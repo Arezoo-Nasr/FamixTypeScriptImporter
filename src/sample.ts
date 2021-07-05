@@ -1,4 +1,4 @@
-import {ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, Project, SourceFile, SyntaxKind } from "ts-morph";
+import { ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, Project, SourceFile, SyntaxKind } from "ts-morph";
 
 import * as Famix from "./lib/famix/src/model/famix";
 import * as fs from "fs"
@@ -12,7 +12,7 @@ var allClasses = [];
 var allInterfaces = [];
 
 var filePaths = ["../**/resources/**.ts",
-                ];
+]; aaa
 
 try {
     const sourceFiles = project.addSourceFilesAtPaths(filePaths);
@@ -28,7 +28,7 @@ try {
         fmxIndexFileAnchor.setEndPos(file.getEnd());
 
         fmxRep.addElement(fmxIndexFileAnchor);
-        
+
         var namespaceName: string;
         var fmxNamespace: Famix.Namespace;
 
@@ -44,7 +44,7 @@ try {
             interfaces = file.getInterfaces();
         }
 
-        if(!fmxNamespaces.has(namespaceName)) {
+        if (!fmxNamespaces.has(namespaceName)) {
             fmxNamespace = new Famix.Namespace(fmxRep);
             fmxNamespace.setName(namespaceName);
             fmxNamespaces[namespaceName] = fmxNamespace;
@@ -103,7 +103,7 @@ try {
     // Get Inheritances
     allClasses.forEach(cls => {
         var baseClass = cls.getBaseClass();
-        if (baseClass !== undefined){
+        if (baseClass !== undefined) {
             var fmxInher = new Famix.Inheritance(fmxRep);
             var sub = fmxTypes.get(cls.getName());
             var fmxSuper = fmxTypes.get(baseClass.getName());
@@ -111,18 +111,18 @@ try {
             fmxInher.setSuperclass(fmxSuper);
         }
 
-            var interfaces  = cls.getImplements();
-            interfaces.forEach(inter => {
-                var fmxImplements = new Famix.Inheritance(fmxRep);
-                var completeName = inter.getText();
-                var fmxSuperInter = fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-                var subImplements = fmxTypes.get(cls.getName());
-                fmxImplements.setSuperclass(fmxSuperInter);
-                fmxImplements.setSubclass(subImplements);
-            });
+        var interfaces = cls.getImplements();
+        interfaces.forEach(inter => {
+            var fmxImplements = new Famix.Inheritance(fmxRep);
+            var completeName = inter.getText();
+            var fmxSuperInter = fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+            var subImplements = fmxTypes.get(cls.getName());
+            fmxImplements.setSuperclass(fmxSuperInter);
+            fmxImplements.setSubclass(subImplements);
         });
-        
-        //*
+    });
+
+    //*
     allInterfaces.forEach(inter => {
         var baseInter = inter.getBaseTypes()[0];
         if (baseInter !== undefined && baseInter.getText() !== 'Object') {
@@ -144,7 +144,7 @@ catch (Error) {
     console.log(Error.message);
 }
 
-function createFamixClass(cls, file: SourceFile, isInterface=false): Famix.Class {
+function createFamixClass(cls, file: SourceFile, isInterface = false): Famix.Class {
     var fmxClass = new Famix.Class(fmxRep);
     var clsName = cls.getName();
     fmxClass.setName(clsName);
@@ -163,10 +163,10 @@ function createFamixClass(cls, file: SourceFile, isInterface=false): Famix.Class
     return fmxClass;
 }
 
-function createFamixMethod(method, file: SourceFile, isSignature=false, isConstructor=false): Famix.Method {
+function createFamixMethod(method, file: SourceFile, isSignature = false, isConstructor = false): Famix.Method {
 
     var fmxMethod = new Famix.Method(fmxRep);
-    if(isConstructor) {
+    if (isConstructor) {
         fmxMethod.setName("constructor");
     }
     else {
@@ -196,11 +196,11 @@ function createFamixMethod(method, file: SourceFile, isSignature=false, isConstr
         fmxMethod.addParameters(fmxParam);
     });
 
-    if(!isSignature) {
+    if (!isSignature) {
         let MethodeCyclo = 1;
         method.getStatements().forEach(stmt => {
-            if([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement,
-                SyntaxKind.DoStatement].includes(stmt.getKind())){
+            if ([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement,
+            SyntaxKind.DoStatement].includes(stmt.getKind())) {
                 MethodeCyclo++;
             }
         });
@@ -235,11 +235,11 @@ function createFamixAttribute(prop, file: SourceFile): Famix.Attribute {
 function createFamixFunction(fct: FunctionDeclaration, file: SourceFile): Famix.Function {
     var fmxFunct = new Famix.Function(fmxRep);
     fmxFunct.setName(fct.getName());
-        
+
     var fctTypeName = getUsableName(fct.getReturnType().getText());
     var fmxType = getFamixType(fctTypeName);
     fmxFunct.setDeclaredType(fmxType);
-    
+
     var fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
     fmxIndexFileAnchor.setFileName(file.getFilePath());
     fmxIndexFileAnchor.setStartPos(fct.getStart());
@@ -249,7 +249,7 @@ function createFamixFunction(fct: FunctionDeclaration, file: SourceFile): Famix.
     fmxFunct.setSourceAnchor(fmxIndexFileAnchor);
 
     fmxFunct.setNumberOfLinesOfCode(fct.getEndLineNumber() - fct.getStartLineNumber());
-    
+
     fct.getParameters().forEach(param => {
         var fmxParam = new Famix.Parameter(fmxRep);
         var paramTypeName = getUsableName(param.getType().getText());
@@ -260,8 +260,8 @@ function createFamixFunction(fct: FunctionDeclaration, file: SourceFile): Famix.
 
     let MethodeCyclo = 1;
     fct.getStatements().forEach(stmt => {
-        if([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement,
-            SyntaxKind.DoStatement].includes(stmt.getKind())){
+        if ([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement,
+        SyntaxKind.DoStatement].includes(stmt.getKind())) {
             MethodeCyclo++;
         }
     });
@@ -273,18 +273,18 @@ function createFamixFunction(fct: FunctionDeclaration, file: SourceFile): Famix.
 }
 
 function getUsableName(name: string): string {
-    if(name.includes('<'))
+    if (name.includes('<'))
         name = name.substring(0, name.indexOf('<'));
-    if(name.includes('.'))
+    if (name.includes('.'))
         name = name.substring(name.lastIndexOf('.') + 1);
-    
+
     return name;
 }
 
 function getFamixType(typeName: string): Famix.Type {
     var fmxType: Famix.Type;
 
-    if(!fmxTypes.has(typeName)) {
+    if (!fmxTypes.has(typeName)) {
         fmxType = new Famix.Type(fmxRep);
         fmxType.setName(typeName);
         fmxTypes.set(typeName, fmxType);
