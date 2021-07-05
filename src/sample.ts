@@ -12,7 +12,7 @@ var allClasses = [];
 var allInterfaces = [];
 
 var filePaths = ["../**/resources/**.ts",
-]; aaa
+]; aaabbb
 
 try {
     const sourceFiles = project.addSourceFilesAtPaths(filePaths);
