@@ -1,5 +1,5 @@
 import { ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, Project, SourceFile, SyntaxKind } from "ts-morph";
-ddd
+
 import * as Famix from "./lib/famix/src/model/famix";
 import * as fs from "fs"
 import { FamixRepository } from "./lib/famix/src/famix_repository";
