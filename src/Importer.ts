@@ -11,15 +11,13 @@ var fmxTypes = new Map<string, Famix.Type>();
 var allClasses = [];
 var allInterfaces = [];
 
-var filePaths = ["../**/resources/**.ts",
-];
+var filePaths = ["../**/resources/**.ts",];
 
 try {
     const sourceFiles = project.addSourceFilesAtPaths(filePaths);
 
     sourceFiles.forEach(file => {
 
-        var classes: ClassDeclaration[];
         //var interfaces: InterfaceDeclaration[];
 
         var fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
@@ -31,6 +29,7 @@ try {
 
         var namespaceName: string;
         var fmxNamespace: Famix.Namespace;
+        var classes: ClassDeclaration[];
 
         if (file.getNamespaces().length > 0) {
             var namespace = file.getNamespaces()[0];
@@ -62,10 +61,10 @@ try {
             var fmxClass = createFamixClass(cls, file);
             fmxNamespace.addTypes(fmxClass);
 
-            // cls.getMethods().forEach(method => {
-            //     var fmxMethod = createFamixMethod(method, file);
-            //     fmxClass.addMethods(fmxMethod);
-            // });
+            cls.getMethods().forEach(method => {
+                var fmxMethod = createFamixMethod(method, file);
+                fmxClass.addMethods(fmxMethod);
+            });
 
             // cls.getProperties().forEach(prop => {
             //     var fmxAttr = createFamixAttribute(prop, file);
@@ -186,7 +185,7 @@ function createFamixMethod(method, file: SourceFile, isSignature = false, isCons
     fmxIndexFileAnchor.setEndPos(method.getEnd());
     fmxIndexFileAnchor.setElement(fmxMethod);
 
-    fmxMethod.setSourceAnchor(fmxIndexFileAnchor);
+    //fmxMethod.setSourceAnchor(fmxIndexFileAnchor);
 
     fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
 
@@ -198,7 +197,7 @@ function createFamixMethod(method, file: SourceFile, isSignature = false, isCons
         fmxMethod.addParameters(fmxParam);
     });
 
-    if (!isSignature) {
+    if (!isSignature) {//////////////////
         let MethodeCyclo = 1;
         method.getStatements().forEach(stmt => {
             if ([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement,
