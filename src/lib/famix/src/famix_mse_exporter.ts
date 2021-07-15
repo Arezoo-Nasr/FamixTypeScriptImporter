@@ -1,12 +1,15 @@
-import {FamixBaseElement} from "./famix_base_element";
+import { FamixBaseElement } from "./famix_base_element";
 
 export class FamixMseExporter {
   private element: FamixBaseElement;
-  private buffer: string;
+  private bufferArray: any = {}
 
   constructor(packageClass: string, element: FamixBaseElement) {
     this.element = element;
-    this.buffer = `(${packageClass}  (id: ${this.element.id})`;
+    //this.buffer = `(${packageClass}  (id: ${this.element.id})`;
+    //this.buffer = `{ FM3 : ${packageClass} , id : ${this.element.id} `;
+    this.bufferArray["FM3"] = packageClass;
+    this.bufferArray["id"] = this.element.id;
   }
 
   public addProperty(name: string, prop: unknown) {
@@ -15,30 +18,46 @@ export class FamixMseExporter {
 
     if (prop instanceof Set) {
       let valueBuffer: string = "";
+      let valueArray = [];
       for (const value of prop) {
         if (valueBuffer.length > 0) {
           valueBuffer = valueBuffer + " ";
         }
-        if (typeof(value) === "string") {
-          valueBuffer = valueBuffer + `'${value}'`;
+        if (typeof (value) === "string") {
+          //valueBuffer = valueBuffer + `'${value}'`;
+          valueArray.push(value);
+
         } else if (value instanceof FamixBaseElement) {
-          valueBuffer = valueBuffer + `(ref: ${value.id})`;
+          //valueBuffer = valueBuffer + `(ref: ${value.id})`;
+          valueArray.push({ "ref": value.id });
+
         } else {
-          valueBuffer = valueBuffer + `${value}`;
+          //valueBuffer = valueBuffer + `${value}`;
+          valueArray.push(value);
         }
       }
-      this.buffer = this.buffer + `\n    (${name} ${valueBuffer})`;
-    } else if (prop instanceof FamixBaseElement)  {
-      this.buffer = this.buffer + `\n    (${name} (ref: ${prop.id}))`;
-    } else if (typeof(prop) === "string") {
-      this.buffer = this.buffer + `\n    (${name} '${prop}')`;
-    } else {
-      this.buffer = this.buffer + `\n    (${name} ${prop})`;
+      //this.buffer = this.buffer + `\n    (${name} ${valueBuffer})`;
+      this.bufferArray[name] = valueArray;
     }
+    else if (prop instanceof FamixBaseElement) {
+      this.bufferArray[name] = { "ref": prop.id };
+    } else if (typeof (prop) === "string") {
+      this.bufferArray[name] = prop;
+    } else {
+      this.bufferArray[name] = prop;
+    }
+    // else if (prop instanceof FamixBaseElement) {
+    //   this.buffer = this.buffer + `\n    (${name} (ref: ${prop.id}))`;
+    // } else if (typeof (prop) === "string") {
+    //   this.buffer = this.buffer + `\n    (${name} '${prop}')`;
+    // } else {
+    //   this.buffer = this.buffer + `\n    (${name} ${prop})`;
+    // }
   }
 
   public getMSE(): string {
-    return this.buffer + ")\n";
+    //return this.buffer + ")\n";
+    return JSON.stringify(this.bufferArray);
   }
 
 }

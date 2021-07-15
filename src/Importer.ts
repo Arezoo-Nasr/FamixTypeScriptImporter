@@ -20,14 +20,14 @@ try {
     sourceFiles.forEach(file => {
 
         var classes: ClassDeclaration[];
-        var interfaces: InterfaceDeclaration[];
+        //var interfaces: InterfaceDeclaration[];
 
         var fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
         fmxIndexFileAnchor.setFileName(file.getFilePath());
         fmxIndexFileAnchor.setStartPos(file.getStart());
         fmxIndexFileAnchor.setEndPos(file.getEnd());
 
-        fmxRep.addElement(fmxIndexFileAnchor);
+        //fmxRep.addElement(fmxIndexFileAnchor);
 
         var namespaceName: string;
         var fmxNamespace: Famix.Namespace;
@@ -36,12 +36,14 @@ try {
             var namespace = file.getNamespaces()[0];
             namespaceName = namespace.getName();
             classes = namespace.getClasses();
-            interfaces = namespace.getInterfaces();
+            //get functions
+            //interfaces = namespace.getInterfaces();
         }
         else {
             namespaceName = "DefaultNamespace";
             classes = file.getClasses();
-            interfaces = file.getInterfaces();
+            //get functions
+            //interfaces = file.getInterfaces();
         }
 
         if (!fmxNamespaces.has(namespaceName)) {
@@ -53,90 +55,90 @@ try {
             fmxNamespace = fmxNamespaces[namespaceName];
         }
 
-        allClasses.push(...classes);
-        allInterfaces.push(...interfaces);
+        allClasses.push(...classes);   //????????????????????
+        //allInterfaces.push(...interfaces);
 
         classes.forEach(cls => {
             var fmxClass = createFamixClass(cls, file);
             fmxNamespace.addTypes(fmxClass);
 
-            cls.getMethods().forEach(method => {
-                var fmxMethod = createFamixMethod(method, file);
-                fmxClass.addMethods(fmxMethod);
-            });
+            // cls.getMethods().forEach(method => {
+            //     var fmxMethod = createFamixMethod(method, file);
+            //     fmxClass.addMethods(fmxMethod);
+            // });
 
-            cls.getProperties().forEach(prop => {
-                var fmxAttr = createFamixAttribute(prop, file);
-                fmxClass.addAttributes(fmxAttr);
-            });
+            // cls.getProperties().forEach(prop => {
+            //     var fmxAttr = createFamixAttribute(prop, file);
+            //     fmxClass.addAttributes(fmxAttr);
+            // });
 
-            cls.getConstructors().forEach(cstr => {
-                var fmxMethod = createFamixMethod(cstr, file, false, true);
-                fmxClass.addMethods(fmxMethod);
-            });
-
-        });
-
-        interfaces.forEach(inter => {
-            var fmxInter = createFamixClass(inter, file, true);
-            fmxNamespace.addTypes(fmxInter);
-
-            inter.getMethods().forEach(method => {
-                var fmxMethod = createFamixMethod(method, file, true);
-                fmxInter.addMethods(fmxMethod);
-            });
-
-            inter.getProperties().forEach(prop => {
-                var fmxAttr = createFamixAttribute(prop, file);
-                fmxInter.addAttributes(fmxAttr);
-            });
+            // cls.getConstructors().forEach(cstr => {
+            //     var fmxMethod = createFamixMethod(cstr, file, false, true);
+            //     fmxClass.addMethods(fmxMethod);
+            // });
 
         });
 
-        file.getFunctions().forEach(fct => {
-            var fmxFunct = createFamixFunction(fct, file);
-            fmxNamespace.addFunctions(fmxFunct);
-        });
+        // interfaces.forEach(inter => {
+        //     var fmxInter = createFamixClass(inter, file, true);
+        //     fmxNamespace.addTypes(fmxInter);
+
+        //     inter.getMethods().forEach(method => {
+        //         var fmxMethod = createFamixMethod(method, file, true);
+        //         fmxInter.addMethods(fmxMethod);
+        //     });
+
+        //     inter.getProperties().forEach(prop => {
+        //         var fmxAttr = createFamixAttribute(prop, file);
+        //         fmxInter.addAttributes(fmxAttr);
+        //     });
+
+        // });
+
+        // file.getFunctions().forEach(fct => {
+        //     var fmxFunct = createFamixFunction(fct, file);
+        //     fmxNamespace.addFunctions(fmxFunct);
+        // });
 
     });
     //*
     // Get Inheritances
-    allClasses.forEach(cls => {
-        var baseClass = cls.getBaseClass();
-        if (baseClass !== undefined) {
-            var fmxInher = new Famix.Inheritance(fmxRep);
-            var sub = fmxTypes.get(cls.getName());
-            var fmxSuper = fmxTypes.get(baseClass.getName());
-            fmxInher.setSubclass(sub);
-            fmxInher.setSuperclass(fmxSuper);
-        }
+    // allClasses.forEach(cls => {
+    //     var baseClass = cls.getBaseClass();
+    //     if (baseClass !== undefined) {
+    //         var fmxInher = new Famix.Inheritance(fmxRep);
+    //         var sub = fmxTypes.get(cls.getName());
+    //         var fmxSuper = fmxTypes.get(baseClass.getName());
+    //         fmxInher.setSubclass(sub);
+    //         fmxInher.setSuperclass(fmxSuper);
+    //     }
 
-        var interfaces = cls.getImplements();
-        interfaces.forEach(inter => {
-            var fmxImplements = new Famix.Inheritance(fmxRep);
-            var completeName = inter.getText();
-            var fmxSuperInter = fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-            var subImplements = fmxTypes.get(cls.getName());
-            fmxImplements.setSuperclass(fmxSuperInter);
-            fmxImplements.setSubclass(subImplements);
-        });
-    });
+    //     var interfaces = cls.getImplements();
+    //     interfaces.forEach(inter => {
+    //         var fmxImplements = new Famix.Inheritance(fmxRep);
+    //         var completeName = inter.getText();
+    //         var fmxSuperInter = fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+    //         var subImplements = fmxTypes.get(cls.getName());
+    //         fmxImplements.setSuperclass(fmxSuperInter);
+    //         fmxImplements.setSubclass(subImplements);
+    //     });
+    // });
 
     //*
-    allInterfaces.forEach(inter => {
-        var baseInter = inter.getBaseTypes()[0];
-        if (baseInter !== undefined && baseInter.getText() !== 'Object') {
-            var fmxInher = new Famix.Inheritance(fmxRep);
-            var sub = fmxTypes.get(inter.getName());
-            var completeName = baseInter.getText();
-            var fmxSuper = fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-            fmxInher.setSubclass(sub);
-            fmxInher.setSuperclass(fmxSuper);
-        }
-    });
+    // allInterfaces.forEach(inter => {
+    //     var baseInter = inter.getBaseTypes()[0];
+    //     if (baseInter !== undefined && baseInter.getText() !== 'Object') {
+    //         var fmxInher = new Famix.Inheritance(fmxRep);
+    //         var sub = fmxTypes.get(inter.getName());
+    //         var completeName = baseInter.getText();
+    //         var fmxSuper = fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+    //         fmxInher.setSubclass(sub);
+    //         fmxInher.setSuperclass(fmxSuper);
+    //     }
+    // });
     //*/
     var mse = fmxRep.getMSE();
-    fs.writeFile('sample.mse', mse, (err) => {
+    fs.writeFile('sample.json', mse, (err) => {
         if (err) { throw err; }
     });
 }
@@ -156,9 +158,9 @@ function createFamixClass(cls, file: SourceFile, isInterface = false): Famix.Cla
     fmxIndexFileAnchor.setEndPos(cls.getEnd());
     fmxIndexFileAnchor.setElement(fmxClass);
 
-    fmxClass.setSourceAnchor(fmxIndexFileAnchor);
+    //fmxClass.setSourceAnchor(fmxIndexFileAnchor);
 
-    fmxRep.addElement(fmxClass);
+    //fmxRep.addElement(fmxClass);
     fmxTypes.set(clsName, fmxClass);
     return fmxClass;
 }

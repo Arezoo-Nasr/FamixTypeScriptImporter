@@ -1,6 +1,6 @@
-import {FamixBaseElement} from "./famix_base_element";
-import {Class} from "./model/famix";
-import {CustomSourceLanguage} from "./model/famix";
+import { FamixBaseElement } from "./famix_base_element";
+import { Class } from "./model/famix";
+import { CustomSourceLanguage } from "./model/famix";
 
 export class FamixRepository {
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
@@ -8,10 +8,16 @@ export class FamixRepository {
   private idCounter: number = 1;
   private lang: CustomSourceLanguage;
   private static repo: FamixRepository;
+  //Arezoo
+  private prefix: string
+  //End
 
   constructor() {
     this.lang = new CustomSourceLanguage(this);
     this.lang.setName("TypeScript");
+    //Arezoo
+    this.prefix = "FamixTypeScript";
+    //End
   }
 
   public static getFamixRepo(): FamixRepository {
@@ -22,7 +28,7 @@ export class FamixRepository {
   }
 
   public static clearFamixRepo() {
-      this.repo = new FamixRepository();
+    this.repo = new FamixRepository();
   }
 
   public createOrGetFamixClass(name: string, isInterface?: boolean): Class {
@@ -58,13 +64,14 @@ export class FamixRepository {
   }
 
   public getMSE(): string {
-    let ret: string = "(";
+    let ret: string = "[";///////
     for (const element of this.famixClasses) {
-      ret = ret + element.getMSE();
+      ret = ret + element.getMSE() + ",";
     }
     for (const element of this.elements) {
-      ret = ret + element.getMSE();
+      ret = ret + element.getMSE() + ",";
     }
-    return ret + ")";
+    ret = ret.substring(0, ret.length - 1)
+    return ret + "]";//////////
   }
 }
