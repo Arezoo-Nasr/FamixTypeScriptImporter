@@ -8,7 +8,7 @@ export class FamixMseExporter {
     this.element = element;
     //this.buffer = `(${packageClass}  (id: ${this.element.id})`;
     //this.buffer = `{ FM3 : ${packageClass} , id : ${this.element.id} `;
-    this.bufferArray["FM3"] = packageClass;
+    this.bufferArray["FM3"] = element.FamixPrefix + "." + packageClass;
     this.bufferArray["id"] = this.element.id;
   }
 

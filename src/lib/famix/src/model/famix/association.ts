@@ -1,7 +1,7 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {SourcedEntity} from "./../famix/sourced_entity";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { SourcedEntity } from "./../famix/sourced_entity";
 
 export class Association extends SourcedEntity {
 
@@ -35,7 +35,7 @@ export class Association extends SourcedEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Association", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Association", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

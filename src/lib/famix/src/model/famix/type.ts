@@ -1,15 +1,15 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {StructuralEntity} from "./../famix/structural_entity";
-import {ParameterizedType} from "./../famix/parameterized_type";
-import {BehaviouralEntity} from "./../famix/behavioural_entity";
-import {ContainerEntity} from "./../famix/container_entity";
-import {Attribute} from "./../famix/attribute";
-import {Reference} from "./../famix/reference";
-import {Inheritance} from "./../famix/inheritance";
-import {TypeAlias} from "./../famix/type_alias";
-import {Method} from "./../famix/method";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { StructuralEntity } from "./../famix/structural_entity";
+import { ParameterizedType } from "./../famix/parameterized_type";
+import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { ContainerEntity } from "./../famix/container_entity";
+import { Attribute } from "./../famix/attribute";
+import { Reference } from "./../famix/reference";
+import { Inheritance } from "./../famix/inheritance";
+import { TypeAlias } from "./../famix/type_alias";
+import { Method } from "./../famix/method";
 
 export class Type extends ContainerEntity {
 
@@ -173,7 +173,7 @@ export class Type extends ContainerEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Type", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Type", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

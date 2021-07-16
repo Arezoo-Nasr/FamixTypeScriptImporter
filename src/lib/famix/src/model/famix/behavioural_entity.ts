@@ -1,14 +1,14 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Type} from "./../famix/type";
-import {ImplicitVariable} from "./../famix/implicit_variable";
-import {Invocation} from "./../famix/invocation";
-import {ContainerEntity} from "./../famix/container_entity";
-import {Reference} from "./../famix/reference";
-import {LocalVariable} from "./../famix/local_variable";
-import {Access} from "./../famix/access";
-import {Parameter} from "./../famix/parameter";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Type } from "./../famix/type";
+import { ImplicitVariable } from "./../famix/implicit_variable";
+import { Invocation } from "./../famix/invocation";
+import { ContainerEntity } from "./../famix/container_entity";
+import { Reference } from "./../famix/reference";
+import { LocalVariable } from "./../famix/local_variable";
+import { Access } from "./../famix/access";
+import { Parameter } from "./../famix/parameter";
 
 export class BehaviouralEntity extends ContainerEntity {
 
@@ -217,7 +217,7 @@ export class BehaviouralEntity extends ContainerEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.BehaviouralEntity", this);
+    const mse: FamixMseExporter = new FamixMseExporter("BehaviouralEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

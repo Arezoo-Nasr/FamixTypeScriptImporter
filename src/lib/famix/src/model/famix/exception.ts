@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Entity} from "./../famix/entity";
-import {Class} from "./../famix/class";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Entity } from "./../famix/entity";
+import { Class } from "./../famix/class";
 
 export class Exception extends Entity {
 
@@ -19,7 +19,7 @@ export class Exception extends Entity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Exception", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Exception", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

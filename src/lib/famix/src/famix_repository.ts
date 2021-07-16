@@ -8,16 +8,10 @@ export class FamixRepository {
   private idCounter: number = 1;
   private lang: CustomSourceLanguage;
   private static repo: FamixRepository;
-  //Arezoo
-  private prefix: string
-  //End
 
   constructor() {
     this.lang = new CustomSourceLanguage(this);
     this.lang.setName("TypeScript");
-    //Arezoo
-    this.prefix = "FamixTypeScript";
-    //End
   }
 
   public static getFamixRepo(): FamixRepository {

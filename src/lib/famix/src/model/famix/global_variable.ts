@@ -1,9 +1,9 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {StructuralEntity} from "./../famix/structural_entity";
-import {ScopingEntity} from "./../famix/scoping_entity";
-import {Module} from "./../famix/module";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { StructuralEntity } from "./../famix/structural_entity";
+import { ScopingEntity } from "./../famix/scoping_entity";
+import { Module } from "./../famix/module";
 
 export class GlobalVariable extends StructuralEntity {
 
@@ -34,7 +34,7 @@ export class GlobalVariable extends StructuralEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.GlobalVariable", this);
+    const mse: FamixMseExporter = new FamixMseExporter("GlobalVariable", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

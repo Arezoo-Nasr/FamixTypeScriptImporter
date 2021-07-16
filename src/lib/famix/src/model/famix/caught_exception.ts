@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Method} from "./../famix/method";
-import {Exception} from "./../famix/exception";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Method } from "./../famix/method";
+import { Exception } from "./../famix/exception";
 
 export class CaughtException extends Exception {
 
@@ -22,7 +22,7 @@ export class CaughtException extends Exception {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.CaughtException", this);
+    const mse: FamixMseExporter = new FamixMseExporter("CaughtException", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

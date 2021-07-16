@@ -29,7 +29,7 @@ export class Class extends Type {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FamixTypeScript.Class", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Class", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

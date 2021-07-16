@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Type} from "./../famix/type";
-import {Association} from "./../famix/association";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Type } from "./../famix/type";
+import { Association } from "./../famix/association";
 
 export class Inheritance extends Association {
 
@@ -36,7 +36,7 @@ export class Inheritance extends Association {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Inheritance", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Inheritance", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

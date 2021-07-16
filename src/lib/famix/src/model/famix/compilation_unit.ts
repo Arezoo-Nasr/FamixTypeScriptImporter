@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Module} from "./../famix/module";
-import {File} from "./../file/file";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Module } from "./../famix/module";
+import { File } from "./../file/file";
 
 export class CompilationUnit extends File {
 
@@ -22,7 +22,7 @@ export class CompilationUnit extends File {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.CompilationUnit", this);
+    const mse: FamixMseExporter = new FamixMseExporter("CompilationUnit", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

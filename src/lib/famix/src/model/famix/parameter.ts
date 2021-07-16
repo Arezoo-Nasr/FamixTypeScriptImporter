@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {StructuralEntity} from "./../famix/structural_entity";
-import {BehaviouralEntity} from "./../famix/behavioural_entity";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { StructuralEntity } from "./../famix/structural_entity";
+import { BehaviouralEntity } from "./../famix/behavioural_entity";
 
 export class Parameter extends StructuralEntity {
 
@@ -22,7 +22,7 @@ export class Parameter extends StructuralEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Parameter", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Parameter", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

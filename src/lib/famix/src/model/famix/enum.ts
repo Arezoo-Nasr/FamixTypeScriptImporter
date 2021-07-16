@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Type} from "./../famix/type";
-import {EnumValue} from "./../famix/enum_value";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Type } from "./../famix/type";
+import { EnumValue } from "./../famix/enum_value";
 
 export class Enum extends Type {
 
@@ -24,7 +24,7 @@ export class Enum extends Type {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Enum", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Enum", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

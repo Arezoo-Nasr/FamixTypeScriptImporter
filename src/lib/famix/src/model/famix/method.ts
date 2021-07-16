@@ -1,11 +1,11 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {CaughtException} from "./../famix/caught_exception";
-import {DeclaredException} from "./../famix/declared_exception";
-import {Type} from "./../famix/type";
-import {BehaviouralEntity} from "./../famix/behavioural_entity";
-import {ThrownException} from "./../famix/thrown_exception";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { CaughtException } from "./../famix/caught_exception";
+import { DeclaredException } from "./../famix/declared_exception";
+import { Type } from "./../famix/type";
+import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { ThrownException } from "./../famix/thrown_exception";
 
 export class Method extends BehaviouralEntity {
 
@@ -117,7 +117,7 @@ export class Method extends BehaviouralEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Method", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Method", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

@@ -1,9 +1,9 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {BehaviouralEntity} from "./../famix/behavioural_entity";
-import {ContainerEntity} from "./../famix/container_entity";
-import {Module} from "./../famix/module";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { ContainerEntity } from "./../famix/container_entity";
+import { Module } from "./../famix/module";
 
 export class Function extends BehaviouralEntity {
 
@@ -34,7 +34,7 @@ export class Function extends BehaviouralEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Function", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Function", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

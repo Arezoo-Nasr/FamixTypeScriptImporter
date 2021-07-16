@@ -1,9 +1,9 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Type} from "./../famix/type";
-import {ContainerEntity} from "./../famix/container_entity";
-import {AnnotationInstance} from "./../famix/annotation_instance";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Type } from "./../famix/type";
+import { ContainerEntity } from "./../famix/container_entity";
+import { AnnotationInstance } from "./../famix/annotation_instance";
 
 export class AnnotationType extends Type {
 
@@ -39,7 +39,7 @@ export class AnnotationType extends Type {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.AnnotationType", this);
+    const mse: FamixMseExporter = new FamixMseExporter("AnnotationType", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

@@ -71,10 +71,10 @@ try {
             //     fmxClass.addAttributes(fmxAttr);
             // });
 
-            // cls.getConstructors().forEach(cstr => {
-            //     var fmxMethod = createFamixMethod(cstr, file, false, true);
-            //     fmxClass.addMethods(fmxMethod);
-            // });
+            cls.getConstructors().forEach(cstr => {
+                var fmxMethod = createFamixMethod(cstr, file, false, true);
+                fmxClass.addMethods(fmxMethod);
+            });
 
         });
 
@@ -208,6 +208,7 @@ function createFamixMethod(method, file: SourceFile, isSignature = false, isCons
 
         fmxMethod.setCyclomaticComplexity(MethodeCyclo);
         fmxMethod.setNumberOfStatements(method.getStatements().length);
+        fmxMethod.setNumberOfParameters(method.getParameters().length);//Arezoo
     }
 
     return fmxMethod;

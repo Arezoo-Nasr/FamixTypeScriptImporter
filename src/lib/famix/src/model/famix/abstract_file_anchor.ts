@@ -1,7 +1,7 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {SourceAnchor} from "./../famix/source_anchor";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { SourceAnchor } from "./../famix/source_anchor";
 
 export class AbstractFileAnchor extends SourceAnchor {
 
@@ -18,7 +18,7 @@ export class AbstractFileAnchor extends SourceAnchor {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.AbstractFileAnchor", this);
+    const mse: FamixMseExporter = new FamixMseExporter("AbstractFileAnchor", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

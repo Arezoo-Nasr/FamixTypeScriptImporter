@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Entity} from "./../famix/entity";
-import {SourcedEntity} from "./../famix/sourced_entity";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Entity } from "./../famix/entity";
+import { SourcedEntity } from "./../famix/sourced_entity";
 
 export class SourceAnchor extends Entity {
 
@@ -22,7 +22,7 @@ export class SourceAnchor extends Entity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.SourceAnchor", this);
+    const mse: FamixMseExporter = new FamixMseExporter("SourceAnchor", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

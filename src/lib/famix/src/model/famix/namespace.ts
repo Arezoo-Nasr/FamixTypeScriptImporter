@@ -18,7 +18,7 @@ export class Namespace extends ScopingEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FamixTypeScript.Namespace", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Namespace", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

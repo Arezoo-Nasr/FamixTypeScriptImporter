@@ -1,10 +1,10 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Invocation} from "./../famix/invocation";
-import {SourcedEntity} from "./../famix/sourced_entity";
-import {Package} from "./../famix/package";
-import {AnnotationInstance} from "./../famix/annotation_instance";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Invocation } from "./../famix/invocation";
+import { SourcedEntity } from "./../famix/sourced_entity";
+import { Package } from "./../famix/package";
+import { AnnotationInstance } from "./../famix/annotation_instance";
 
 export class NamedEntity extends SourcedEntity {
 
@@ -93,7 +93,7 @@ export class NamedEntity extends SourcedEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.NamedEntity", this);
+    const mse: FamixMseExporter = new FamixMseExporter("NamedEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

@@ -29,7 +29,7 @@ export class IndexedFileAnchor extends AbstractFileAnchor {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FamixTypeScript.IndexedFileAnchor", this);
+    const mse: FamixMseExporter = new FamixMseExporter("IndexedFileAnchor", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }

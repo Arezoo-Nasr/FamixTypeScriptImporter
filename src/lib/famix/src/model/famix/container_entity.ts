@@ -1,10 +1,10 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Function} from "./../famix/function";
-import {NamedEntity} from "./../famix/named_entity";
-import {Type} from "./../famix/type";
-import {AnnotationType} from "./../famix/annotation_type";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { Function } from "./../famix/function";
+import { NamedEntity } from "./../famix/named_entity";
+import { Type } from "./../famix/type";
+import { AnnotationType } from "./../famix/annotation_type";
 
 export class ContainerEntity extends NamedEntity {
 
@@ -58,7 +58,7 @@ export class ContainerEntity extends NamedEntity {
 
 
   public getMSE(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.ContainerEntity", this);
+    const mse: FamixMseExporter = new FamixMseExporter("ContainerEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getMSE();
   }
