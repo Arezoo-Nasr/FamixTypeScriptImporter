@@ -4,9 +4,7 @@ import { FamixRepository } from "./famix_repository";
 export abstract class FamixBaseElement {
 
   public id: number;
-  //Arezoo
-  public FamixPrefix: string = "FamixTypeScript";
-  //End
+
   constructor(repo: FamixRepository) {
     repo.addElement(this);
   }

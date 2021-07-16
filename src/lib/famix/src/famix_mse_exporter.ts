@@ -3,12 +3,14 @@ import { FamixBaseElement } from "./famix_base_element";
 export class FamixMseExporter {
   private element: FamixBaseElement;
   private bufferArray: any = {}
-
+  //Arezoo
+  private FamixPrefix: string = "FamixTypeScript";
+  //End
   constructor(packageClass: string, element: FamixBaseElement) {
     this.element = element;
     //this.buffer = `(${packageClass}  (id: ${this.element.id})`;
     //this.buffer = `{ FM3 : ${packageClass} , id : ${this.element.id} `;
-    this.bufferArray["FM3"] = element.FamixPrefix + "." + packageClass;
+    this.bufferArray["FM3"] = this.FamixPrefix + "." + packageClass;
     this.bufferArray["id"] = this.element.id;
   }
 
