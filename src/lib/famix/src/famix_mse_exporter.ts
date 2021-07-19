@@ -23,7 +23,7 @@ export class FamixMseExporter {
       let valueArray = [];
       for (const value of prop) {
         if (valueBuffer.length > 0) {
-          valueBuffer = valueBuffer + " ";
+          //valueBuffer = valueBuffer + " ";
         }
         if (typeof (value) === "string") {
           //valueBuffer = valueBuffer + `'${value}'`;
@@ -61,5 +61,4 @@ export class FamixMseExporter {
     //return this.buffer + ")\n";
     return JSON.stringify(this.bufferArray);
   }
-
 }
