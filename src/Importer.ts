@@ -145,6 +145,7 @@ catch (Error) {
     console.log(Error.message);
 }
 
+
 function createFamixClass(cls, file: SourceFile, isInterface = false): Famix.Class {
     var fmxClass = new Famix.Class(fmxRep);
     var clsName = cls.getName();
@@ -197,6 +198,15 @@ function createFamixMethod(method, file: SourceFile, isSignature = false, isCons
         fmxMethod.addParameters(fmxParam);
     });
 
+    //Arezoo
+    method.getLocalVariables().array.forEach(variable => {
+        var fmxLocalVariable = new Famix.LocalVariable(fmxRep);
+        var localVariableTypeName = getUsableName(variable.getType().getText());
+        fmxLocalVariable.setDeclaredType(getFamixType(localVariableTypeName));
+        fmxLocalVariable.setName(variable.getName());
+        fmxMethod.addLocalVariables(fmxLocalVariable);
+    });
+    //
     if (!isSignature) {//////////////////
         let MethodeCyclo = 1;
         method.getStatements().forEach(stmt => {
