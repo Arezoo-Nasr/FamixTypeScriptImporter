@@ -1,4 +1,4 @@
-import { ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, Project, SourceFile, SyntaxKind } from "ts-morph";
+import { ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, MethodDeclaration, Project, SourceFile, SyntaxKind } from "ts-morph";
 
 import * as Famix from "./lib/famix/src/model/famix";
 import * as fs from "fs"
@@ -31,8 +31,8 @@ try {
         var fmxNamespace: Famix.Namespace;
         var classes: ClassDeclaration[];
 
-        if (file.getNamespaces().length > 0) {
-            var namespace = file.getNamespaces()[0];
+        if (file.getModules().length > 0) {
+            var namespace = file.getModules()[0];
             namespaceName = namespace.getName();
             classes = namespace.getClasses();
             //get functions
@@ -146,7 +146,7 @@ catch (Error) {
 }
 
 
-function createFamixClass(cls, file: SourceFile, isInterface = false): Famix.Class {
+function createFamixClass(cls: ClassDeclaration, file: SourceFile, isInterface = false): Famix.Class {
     var fmxClass = new Famix.Class(fmxRep);
     var clsName = cls.getName();
     fmxClass.setName(clsName);
@@ -155,7 +155,7 @@ function createFamixClass(cls, file: SourceFile, isInterface = false): Famix.Cla
     var fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
     fmxIndexFileAnchor.setFileName(file.getFilePath());
     fmxIndexFileAnchor.setStartPos(cls.getStart());
-    fmxIndexFileAnchor.setEndPos(cls.getEnd());
+    fmxIndexFileAnchor.setEndPos(cls.getpro.getEnd());
     fmxIndexFileAnchor.setElement(fmxClass);
 
     //fmxClass.setSourceAnchor(fmxIndexFileAnchor);
@@ -165,7 +165,7 @@ function createFamixClass(cls, file: SourceFile, isInterface = false): Famix.Cla
     return fmxClass;
 }
 
-function createFamixMethod(method, file: SourceFile, isSignature = false, isConstructor = false): Famix.Method {
+function createFamixMethod(method: MethodDeclaration, file: SourceFile, isSignature = false, isConstructor = false): Famix.Method {
 
     var fmxMethod = new Famix.Method(fmxRep);
     if (isConstructor) {
@@ -190,22 +190,25 @@ function createFamixMethod(method, file: SourceFile, isSignature = false, isCons
 
     fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
 
-    method.getParameters().forEach(param => {
-        var fmxParam = new Famix.Parameter(fmxRep);
-        var paramTypeName = getUsableName(param.getType().getText());
-        fmxParam.setDeclaredType(getFamixType(paramTypeName));
-        fmxParam.setName(param.getName());
-        fmxMethod.addParameters(fmxParam);
-    });
-
+    if (method.getParameters()) {
+        method.getParameters().forEach(param => {
+            var fmxParam = new Famix.Parameter(fmxRep);
+            var paramTypeName = getUsableName(param.getType().getText());
+            fmxParam.setDeclaredType(getFamixType(paramTypeName));
+            fmxParam.setName(param.getName());
+            fmxMethod.addParameters(fmxParam);
+        });
+    }
     //Arezoo
-    method.getLocalVariables().array.forEach(variable => {
-        var fmxLocalVariable = new Famix.LocalVariable(fmxRep);
-        var localVariableTypeName = getUsableName(variable.getType().getText());
-        fmxLocalVariable.setDeclaredType(getFamixType(localVariableTypeName));
-        fmxLocalVariable.setName(variable.getName());
-        fmxMethod.addLocalVariables(fmxLocalVariable);
-    });
+    if (method.getLocals()) {
+        method.getLocals().forEach(variable => {
+            var fmxLocalVariable = new Famix.LocalVariable(fmxRep);
+            var localVariableTypeName = getUsableName(variable.getType().getText());
+            fmxLocalVariable.setDeclaredType(getFamixType(localVariableTypeName));
+            fmxLocalVariable.setName(variable.getName());
+            fmxMethod.addLocalVariables(fmxLocalVariable);
+        });
+    }
     //
     if (!isSignature) {//////////////////
         let MethodeCyclo = 1;

@@ -21,7 +21,7 @@ export class FamixMseExporter {
     if (prop instanceof Set) {
       let valueBuffer: string = "";
       let valueArray = [];
-      for (const value of prop) {
+      for (const value of Array.from(prop.values())) {
         if (valueBuffer.length > 0) {
           //valueBuffer = valueBuffer + " ";
         }

@@ -39,7 +39,7 @@ export class FamixRepository {
   }
 
   public getFamixClass(name: string): Class | undefined {
-    for (const fc of this.famixClasses) {
+    for (const fc of Array.from(this.famixClasses.values())) {
       if (fc.getName().toLowerCase() === name.toLowerCase()) {
         return fc;
       }
@@ -59,10 +59,10 @@ export class FamixRepository {
 
   public getMSE(): string {
     let ret: string = "[";///////
-    for (const element of this.famixClasses) {
+    for (const element of Array.from(this.famixClasses.values())) {
       ret = ret + element.getMSE() + ",";
     }
-    for (const element of this.elements) {
+    for (const element of Array.from(this.elements.values())) {
       ret = ret + element.getMSE() + ",";
     }
     ret = ret.substring(0, ret.length - 1)
