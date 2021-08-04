@@ -1,4 +1,4 @@
-import { ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, MethodDeclaration, Project, SourceFile, SyntaxKind } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, InterfaceDeclaration, MethodDeclaration, Project, SourceFile, SyntaxKind } from "ts-morph";
 
 import * as Famix from "./lib/famix/src/model/famix";
 import * as fs from "fs"
@@ -11,7 +11,7 @@ var fmxTypes = new Map<string, Famix.Type>();
 var allClasses = [];
 var allInterfaces = [];
 
-var filePaths = ["../**/resources/**.ts",];
+var filePaths = ["./resources/**.ts",];
 
 try {
     const sourceFiles = project.addSourceFilesAtPaths(filePaths);
@@ -155,7 +155,7 @@ function createFamixClass(cls: ClassDeclaration, file: SourceFile, isInterface =
     var fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
     fmxIndexFileAnchor.setFileName(file.getFilePath());
     fmxIndexFileAnchor.setStartPos(cls.getStart());
-    fmxIndexFileAnchor.setEndPos(cls.getpro.getEnd());
+    fmxIndexFileAnchor.setEndPos(cls.getEnd());
     fmxIndexFileAnchor.setElement(fmxClass);
 
     //fmxClass.setSourceAnchor(fmxIndexFileAnchor);
@@ -165,14 +165,16 @@ function createFamixClass(cls: ClassDeclaration, file: SourceFile, isInterface =
     return fmxClass;
 }
 
-function createFamixMethod(method: MethodDeclaration, file: SourceFile, isSignature = false, isConstructor = false): Famix.Method {
+function createFamixMethod(method: MethodDeclaration | ConstructorDeclaration, file: SourceFile, isSignature = false, isConstructor = false): Famix.Method {
 
     var fmxMethod = new Famix.Method(fmxRep);
     if (isConstructor) {
         fmxMethod.setName("constructor");
+        //Arezoo
+
     }
     else {
-        var methodName = method.getName();
+        var methodName = (method as MethodDeclaration).getName();
         fmxMethod.setName(methodName);
     }
 
@@ -200,8 +202,8 @@ function createFamixMethod(method: MethodDeclaration, file: SourceFile, isSignat
         });
     }
     //Arezoo
-    if (method.getLocals()) {
-        method.getLocals().forEach(variable => {
+    if (method.getVariableDeclarations()) {
+        method.getVariableDeclarations().forEach(variable => {
             var fmxLocalVariable = new Famix.LocalVariable(fmxRep);
             var localVariableTypeName = getUsableName(variable.getType().getText());
             fmxLocalVariable.setDeclaredType(getFamixType(localVariableTypeName));

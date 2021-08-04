@@ -5,7 +5,7 @@ module MyNamespace {
         public move(): void {}
        
 		public move2(family : string):void{
-			var x:string = "salam" + family
+			var variabl:string = "salam" + family;
 		}
 
     }
