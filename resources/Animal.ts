@@ -8,8 +8,8 @@ namespace MyNamespace {
         public move(): void {}
      
 		public move2(family : string):void{
-			var vari:string = "salam" + family;
-			this.name = family;
+			var Str1:string = "hi" + family;
+			this.name = family+Str1;
 		}
     }
 	class class2{
@@ -22,5 +22,19 @@ namespace MyNamespace {
 			}
 		}
 	}
-	var x = 2;
+	
 }
+	class clsOutNsp{
+		public att1 : number = 10;
+			public udf(): string{
+				return "Hiiii in out of namespace";
+			}
+		}
+		
+namespace Nsp3{
+		class clsInNsp3{
+			public udf3(): string{
+				return "Hiiii";
+			}
+		}
+	}

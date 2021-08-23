@@ -1,6 +1,8 @@
 import {
+    ArrayLiteralExpression, PropertyAccessExpression, Decorator, ReferencedSymbol, ts, Expression, ObjectLiteralExpression,
+    ReferenceEntry,
     ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, InterfaceDeclaration
-    , MethodDeclaration, ModuleDeclaration, Project, PropertyDeclaration, SourceFile, SyntaxKind
+    , MethodDeclaration, ModuleDeclaration, Project, PropertyDeclaration, SourceFile, SyntaxKind, Node, Identifier
 } from "ts-morph";
 
 import * as Famix from "./lib/famix/src/model/famix";
@@ -32,35 +34,12 @@ try {
         let currentModules: ModuleDeclaration[] = file.getModules();
         if (currentModules.length > 0) {
             readNamespace(currentModules, file.getFilePath(), null);
-            // file.getModules().forEach(namespace => {
-            //     namespaceName = namespace.getName();
-            //     fmxNamespace = checkFamixNamespace(fmxNamespacesMap, namespaceName);
-            //     classesInFile = namespace.getClasses();
-            //     //get functions //get global var
-            //     //interfaces = namespace.getInterfaces();
-
-            //     let fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
-            //     fmxIndexFileAnchor.setFileName(file.getFilePath());
-            //     fmxIndexFileAnchor.setStartPos(namespace.getStart());
-            //     fmxIndexFileAnchor.setEndPos(namespace.getEnd());
-            //     fmxIndexFileAnchor.setElement(fmxNamespace);
-
-            //     setElemntsInModule(namespace, file);
-            // });
         }
-        // if (file.getClasses().length > 0) {
-        //     //Arezoo  if there is not any classes but also it must be executed for global variables,functions,etc.
-        //     namespaceName = "DefaultNamespace";
-        //     fmxNamespace = checkFamixNamespace(fmxNamespacesMap, namespaceName);
-        //     classesInFile = file.getClasses();
-        //     //get functions
-        //     //interfaces = file.getInterfaces();
-        //     setElemntsInModule(classesInFile, file, fmxNamespace);
-        // }
+        readNamespace(file, file.getFilePath(), null);
     });
 
     var mse = fmxRep.getMSE();
-    fs.writeFile('sample1.json', mse, (err) => {
+    fs.writeFile('Model.json', mse, (err) => {
         if (err) { throw err; }
     });
 }
@@ -69,30 +48,48 @@ catch (Error) {
 }
 
 //Arezoo
-function readNamespace(currentModules: ModuleDeclaration[], filePath, parentScope: Famix.Namespace = null) {
+function readNamespace(currentModules: ModuleDeclaration[] | SourceFile, filePath, parentScope: Famix.Namespace = null) {
     let namespaceName: string;
     let fmxNamespace: Famix.Namespace;
     //let interfacesInFile: InterfaceDeclaration[];
     let classesInFile: ClassDeclaration[];
+    let ccc = (currentModules as ModuleDeclaration[]) !== undefined;
+    let cccc = (currentModules as SourceFile).getModules !== undefined;
 
-    currentModules.forEach(namespace => {
-        namespaceName = namespace.getName();
+    if ((currentModules as SourceFile).getModules === undefined) {
+        (currentModules as ModuleDeclaration[]).forEach(namespace => {
+
+            namespaceName = namespace.getName();
+            fmxNamespace = checkFamixNamespace(namespaceName, parentScope);
+            classesInFile = namespace.getClasses();
+            //get functions //get global var
+            //interfaces = namespace.getInterfaces();
+
+            let fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
+            fmxIndexFileAnchor.setFileName(filePath);
+            fmxIndexFileAnchor.setStartPos(namespace.getStart());
+            fmxIndexFileAnchor.setEndPos(namespace.getEnd());
+            fmxIndexFileAnchor.setElement(fmxNamespace);
+
+            if (classesInFile.length > 0) {
+                setElemntsInModule(classesInFile, filePath, fmxNamespace);
+            }
+            if (namespace.getModules().length > 0) {
+                readNamespace(namespace.getModules(), filePath, fmxNamespace);
+            }
+        });
+    }
+    else {
+        namespaceName = "DefaultNamespace";
         fmxNamespace = checkFamixNamespace(namespaceName, parentScope);
-        classesInFile = namespace.getClasses();
-        //get functions //get global var
-        //interfaces = namespace.getInterfaces();
+        classesInFile = (currentModules as SourceFile).getClasses();
+        //Arezoo  if there is not any classes but also it must be executed for global variables,functions,etc.
 
-        let fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
-        fmxIndexFileAnchor.setFileName(filePath);
-        fmxIndexFileAnchor.setStartPos(namespace.getStart());
-        fmxIndexFileAnchor.setEndPos(namespace.getEnd());
-        fmxIndexFileAnchor.setElement(fmxNamespace);
-
-        setElemntsInModule(classesInFile, filePath, fmxNamespace);
-        if (namespace.getModules().length > 0) {
-            readNamespace(namespace.getModules(), filePath, fmxNamespace);
+        if (classesInFile.length > 0) {
+            setElemntsInModule(classesInFile, filePath, fmxNamespace);
         }
-    });
+
+    }
 }
 //Arezoo
 function setElemntsInModule(classesInFile: ClassDeclaration[], filePath, fmxNamespace: Famix.Namespace) {
@@ -215,23 +212,49 @@ function createFamixMethod(method: MethodDeclaration | ConstructorDeclaration, f
             fmxLocalVariable.setDeclaredType(getFamixType(localVariableTypeName));
             fmxLocalVariable.setName(variable.getName());
             fmxMethod.addLocalVariables(fmxLocalVariable);
+
+            ///
+            var referenceSymbols = variable.findReferences();
+
+            referenceSymbols.forEach(rs => {
+                rs.getReferences().forEach(r => {
+                    var args = r.getNode();//.getParentOrThrow()//.getParentOrThrow().getParentOrThrow() as ArrayLiteralExpression;
+
+                    //set access
+                    let fmxAccess = new Famix.Access(fmxRep);
+                    fmxAccess.setAccessor(fmxMethod);
+                    fmxAccess.setVariable(fmxLocalVariable);
+
+                    let fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
+                    fmxIndexFileAnchor.setFileName(filePath);
+                    fmxIndexFileAnchor.setStartPos(args.getStart());
+                    fmxIndexFileAnchor.setEndPos(args.getEnd());
+                    fmxIndexFileAnchor.setElement(fmxAccess);
+
+                    // r.getNode().replaceWithText('Arezoo');
+                    // r.getSourceFile().save();
+                    //var sdf = args.getElements().toString();
+                    //var dd = args.getKindName();
+                    //args.getChildren().forEach(c => console.log(c.getKindName().toString()));
+                })
+            })
         });
     }
     //
-    if (!isSignature) {//////////////////
-        let MethodeCyclo = 1;
-        method.getStatements().forEach(stmt => {
-            if ([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement, SyntaxKind.DoStatement]
-                .includes(stmt.getKind())) {
-                MethodeCyclo++;
-            }
-        });
+    // if (!isSignature) {//////////////////
+    //     let MethodeCyclo = 1;
+    //     method.getStatements().forEach(stmt => {
+    //         if ([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement, SyntaxKind.DoStatement]
+    //             .includes(stmt.getKind())) {
+    //             MethodeCyclo++;
+    //         }
+    //     });
 
-        fmxMethod.setCyclomaticComplexity(MethodeCyclo);
-        fmxMethod.setNumberOfStatements(method.getStatements().length);
-        fmxMethod.setNumberOfParameters(method.getParameters().length);//Arezoo
-    }
+    //     fmxMethod.setCyclomaticComplexity(MethodeCyclo);
+    // }
 
+    fmxMethod.setNumberOfStatements(method.getStatements().length);
+    fmxMethod.setNumberOfParameters(method.getParameters().length);//Arezoo
     return fmxMethod;
 }
 
