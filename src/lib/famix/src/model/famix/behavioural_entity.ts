@@ -216,10 +216,10 @@ export class BehaviouralEntity extends ContainerEntity {
   }
 
 
-  public getMSE(): string {
+  public getJSON(): string {
     const mse: FamixMseExporter = new FamixMseExporter("BehaviouralEntity", this);
     this.addPropertiesToExporter(mse);
-    return mse.getMSE();
+    return mse.getJSON();
   }
 
   public addPropertiesToExporter(exporter: FamixMseExporter) {

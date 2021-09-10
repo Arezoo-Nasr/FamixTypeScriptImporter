@@ -21,10 +21,10 @@ export class Module extends ScopingEntity {
   }
 
 
-  public getMSE(): string {
+  public getJSON(): string {
     const mse: FamixMseExporter = new FamixMseExporter("Module", this);
     this.addPropertiesToExporter(mse);
-    return mse.getMSE();
+    return mse.getJSON();
   }
 
   public addPropertiesToExporter(exporter: FamixMseExporter) {

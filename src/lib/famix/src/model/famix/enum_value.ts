@@ -21,10 +21,10 @@ export class EnumValue extends StructuralEntity {
   }
 
 
-  public getMSE(): string {
+  public getJSON(): string {
     const mse: FamixMseExporter = new FamixMseExporter("EnumValue", this);
     this.addPropertiesToExporter(mse);
-    return mse.getMSE();
+    return mse.getJSON();
   }
 
   public addPropertiesToExporter(exporter: FamixMseExporter) {

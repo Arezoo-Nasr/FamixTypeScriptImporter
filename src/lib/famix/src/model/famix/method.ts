@@ -116,10 +116,10 @@ export class Method extends BehaviouralEntity {
   }
 
 
-  public getMSE(): string {
+  public getJSON(): string {
     const mse: FamixMseExporter = new FamixMseExporter("Method", this);
     this.addPropertiesToExporter(mse);
-    return mse.getMSE();
+    return mse.getJSON();
   }
 
   public addPropertiesToExporter(exporter: FamixMseExporter) {

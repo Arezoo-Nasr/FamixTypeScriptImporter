@@ -60,10 +60,10 @@ export class FamixRepository {
   public getJSON(): string {
     let ret: string = "[";///////
     for (const element of Array.from(this.famixClasses.values())) {
-      ret = ret + element.getMSE() + ",";
+      ret = ret + element.getJSON() + ",";
     }
     for (const element of Array.from(this.elements.values())) {
-      ret = ret + element.getMSE() + ",";
+      ret = ret + element.getJSON() + ",";
     }
     ret = ret.substring(0, ret.length - 1)
     return ret + "]";//////////

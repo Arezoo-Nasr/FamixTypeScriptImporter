@@ -57,7 +57,7 @@ export class FamixMseExporter {
     // }
   }
 
-  public getMSE(): string {
+  public getJSON(): string {
     //return this.buffer + ")\n";
     return JSON.stringify(this.bufferArray);
   }

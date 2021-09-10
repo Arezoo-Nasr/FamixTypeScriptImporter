@@ -92,10 +92,10 @@ export class NamedEntity extends SourcedEntity {
   }
 
 
-  public getMSE(): string {
+  public getJSON(): string {
     const mse: FamixMseExporter = new FamixMseExporter("NamedEntity", this);
     this.addPropertiesToExporter(mse);
-    return mse.getMSE();
+    return mse.getJSON();
   }
 
   public addPropertiesToExporter(exporter: FamixMseExporter) {
