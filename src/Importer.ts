@@ -2,7 +2,7 @@ import {
     ArrayLiteralExpression, PropertyAccessExpression, Decorator, ReferencedSymbol, ts, Expression, ObjectLiteralExpression,
     ReferenceEntry,
     ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, InterfaceDeclaration
-    , MethodDeclaration, ModuleDeclaration, Project, PropertyDeclaration, SourceFile, SyntaxKind, Node, Identifier
+    , MethodDeclaration, ModuleDeclaration, Project, PropertyDeclaration, SourceFile, SyntaxKind, Node, Identifier, StructureKind
 } from "ts-morph";
 
 import * as Famix from "./lib/famix/src/model/famix";
@@ -215,11 +215,23 @@ function createFamixMethod(method: MethodDeclaration | ConstructorDeclaration, f
 
             ///
             var referenceSymbols = variable.findReferences();
+            ///////////
+            //var fgh = variable.getSymbol().getDeclarations().forEach(s => console.log(s.getParent().getText()));//.findReferences().map(r => r.getDefinition().getNode().getParent());
+            ////////
 
             referenceSymbols.forEach(rs => {
+                //rs.compilerObject.references.forEach(dd=>dd.textSpan);
                 rs.getReferences().forEach(r => {
-                    var args = r.getNode();//.getParentOrThrow()//.getParentOrThrow().getParentOrThrow() as ArrayLiteralExpression;
-
+                    var currentNode = r.getNode()//.getParentOrThrow()//.getParentOrThrow()//.getParentOrThrow() as ArrayLiteralExpression;
+                    ///
+                    // var c = currentNode.getText();
+                    // currentNode.getChildren().forEach(c => {
+                    //     var fg = c.getKindName();
+                    //     if (c.getKind() == SyntaxKind.Identifier) {
+                    //         console.log(c.getText());
+                    //     }
+                    // })
+                    //
                     //set access
                     let fmxAccess = new Famix.Access(fmxRep);
                     fmxAccess.setAccessor(fmxMethod);
@@ -227,14 +239,14 @@ function createFamixMethod(method: MethodDeclaration | ConstructorDeclaration, f
 
                     let fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
                     fmxIndexFileAnchor.setFileName(filePath);
-                    fmxIndexFileAnchor.setStartPos(args.getStart());
-                    fmxIndexFileAnchor.setEndPos(args.getEnd());
+                    fmxIndexFileAnchor.setStartPos(currentNode.getStart());
+                    fmxIndexFileAnchor.setEndPos(currentNode.getEnd());
                     fmxIndexFileAnchor.setElement(fmxAccess);
 
                     // r.getNode().replaceWithText('Arezoo');
                     // r.getSourceFile().save();
-                    //var sdf = args.getElements().toString();
-                    //var dd = args.getKindName();
+                    //var sdf = currentNode.getElements().toString();
+                    //var dd = currentNode.getKindName();
                     //args.getChildren().forEach(c => console.log(c.getKindName().toString()));
                 })
             })
