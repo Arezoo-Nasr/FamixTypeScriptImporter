@@ -32,8 +32,8 @@ try {
         var namespaceName: string;
         var fmxNamespace: Famix.Namespace;
 
-        if (file.getNamespaces().length > 0) {
-            var namespace = file.getNamespaces()[0];
+        if (file.getModules().length) {
+            var namespace = file.getModules()[0];
             namespaceName = namespace.getName();
             classes = namespace.getClasses();
             interfaces = namespace.getInterfaces();
@@ -135,10 +135,12 @@ try {
         }
     });
     //*/
-    var mse = fmxRep.getMSE();
-    fs.writeFile('sample.mse', mse, (err) => {
+    const jsonOutput = fmxRep.getJSON();
+    const fileName = 'sample.json';
+    fs.writeFile(fileName, jsonOutput, (err) => {
         if (err) { throw err; }
     });
+    console.info(`created ${fileName}`);
 }
 catch (Error) {
     console.log(Error.message);
