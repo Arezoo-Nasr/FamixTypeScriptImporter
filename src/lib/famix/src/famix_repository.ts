@@ -57,7 +57,7 @@ export class FamixRepository {
     this.idCounter++;
   }
 
-  public getMSE(): string {
+  public getJSON(): string {
     let ret: string = "[";///////
     for (const element of Array.from(this.famixClasses.values())) {
       ret = ret + element.getMSE() + ",";
