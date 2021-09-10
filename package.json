@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node",
-    "debug": "node --inspect-brk node_modules/.bin/ts-node"
+    "debug": "node --inspect-brk node_modules/.bin/ts-node",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -16,12 +17,15 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^27.0.1",
     "@types/node": "^16.9.1",
+    "jest": "^27.1.1",
+    "jest-extended": "^0.11.5",
+    "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.2"
   },
   "dependencies": {
-    "jest": "^27.1.1",
     "ts-morph": "^12.0.0"
   }
 }
