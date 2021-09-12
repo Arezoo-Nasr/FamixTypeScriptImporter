@@ -3,7 +3,7 @@ import 'jest-extended';
 
 describe('ts2famix', () => {
     it("should generate json", async () => {
-        const filePaths = ["../**/resources/**.ts"];
+        const filePaths = ["resources/**.ts"];
         const importer = new TS2Famix();
 
         const fmxRep2 = importer.famixRepFromPath(filePaths);
