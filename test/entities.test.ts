@@ -1,6 +1,5 @@
 import { TS2Famix } from '../src/ts2famix';
 import 'jest-extended';
-import { forEachChild } from '@ts-morph/common/lib/typescript';
 
 const filePaths = ["resources/Animal.ts"];
 const importer = new TS2Famix();
@@ -24,7 +23,7 @@ describe('ts2famix', () => {
         initMapFromModel(parsedModel);
     });
 
-    it("should generate json with Animal Class", async () => {
+    it("should generate json with FM3 FamixTypeScript.Class for Animal", async () => {
         expect(jsonOutput).toMatch(/"FM3":"FamixTypeScript.Class","id":[1-9]\d*|0,"sourceAnchor":{"ref":[1-9]\d*|0},"name":"Animal"/);
     });
 
