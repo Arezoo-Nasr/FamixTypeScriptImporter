@@ -38,7 +38,7 @@ try {
         readNamespace(file, file.getFilePath(), null);
     });
 
-    var mse = fmxRep.getMSE();
+    var mse = fmxRep.getJSON();
     fs.writeFile('Model.json', mse, (err) => {
         if (err) { throw err; }
     });
