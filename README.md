@@ -1,29 +1,18 @@
-# ProjetFamix
+# FamixTypeScriptImporter
 
-Ce projet a pour but de générer le fichier MSE correspondant au code TypeScript contenu dans le dossier **resources**.
+Command to create a FAMIX model in JSON of TypeScript files.
 
 ## Installation
-
-Pour installer les dépendances, il suffit de lancer la commande :
 
 ```npm install```
 
 ## Utilisation
 
-Pour lancer le script, il suffit de lancer la commande :
+Run the importer with the following command :
 
 ```
-cd src
-ts-node sample.ts
+ts-node src/ts2famix.ts --help
 ```
-
-Un fichier `sample.mse` sera alors généré à la racine du projet.
-
-## Déboguer en VSCode
-
-- Ouvrir un **JavaScript debug terminal**
-- `cd src` (afin d'être au niveau du bon `tsconfig.json`)
-- `ts-node sample.ts`
 
 ## Références
 

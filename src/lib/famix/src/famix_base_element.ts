@@ -9,7 +9,7 @@ export abstract class FamixBaseElement {
     repo.addElement(this);
   }
 
-  public abstract getMSE(): string;
+  public abstract getJSON(): string;
 
   // @ts-ignore
   // tslint:disable-next-line:no-empty

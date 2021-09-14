@@ -1,11 +1,18 @@
 {
-  "name": "ProjetFamix",
-  "version": "1.0.0",
+  "name": "ts2famix",
+  "version": "0.1.0",
   "description": "Examples of the TypeScript compiler API usage",
-  "main": "index.js",
+  "main": "dist/ts2famix-cli.js",
   "scripts": {
-    "dev": "ts-node",
-    "debug": "node --inspect-brk node_modules/.bin/ts-node"
+    "dev": "ts-node src/ts2famix-cli.ts",
+    "debug": "node --inspect-brk node_modules/.bin/ts-node",
+    "build": "tsc",
+    "test": "jest --colors",
+    "local": "sudo npm i -g && ts2famix",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+  },
+  "bin": {
+    "ts2famix": "dist/ts2famix-cli.js"
   },
   "keywords": [],
   "author": "",
@@ -16,11 +23,16 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^16.4.3",
-    "ts-node": "^10.1.0",
-    "typescript": "^4.3.5"
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.9.1",
+    "jest": "^27.1.1",
+    "jest-extended": "^0.11.5",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
   },
   "dependencies": {
-    "ts-morph": "^11.0.3"
+    "ts-morph": "^12.0.0",
+    "yargs": "^17.1.1"
   }
 }
