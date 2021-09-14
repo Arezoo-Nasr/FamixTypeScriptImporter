@@ -33,7 +33,7 @@ describe('ts2famix', () => {
     });
 
     it("should contain an Animal class with three methods: move, move2 and constructor", async () => {
-        const animalCls = parsedModel.filter(el => el.name == "Animal")[0];
+        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Animal"))[0];
         expect(animalCls.methods.length).toBe(3);
         let mNames: Set<string> = new Set();
         animalCls.methods.forEach(m => {
