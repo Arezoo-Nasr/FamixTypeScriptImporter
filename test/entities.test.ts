@@ -8,11 +8,10 @@ const fmxRep2 = importer.famixRepFromPath(filePaths);
 const jsonOutput = fmxRep2.getJSON();
 let parsedModel: Array<any>;
 
-// to find entities in the model
-const entityMap: Map<number, any> = new Map();
+const idToElementMap: Map<number, any> = new Map();
 function initMapFromModel(model) {
     model.forEach(element => {
-        entityMap.set(element.id, element);
+        idToElementMap.set(element.id, element);
     });
 }
 
@@ -24,19 +23,21 @@ describe('ts2famix', () => {
     });
 
     it("should generate json with FM3 FamixTypeScript.Class for Animal", async () => {
-        expect(jsonOutput).toMatch(/"FM3":"FamixTypeScript.Class","id":[1-9]\d*|0,"sourceAnchor":{"ref":[1-9]\d*|0},"name":"Animal"/);
+        expect(jsonOutput)
+            .toMatch(/"FM3":"FamixTypeScript.Class","id":[1-9]\d*|0,"sourceAnchor":{"ref":[1-9]\d*|0},"name":"Animal"/);
     });
 
+    // this test will break when Animal.ts is changed
     it("model should contain some elements", async () => {
         expect(parsedModel.length).toBe(28);
     });
 
-    it("should contain an Animal Class with three methods: move, move2 and constructor", async () => {
+    it("should contain an Animal class with three methods: move, move2 and constructor", async () => {
         const animalCls = parsedModel.filter(el => el.name == "Animal")[0];
         expect(animalCls.methods.length).toBe(3);
         let mNames: Set<string> = new Set();
         animalCls.methods.forEach(m => {
-            mNames.add(entityMap.get(m.ref as number).name)
+            mNames.add(idToElementMap.get(m.ref as number).name)
         });
         expect(mNames.has("move") && 
                mNames.has("move2") && 
