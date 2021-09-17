@@ -29,7 +29,7 @@ describe('ts2famix', () => {
 
     // this test will break when Animal.ts is changed
     it("model should contain some elements", async () => {
-        expect(parsedModel.length).toBe(28);
+        expect(parsedModel.length).toBe(52);
     });
 
     it("should contain an Animal class with three methods: move, move2 and constructor", async () => {
@@ -39,9 +39,11 @@ describe('ts2famix', () => {
         animalCls.methods.forEach(m => {
             mNames.add(idToElementMap.get(m.ref as number).name)
         });
-        expect(mNames.has("move") && 
-               mNames.has("move2") && 
-               mNames.has("constructor")).toBeTrue();
+        expect(mNames.has("move") &&
+            mNames.has("move2") &&
+            mNames.has("constructor")).toBeTrue();
     });
-
+    it("should contain fish class extend Animal", async () => {
+        throw new Error("Test not implemented");
+    });
 });
