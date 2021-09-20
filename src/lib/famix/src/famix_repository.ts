@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class } from "./model/famix";
+import { Class, IndexedFileAnchor } from "./model/famix";
 import { CustomSourceLanguage } from "./model/famix";
 
 export class FamixRepository {
@@ -46,6 +46,24 @@ export class FamixRepository {
     }
     return undefined;
   }
+
+  //Arezoo
+  public getFamixElementById(id: number): FamixBaseElement | undefined {
+    let element = Array.from(this.elements.values()).find(e => e.id == id);
+    return element;
+  }
+
+  public getFamixElement(filePath: string, startPos: number): FamixBaseElement | undefined {
+
+    let allIndexedFileAnchorElement = Array.from(this.elements.values())
+      .filter(e => (e as any).constructor.name == 'IndexedFileAnchor') as IndexedFileAnchor[];
+
+    let indexedFileAnchorElement = allIndexedFileAnchorElement.find(i =>
+      i.getFileName() == filePath && i.getStartPos() == startPos);
+    return this.getFamixElementById(
+      indexedFileAnchorElement == undefined ? 0 : indexedFileAnchorElement.getElement().id);
+  }
+  //
 
   public addElement(element: FamixBaseElement) {
     if (element instanceof Class) {

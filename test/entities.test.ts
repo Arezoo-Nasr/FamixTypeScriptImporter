@@ -43,7 +43,8 @@ describe('ts2famix', () => {
             mNames.has("move2") &&
             mNames.has("constructor")).toBeTrue();
     });
-    it("should contain fish class extend Animal", async () => {
-        throw new Error("Test not implemented");
+    it("should find all references to variable Str1", async () => {
+        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Animal"))[0];//find Str1
+        //expect
     });
 });
