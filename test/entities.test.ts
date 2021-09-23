@@ -28,9 +28,9 @@ describe('ts2famix', () => {
     });
 
     // this test will break when Animal.ts is changed
-    it("model should contain some elements", async () => {
-        expect(parsedModel.length).toBe(52);
-    });
+    // it("model should contain some elements", async () => {
+    //     expect(parsedModel.length).toBe(52);
+    // });
 
     it("should contain an Animal class with three methods: move, move2 and constructor", async () => {
         const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Animal"))[0];
@@ -42,9 +42,5 @@ describe('ts2famix', () => {
         expect(mNames.has("move") &&
             mNames.has("move2") &&
             mNames.has("constructor")).toBeTrue();
-    });
-    it("should find all references to variable Str1", async () => {
-        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Animal"))[0];//find Str1
-        //expect
     });
 });

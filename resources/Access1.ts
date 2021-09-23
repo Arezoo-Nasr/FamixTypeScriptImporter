@@ -1,6 +1,6 @@
-class clsOutNsp {
-	public att1: string = "10";
-	public udf(): string {
-		return this.att1;
+class accessClass {
+	public accessName: string = "FamixTypeScript.Access";
+	public returnAccessName(): string {
+		return this.accessName;
 	}
 }
