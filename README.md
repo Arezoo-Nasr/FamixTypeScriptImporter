@@ -11,9 +11,5 @@ Command to create a FAMIX model in JSON of TypeScript files.
 Run the importer with the following command :
 
 ```
-ts-node src/ts2famix.ts --help
+ts-node src/ts2famix-cli.ts --help
 ```
-
-## Références
-
-Lien vers le [Repo Github du projet](https://github.com/Imonor/ProjetFamix).
