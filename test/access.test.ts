@@ -8,8 +8,8 @@ const fmxRep2 = importer.famixRepFromPath(filePaths);
 const jsonOutput = fmxRep2.getJSON();
 
 let parsedModel: Array<any>;
-var accessCls;
-var accessClsMethods;
+let accessCls;
+let accessClsMethods: Array<any>;
 
 describe('Access', () => {
     it("should contain an Access class with one method: returnAccessName and one attribute: accessName", async () => {

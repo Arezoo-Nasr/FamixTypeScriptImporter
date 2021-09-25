@@ -221,7 +221,10 @@ export class TS2Famix {
         //Arezoo
         //Variables
         if (method.getVariableDeclarations().length > 0) {
+            console.info(`  Variables:`)
             method.getVariableDeclarations().forEach(variable => {
+                let fullyQualifiedLocalVarName = `${method.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
+                console.info(`  > ${fullyQualifiedLocalVarName}`);
                 let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
                 let localVariableTypeName = this.getUsableName(variable.getType().getText());
                 fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
@@ -268,10 +271,15 @@ export class TS2Famix {
     }
 
     private getUsableName(name: string): string {
-        if (name.includes('<'))
+        console.log(`getUsableName: ${name}`);
+        if (name.includes('<')) {
             name = name.substring(0, name.indexOf('<'));
-        if (name.includes('.'))
+            console.log(` changed to: ${name}`);
+        }
+        if (name.includes('.')) {
             name = name.substring(name.lastIndexOf('.') + 1);
+            console.log(` changed to: ${name}`);
+        }
 
         return name;
     }
