@@ -1,9 +1,9 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {NamedEntity} from "./../famix/named_entity";
-import {Association} from "./../famix/association";
-import {BehaviouralEntity} from "./../famix/behavioural_entity";
+import { FamixMseExporter } from "../../famix_mse_exporter";
+import { NamedEntity } from "./../famix/named_entity";
+import { Association } from "./../famix/association";
+import { BehaviouralEntity } from "./../famix/behavioural_entity";
 
 export class Invocation extends Association {
 
@@ -75,7 +75,7 @@ export class Invocation extends Association {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Invocation", this);
+    const mse: FamixMseExporter = new FamixMseExporter("Invocation", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
