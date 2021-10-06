@@ -224,6 +224,7 @@ export class TS2Famix {
             // var ff = method.getSourceFile().getSymbol().getFullyQualifiedName();
         }
 
+
         let methodTypeName = this.getUsableName(method.getReturnType().getText());
         let fmxType = this.getFamixType(methodTypeName);
         fmxMethod.setDeclaredType(fmxType);
@@ -233,8 +234,9 @@ export class TS2Famix {
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
         //Parameters
-        if (method.getParameters().length > 0) {
-            method.getParameters().forEach(param => {
+        let parameters = method.getParameters();
+        if (parameters.length > 0) {
+            parameters.forEach(param => {
                 let fmxParam = new Famix.Parameter(this.fmxRep);
                 let paramTypeName = this.getUsableName(param.getType().getText());
                 fmxParam.setDeclaredType(this.getFamixType(paramTypeName));
@@ -242,13 +244,14 @@ export class TS2Famix {
                 fmxMethod.addParameters(fmxParam);
                 this.makeFamixIndexFileAnchor(filePath, param.getStart(), param.getEnd(), fmxParam);
                 //for access
-                //  this.arrayOfAccess.set(fmxParam.id, param);
+                this.arrayOfAccess.set(fmxParam.id, param);
             });
         }
         //Arezoo
         //Variables
-        if (method.getVariableDeclarations().length > 0) {
-            method.getVariableDeclarations().forEach(variable => {
+        let variables = method.getVariableDeclarations();
+        if (variables.length > 0) {
+            variables.forEach(variable => {
                 let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
                 let localVariableTypeName = this.getUsableName(variable.getType().getText());
                 fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
@@ -274,7 +277,7 @@ export class TS2Famix {
         // }
 
         fmxMethod.setNumberOfStatements(method.getStatements().length);
-        fmxMethod.setNumberOfParameters(method.getParameters().length);//Arezoo
+        fmxMethod.setNumberOfParameters(parameters.length);//Arezoo
         return fmxMethod;
     }
 
