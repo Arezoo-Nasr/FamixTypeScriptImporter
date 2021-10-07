@@ -251,10 +251,15 @@ export class TS2Famix {
         //Variables
         let variables = method.getVariableDeclarations();
         if (variables.length > 0) {
-            console.info(`  Variables:`)
+            console.info(`  Variables:`);
+
             variables.forEach(variable => {
+
+                var d = method.getSymbol();//.getFullyQualifiedName();
+                var f = variable.getSymbol().getFullyQualifiedName();
                 let fullyQualifiedLocalVarName = `${method.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
                 console.info(`  > ${fullyQualifiedLocalVarName}`);
+
                 let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
                 let localVariableTypeName = this.getUsableName(variable.getType().getText());
                 fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));

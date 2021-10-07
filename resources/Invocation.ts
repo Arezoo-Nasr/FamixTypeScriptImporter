@@ -4,9 +4,15 @@ class Class1 {
 	}
 }
 class Class2 {
-	public getHi() {
+	public returnName(): string {
+		return "Arezoo";
+	}
+}
+class Class3 {
+	public getString() {
 		var class1Obj = new Class1();
-		var returnValue = class1Obj.returnHi();
-		var class1Obj1 = new Class1();
+		var class2Obj = new Class2();
+		var returnValue1 = class1Obj.returnHi();
+		var returnValue2 = class2Obj.returnName();
 	}
 }
