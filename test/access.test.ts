@@ -20,6 +20,7 @@ describe('Access', () => {
         let methodNames: string[] = ['returnAccessName'];
 
         accessClsMethods = parsedModel.filter(e => accessCls.methods.some(m => m.ref == e.id));
+        expect(accessClsMethods.length).toBeGreaterThan(0);
         let checkMethodName = accessClsMethods.every(m => methodNames.includes(m.name));
         expect(checkMethodName).toBeTrue();
     });

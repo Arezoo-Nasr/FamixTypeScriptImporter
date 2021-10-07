@@ -18,7 +18,8 @@ describe('Invocation', () => {
         expect(invocationCls.methods.length).toBe(1);
         let methodNames: string[] = ['getString'];
 
-        invocationClsMethods = parsedModel.filter(e => invocationCls.methods.find(m => m.ref == e.id));///
+        invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref == e.id));
+        expect(invocationClsMethods.length).toBeGreaterThan(0);
         let checkMethodName = invocationClsMethods.every(m => methodNames.includes(m.name));
         expect(checkMethodName).toBeTrue();
     });

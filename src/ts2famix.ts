@@ -45,10 +45,17 @@ export class TS2Famix {
                             || a.getKind() == SyntaxKind.Constructor
                             || a.getKind() == SyntaxKind.FunctionDeclaration
                             //|| a.getKind() == SyntaxKind.SourceFile
+                            //|| a.getKind() == SyntaxKind.ModuleDeclaration
                         );//////////for global variable it must work
 
-                    let accessor = this.fmxRep.getFamixElement(scopeDeclaration.getSourceFile().getFilePath()
-                        , scopeDeclaration.getStart()) as Famix.BehaviouralEntity;
+                    // let accessor = this.fmxRep.getFamixElementby(scopeDeclaration.getSourceFile().getFilePath()
+                    //     , scopeDeclaration.getStart()) as Famix.BehaviouralEntity;
+                    // let fmxAccess = new Famix.Access(this.fmxRep);
+                    // fmxAccess.setAccessor(accessor);
+                    // fmxAccess.setVariable(famixStructuralElement);
+
+                    let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
+                    let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
                     let fmxAccess = new Famix.Access(this.fmxRep);
                     fmxAccess.setAccessor(accessor);
                     fmxAccess.setVariable(famixStructuralElement);
@@ -67,8 +74,8 @@ export class TS2Famix {
                             //|| a.getKind() == SyntaxKind.SourceFile
                         );//////////for global variable it must work
 
-                    let reciever = this.fmxRep.getFamixElement(scopeDeclaration.getSourceFile().getFilePath()
-                        , scopeDeclaration.getStart()) as Famix.NamedEntity;
+                    let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
+                    let reciever = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
                     let fmxInvovation = new Famix.Invocation(this.fmxRep);
                     fmxInvovation.setReceiver(reciever);
                     fmxInvovation.setSender(famixBehaviouralElement);
@@ -224,12 +231,12 @@ export class TS2Famix {
             // var ff = method.getSourceFile().getSymbol().getFullyQualifiedName();
         }
 
-
         let methodTypeName = this.getUsableName(method.getReturnType().getText());
         let fmxType = this.getFamixType(methodTypeName);
         fmxMethod.setDeclaredType(fmxType);
         fmxMethod.setKind(method.getKindName());
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
+        fmxMethod.setFullyQualifiedName(method.getSymbol().getFullyQualifiedName());
 
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
@@ -254,9 +261,6 @@ export class TS2Famix {
             console.info(`  Variables:`);
 
             variables.forEach(variable => {
-
-                var d = method.getSymbol();//.getFullyQualifiedName();
-                var f = variable.getSymbol().getFullyQualifiedName();
                 let fullyQualifiedLocalVarName = `${method.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
                 console.info(`  > ${fullyQualifiedLocalVarName}`);
 

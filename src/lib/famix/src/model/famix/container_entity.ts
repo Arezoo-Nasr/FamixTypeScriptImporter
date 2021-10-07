@@ -10,6 +10,18 @@ export class ContainerEntity extends NamedEntity {
 
   private containerEntityTypes: Set<Type> = new Set();
 
+  //Arezoo
+  private fullyQualifiedName: string;
+
+  // @FameProperty(name = "fullyQualifiedName")
+  public getFullyQualifiedName(): string {
+    return this.fullyQualifiedName;
+  }
+  public setFullyQualifiedName(fullyQualifiedName: string) {
+    this.fullyQualifiedName = fullyQualifiedName;
+  }
+  //
+
   // manyOne.Getter
   // @FameProperty(name = "types", opposite = "container", derived = true)
   public getTypes(): Set<Type> {
@@ -68,8 +80,7 @@ export class ContainerEntity extends NamedEntity {
     exporter.addProperty("types", this.getTypes());
     exporter.addProperty("functions", this.getFunctions());
     exporter.addProperty("definedAnnotationTypes", this.getDefinedAnnotationTypes());
-
+    exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
   }
-
 }
 

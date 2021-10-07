@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, IndexedFileAnchor } from "./model/famix";
+import { Class, ContainerEntity } from "./model/famix";
 import { CustomSourceLanguage } from "./model/famix";
 
 export class FamixRepository {
@@ -53,17 +53,16 @@ export class FamixRepository {
     return element;
   }
 
-  public getFamixElement(filePath: string, startPos: number): FamixBaseElement | undefined {
+  public getFamixElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
 
-    let allIndexedFileAnchorElement = Array.from(this.elements.values())
-      .filter(e => (e as any).constructor.name == 'IndexedFileAnchor') as IndexedFileAnchor[];
+    let allContainerEntity = Array.from(this.elements.values())
+      .filter(e => (e as any).constructor.name == 'Method'
+        || (e as any).constructor.name == 'Function'
+        || (e as any).constructor.name == 'Namespace') as ContainerEntity[];
 
-    let indexedFileAnchorElement = allIndexedFileAnchorElement.find(i =>
-      i.getFileName() == filePath && i.getStartPos() == startPos);
-    return this.getFamixElementById(
-      indexedFileAnchorElement == undefined ? 0 : indexedFileAnchorElement.getElement().id);
+    let containerEntityElement = allContainerEntity.find(c => c.getFullyQualifiedName() == FullyQualifiedName);
+    return containerEntityElement;
   }
-  //
 
   public addElement(element: FamixBaseElement) {
     if (element instanceof Class) {
