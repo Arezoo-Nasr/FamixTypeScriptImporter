@@ -1,4 +1,4 @@
-import { FamixMseExporter } from "./famix_mse_exporter";
+import { FamixJSONExporter } from "./famix_JSON_exporter";
 import { FamixRepository } from "./famix_repository";
 
 export abstract class FamixBaseElement {
@@ -13,7 +13,7 @@ export abstract class FamixBaseElement {
 
   // @ts-ignore
   // tslint:disable-next-line:no-empty
-  public addPropertiesToExporter(exporter: FamixMseExporter): void {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
   }
 
 }

@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./../famix/type";
 import { Association } from "./../famix/association";
 
@@ -36,12 +36,12 @@ export class Inheritance extends Association {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("Inheritance", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Inheritance", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("superclass", this.getSuperclass());
     exporter.addProperty("subclass", this.getSubclass());

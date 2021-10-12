@@ -1,7 +1,7 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {AbstractFile} from "./../file/abstract_file";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { AbstractFile } from "./../file/abstract_file";
 
 export class File extends AbstractFile {
 
@@ -128,12 +128,12 @@ export class File extends AbstractFile {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FILE.File", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FILE.File", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("averageNumberOfCharactersPerLine", this.getAverageNumberOfCharactersPerLine());
     exporter.addProperty("numberOfInternalClones", this.getNumberOfInternalClones());

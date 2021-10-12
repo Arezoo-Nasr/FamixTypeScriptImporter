@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { AbstractFileAnchor } from "./../famix/abstract_file_anchor";
 
 export class FileAnchor extends AbstractFileAnchor {
@@ -51,12 +51,12 @@ export class FileAnchor extends AbstractFileAnchor {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FileAnchor", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FileAnchor", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("endLine", this.getEndLine());
     exporter.addProperty("endColumn", this.getEndColumn());

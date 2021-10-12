@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { GlobalVariable } from "./../famix/global_variable";
 import { ContainerEntity } from "./../famix/container_entity";
 
@@ -54,12 +54,12 @@ export class ScopingEntity extends ContainerEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("ScopingEntity", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("ScopingEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("globalVariables", this.getGlobalVariables());
     exporter.addProperty("parentScope", this.getParentScope());

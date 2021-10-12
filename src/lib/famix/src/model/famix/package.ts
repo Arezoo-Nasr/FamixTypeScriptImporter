@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {NamedEntity} from "./../famix/named_entity";
-import {ScopingEntity} from "./../famix/scoping_entity";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { NamedEntity } from "./../famix/named_entity";
+import { ScopingEntity } from "./../famix/scoping_entity";
 
 export class Package extends ScopingEntity {
 
@@ -46,12 +46,12 @@ export class Package extends ScopingEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Package", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FAMIX.Package", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("numberOfClientPackages", this.getNumberOfClientPackages());
     exporter.addProperty("numberOfMethods", this.getNumberOfMethods());

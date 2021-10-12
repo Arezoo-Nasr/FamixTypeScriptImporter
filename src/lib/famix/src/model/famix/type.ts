@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./../famix/structural_entity";
 import { ParameterizedType } from "./../famix/parameterized_type";
 import { BehaviouralEntity } from "./../famix/behavioural_entity";
@@ -173,12 +173,12 @@ export class Type extends ContainerEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("Type", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Type", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("container", this.getContainer());
     exporter.addProperty("typeAliases", this.getTypeAliases());

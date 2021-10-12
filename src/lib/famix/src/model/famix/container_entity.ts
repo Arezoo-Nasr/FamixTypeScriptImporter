@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Function } from "./../famix/function";
 import { NamedEntity } from "./../famix/named_entity";
 import { Type } from "./../famix/type";
@@ -70,12 +70,12 @@ export class ContainerEntity extends NamedEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("ContainerEntity", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("ContainerEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("types", this.getTypes());
     exporter.addProperty("functions", this.getFunctions());

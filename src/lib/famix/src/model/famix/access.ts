@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./../famix/structural_entity";
 import { Association } from "./../famix/association";
 import { BehaviouralEntity } from "./../famix/behavioural_entity";
@@ -48,12 +48,12 @@ export class Access extends Association {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("Access", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Access", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("accessor", this.getAccessor());
     exporter.addProperty("variable", this.getVariable());

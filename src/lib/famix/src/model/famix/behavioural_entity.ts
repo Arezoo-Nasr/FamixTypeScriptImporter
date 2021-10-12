@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./../famix/type";
 import { ImplicitVariable } from "./../famix/implicit_variable";
 import { Invocation } from "./../famix/invocation";
@@ -217,12 +217,12 @@ export class BehaviouralEntity extends ContainerEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("BehaviouralEntity", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("BehaviouralEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("signature", this.getSignature());
     exporter.addProperty("numberOfParameters", this.getNumberOfParameters());

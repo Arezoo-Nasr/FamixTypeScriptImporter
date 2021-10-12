@@ -1,9 +1,9 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Type} from "./../famix/type";
-import {Association} from "./../famix/association";
-import {BehaviouralEntity} from "./../famix/behavioural_entity";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { Type } from "./../famix/type";
+import { Association } from "./../famix/association";
+import { BehaviouralEntity } from "./../famix/behavioural_entity";
 
 export class Reference extends Association {
 
@@ -37,12 +37,12 @@ export class Reference extends Association {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.Reference", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Reference", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("source", this.getSource());
     exporter.addProperty("target", this.getTarget());

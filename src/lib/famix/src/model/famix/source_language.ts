@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Entity} from "./../famix/entity";
-import {SourcedEntity} from "./../famix/sourced_entity";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { Entity } from "./../famix/entity";
+import { SourcedEntity } from "./../famix/sourced_entity";
 
 export class SourceLanguage extends Entity {
 
@@ -24,12 +24,12 @@ export class SourceLanguage extends Entity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.SourceLanguage", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FAMIX.SourceLanguage", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("sourcedEntities", this.getSourcedEntities());
 

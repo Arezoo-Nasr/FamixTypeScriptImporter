@@ -1,8 +1,8 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {ParameterizedType} from "./../famix/parameterized_type";
-import {Class} from "./../famix/class";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { ParameterizedType } from "./../famix/parameterized_type";
+import { Class } from "./../famix/class";
 
 export class ParameterizableClass extends Class {
 
@@ -24,12 +24,12 @@ export class ParameterizableClass extends Class {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.ParameterizableClass", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("ParameterizableClass", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("parameterizedTypes", this.getParameterizedTypes());
 

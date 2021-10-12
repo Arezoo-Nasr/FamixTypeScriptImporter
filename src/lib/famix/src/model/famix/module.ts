@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { CompilationUnit } from "./../famix/compilation_unit";
 import { ScopingEntity } from "./../famix/scoping_entity";
 
@@ -22,12 +22,12 @@ export class Module extends ScopingEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("Module", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Module", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("compilationUnit", this.getCompilationUnit());
 

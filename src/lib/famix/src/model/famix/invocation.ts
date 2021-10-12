@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { NamedEntity } from "./../famix/named_entity";
 import { Association } from "./../famix/association";
 import { BehaviouralEntity } from "./../famix/behavioural_entity";
@@ -75,12 +75,12 @@ export class Invocation extends Association {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("Invocation", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Invocation", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("candidates", this.getCandidates());
     exporter.addProperty("receiver", this.getReceiver());

@@ -1,7 +1,7 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {SourceAnchor} from "./../famix/source_anchor";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { SourceAnchor } from "./../famix/source_anchor";
 
 export class SourceTextAnchor extends SourceAnchor {
 
@@ -18,12 +18,12 @@ export class SourceTextAnchor extends SourceAnchor {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.SourceTextAnchor", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FAMIX.SourceTextAnchor", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("source", this.getSource());
 

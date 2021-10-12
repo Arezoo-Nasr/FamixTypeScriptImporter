@@ -1,7 +1,7 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {Entity} from "./../famix/entity";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { Entity } from "./../famix/entity";
 
 export class AbstractFile extends Entity {
 
@@ -18,12 +18,12 @@ export class AbstractFile extends Entity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FILE.AbstractFile", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FILE.AbstractFile", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("name", this.getName());
 

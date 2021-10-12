@@ -1,6 +1,6 @@
 import { FamixBaseElement } from "./famix_base_element";
 
-export class FamixMseExporter {
+export class FamixJSONExporter {
   private element: FamixBaseElement;
   private bufferArray: any = {}
   //Arezoo

@@ -1,7 +1,7 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {AbstractFile} from "./../file/abstract_file";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { AbstractFile } from "./../file/abstract_file";
 
 export class Folder extends AbstractFile {
 
@@ -62,12 +62,12 @@ export class Folder extends AbstractFile {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FILE.Folder", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FILE.Folder", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("numberOfFiles", this.getNumberOfFiles());
     exporter.addProperty("numberOfFolders", this.getNumberOfFolders());

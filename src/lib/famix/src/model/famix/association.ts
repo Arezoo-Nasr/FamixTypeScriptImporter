@@ -1,6 +1,6 @@
 // automatically generated code, please do not change
 
-import { FamixMseExporter } from "../../famix_mse_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { SourcedEntity } from "./../famix/sourced_entity";
 
 export class Association extends SourcedEntity {
@@ -35,12 +35,12 @@ export class Association extends SourcedEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("Association", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Association", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("next", this.getNext());
     exporter.addProperty("previous", this.getPrevious());

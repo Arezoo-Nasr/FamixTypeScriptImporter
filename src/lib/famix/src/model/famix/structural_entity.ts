@@ -1,10 +1,10 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {DereferencedInvocation} from "./../famix/dereferenced_invocation";
-import {Type} from "./../famix/type";
-import {Access} from "./../famix/access";
-import {LeafEntity} from "./../famix/leaf_entity";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { DereferencedInvocation } from "./../famix/dereferenced_invocation";
+import { Type } from "./../famix/type";
+import { Access } from "./../famix/access";
+import { LeafEntity } from "./../famix/leaf_entity";
 
 export class StructuralEntity extends LeafEntity {
 
@@ -56,12 +56,12 @@ export class StructuralEntity extends LeafEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.StructuralEntity", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FAMIX.StructuralEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("incomingAccesses", this.getIncomingAccesses());
     exporter.addProperty("declaredType", this.getDeclaredType());

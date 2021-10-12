@@ -1,18 +1,18 @@
 // automatically generated code, please do not change
 
-import {FamixMseExporter} from "../../famix_mse_exporter";
-import {StructuralEntity} from "./../famix/structural_entity";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { StructuralEntity } from "./../famix/structural_entity";
 
 export class UnknownVariable extends StructuralEntity {
 
 
   public getJSON(): string {
-    const mse: FamixMseExporter = new FamixMseExporter("FAMIX.UnknownVariable", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("FAMIX.UnknownVariable", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixMseExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
 
   }
