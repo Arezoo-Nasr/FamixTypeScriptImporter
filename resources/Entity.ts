@@ -1,6 +1,6 @@
 namespace MyNamespace {
 
-	export class Animal {
+	export class EntityClass {
 		public name: string;
 		constructor() {
 			this.name = "Arezoo";
@@ -12,13 +12,7 @@ namespace MyNamespace {
 			this.name = family + Str1;
 		}
 	}
-	export class Fish extends Animal {
-		private color: string;
-		constructor() {
-			super();
-			this.color = "red";
-		}
-	}
+
 	class class2 {
 		public cls2: number;
 	}
