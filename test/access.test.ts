@@ -1,7 +1,7 @@
 import { TS2Famix } from "../src/ts2famix";
 import 'jest-extended';
 
-const filePaths = ["resources/Access1.ts"];
+const filePaths = ["resources/Access.ts"];
 const importer = new TS2Famix();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
