@@ -36,11 +36,12 @@ const associations = new Array<Association>();
 parsedModel.forEach(element => {
     // Map has id as key and unique (plantuml) class name
     classNameMap.set(element.id, uniqueElementName(element));
-    if (element.FM3.endsWith('Inheritance')) {
+    const nameWithoutPrefix = element.FM3.split('.')[1];
+    if (nameWithoutPrefix.endsWith('Inheritance')) {
         // special case association
-        let subclass = refForAttr(element, 'subclass');
-        let superclass = refForAttr(element, 'superclass');
-        associations.push({ from: subclass, to: superclass, name: uniqueElementName(element) })
+        let subclass = element['subclass'].ref; // refForAttr(element, 'subclass');
+        let superclass = element['superclass'].ref; // refForAttr(element, 'superclass');
+        associations.push({ from: subclass, to: superclass, name: nameWithoutPrefix })
     }
 });
 
@@ -56,6 +57,7 @@ parsedModel.forEach(element => {
 // create associations
 associations.forEach(association => {
     // Inheritance is a special case - show it in UML even though it doesn't make 100% sense in object diagrams
+    console.error(`association.name = ${association.name}`);
     const isInheritance = association.name.startsWith('Inheritance');
     if (isInheritance) {
         plantUMLOutString += `${classNameMap.get(association.from)} --|> ${classNameMap.get(association.to)} #line:blue\n`;
