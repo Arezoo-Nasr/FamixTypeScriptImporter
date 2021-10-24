@@ -43,4 +43,8 @@ describe('ts2famix', () => {
             mNames.has("move2") &&
             mNames.has("constructor")).toBeTrue();
     });
+    it("should contain a Fish class that's a subclass of Animal", async () => {
+        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "EntityClass"))[0];
+        expect(idToElementMap.get(animalCls.superclass.ref).name).toBe("Animal"); // peut-être pas le bon format de la définition de la superclasse
+    })
 });
