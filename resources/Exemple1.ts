@@ -1,7 +1,7 @@
 namespace MyNamespace {
 
 	class class1 {
-		private projectName: string;
+		protected projectName: string;
 
 		constructor() {
 			this.projectName = "Support for TypeScript";
@@ -17,6 +17,12 @@ namespace MyNamespace {
 		public getString() {
 			var class1Obj = new class1();
 			var returnValue1 = class1Obj.getName("ETS");
+		}
+	}
+
+	class class3 extends class1 {
+		public func() {
+			var x = this.projectName;
 		}
 	}
 }

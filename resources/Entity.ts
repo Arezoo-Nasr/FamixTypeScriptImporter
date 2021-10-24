@@ -13,7 +13,7 @@ namespace MyNamespace {
 		}
 	}
 
-	class class2 {
+	class class2 extends EntityClass {
 		public cls2: number;
 	}
 	namespace Nsp2 {

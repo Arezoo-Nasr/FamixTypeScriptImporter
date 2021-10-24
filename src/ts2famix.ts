@@ -5,6 +5,7 @@ import {
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { getSyntaxKindName, ModuleKind, SyntaxKind } from "@ts-morph/common";
+import { number, string } from "yargs";
 
 export class TS2Famix {
 
@@ -247,6 +248,7 @@ export class TS2Famix {
         fmxMethod.setKind(method.getKindName());
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
         fmxMethod.setFullyQualifiedName(method.getSymbol().getFullyQualifiedName());
+        fmxMethod.addModifiers(this.getAccessor(method));
 
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
@@ -311,7 +313,7 @@ export class TS2Famix {
         let fmxType = this.getFamixType(propTypeName);
         fmxAttribute.setDeclaredType(fmxType);
         fmxAttribute.setHasClassScope(true);
-        var ff = property.getDeclareKeyword();
+        fmxAttribute.addModifiers(this.getAccessor(property));
         this.makeFamixIndexFileAnchor(filePath, property.getStart(), property.getEnd(), fmxAttribute);
 
         //for access
@@ -345,5 +347,16 @@ export class TS2Famix {
             fmxType = this.fmxTypes.get(typeName);
         }
         return fmxType;
+    }
+
+    private getAccessor(object: any): string {
+        var keyword: string = "";
+        var xx = object.hasModifier(SyntaxKind.ProtectedKeyword);
+        if (object.hasModifier(SyntaxKind.PrivateKeyword))
+            return "Private";
+        else if (object.hasModifier(SyntaxKind.PublicKeyword))
+            return "Public";
+        else if (object.hasModifier(SyntaxKind.ProtectedKeyword))
+            return "Protected";
     }
 }
