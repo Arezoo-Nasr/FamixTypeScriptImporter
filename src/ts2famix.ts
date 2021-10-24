@@ -248,7 +248,7 @@ export class TS2Famix {
         fmxMethod.setKind(method.getKindName());
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
         fmxMethod.setFullyQualifiedName(method.getSymbol().getFullyQualifiedName());
-        fmxMethod.addModifiers(this.getAccessor(method));
+        // fmxMethod.addModifiers(this.getAccessor(method));
 
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
@@ -313,7 +313,7 @@ export class TS2Famix {
         let fmxType = this.getFamixType(propTypeName);
         fmxAttribute.setDeclaredType(fmxType);
         fmxAttribute.setHasClassScope(true);
-        fmxAttribute.addModifiers(this.getAccessor(property));
+        // fmxAttribute.addModifiers(this.getAccessor(property));
         this.makeFamixIndexFileAnchor(filePath, property.getStart(), property.getEnd(), fmxAttribute);
 
         //for access
