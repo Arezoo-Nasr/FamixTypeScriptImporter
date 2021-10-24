@@ -45,12 +45,12 @@ parsedModel.forEach(element => {
 });
 
 // generate plantuml
-console.log('@startuml');
-console.log('skinparam style strictuml');
-console.log('title Object diagram for ' + jsonFileName + '\n');
-//console.log(sampleJavaFileNotePUML); // put the note in the UML, don't use for general case
+let plantUMLOutString = `@startuml
+skinparam style strictuml
+title Object diagram for ${jsonFileName}
+`;
 parsedModel.forEach(element => {
-    console.log(toPlantUML(element));
+    plantUMLOutString += `${toPlantUML(element)}\n`;
 });
 
 // create associations
@@ -58,15 +58,22 @@ associations.forEach(association => {
     // Inheritance is a special case - show it in UML even though it doesn't make 100% sense in object diagrams
     const isInheritance = association.name.startsWith('Inheritance');
     if (isInheritance) {
-        console.log(`${classNameMap.get(association.from)} --|> ${classNameMap.get(association.to)} #line:blue`);
-        console.log(`${classNameMap.get(association.from)} .[${INHERITANCE_LINK_COLOR}]. ${association.name}`);
-        console.log(`${classNameMap.get(association.to)} .[${INHERITANCE_LINK_COLOR}]. ${association.name}`);
+        plantUMLOutString += `${classNameMap.get(association.from)} --|> ${classNameMap.get(association.to)} #line:blue\n`;
+        plantUMLOutString += `${classNameMap.get(association.from)} .[${INHERITANCE_LINK_COLOR}]. ${association.name}\n`;
+        plantUMLOutString += `${classNameMap.get(association.to)} .[${INHERITANCE_LINK_COLOR}]. ${association.name}\n`;
     } else {
-        console.log(`${classNameMap.get(association.from)} ..> "${association.name}" ${classNameMap.get(association.to)}`);
+        plantUMLOutString += `${classNameMap.get(association.from)} ..> "${association.name}" ${classNameMap.get(association.to)}\n`;
     }
 });
 
-console.log('@enduml')
+plantUMLOutString += '@enduml';
+
+// write to output file
+fs.writeFile(argv.output as string, plantUMLOutString, (err) => {
+    if (err) { throw err; }
+});
+
+
 
 function uniqueElementName(element: FamixTypeScriptElement): string {
     // console.error(`uniqueElementName for ${JSON.stringify(element)}`);
@@ -79,16 +86,16 @@ function toPlantUML(element: FamixTypeScriptElement) {
     let nameWithoutPrefix = element.FM3.split('.')[1];
     plantUMLString += `object "${optionalName}:${nameWithoutPrefix}" as ${uniqueElementName(element)} {\n`;
     plantUMLString += `id = ${element.id}\n`;
-    plantUMLString += attrToPlantUML(element);
+    plantUMLString += propertiesToPlantUML(element);
     plantUMLString += '}\n';
     return plantUMLString;
 }
 
-function attrToPlantUML(element: FamixTypeScriptElement) {
+function propertiesToPlantUML(element: FamixTypeScriptElement) {
     var plantUMLString: string = '';
     // element.attrs.forEach(attr => {
-    for (const attr in element) {
-        switch (attr) {
+    for (const property in element) {
+        switch (property) {
             // ignore these properties
             case 'subclass':
             case 'superclass':
@@ -97,42 +104,20 @@ function attrToPlantUML(element: FamixTypeScriptElement) {
             case 'name':
                 break;
 
-            // get one-to-many references
-            case 'types':
-            case 'structuresWithDeclaredType':
-            case 'behavioursWithDeclaredType':
-            case 'methods':
-            case 'containers':
-            case 'incomingAccesses':
-            case 'accesses':
-            case 'localVariables':
-            case 'outgoingInvocations':
-            case 'receivingInvocations':
-                element[attr].forEach((composite, index) => {
-                    associations.push({ from: element.id, to: composite.ref, name: `${attr}[${index}]` })
-                });
-                break;
-
-            // get references
-            case 'receiver':
-            case 'sender':
-            case 'container':
-            case 'parameterizableClass':
-            case 'typeContainer':
-            case 'element':
-            case 'declaredType':
-            case 'previous':
-            case 'parentNamespace':
-            case 'accessor':
-            case 'variable':
-            case 'parentType':
-            case 'parentBehaviouralEntity':
-            case 'sourceAnchor':
-                associations.push({ from: element.id, to: element[attr].ref, name: attr });
-                break;
             default:
-                // treat it as an attribute
-                plantUMLString += `${attr} = ${element[attr]}\n`
+                const attribute = element[property];
+                const isOneToManyReference = typeof attribute != 'string' && attribute.length; // Array but not a string
+                if (isOneToManyReference) {
+                    attribute.forEach((composite, index) => {
+                        associations.push({ from: element.id, to: composite.ref, name: `${property}[${index}]` })
+                    });
+                } else if (typeof attribute == 'object') {
+                    associations.push({ from: element.id, to: attribute.ref, name: property });
+                } else {  // typeof string, boolean, number, etc.
+                    // treat it as a simple attribute
+                    plantUMLString += `${property} = ${element[property]}\n`
+                }
+
                 break;
         }
     }
