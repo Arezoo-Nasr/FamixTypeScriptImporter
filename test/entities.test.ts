@@ -27,24 +27,15 @@ describe('ts2famix', () => {
             .toMatch(/"FM3":"FamixTypeScript.Class","id":[1-9]\d*|0,"sourceAnchor":{"ref":[1-9]\d*|0},"name":"EntityClass"/);
     });
 
-    // this test will break when Animal.ts is changed
-    // it("model should contain some elements", async () => {
-    //     expect(parsedModel.length).toBe(52);
-    // });
-
-    it("should contain an Animal class with three methods: move, move2 and constructor", async () => {
-        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "EntityClass"))[0];
-        expect(animalCls.methods.length).toBe(3);
+    it("should contain an EntityClass class with three methods: move, move2 and constructor", async () => {
+        const theClass = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "EntityClass"))[0];
+        expect(theClass.methods.length).toBe(3);
         let mNames: Set<string> = new Set();
-        animalCls.methods.forEach(m => {
+        theClass.methods.forEach(m => {
             mNames.add(idToElementMap.get(m.ref as number).name)
         });
         expect(mNames.has("move") &&
             mNames.has("move2") &&
             mNames.has("constructor")).toBeTrue();
     });
-    it("should contain a Fish class that's a subclass of Animal", async () => {
-        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "EntityClass"))[0];
-        expect(idToElementMap.get(animalCls.superclass.ref).name).toBe("Animal"); // peut-être pas le bon format de la définition de la superclasse
-    })
 });
