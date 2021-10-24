@@ -84,6 +84,16 @@ export class TS2Famix {
                 });
             });
             //
+            this.allClasses.forEach(cls => {
+                var baseClass = cls.getBaseClass();
+                if (baseClass !== undefined) {
+                    var fmxInheritance = new Famix.Inheritance(this.fmxRep);
+                    var subClass = this.fmxTypes.get(cls.getName());
+                    var superClass = this.fmxTypes.get(baseClass.getName());
+                    fmxInheritance.setSubclass(subClass);
+                    fmxInheritance.setSuperclass(superClass);
+                }
+            });
         }
         catch (error: any) {
             console.error(error.message);
@@ -301,6 +311,7 @@ export class TS2Famix {
         let fmxType = this.getFamixType(propTypeName);
         fmxAttribute.setDeclaredType(fmxType);
         fmxAttribute.setHasClassScope(true);
+        var ff = property.getDeclareKeyword();
         this.makeFamixIndexFileAnchor(filePath, property.getStart(), property.getEnd(), fmxAttribute);
 
         //for access
