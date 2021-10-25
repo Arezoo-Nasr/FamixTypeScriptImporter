@@ -28,4 +28,23 @@ describe('ts2famix', () => {
         const subInheritance = idToElementMap.get(animalCls.subInheritances[0].ref);
         expect(idToElementMap.get(subInheritance.subclass.ref).name).toBe("Fish"); // nom de la superclasse
     })
+    it("should contain a Flyable interface", async () => {
+        const flyableInterface = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Flyable"))[0];
+        expect(flyableInterface).toBeTruthy();
+        expect(flyableInterface.isInterface()).toBeTrue();
+    })
+    it("should contain a Bird class who has a superclass Animal and implements a Flyable interface", async () => {
+        const birdCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Bird"))[0];
+        expect(birdCls).toBeTruthy();
+        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Animal"))[0];
+        expect(animalCls).toBeTruthy();
+        const flyableInterface = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Flyable"))[0];
+        expect(flyableInterface).toBeTruthy();
+        const superInheritances: Array<any> = idToElementMap.get(birdCls.superInheritances);
+        expect(superInheritances).toBeTruthy();
+        const interfaceRef = superInheritances.filter(si => (si.ref == flyableInterface.ref));
+        expect(interfaceRef).toBeTruthy();
+        const extendsRef = superInheritances.filter(si => (si.ref == animalCls.ref));
+        expect(extendsRef).toBeTruthy();
+    })
 });
