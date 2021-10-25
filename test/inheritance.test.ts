@@ -42,7 +42,7 @@ describe('ts2famix', () => {
         expect(birdCls).toBeTruthy();
         const birdSuperInheritances: Array<any> = birdCls.superInheritances;
         // extends Animal, implements Flyable
-        expect(birdSuperInheritances.length).toBe(2); 
+        expect(birdSuperInheritances.length).toBe(2);
         const extendsRef = birdSuperInheritances.filter(si => (si.ref == animalCls.ref));
         expect(extendsRef).toBeTruthy();
         const interfaceRef = birdSuperInheritances.filter(si => (si.ref == flyableInterface.ref));
