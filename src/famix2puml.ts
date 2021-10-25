@@ -1,7 +1,5 @@
-import { FamixTypeScriptRepository, FamixTypeScriptElement, FamixTypeScriptAttr } from './lib/famix-ts-model';
 import * as fs from 'fs';
 import yargs from 'yargs';
-// import { MSEDocument, Element, Attr } from "./src/MSEDocument";
 
 const argv = yargs
     .example('$0 -i ts-model.json -o ts-model.puml', 'creates PlantUML class diagram from JSON-format model of typescript project')
@@ -11,36 +9,35 @@ const argv = yargs
     .nargs('o', 1)
     .demandOption('input').demandOption('output').argv;
 
-const INHERITANCE_LINK_COLOR = '#orange';
+const INHERITANCE_LINK_COLOR = 'blue';
+
+// approximation for code completion
+interface FamixTypeScriptElement {
+    FM3: string
+    name: string
+    id?: string
+}
+
 interface Association {
     from: string;
     to: string;
     name: string;
 }
 
-// Load the JSON Famix file, this should ideally not be hard-coded
 const jsonFileName = argv.input as string;
-let parsedModel: Array<FamixTypeScriptElement> = JSON.parse(fs.readFileSync(jsonFileName, 'utf-8'));
-// const mseJSON:MSEDocument =  new MSEDocument(parser.parse(sampleMSE));
-
-// const sampleJavaFileNote = 'note-with-source.puml';
-// let sampleJavaFileNotePUML = fs.readFileSync(sampleJavaFileNote, 'utf-8');
-
+const parsedModel: Array<FamixTypeScriptElement> = JSON.parse(fs.readFileSync(jsonFileName, 'utf-8'));
 const classNameMap = new Map<string, string>();
 const associations = new Array<Association>();
-
-// write out JSON for debugging
-//fs.writeFileSync(mseFileName + '.json', JSON.stringify(mseJSON));
 
 // map all the classnames to their ids
 parsedModel.forEach(element => {
     // Map has id as key and unique (plantuml) class name
     classNameMap.set(element.id, uniqueElementName(element));
     const nameWithoutPrefix = element.FM3.split('.')[1];
+    // special case association
     if (nameWithoutPrefix.endsWith('Inheritance')) {
-        // special case association
-        let subclass = element['subclass'].ref; // refForAttr(element, 'subclass');
-        let superclass = element['superclass'].ref; // refForAttr(element, 'superclass');
+        const subclass = element['subclass'].ref;
+        const superclass = element['superclass'].ref;
         associations.push({ from: subclass, to: superclass, name: nameWithoutPrefix })
     }
 });
@@ -57,12 +54,9 @@ parsedModel.forEach(element => {
 // create associations
 associations.forEach(association => {
     // Inheritance is a special case - show it in UML even though it doesn't make 100% sense in object diagrams
-    console.error(`association.name = ${association.name}`);
     const isInheritance = association.name.startsWith('Inheritance');
     if (isInheritance) {
-        plantUMLOutString += `${classNameMap.get(association.from)} --|> ${classNameMap.get(association.to)} #line:blue\n`;
-        plantUMLOutString += `${classNameMap.get(association.from)} .[${INHERITANCE_LINK_COLOR}]. ${association.name}\n`;
-        plantUMLOutString += `${classNameMap.get(association.to)} .[${INHERITANCE_LINK_COLOR}]. ${association.name}\n`;
+        plantUMLOutString += `${classNameMap.get(association.from)} --|> ${classNameMap.get(association.to)} #line:${INHERITANCE_LINK_COLOR}\n`;
     } else {
         plantUMLOutString += `${classNameMap.get(association.from)} ..> "${association.name}" ${classNameMap.get(association.to)}\n`;
     }
@@ -74,8 +68,6 @@ plantUMLOutString += '@enduml';
 fs.writeFile(argv.output as string, plantUMLOutString, (err) => {
     if (err) { throw err; }
 });
-
-
 
 function uniqueElementName(element: FamixTypeScriptElement): string {
     // console.error(`uniqueElementName for ${JSON.stringify(element)}`);
@@ -124,8 +116,4 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
         }
     }
     return plantUMLString;
-}
-
-function refForAttr(element: FamixTypeScriptElement, attrKey: string): string {
-    return element.attrs.filter(attr => attr.name == attrKey)[0].vals[0].ref;
 }
