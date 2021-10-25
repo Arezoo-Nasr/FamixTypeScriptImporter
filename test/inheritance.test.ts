@@ -18,9 +18,14 @@ function initMapFromModel(model) {
 describe('ts2famix', () => {
     initMapFromModel(parsedModel);
 
-    it("should contain a Fish class that's a subclass of Animal", async () => {
+    it("should contain a Fish class who has a superclass Animal", async () => {
         const fishCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Fish"))[0];
-        const inheritance = idToElementMap.get(fishCls.superInheritances[0].ref);
-        expect(idToElementMap.get(inheritance.superclass.ref).name).toBe("Animal"); // nom de la superclasse
+        const superInheritance = idToElementMap.get(fishCls.superInheritances[0].ref);
+        expect(idToElementMap.get(superInheritance.superclass.ref).name).toBe("Animal"); // nom de la superclasse
+    })
+    it("should contain an Animal class who has a subclass Fish", async () => {
+        const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Animal"))[0];
+        const subInheritance = idToElementMap.get(animalCls.subInheritances[0].ref);
+        expect(idToElementMap.get(subInheritance.subclass.ref).name).toBe("Fish"); // nom de la superclasse
     })
 });
