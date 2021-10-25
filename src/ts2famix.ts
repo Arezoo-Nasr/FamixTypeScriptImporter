@@ -1,11 +1,12 @@
 import {
-    ClassDeclaration, ConstructorDeclaration, InterfaceDeclaration
-    , MethodDeclaration, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, SourceFile, StructureKind, VariableDeclaration
+    ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, InterfaceDeclaration
+    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, VariableDeclaration
 } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { getSyntaxKindName, ModuleKind, SyntaxKind } from "@ts-morph/common";
 import { number, string } from "yargs";
+import { Interface } from "readline";
 
 export class TS2Famix {
 
@@ -13,7 +14,7 @@ export class TS2Famix {
     private fmxRep = new FamixRepository();
     private fmxTypes = new Map<string, Famix.Type>();
     private allClasses = new Array<ClassDeclaration>();
-    //private allInterfaces = Array<InterfaceDeclaration>();
+    private allInterfaces = Array<InterfaceDeclaration>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object(variable,attribute) and ts-morph object
     private arrayOfInvocation = new Map<number, any>(); // id of famix object(method) and ts-morph object
     private parsedModel: Array<any>;/////////
@@ -84,7 +85,7 @@ export class TS2Famix {
                     this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
                 });
             });
-            //
+            //Inheritance
             this.allClasses.forEach(cls => {
                 var baseClass = cls.getBaseClass();
                 if (baseClass !== undefined) {
@@ -93,6 +94,27 @@ export class TS2Famix {
                     var superClass = this.fmxTypes.get(baseClass.getName());
                     fmxInheritance.setSubclass(subClass);
                     fmxInheritance.setSuperclass(superClass);
+                }
+
+                var interfaces = cls.getImplements();
+                interfaces.forEach(inter => {
+                    var fmxImplements = new Famix.Inheritance(this.fmxRep);
+                    var completeName = inter.getText();
+                    var fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+                    var subImplements = this.fmxTypes.get(cls.getName());
+                    fmxImplements.setSuperclass(fmxSuperInter);
+                    fmxImplements.setSubclass(subImplements);
+                });
+            });
+            this.allInterfaces.forEach(inter => {
+                var baseInter = inter.getBaseTypes()[0];
+                if (baseInter !== undefined && baseInter.getText() !== 'Object') {
+                    var fmxInher = new Famix.Inheritance(this.fmxRep);
+                    var sub = this.fmxTypes.get(inter.getName());
+                    var completeName = baseInter.getText();
+                    var fmxSuper = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+                    fmxInher.setSubclass(sub);
+                    fmxInher.setSuperclass(fmxSuper);
                 }
             });
         }
@@ -115,10 +137,12 @@ export class TS2Famix {
     }
     //Arezoo
     private readNamespace(currentModules: ModuleDeclaration[] | SourceFile, filePath, parentScope: Famix.Namespace = null) {
+
         let namespaceName: string;
         let fmxNamespace: Famix.Namespace;
-        //let interfacesInFile: InterfaceDeclaration[];
+        let interfacesInFile: InterfaceDeclaration[];
         let classesInFile: ClassDeclaration[];
+        let functionsInFile: FunctionDeclaration[];
 
         if ((currentModules as SourceFile).getModules === undefined) {
             (currentModules as ModuleDeclaration[]).forEach(namespace => {
@@ -127,7 +151,7 @@ export class TS2Famix {
                 fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
                 classesInFile = namespace.getClasses();
                 //get functions //get global var
-                //interfaces = namespace.getInterfaces();
+                interfacesInFile = namespace.getInterfaces();
 
                 console.info(`namespace: ${namespaceName}`);
                 console.info(`classes: ${classesInFile.map(c => c.getName())}`);
@@ -136,8 +160,17 @@ export class TS2Famix {
                 this.makeFamixIndexFileAnchor(filePath, namespace.getStart(), namespace.getEnd(), fmxNamespace);
 
                 if (classesInFile.length > 0) {
-                    this.setElemntsInModule(classesInFile, filePath, fmxNamespace);
+                    this.setClassElements(classesInFile, filePath, fmxNamespace);
                 }
+                if (interfacesInFile.length > 0) {
+                    this.setInterfaceElements(interfacesInFile, filePath, fmxNamespace);
+                }
+                namespace.getFunctions().forEach(func => {
+                    console.info("functions: ");
+                    console.info(` > ${func.getName()}`);
+                    let fmxFunction = this.createFamixFunction(func, filePath);
+                    fmxNamespace.addFunctions(fmxFunction);
+                });
                 if (namespace.getModules().length > 0) {
                     this.readNamespace(namespace.getModules(), filePath, fmxNamespace);
                 }
@@ -147,21 +180,30 @@ export class TS2Famix {
             namespaceName = "DefaultNamespace";
             fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
             classesInFile = (currentModules as SourceFile).getClasses();
+            interfacesInFile = (currentModules as SourceFile).getInterfaces();
+
             console.info(`namespace: ${namespaceName}`);
             console.info(`classes: ${classesInFile.map(c => c.getName())}`);
             //Arezoo  if there is not any classes but also it must be executed for global variables,functions,etc.
 
             if (classesInFile.length > 0) {
-                this.setElemntsInModule(classesInFile, filePath, fmxNamespace);
+                this.setClassElements(classesInFile, filePath, fmxNamespace);
             }
-
+            if (interfacesInFile.length > 0) {
+                this.setInterfaceElements(interfacesInFile, filePath, fmxNamespace);
+            }
+            (currentModules as SourceFile).getFunctions().forEach(func => {
+                console.info("functions: ");
+                console.info(` > ${func.getName()}`);
+                let fmxFunction = this.createFamixFunction(func, filePath);
+                fmxNamespace.addFunctions(fmxFunction);
+            });
         }
     }
     //Arezoo
-    private setElemntsInModule(classesInFile: ClassDeclaration[], filePath, fmxNamespace: Famix.Namespace) {
+    private setClassElements(classesInFile: ClassDeclaration[], filePath, fmxNamespace: Famix.Namespace) {
 
         this.allClasses.push(...classesInFile);   //????????????????????
-        //allInterfaces.push(...interfaces);
         console.info("Analyzing classes:");
         classesInFile.forEach(cls => {
             console.info(`> ${cls.getName()}`);
@@ -189,7 +231,30 @@ export class TS2Famix {
                 fmxClass.addMethods(fmxMethod);
             });
         });
+    }
+    private setInterfaceElements(interfacesInFile: InterfaceDeclaration[], filePath, fmxNamespace: Famix.Namespace) {
 
+        this.allInterfaces.push(...interfacesInFile);
+        console.info("Analyzing interfaces:");
+        interfacesInFile.forEach(inter => {
+            console.info(`> ${inter.getName()}`);
+            let fmxInterface = this.createFamixClass(inter, filePath, true);
+            fmxNamespace.addTypes(fmxInterface);
+
+            console.info("Methods:");
+            inter.getMethods().forEach(method => {
+                console.info(` > ${method.getName()}`);
+                let fmxMethod = this.createFamixMethod(method, filePath, true);
+                fmxInterface.addMethods(fmxMethod);
+            });
+
+            console.info("Properties:");
+            inter.getProperties().forEach(prop => {
+                console.info(` > ${prop.getName()}`);
+                let fmxAttr = this.createFamixAttribute(prop, filePath, true);
+                fmxInterface.addAttributes(fmxAttr);
+            });
+        });
     }
     //Arezoo
     private checkFamixNamespace(namespaceName: string, parentScope: Famix.Namespace = null): Famix.Namespace {
@@ -210,7 +275,7 @@ export class TS2Famix {
         return fmxNamespace;
     }
 
-    private createFamixClass(cls: ClassDeclaration, filePath, isInterface = false): Famix.Class {
+    private createFamixClass(cls: ClassDeclaration | InterfaceDeclaration, filePath, isInterface = false): Famix.Class {
         let fmxClass = new Famix.Class(this.fmxRep);
         let clsName = cls.getName();
         fmxClass.setName(clsName);
@@ -222,24 +287,26 @@ export class TS2Famix {
         return fmxClass;
     }
 
-    private createFamixMethod(method: MethodDeclaration | ConstructorDeclaration, filePath
+    private createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, filePath
         , isSignature = false, isConstructor = false): Famix.Method {
 
         let fmxMethod = new Famix.Method(this.fmxRep);
         if (isConstructor) {
             fmxMethod.setName("constructor");
         }
+        else if (isSignature) {
+            let methodName = (method as MethodSignature).getName();
+            fmxMethod.setName(methodName);
+        }
         else {
             //Arezoo
             let methodName = (method as MethodDeclaration).getName();
             fmxMethod.setName(methodName);
+            // fmxMethod.addModifiers(this.getAccessor(method));
             ////
             //for access
             this.arrayOfInvocation.set(fmxMethod.id, method);
             ///
-            //var f = method.getAncestors();
-            // var e = method.getSourceFile()//.getSymbol();
-            // var ff = method.getSourceFile().getSymbol().getFullyQualifiedName();
         }
 
         let methodTypeName = this.getUsableName(method.getReturnType().getText());
@@ -248,7 +315,6 @@ export class TS2Famix {
         fmxMethod.setKind(method.getKindName());
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
         fmxMethod.setFullyQualifiedName(method.getSymbol().getFullyQualifiedName());
-        // fmxMethod.addModifiers(this.getAccessor(method));
 
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
@@ -262,30 +328,38 @@ export class TS2Famix {
                 fmxParam.setName(param.getName());
                 fmxMethod.addParameters(fmxParam);
                 this.makeFamixIndexFileAnchor(filePath, param.getStart(), param.getEnd(), fmxParam);
-                //for access
-                this.arrayOfAccess.set(fmxParam.id, param);
+                if (!isSignature) {
+                    //for access
+                    this.arrayOfAccess.set(fmxParam.id, param);
+                }
             });
         }
+        fmxMethod.setNumberOfParameters(parameters.length);//Arezoo
+
         //Arezoo
         //Variables
-        let variables = method.getVariableDeclarations();
-        if (variables.length > 0) {
-            console.info(`  Variables:`);
+        if (!isSignature) {
+            method = method as MethodDeclaration;
+            let variables = method.getVariableDeclarations();
+            if (variables.length > 0) {
+                console.info(`  Variables:`);
 
-            variables.forEach(variable => {
-                let fullyQualifiedLocalVarName = `${method.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
-                console.info(`  > ${fullyQualifiedLocalVarName}`);
+                variables.forEach(variable => {
+                    let fullyQualifiedLocalVarName = `${method.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
+                    console.info(`  > ${fullyQualifiedLocalVarName}`);
 
-                let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
-                let localVariableTypeName = this.getUsableName(variable.getType().getText());
-                fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
-                fmxLocalVariable.setName(variable.getName());
-                fmxMethod.addLocalVariables(fmxLocalVariable);
-                this.makeFamixIndexFileAnchor(filePath, variable.getStart(), variable.getEnd(), fmxLocalVariable);
-                //var cf = variable.getSourceFile().getSymbol().getFullyQualifiedName();
-                //for access
-                this.arrayOfAccess.set(fmxLocalVariable.id, variable);
-            });
+                    let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
+                    let localVariableTypeName = this.getUsableName(variable.getType().getText());
+                    fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
+                    fmxLocalVariable.setName(variable.getName());
+                    fmxMethod.addLocalVariables(fmxLocalVariable);
+                    this.makeFamixIndexFileAnchor(filePath, variable.getStart(), variable.getEnd(), fmxLocalVariable);
+                    //var cf = variable.getSourceFile().getSymbol().getFullyQualifiedName();
+                    //for access
+                    this.arrayOfAccess.set(fmxLocalVariable.id, variable);
+                });
+            }
+            fmxMethod.setNumberOfStatements(method.getStatements().length);
         }
         //
         // if (!isSignature) {//////////////////
@@ -300,12 +374,65 @@ export class TS2Famix {
         //     fmxMethod.setCyclomaticComplexity(MethodeCyclo);
         // }
 
-        fmxMethod.setNumberOfStatements(method.getStatements().length);
-        fmxMethod.setNumberOfParameters(parameters.length);//Arezoo
         return fmxMethod;
     }
 
-    private createFamixAttribute(property: PropertyDeclaration, filePath): Famix.Attribute {
+    private createFamixFunction(func: FunctionDeclaration, filePath): Famix.Function {
+
+        let fmxFunction = new Famix.Function(this.fmxRep);
+        fmxFunction.setName(func.getName());
+
+        let functionTypeName = this.getUsableName(func.getReturnType().getText());
+        let fmxType = this.getFamixType(functionTypeName);
+        fmxFunction.setDeclaredType(fmxType);
+        fmxFunction.setNumberOfLinesOfCode(func.getEndLineNumber() - func.getStartLineNumber());
+        fmxFunction.setFullyQualifiedName(func.getSymbol().getFullyQualifiedName());
+
+        this.makeFamixIndexFileAnchor(filePath, func.getStart(), func.getEnd(), fmxFunction);
+
+        //Parameters
+        let parameters = func.getParameters();
+        if (parameters.length > 0) {
+            parameters.forEach(param => {
+                let fmxParam = new Famix.Parameter(this.fmxRep);
+                let paramTypeName = this.getUsableName(param.getType().getText());
+                fmxParam.setDeclaredType(this.getFamixType(paramTypeName));
+                fmxParam.setName(param.getName());
+                fmxFunction.addParameters(fmxParam);
+                this.makeFamixIndexFileAnchor(filePath, param.getStart(), param.getEnd(), fmxParam);
+                //for access
+                this.arrayOfAccess.set(fmxParam.id, param);
+            });
+        }
+        fmxFunction.setNumberOfParameters(parameters.length);
+
+        //Arezoo
+        //Variables
+        let variables = func.getVariableDeclarations();
+        if (variables.length > 0) {
+            console.info(`  Variables:`);
+
+            variables.forEach(variable => {
+                let fullyQualifiedLocalVarName = `${func.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
+                console.info(`  > ${fullyQualifiedLocalVarName}`);
+
+                let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
+                let localVariableTypeName = this.getUsableName(variable.getType().getText());
+                fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
+                fmxLocalVariable.setName(variable.getName());
+                fmxFunction.addLocalVariables(fmxLocalVariable);
+                this.makeFamixIndexFileAnchor(filePath, variable.getStart(), variable.getEnd(), fmxLocalVariable);
+                //for access
+                this.arrayOfAccess.set(fmxLocalVariable.id, variable);
+            });
+        }
+        fmxFunction.setNumberOfStatements(func.getStatements().length);
+
+        return fmxFunction;
+    }
+
+    private createFamixAttribute(property: PropertyDeclaration | PropertySignature, filePath, isSignature = false): Famix.Attribute {
+
         let fmxAttribute = new Famix.Attribute(this.fmxRep);
         fmxAttribute.setName(property.getName());
 
@@ -316,9 +443,10 @@ export class TS2Famix {
         // fmxAttribute.addModifiers(this.getAccessor(property));
         this.makeFamixIndexFileAnchor(filePath, property.getStart(), property.getEnd(), fmxAttribute);
 
-        //for access
-        this.arrayOfAccess.set(fmxAttribute.id, property);
-
+        if (!isSignature) {
+            //for access
+            this.arrayOfAccess.set(fmxAttribute.id, property);
+        }
         return fmxAttribute;
     }
 

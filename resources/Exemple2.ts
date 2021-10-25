@@ -1,12 +1,13 @@
-namespace MyNamespace {
+import * as mm from "./exp1"
 
-	class class1 {
-		private projectName: string;
+namespace MyNamespace2 {
+    class class12 extends mm.MyNamespace.class1 {
+        private projectName12: string = "";
 
-		public getName(): string {
-			var finalString: string = this.projectName;
-			return finalString;
-		}
-	}
+        public getName12(): string {
+            var finalString: string = this.projectName;
+            return finalString;
+        }
+    }
 }
 
