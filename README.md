@@ -18,4 +18,5 @@ ts-node src/ts2famix-cli.ts --help
 
 ## Import the JSON into the Moose
 
-'.\JSONModels\TypeScriptModel.json' asFileReference readStreamDo: [ :stream | model := FamixTypeScriptModel new importFromJSONStream: stream. model install ].
+'.\JSONModels\TypeScriptModel.json' asFileReference readStreamDo:
+[ :stream | model := FamixTypeScriptModel new importFromJSONStream: stream. model install ].
