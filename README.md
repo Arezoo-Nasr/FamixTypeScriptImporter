@@ -16,6 +16,11 @@ Instructions for using the command-line importer:
 ts-node src/ts2famix-cli.ts --help
 ```
 
+## Generate an object diagram of the JSON model
+
+ts-node src/famix2puml.ts -i JSONModels/ModelName.json -o ModelName.puml
+
+
 ## Import the JSON into the Moose
 
 '.\JSONModels\TypeScriptModel.json' asFileReference readStreamDo:
