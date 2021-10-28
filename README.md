@@ -24,5 +24,8 @@ ts-node src/famix2puml.ts -i JSONModels/ModelName.json -o ModelName.puml
 
 ## Import the JSON into the Moose
 
+```
 '.\JSONModels\TypeScriptModel.json' asFileReference readStreamDo:
 [ :stream | model := FamixTypeScriptModel new importFromJSONStream: stream. model install ].
+```
+
