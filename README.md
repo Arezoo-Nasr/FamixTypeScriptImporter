@@ -1,6 +1,6 @@
 # FamixTypeScriptImporter
 
-Create a FAMIX model in JSON of TypeScript files.
+Create a FAMIX model in JSON of TypeScript files. The JSON model is stored in the JSONModels folder.
 
 ## Installation
 
@@ -13,3 +13,8 @@ Instructions for using the command-line importer:
 ```
 ts-node src/ts2famix-cli.ts --help
 ```
+
+## Import the JSON into the Moose
+
+'.\JSONModels\TypeScriptModel.json' asFileReference readStreamDo:
+[ :stream | model := FamixTypeScriptModel new importFromJSONStream: stream. model install ].

@@ -177,11 +177,16 @@ export class TS2Famix {
             });
         }
         else {
-            namespaceName = "DefaultNamespace";
-            fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
+            // namespaceName = "DefaultNamespace";
+            // fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
             classesInFile = (currentModules as SourceFile).getClasses();
             interfacesInFile = (currentModules as SourceFile).getInterfaces();
+            functionsInFile = (currentModules as SourceFile).getFunctions();
 
+            if (classesInFile.length || interfacesInFile.length || functionsInFile.length) {
+                namespaceName = "DefaultNamespace";
+                fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
+            }
             console.info(`namespace: ${namespaceName}`);
             console.info(`classes: ${classesInFile.map(c => c.getName())}`);
             //Arezoo  if there is not any classes but also it must be executed for global variables,functions,etc.
@@ -232,6 +237,7 @@ export class TS2Famix {
             });
         });
     }
+
     private setInterfaceElements(interfacesInFile: InterfaceDeclaration[], filePath, fmxNamespace: Famix.Namespace) {
 
         this.allInterfaces.push(...interfacesInFile);
@@ -315,7 +321,6 @@ export class TS2Famix {
         fmxMethod.setKind(method.getKindName());
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
         fmxMethod.setFullyQualifiedName(method.getSymbol().getFullyQualifiedName());
-
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
         //Parameters
