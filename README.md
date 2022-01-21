@@ -6,7 +6,13 @@ Create a FAMIX model in JSON of TypeScript files. The JSON model is stored in th
 
 ## Installation
 
-```npm install```
+```
+npm install
+```
+
+```
+npm install -g ts-node
+```
 
 ## Usage
 
