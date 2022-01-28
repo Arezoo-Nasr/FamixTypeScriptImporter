@@ -1,5 +1,12 @@
 namespace MyNamespace {
 
+	export interface MyGenInterface<T> {
+		name: string;
+		insert(object: T): boolean;
+		get(id: number): T;
+		getAll(): [T];
+	}
+
 	export class Animal {
 	}
 	export class Fish extends Animal {

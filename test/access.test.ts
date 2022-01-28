@@ -1,7 +1,7 @@
 import { TS2Famix } from "../src/ts2famix";
 import 'jest-extended';
 
-const filePaths = ["resources/Access.ts"];
+const filePaths = ["test_src/Access.ts"];
 const importer = new TS2Famix();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
@@ -12,19 +12,21 @@ let accessCls;
 let accessClsMethods: Array<any>;
 
 describe('Access', () => {
-    it("should contain an Access class with one method: returnAccessName and one attribute: accessName", async () => {
+    it("should contain an Access class with two methods (public returnAccessName, private privateMethod) and two attributes: (public accessName, private privateAttribute)", async () => {
         parsedModel = JSON.parse(jsonOutput);
-        accessCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "accessClass"))[0];
-        expect(accessCls.methods.length).toBe(1);
-        expect(accessCls.attributes.length).toBe(1);
+        accessCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "AccessClassForTesting"))[0];
+        expect(accessCls.methods.length).toBe(2);
+        expect(accessCls.attributes.length).toBe(2);
         let methodNames: string[] = ['returnAccessName'];
 
+        // TODO - fix to find the method names
         accessClsMethods = parsedModel.filter(e => accessCls.methods.some(m => m.ref == e.id));
         expect(accessClsMethods.length).toBeGreaterThan(0);
         let checkMethodName = accessClsMethods.every(m => methodNames.includes(m.name));
         expect(checkMethodName).toBeTrue();
     });
 
+    // TODO add access to private method and check it with test
     it("should have one access for method", async () => {
         let checkMethodHasAccess = accessClsMethods.every(m => m.accesses !== undefined);
         expect(checkMethodHasAccess).toBeTrue();
