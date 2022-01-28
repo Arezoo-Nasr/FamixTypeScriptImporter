@@ -1,5 +1,5 @@
 import {
-    ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, InterfaceDeclaration
+    ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration
     , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, VariableDeclaration
 } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
@@ -40,7 +40,7 @@ export class TS2Famix {
             //
             this.arrayOfAccess.forEach((value, key) => {
                 let famixStructuralElement = this.fmxRep.getFamixElementById(key) as Famix.StructuralEntity;
-                let nodes = value.findReferencesAsNodes();
+                let nodes = value.findReferencesAsNodes() as Array<Identifier>;
                 nodes.forEach(node => {
                     let scopeDeclaration = node.getAncestors()
                         .find(a => a.getKind() == SyntaxKind.MethodDeclaration
@@ -55,19 +55,22 @@ export class TS2Famix {
                     // let fmxAccess = new Famix.Access(this.fmxRep);
                     // fmxAccess.setAccessor(accessor);
                     // fmxAccess.setVariable(famixStructuralElement);
+                    if (scopeDeclaration) {
+                        let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
+                        let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                        let fmxAccess = new Famix.Access(this.fmxRep);
+                        fmxAccess.setAccessor(accessor);
+                        fmxAccess.setVariable(famixStructuralElement);
 
-                    let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
-                    let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
-                    let fmxAccess = new Famix.Access(this.fmxRep);
-                    fmxAccess.setAccessor(accessor);
-                    fmxAccess.setVariable(famixStructuralElement);
-
-                    this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxAccess);
+                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxAccess);
+                    } else {
+                        console.log(`---error--- Scope declaration is invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+                    }
                 });
             });
             this.arrayOfInvocation.forEach((value, key) => {
                 let famixBehaviouralElement = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
-                let nodes = value.findReferencesAsNodes();
+                let nodes = value.findReferencesAsNodes() as Array<Identifier>;
                 nodes.forEach(node => {
                     let scopeDeclaration = node.getAncestors()
                         .find(a => a.getKind() == SyntaxKind.MethodDeclaration
@@ -75,14 +78,18 @@ export class TS2Famix {
                             || a.getKind() == SyntaxKind.FunctionDeclaration
                             //|| a.getKind() == SyntaxKind.SourceFile
                         );//////////for global variable it must work
+                    if (scopeDeclaration) {
+                        let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
+                        let receiver = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                        let fmxInvovation = new Famix.Invocation(this.fmxRep);
+                        fmxInvovation.setReceiver(receiver);
+                        fmxInvovation.setSender(famixBehaviouralElement);
+    
+                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
+                    } else {
+                        console.error(`---error--- scopeDeclaration invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+                    }
 
-                    let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
-                    let reciever = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
-                    let fmxInvovation = new Famix.Invocation(this.fmxRep);
-                    fmxInvovation.setReceiver(reciever);
-                    fmxInvovation.setSender(famixBehaviouralElement);
-
-                    this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
                 });
             });
             //Inheritance
@@ -231,7 +238,7 @@ export class TS2Famix {
 
             console.info("Constructors:");
             cls.getConstructors().forEach(cstr => {
-                console.info(` > ${cstr.getSignature()}`);
+                console.info(` > ${cstr.getSignature().getDeclaration().getText().split("\n")[0].trim()} ...`);
                 let fmxMethod = this.createFamixMethod(cstr, filePath, false, true);
                 fmxClass.addMethods(fmxMethod);
             });
