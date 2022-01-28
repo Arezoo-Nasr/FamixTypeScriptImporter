@@ -1,6 +1,6 @@
 import {
     ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration
-    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, VariableDeclaration
+    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, VariableDeclaration, Decorator
 } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -261,6 +261,14 @@ export class TS2Famix {
             let fmxClass = this.createFamixClass(cls, filePath);
             fmxNamespace.addTypes(fmxClass);
 
+            console.info("Decorators:");
+            cls.getDecorators().forEach(decorator => {
+                console.info(` > ${decorator.getName()}`)
+                let isFactory = decorator.isDecoratorFactory()
+                let fmxDecorator = this.createFamixDecorator(decorator, filePath, isFactory);
+                fmxClass.addAnnotationInstances(fmxDecorator);
+            });
+
             console.info("Methods:");
             cls.getMethods().forEach(method => {
                 console.info(` > ${method.getName()}`);
@@ -349,6 +357,34 @@ export class TS2Famix {
 
         this.fmxTypes.set(clsName, fmxClass);
         return fmxClass;
+    }
+
+    /**
+     * Make a Famix annotation to represent a Typescript decorator
+     */
+    private createFamixDecorator(decorator: Decorator, filepath, isFactory: boolean){
+        console.log("...CREATING A FAMIX DECORATOR...");
+
+        // Fetch the decorators name
+        let fmxDecorator = new Famix.AnnotationType(this.fmxRep);
+        let decoratorName = decorator.getName();
+        fmxDecorator.setName(decoratorName);
+
+        // Define a decorator instance
+        let fmxDecoratorInstance = new Famix.AnnotationInstance(this.fmxRep);
+        fmxDecoratorInstance.setAnnotationType(fmxDecorator);
+
+        // Add decorator arguments as annotation attributes
+        decorator.getArguments().forEach(arg => {
+            let fmxDecoratorAttribute = new Famix.AnnotationInstanceAttribute(this.fmxRep);
+            
+            fmxDecoratorAttribute.setValue(arg.getText());
+            fmxDecoratorInstance.addAttributes(fmxDecoratorAttribute);
+        });
+
+        this.makeFamixIndexFileAnchor(filepath, decorator.getStart(), decorator.getEnd(), fmxDecorator);
+
+        return fmxDecoratorInstance;
     }
 
     /**
