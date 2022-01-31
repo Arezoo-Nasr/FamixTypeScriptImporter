@@ -108,12 +108,14 @@ export class TS2Famix {
 
                 var interfaces = cls.getImplements();
                 interfaces.forEach(inter => {
-                    var fmxImplements = new Famix.Inheritance(this.fmxRep);
-                    var completeName = inter.getText();
-                    var fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-                    var subImplements = this.fmxTypes.get(cls.getName());
-                    fmxImplements.setSuperclass(fmxSuperInter);
-                    fmxImplements.setSubclass(subImplements);
+                    if (inter.getKind() !== SyntaxKind.ExpressionWithTypeArguments) { // ignore generics
+                        var fmxImplements = new Famix.Inheritance(this.fmxRep);
+                        var completeName = inter.getText();
+                        var fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+                        var subImplements = this.fmxTypes.get(cls.getName());
+                        fmxImplements.setSuperclass(fmxSuperInter);
+                        fmxImplements.setSubclass(subImplements);
+                    }
                 });
             });
             this.allInterfaces.forEach(inter => {
