@@ -17,7 +17,6 @@ export class TS2Famix {
     private allInterfaces = Array<InterfaceDeclaration>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object(variable,attribute) and ts-morph object
     private arrayOfInvocation = new Map<number, any>(); // id of famix object(method) and ts-morph object
-    private parsedModel: Array<any>;/////////
 
     famixRepFromPath(paths: Array<string>) {
         try {
@@ -37,11 +36,14 @@ export class TS2Famix {
                 }
                 this.readNamespace(file, file.getFilePath(), null);
             });
-            //
+            // Create accesses
+            console.log(`Creating accesses:`);
             this.arrayOfAccess.forEach((value, key) => {
+                console.log(`  Accesss(es) to ${value.getName()}:`);
                 let famixStructuralElement = this.fmxRep.getFamixElementById(key) as Famix.StructuralEntity;
                 let nodes = value.findReferencesAsNodes() as Array<Identifier>;
                 nodes.forEach(node => {
+                    console.log(`    ${node.getSymbol().getName()}`);
                     let scopeDeclaration = node.getAncestors()
                         .find(a => a.getKind() == SyntaxKind.MethodDeclaration
                             || a.getKind() == SyntaxKind.Constructor
@@ -58,6 +60,7 @@ export class TS2Famix {
                     if (scopeDeclaration) {
                         let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
                         let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                        console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
                         let fmxAccess = new Famix.Access(this.fmxRep);
                         fmxAccess.setAccessor(accessor);
                         fmxAccess.setVariable(famixStructuralElement);
@@ -84,7 +87,7 @@ export class TS2Famix {
                         let fmxInvovation = new Famix.Invocation(this.fmxRep);
                         fmxInvovation.setReceiver(receiver);
                         fmxInvovation.setSender(famixBehaviouralElement);
-    
+
                         this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
                     } else {
                         console.error(`---error--- scopeDeclaration invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
@@ -300,8 +303,9 @@ export class TS2Famix {
         return fmxClass;
     }
 
-    private createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, filePath
-        , isSignature = false, isConstructor = false): Famix.Method {
+    private createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature,
+        filePath: string, isSignature = false, isConstructor = false): Famix.Method {
+        console.log(` creating a FamixFunction:`);
 
         let fmxMethod = new Famix.Method(this.fmxRep);
         if (isConstructor) {
@@ -342,6 +346,7 @@ export class TS2Famix {
                 this.makeFamixIndexFileAnchor(filePath, param.getStart(), param.getEnd(), fmxParam);
                 if (!isSignature) {
                     //for access
+                    console.log(`  Add parameter for eventual access> ${param.getText()} with ${fmxParam.id}`);
                     this.arrayOfAccess.set(fmxParam.id, param);
                 }
             });
@@ -368,6 +373,7 @@ export class TS2Famix {
                     this.makeFamixIndexFileAnchor(filePath, variable.getStart(), variable.getEnd(), fmxLocalVariable);
                     //var cf = variable.getSourceFile().getSymbol().getFullyQualifiedName();
                     //for access
+                    console.log(`    Add local variable for eventual access> ${variable.getText()} with ${fmxLocalVariable.id}`);
                     this.arrayOfAccess.set(fmxLocalVariable.id, variable);
                 });
             }
@@ -390,7 +396,7 @@ export class TS2Famix {
     }
 
     private createFamixFunction(func: FunctionDeclaration, filePath): Famix.Function {
-
+        console.log(` creating a FamixFunction:`);
         let fmxFunction = new Famix.Function(this.fmxRep);
         fmxFunction.setName(func.getName());
 
@@ -413,6 +419,7 @@ export class TS2Famix {
                 fmxFunction.addParameters(fmxParam);
                 this.makeFamixIndexFileAnchor(filePath, param.getStart(), param.getEnd(), fmxParam);
                 //for access
+                console.log(`  Add parameter for eventual access> ${param.getText()} with ${fmxParam.id}`);
                 this.arrayOfAccess.set(fmxParam.id, param);
             });
         }
@@ -435,6 +442,7 @@ export class TS2Famix {
                 fmxFunction.addLocalVariables(fmxLocalVariable);
                 this.makeFamixIndexFileAnchor(filePath, variable.getStart(), variable.getEnd(), fmxLocalVariable);
                 //for access
+                console.log(`  Add local variable for eventual access> ${variable.getText()} with ${fmxLocalVariable.id}`);
                 this.arrayOfAccess.set(fmxLocalVariable.id, variable);
             });
         }
@@ -457,6 +465,7 @@ export class TS2Famix {
 
         if (!isSignature) {
             //for access
+            console.log(`  Add property for eventual access> ${property.getText()} with ${fmxAttribute.id}`);
             this.arrayOfAccess.set(fmxAttribute.id, property);
         }
         return fmxAttribute;
