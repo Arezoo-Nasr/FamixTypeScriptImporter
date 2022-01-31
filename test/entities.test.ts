@@ -1,5 +1,6 @@
 import { TS2Famix } from '../src/ts2famix';
 import 'jest-extended';
+import { BehaviouralEntity, Method, NamedEntity, SourcedEntity } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/Entity.ts"];
 const importer = new TS2Famix();
@@ -8,18 +9,18 @@ const fmxRep2 = importer.famixRepFromPath(filePaths);
 const jsonOutput = fmxRep2.getJSON();
 let parsedModel: Array<any>;
 
-const idToElementMap: Map<number, any> = new Map();
-function initMapFromModel(model) {
-    model.forEach(element => {
-        idToElementMap.set(element.id, element);
-    });
-}
+// const idToElementMap: Map<number, any> = new Map();
+// function initMapFromModel(model) {
+//     model.forEach(element => {
+//         idToElementMap.set(element.id, element);
+//     });
+// }
 
 describe('ts2famix', () => {
     it("should generate valid json", async () => {
         parsedModel = JSON.parse(jsonOutput);
         expect(parsedModel).toBeTruthy();
-        initMapFromModel(parsedModel);
+        // initMapFromModel(parsedModel);
     });
 
     it("should generate json with FM3 FamixTypeScript.Class for EntityClass", async () => {
@@ -32,7 +33,8 @@ describe('ts2famix', () => {
         expect(theClass.methods.length).toBe(3);
         let mNames: Set<string> = new Set();
         theClass.methods.forEach(m => {
-            mNames.add(idToElementMap.get(m.ref as number).name)
+            const entityCls = fmxRep2.getFamixElementById(m.ref as number) as Method;
+            mNames.add(entityCls.getName())
         });
         expect(mNames.has("move") &&
             mNames.has("move2") &&

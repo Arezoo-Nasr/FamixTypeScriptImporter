@@ -1,5 +1,7 @@
 import { TS2Famix } from "../src/ts2famix";
 import 'jest-extended';
+import { Attribute, Method } from "../src/lib/famix/src/model/famix";
+import { FamixTypeScriptElementStorage } from "../src/lib/famix/src/famix_JSON_exporter";
 
 const filePaths = ["test_src/Access.ts"];
 const importer = new TS2Famix();
@@ -7,38 +9,47 @@ const importer = new TS2Famix();
 const fmxRep2 = importer.famixRepFromPath(filePaths);
 const jsonOutput = fmxRep2.getJSON();
 
-let parsedModel: Array<any>;
-let accessCls;
+let parsedModel: Array<FamixTypeScriptElementStorage> = JSON.parse(jsonOutput);
+let testAccessCls;
 let accessClsMethods: Array<any>;
+let accessClsAttributes: Array<any>;
 
 describe('Access', () => {
     // it("should contain an Access class with two methods (public returnAccessName, private privateMethod) and two attributes: (public accessName, private privateAttribute)", () => {
-    it("should contain an Access class with one method: returnAccessName and one attribute: accessName", () => {
-            parsedModel = JSON.parse(jsonOutput);
-        accessCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "AccessClassForTesting"))[0];
-        expect(accessCls.methods.length).toBe(1);
-        expect(accessCls.attributes.length).toBe(1);
-        let methodNames: string[] = ['returnAccessName'/*,'privateMethod'*/];
+    it("should have a class with two methods and two attributes", () => {
+        let expectedAttributeNames: string[] = ['privateAttribute', 'publicAttribute'];
+        let expectedMethodNames: string[] = ['privateMethod', 'returnAccessName'];
+        testAccessCls = parsedModel.filter(el =>
+            (el.FM3 == "FamixTypeScript.Class" && el.name == "AccessClassForTesting"))[0];
+        expect(testAccessCls.attributes.length).toBe(expectedAttributeNames.length);
+        expect(testAccessCls.methods.length).toBe(expectedMethodNames.length);
 
-        accessClsMethods = parsedModel.filter(e => accessCls.methods.some(m => m.ref == e.id));
+        accessClsMethods = parsedModel.filter(e => testAccessCls.methods.some(m => m.ref == e.id));
         expect(accessClsMethods.length).toBeGreaterThan(0);
-        let checkMethodName = accessClsMethods.every(m => methodNames.includes(m.name));
+        let checkMethodName = accessClsMethods.every(m => expectedMethodNames.includes(m.name));
         expect(checkMethodName).toBeTrue();
+        accessClsAttributes = parsedModel.filter(e => testAccessCls.attributes.some(a => a.ref == e.id));
+        expect(accessClsAttributes.length).toBeGreaterThan(0);
+        let checkAttributeName = accessClsAttributes.every(a => expectedAttributeNames.includes(a.name));
+        expect(checkAttributeName).toBeTrue();
     });
 
-    // TODO add access to private method and check it with test
-    it("should have one access for method", () => {
-        let checkMethodHasAccess = accessClsMethods.every(
-            m => m.accesses !== undefined
-        );
-        expect(checkMethodHasAccess).toBeTrue();
+    it("should have an access to privateAttribute in privateMethod", () => {
+        const famixAccess = parsedModel.filter(el =>
+            (el.FM3 == "FamixTypeScript.Access"
+                && ((fmxRep2.getFamixElementById(el.accessor.ref) as Method).getName() == "privateMethod") 
+                && ((fmxRep2.getFamixElementById(el.variable.ref) as Attribute).getName() == "privateAttribute")
+                ))[0];
+        expect(famixAccess).toBeTruthy();
+    });
 
-        accessClsMethods.forEach(method => {
-            let accessClsAccess = parsedModel.filter(e => e.FM3 == "FamixTypeScript.Access"
-                && method.accesses.some(m => m.ref == e.id));
-            let checkHasRelatedToMethod = accessClsAccess.every(a => a.accessor !== undefined && a.accessor.ref == method.id);
-            expect(checkHasRelatedToMethod).toBeTrue();
-        });
+    it("should have an access to publicAttribute in returnAccessName", () => {
+        const famixAccess = parsedModel.filter(el =>
+            (el.FM3 == "FamixTypeScript.Access"
+                && ((fmxRep2.getFamixElementById(el.accessor.ref) as Method).getName() == "returnAccessName") 
+                && ((fmxRep2.getFamixElementById(el.variable.ref) as Attribute).getName() == "publicAttribute")
+                ))[0];
+        expect(famixAccess).toBeTruthy();
     });
 
 })

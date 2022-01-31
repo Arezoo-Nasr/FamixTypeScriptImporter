@@ -1,5 +1,17 @@
 import { FamixBaseElement } from "./famix_base_element";
 
+type RefType = {
+  ref: number
+}
+// approximation for code completion
+export interface FamixTypeScriptElementStorage {
+    FM3: string
+    name: string
+    id?: string
+    accessor?: RefType
+    variable?: RefType
+}
+
 export class FamixJSONExporter {
   private element: FamixBaseElement;
   private bufferArray: any = {}
