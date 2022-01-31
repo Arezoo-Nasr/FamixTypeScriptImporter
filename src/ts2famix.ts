@@ -97,34 +97,34 @@ export class TS2Famix {
             });
             //Inheritance
             this.allClasses.forEach(cls => {
-                var baseClass = cls.getBaseClass();
+                const baseClass = cls.getBaseClass();
                 if (baseClass !== undefined) {
-                    var fmxInheritance = new Famix.Inheritance(this.fmxRep);
-                    var subClass = this.fmxTypes.get(cls.getName());
-                    var superClass = this.fmxTypes.get(baseClass.getName());
+                    const fmxInheritance = new Famix.Inheritance(this.fmxRep);
+                    const subClass = this.fmxTypes.get(cls.getName());
+                    const superClass = this.fmxTypes.get(baseClass.getName());
                     fmxInheritance.setSubclass(subClass);
                     fmxInheritance.setSuperclass(superClass);
                 }
 
-                var interfaces = cls.getImplements();
+                const interfaces = cls.getImplements();
                 interfaces.forEach(inter => {
-                    if (inter.getKind() !== SyntaxKind.ExpressionWithTypeArguments) { // ignore generics
-                        var fmxImplements = new Famix.Inheritance(this.fmxRep);
-                        var completeName = inter.getText();
-                        var fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-                        var subImplements = this.fmxTypes.get(cls.getName());
+                    if (!inter.getType().getText().endsWith('>')) { // ignore generics
+                        const fmxImplements = new Famix.Inheritance(this.fmxRep);
+                        const completeName = inter.getText();
+                        const fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+                        const subImplements = this.fmxTypes.get(cls.getName());
                         fmxImplements.setSuperclass(fmxSuperInter);
                         fmxImplements.setSubclass(subImplements);
                     }
                 });
             });
             this.allInterfaces.forEach(inter => {
-                var baseInter = inter.getBaseTypes()[0];
+                const baseInter = inter.getBaseTypes()[0];
                 if (baseInter !== undefined && baseInter.getText() !== 'Object') {
-                    var fmxInher = new Famix.Inheritance(this.fmxRep);
-                    var sub = this.fmxTypes.get(inter.getName());
-                    var completeName = baseInter.getText();
-                    var fmxSuper = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+                    const fmxInher = new Famix.Inheritance(this.fmxRep);
+                    const sub = this.fmxTypes.get(inter.getName());
+                    const completeName = baseInter.getText();
+                    const fmxSuper = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
                     fmxInher.setSubclass(sub);
                     fmxInher.setSuperclass(fmxSuper);
                 }
@@ -501,8 +501,8 @@ export class TS2Famix {
     }
 
     private getAccessor(object: any): string {
-        var keyword: string = "";
-        var xx = object.hasModifier(SyntaxKind.ProtectedKeyword);
+        const keyword: string = "";
+        const xx = object.hasModifier(SyntaxKind.ProtectedKeyword);
         if (object.hasModifier(SyntaxKind.PrivateKeyword))
             return "Private";
         else if (object.hasModifier(SyntaxKind.PublicKeyword))

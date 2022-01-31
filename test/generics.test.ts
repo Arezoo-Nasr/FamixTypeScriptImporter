@@ -2,19 +2,12 @@ import { TS2Famix } from '../src/ts2famix';
 import 'jest-extended';
 import { Exception } from '../src/lib/famix/src/model/famix';
 
-const filePaths = ["test_src/generics/"];
+const filePaths = ["test_src/generics/**/*"];
 const importer = new TS2Famix();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
 const jsonOutput = fmxRep2.getJSON();
 let parsedModel: Array<any>;
-
-const idToElementMap: Map<number, any> = new Map();
-function initMapFromModel(model) {
-    model.forEach(element => {
-        idToElementMap.set(element.id, element);
-    });
-}
 
 describe('ts2famix', () => {
     // it("should generate valid json", async () => {
