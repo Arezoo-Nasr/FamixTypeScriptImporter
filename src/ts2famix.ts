@@ -251,15 +251,12 @@ export class TS2Famix {
             console.info(`> ${cls.getName()}`);
             let fmxClass = this.createFamixClass(cls, filePath);
             fmxNamespace.addTypes(fmxClass);
-
-            console.info("Extracting decorators:");
             this.extractDecorators(cls, fmxClass, filePath);
 
             console.info("Methods:");
             cls.getMethods().forEach(method => {
                 console.info(` > ${method.getName()}`);
                 let fmxMethod = this.createFamixMethod(method, filePath);
-                console.info("Extracting decorators:");
                 this.extractDecorators(method, fmxMethod, filePath);
                 fmxClass.addMethods(fmxMethod);
             });
@@ -268,7 +265,6 @@ export class TS2Famix {
             cls.getProperties().forEach(prop => {
                 console.info(` > ${prop.getName()}`);
                 let fmxAttr = this.createFamixAttribute(prop, filePath);
-                console.info("Extracting decorators:");
                 this.extractDecorators(prop, fmxAttr, filePath);
                 fmxClass.addAttributes(fmxAttr);
             });
@@ -387,7 +383,6 @@ export class TS2Famix {
                 let paramTypeName = this.getUsableName(param.getType().getText());
                 fmxParam.setDeclaredType(this.getFamixType(paramTypeName));
                 fmxParam.setName(param.getName());
-                console.info("Extracting decorators:");
                 this.extractDecorators(param, fmxParam, filePath);
 
                 fmxMethod.addParameters(fmxParam);
@@ -579,15 +574,17 @@ export class TS2Famix {
         fmxEntity: Famix.Class | Famix.Method | Famix.Attribute | Famix.Parameter,
         filePath: StandardizedFilePath
     ) {
+        console.info(`Extracting decorators:`);
         instance.getDecorators().forEach(decorator => {
 
             console.info(` > @${decorator.getName()}()`);
             console.info(`  ~ type: ${instance.constructor.name.replace('Declaration','')} Decorator`);
             let isFactory = decorator.isDecoratorFactory();
             console.info(`  ~ factory: ${isFactory}`);
-            console.info(`  ~ arguments: ${decorator
-                .getArguments()
-                .reduce((acc, val) => { return acc.concat(`${val.getText()}, `)}, '')
+            console.info(`  ~ arguments: ${
+                decorator
+                    .getArguments()
+                    .reduce((acc, val) => { return acc.concat(`${val.getText()}, `)}, '')
             }`);
 
             let fmxDecorator = this.createFamixDecorator(decorator, filePath, isFactory);
