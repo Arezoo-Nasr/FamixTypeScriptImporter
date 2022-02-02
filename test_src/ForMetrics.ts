@@ -18,7 +18,7 @@ export class ForMetrics {
         }
     }
 }
-export class Fish extends Animal {
+export class Fish extends ForMetrics {
     private color: string;
     constructor() {
         super();
