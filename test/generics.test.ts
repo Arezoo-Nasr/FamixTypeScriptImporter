@@ -1,5 +1,5 @@
 import { TS2Famix } from '../src/ts2famix';
-//import { Exception } from '../src/lib/famix/src/model/famix';
+import { Exception } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/generics/**/*"];
 const importer = new TS2Famix();
@@ -8,7 +8,7 @@ const fmxRep2 = importer.famixRepFromPath(filePaths);
 const jsonOutput = fmxRep2.getJSON();
 let parsedModel: Array<any>;
 
-describe('ts2famix', () => {
+describe.skip('ts2famix', () => {
     // it("should generate valid json", async () => {
     //     parsedModel = JSON.parse(jsonOutput);
     //     expect(parsedModel).toBeTruthy();
