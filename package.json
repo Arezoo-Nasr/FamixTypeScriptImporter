@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "ts-morph": "^12.0.0",
+    "tsutils": "^3.21.0",
     "yargs": "^17.2.1"
   }
 }
