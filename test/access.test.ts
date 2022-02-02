@@ -1,5 +1,4 @@
 import { TS2Famix } from "../src/ts2famix";
-import 'jest-extended';
 import { Attribute, Method } from "../src/lib/famix/src/model/famix";
 import { FamixTypeScriptElementStorage } from "../src/lib/famix/src/famix_JSON_exporter";
 
@@ -27,11 +26,11 @@ describe('Access', () => {
         accessClsMethods = parsedModel.filter(e => testAccessCls.methods.some(m => m.ref == e.id));
         expect(accessClsMethods.length).toBeGreaterThan(0);
         let checkMethodName = accessClsMethods.every(m => expectedMethodNames.includes(m.name));
-        expect(checkMethodName).toBeTrue();
+        expect(checkMethodName).toBe(true);
         accessClsAttributes = parsedModel.filter(e => testAccessCls.attributes.some(a => a.ref == e.id));
         expect(accessClsAttributes.length).toBeGreaterThan(0);
         let checkAttributeName = accessClsAttributes.every(a => expectedAttributeNames.includes(a.name));
-        expect(checkAttributeName).toBeTrue();
+        expect(checkAttributeName).toBe(true);
     });
 
     it("should have an access to privateAttribute in privateMethod", () => {

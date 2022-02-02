@@ -1,5 +1,4 @@
 import { TS2Famix } from "../src/ts2famix";
-import 'jest-extended';
 
 const filePaths = ["test_src/Invocation.ts"];
 const importer = new TS2Famix();
@@ -21,18 +20,18 @@ describe('Invocation', () => {
         invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref == e.id));
         expect(invocationClsMethods.length).toBeGreaterThan(0);
         let checkMethodName = invocationClsMethods.every(m => methodNames.includes(m.name));
-        expect(checkMethodName).toBeTrue();
+        expect(checkMethodName).toBe(true);
     });
 
     it("should have one invocation for method", async () => {
         let checkMethodHasInvocation = invocationClsMethods.every(m => m.receivingInvocations !== undefined);
-        expect(checkMethodHasInvocation).toBeTrue();
+        expect(checkMethodHasInvocation).toBe(true);
 
         invocationClsMethods.forEach(method => {
             let invocationCls = parsedModel.filter(e => e.FM3 == "FamixTypeScript.Invocation"
                 && method.receivingInvocations.some(m => m.ref == e.id));
             let checkHasRelatedToMethod = invocationCls.every(a => a.receiver !== undefined && a.receiver.ref == method.id);
-            expect(checkHasRelatedToMethod).toBeTrue();
+            expect(checkHasRelatedToMethod).toBe(true);
         });
     });
 

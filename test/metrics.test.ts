@@ -1,5 +1,4 @@
 import { TS2Famix } from '../src/ts2famix';
-import 'jest-extended';
 import { Method } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/ForMetrics.ts"];

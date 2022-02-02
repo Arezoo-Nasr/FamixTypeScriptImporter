@@ -1,5 +1,4 @@
 import { TS2Famix } from '../src/ts2famix';
-import 'jest-extended';
 
 const filePaths = ["test_src/Inheritance.ts"];
 const importer = new TS2Famix();
@@ -31,7 +30,7 @@ describe('ts2famix', () => {
     it("should contain a Flyable interface", async () => {
         const flyableInterface = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Flyable"))[0];
         expect(flyableInterface).toBeTruthy();
-        expect(flyableInterface.isInterface).toBeTrue();
+        expect(flyableInterface.isInterface).toBe(true);
     })
     it("should contain a Bird class who has a superclass Animal and implements a Flyable interface", async () => {
         const animalCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Animal"))[0];
