@@ -8,6 +8,8 @@ import { getSyntaxKindName, ModuleKind, SyntaxKind } from "@ts-morph/common";
 import { number, string } from "yargs";
 import { Interface } from "readline";
 
+const cyclomatic = require('./lib/ts-complex/cyclomatic-service');
+
 export class TS2Famix {
 
     private readonly fmxNamespacesMap = new Map<string, Famix.Namespace>();
@@ -17,6 +19,8 @@ export class TS2Famix {
     private allInterfaces = Array<InterfaceDeclaration>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object(variable,attribute) and ts-morph object
     private arrayOfInvocation = new Map<number, any>(); // id of famix object(method) and ts-morph object
+
+    private currentCC: any; // store cc metrics for current file
 
     famixRepFromPath(paths: Array<string>) {
         try {
@@ -29,6 +33,8 @@ export class TS2Famix {
 
                 this.makeFamixIndexFileAnchor(file.getFilePath(), file.getStart(), file.getEnd(), null);
 
+                this.currentCC = cyclomatic.calculate(file.getFilePath());
+
                 let currentModules: ModuleDeclaration[] = file.getModules();
                 console.info("Module(s):")
                 if (currentModules.length > 0) {
@@ -39,7 +45,7 @@ export class TS2Famix {
             // Create accesses
             console.log(`Creating accesses:`);
             this.arrayOfAccess.forEach((value, key) => {
-                console.log(`  Accesss(es) to ${value.getName()}:`);
+                console.log(`  Access(es) to ${value.getName()}:`);
                 let famixStructuralElement = this.fmxRep.getFamixElementById(key) as Famix.StructuralEntity;
                 let nodes = value.findReferencesAsNodes() as Array<Identifier>;
                 nodes.forEach(node => {
@@ -71,7 +77,9 @@ export class TS2Famix {
                     }
                 });
             });
+            console.log(`Creating invocations:`);
             this.arrayOfInvocation.forEach((value, key) => {
+                console.log(`  Invocation(s) to ${value.getName()}:`);
                 let famixBehaviouralElement = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
                 let nodes = value.findReferencesAsNodes() as Array<Identifier>;
                 nodes.forEach(node => {
@@ -328,6 +336,19 @@ export class TS2Famix {
             ///
         }
 
+        if (!isSignature) {//////////////////
+            // let MethodeCyclo = 1;
+            // (method as MethodDeclaration).getStatements().forEach(stmt => {
+            //     if ([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement, SyntaxKind.DoStatement]
+            //         .includes(stmt.getKind())) {
+            //         MethodeCyclo++;
+            //     }
+            // });
+
+            fmxMethod.setCyclomaticComplexity(this.currentCC[fmxMethod.getName()]);
+        }
+
+
         let methodTypeName = this.getUsableName(method.getReturnType().getText());
         let fmxType = this.getFamixType(methodTypeName);
         fmxMethod.setDeclaredType(fmxType);
@@ -381,19 +402,7 @@ export class TS2Famix {
             }
             fmxMethod.setNumberOfStatements(method.getStatements().length);
         }
-        //
-        // if (!isSignature) {//////////////////
-        //     let MethodeCyclo = 1;
-        //     method.getStatements().forEach(stmt => {
-        //         if ([SyntaxKind.IfStatement, SyntaxKind.WhileStatement, SyntaxKind.ForStatement, SyntaxKind.DoStatement]
-        //             .includes(stmt.getKind())) {
-        //             MethodeCyclo++;
-        //         }
-        //     });
-
-        //     fmxMethod.setCyclomaticComplexity(MethodeCyclo);
-        // }
-
+        
         return fmxMethod;
     }
 
