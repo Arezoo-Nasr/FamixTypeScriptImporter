@@ -1,1 +1,535 @@
-[{"FM3":"FamixTypeScript.Class","id":5,"sourceAnchor":{"ref":6},"name":"class1","container":{"ref":3},"subInheritances":[{"ref":36}],"behavioursWithDeclaredType":[{"ref":10}],"methods":[{"ref":10}],"attributes":[{"ref":7}],"isInterface":false},{"FM3":"FamixTypeScript.Class","id":12,"sourceAnchor":{"ref":13},"name":"class2","container":{"ref":3},"superInheritances":[{"ref":36},{"ref":37}],"methods":[{"ref":14}],"isInterface":false},{"FM3":"FamixTypeScript.Class","id":20,"sourceAnchor":{"ref":21},"name":"interface1","container":{"ref":3},"subInheritances":[{"ref":37}],"isInterface":true},{"FM3":"FamixTypeScript.CustomSourceLanguage","id":1,"name":"TypeScript"},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":2,"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":0,"endPos":527},{"FM3":"FamixTypeScript.Namespace","id":3,"sourceAnchor":{"ref":4},"name":"MyNamespace","types":[{"ref":5},{"ref":12},{"ref":20}]},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":4,"element":{"ref":3},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":0,"endPos":475},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":6,"element":{"ref":5},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":35,"endPos":169},{"FM3":"FamixTypeScript.Attribute","id":7,"sourceAnchor":{"ref":9},"name":"projectName","incomingAccesses":[{"ref":28},{"ref":30}],"declaredType":{"ref":8},"hasClassScope":true,"parentType":{"ref":5}},{"FM3":"FamixTypeScript.Type","id":8,"name":"string","behavioursWithDeclaredType":[{"ref":14}],"structuresWithDeclaredType":[{"ref":7},{"ref":16},{"ref":18},{"ref":26}]},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":9,"element":{"ref":7},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":60,"endPos":90},{"FM3":"FamixTypeScript.Method","id":10,"sourceAnchor":{"ref":11},"name":"constructor","fullyQualifiedName":"\"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel\".MyNamespace.class1.__constructor","numberOfParameters":0,"declaredType":{"ref":5},"numberOfStatements":1,"numberOfLinesOfCode":2,"accesses":[{"ref":28}],"kind":"Constructor","parentType":{"ref":5}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":11,"element":{"ref":10},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":96,"endPos":165},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":13,"element":{"ref":12},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":232,"endPos":472},{"FM3":"FamixTypeScript.Method","id":14,"sourceAnchor":{"ref":15},"name":"getName","fullyQualifiedName":"\"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel\".MyNamespace.class2.getName","numberOfParameters":1,"declaredType":{"ref":8},"localVariables":[{"ref":18}],"numberOfStatements":2,"numberOfLinesOfCode":3,"accesses":[{"ref":30},{"ref":32},{"ref":34}],"parameters":[{"ref":16}],"kind":"MethodDeclaration","parentType":{"ref":12}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":15,"element":{"ref":14},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":321,"endPos":468},{"FM3":"FamixTypeScript.Parameter","id":16,"sourceAnchor":{"ref":17},"name":"university","incomingAccesses":[{"ref":32}],"declaredType":{"ref":8},"parentBehaviouralEntity":{"ref":14}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":17,"element":{"ref":16},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":336,"endPos":354},{"FM3":"FamixTypeScript.LocalVariable","id":18,"sourceAnchor":{"ref":19},"name":"finalString","incomingAccesses":[{"ref":34}],"declaredType":{"ref":8},"parentBehaviouralEntity":{"ref":14}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":19,"element":{"ref":18},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":374,"endPos":438},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":21,"element":{"ref":20},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":174,"endPos":227},{"FM3":"FamixTypeScript.Namespace","id":22,"name":"DefaultNamespace","functions":[{"ref":23}]},{"FM3":"FamixTypeScript.Function","id":23,"sourceAnchor":{"ref":25},"name":"function1","fullyQualifiedName":"function1","numberOfParameters":0,"declaredType":{"ref":24},"localVariables":[{"ref":26}],"numberOfStatements":1,"numberOfLinesOfCode":2,"container":{"ref":22}},{"FM3":"FamixTypeScript.Type","id":24,"name":"void","behavioursWithDeclaredType":[{"ref":23}]},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":25,"element":{"ref":23},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":479,"endPos":527},{"FM3":"FamixTypeScript.LocalVariable","id":26,"sourceAnchor":{"ref":27},"name":"localVar","declaredType":{"ref":8},"parentBehaviouralEntity":{"ref":23}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":27,"element":{"ref":26},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":508,"endPos":523},{"FM3":"FamixTypeScript.Access","id":28,"sourceAnchor":{"ref":29},"accessor":{"ref":10},"variable":{"ref":7}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":29,"element":{"ref":28},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":121,"endPos":132},{"FM3":"FamixTypeScript.Access","id":30,"sourceAnchor":{"ref":31},"accessor":{"ref":14},"variable":{"ref":7}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":31,"element":{"ref":30},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":401,"endPos":412},{"FM3":"FamixTypeScript.Access","id":32,"sourceAnchor":{"ref":33},"accessor":{"ref":14},"variable":{"ref":16}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":33,"element":{"ref":32},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":428,"endPos":438},{"FM3":"FamixTypeScript.Access","id":34,"sourceAnchor":{"ref":35},"accessor":{"ref":14},"variable":{"ref":18}},{"FM3":"FamixTypeScript.IndexedFileAnchor","id":35,"element":{"ref":34},"fileName":"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts","startPos":451,"endPos":462},{"FM3":"FamixTypeScript.Inheritance","id":36,"superclass":{"ref":5},"subclass":{"ref":12}},{"FM3":"FamixTypeScript.Inheritance","id":37,"superclass":{"ref":20},"subclass":{"ref":12}}]
+[
+    {
+        "FM3": "FamixTypeScript.Class",
+        "id": 5,
+        "sourceAnchor": {
+            "ref": 6
+        },
+        "name": "class1",
+        "container": {
+            "ref": 3
+        },
+        "subInheritances": [
+            {
+                "ref": 36
+            }
+        ],
+        "behavioursWithDeclaredType": [
+            {
+                "ref": 10
+            }
+        ],
+        "methods": [
+            {
+                "ref": 10
+            }
+        ],
+        "attributes": [
+            {
+                "ref": 7
+            }
+        ],
+        "isInterface": false
+    },
+    {
+        "FM3": "FamixTypeScript.Class",
+        "id": 12,
+        "sourceAnchor": {
+            "ref": 13
+        },
+        "name": "class2",
+        "container": {
+            "ref": 3
+        },
+        "superInheritances": [
+            {
+                "ref": 36
+            },
+            {
+                "ref": 37
+            }
+        ],
+        "methods": [
+            {
+                "ref": 14
+            }
+        ],
+        "isInterface": false
+    },
+    {
+        "FM3": "FamixTypeScript.Class",
+        "id": 20,
+        "sourceAnchor": {
+            "ref": 21
+        },
+        "name": "interface1",
+        "container": {
+            "ref": 3
+        },
+        "subInheritances": [
+            {
+                "ref": 37
+            }
+        ],
+        "isInterface": true
+    },
+    {
+        "FM3": "FamixTypeScript.CustomSourceLanguage",
+        "id": 1,
+        "name": "TypeScript"
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 2,
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 0,
+        "endPos": 527
+    },
+    {
+        "FM3": "FamixTypeScript.Namespace",
+        "id": 3,
+        "sourceAnchor": {
+            "ref": 4
+        },
+        "name": "MyNamespace",
+        "types": [
+            {
+                "ref": 5
+            },
+            {
+                "ref": 12
+            },
+            {
+                "ref": 20
+            }
+        ]
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 4,
+        "element": {
+            "ref": 3
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 0,
+        "endPos": 475
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 6,
+        "element": {
+            "ref": 5
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 35,
+        "endPos": 169
+    },
+    {
+        "FM3": "FamixTypeScript.Attribute",
+        "id": 7,
+        "sourceAnchor": {
+            "ref": 9
+        },
+        "name": "projectName",
+        "incomingAccesses": [
+            {
+                "ref": 28
+            },
+            {
+                "ref": 30
+            }
+        ],
+        "declaredType": {
+            "ref": 8
+        },
+        "hasClassScope": true,
+        "parentType": {
+            "ref": 5
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.Type",
+        "id": 8,
+        "name": "string",
+        "behavioursWithDeclaredType": [
+            {
+                "ref": 14
+            }
+        ],
+        "structuresWithDeclaredType": [
+            {
+                "ref": 7
+            },
+            {
+                "ref": 16
+            },
+            {
+                "ref": 18
+            },
+            {
+                "ref": 26
+            }
+        ]
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 9,
+        "element": {
+            "ref": 7
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 60,
+        "endPos": 90
+    },
+    {
+        "FM3": "FamixTypeScript.Method",
+        "id": 10,
+        "sourceAnchor": {
+            "ref": 11
+        },
+        "name": "constructor",
+        "fullyQualifiedName": "\"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel\".MyNamespace.class1.__constructor",
+        "numberOfParameters": 0,
+        "declaredType": {
+            "ref": 5
+        },
+        "numberOfStatements": 1,
+        "numberOfLinesOfCode": 2,
+        "accesses": [
+            {
+                "ref": 28
+            }
+        ],
+        "kind": "Constructor",
+        "parentType": {
+            "ref": 5
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 11,
+        "element": {
+            "ref": 10
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 96,
+        "endPos": 165
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 13,
+        "element": {
+            "ref": 12
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 232,
+        "endPos": 472
+    },
+    {
+        "FM3": "FamixTypeScript.Method",
+        "id": 14,
+        "sourceAnchor": {
+            "ref": 15
+        },
+        "name": "getName",
+        "fullyQualifiedName": "\"C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel\".MyNamespace.class2.getName",
+        "numberOfParameters": 1,
+        "declaredType": {
+            "ref": 8
+        },
+        "localVariables": [
+            {
+                "ref": 18
+            }
+        ],
+        "numberOfStatements": 2,
+        "numberOfLinesOfCode": 3,
+        "accesses": [
+            {
+                "ref": 30
+            },
+            {
+                "ref": 32
+            },
+            {
+                "ref": 34
+            }
+        ],
+        "parameters": [
+            {
+                "ref": 16
+            }
+        ],
+        "kind": "MethodDeclaration",
+        "parentType": {
+            "ref": 12
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 15,
+        "element": {
+            "ref": 14
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 321,
+        "endPos": 468
+    },
+    {
+        "FM3": "FamixTypeScript.Parameter",
+        "id": 16,
+        "sourceAnchor": {
+            "ref": 17
+        },
+        "name": "university",
+        "incomingAccesses": [
+            {
+                "ref": 32
+            }
+        ],
+        "declaredType": {
+            "ref": 8
+        },
+        "parentBehaviouralEntity": {
+            "ref": 14
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 17,
+        "element": {
+            "ref": 16
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 336,
+        "endPos": 354
+    },
+    {
+        "FM3": "FamixTypeScript.LocalVariable",
+        "id": 18,
+        "sourceAnchor": {
+            "ref": 19
+        },
+        "name": "finalString",
+        "incomingAccesses": [
+            {
+                "ref": 34
+            }
+        ],
+        "declaredType": {
+            "ref": 8
+        },
+        "parentBehaviouralEntity": {
+            "ref": 14
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 19,
+        "element": {
+            "ref": 18
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 374,
+        "endPos": 438
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 21,
+        "element": {
+            "ref": 20
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 174,
+        "endPos": 227
+    },
+    {
+        "FM3": "FamixTypeScript.Namespace",
+        "id": 22,
+        "name": "DefaultNamespace",
+        "functions": [
+            {
+                "ref": 23
+            }
+        ]
+    },
+    {
+        "FM3": "FamixTypeScript.Function",
+        "id": 23,
+        "sourceAnchor": {
+            "ref": 25
+        },
+        "name": "function1",
+        "fullyQualifiedName": "function1",
+        "numberOfParameters": 0,
+        "declaredType": {
+            "ref": 24
+        },
+        "localVariables": [
+            {
+                "ref": 26
+            }
+        ],
+        "numberOfStatements": 1,
+        "numberOfLinesOfCode": 2,
+        "container": {
+            "ref": 22
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.Type",
+        "id": 24,
+        "name": "void",
+        "behavioursWithDeclaredType": [
+            {
+                "ref": 23
+            }
+        ]
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 25,
+        "element": {
+            "ref": 23
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 479,
+        "endPos": 527
+    },
+    {
+        "FM3": "FamixTypeScript.LocalVariable",
+        "id": 26,
+        "sourceAnchor": {
+            "ref": 27
+        },
+        "name": "localVar",
+        "declaredType": {
+            "ref": 8
+        },
+        "parentBehaviouralEntity": {
+            "ref": 23
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 27,
+        "element": {
+            "ref": 26
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 508,
+        "endPos": 523
+    },
+    {
+        "FM3": "FamixTypeScript.Access",
+        "id": 28,
+        "sourceAnchor": {
+            "ref": 29
+        },
+        "accessor": {
+            "ref": 10
+        },
+        "variable": {
+            "ref": 7
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 29,
+        "element": {
+            "ref": 28
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 121,
+        "endPos": 132
+    },
+    {
+        "FM3": "FamixTypeScript.Access",
+        "id": 30,
+        "sourceAnchor": {
+            "ref": 31
+        },
+        "accessor": {
+            "ref": 14
+        },
+        "variable": {
+            "ref": 7
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 31,
+        "element": {
+            "ref": 30
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 401,
+        "endPos": 412
+    },
+    {
+        "FM3": "FamixTypeScript.Access",
+        "id": 32,
+        "sourceAnchor": {
+            "ref": 33
+        },
+        "accessor": {
+            "ref": 14
+        },
+        "variable": {
+            "ref": 16
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 33,
+        "element": {
+            "ref": 32
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 428,
+        "endPos": 438
+    },
+    {
+        "FM3": "FamixTypeScript.Access",
+        "id": 34,
+        "sourceAnchor": {
+            "ref": 35
+        },
+        "accessor": {
+            "ref": 14
+        },
+        "variable": {
+            "ref": 18
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.IndexedFileAnchor",
+        "id": 35,
+        "element": {
+            "ref": 34
+        },
+        "fileName": "C:/Users/Arezoo/Desktop/Final Project/Project/FamixTypeScriptImporter/resources/typescriptmodel.ts",
+        "startPos": 451,
+        "endPos": 462
+    },
+    {
+        "FM3": "FamixTypeScript.Inheritance",
+        "id": 36,
+        "superclass": {
+            "ref": 5
+        },
+        "subclass": {
+            "ref": 12
+        }
+    },
+    {
+        "FM3": "FamixTypeScript.Inheritance",
+        "id": 37,
+        "superclass": {
+            "ref": 20
+        },
+        "subclass": {
+            "ref": 12
+        }
+    }
+]
