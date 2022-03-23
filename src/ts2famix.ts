@@ -8,6 +8,8 @@ import { getSyntaxKindName, ModuleKind, SyntaxKind } from "@ts-morph/common";
 import { number, string } from "yargs";
 import { Interface } from "readline";
 
+const UNKNOWN_VALUE = '(unknown due to parsing error)';
+
 const cyclomatic = require('./lib/ts-complex/cyclomatic-service');
 
 export class TS2Famix {
@@ -47,35 +49,40 @@ export class TS2Famix {
             this.arrayOfAccess.forEach((value, key) => {
                 console.log(`  Access(es) to ${value.getName()}:`);
                 let famixStructuralElement = this.fmxRep.getFamixElementById(key) as Famix.StructuralEntity;
-                let nodes = value.findReferencesAsNodes() as Array<Identifier>;
-                nodes.forEach(node => {
-                    console.log(`    ${node.getSymbol().getName()}`);
-                    let scopeDeclaration = node.getAncestors()
-                        .find(a => a.getKind() == SyntaxKind.MethodDeclaration
-                            || a.getKind() == SyntaxKind.Constructor
-                            || a.getKind() == SyntaxKind.FunctionDeclaration
-                            //|| a.getKind() == SyntaxKind.SourceFile
-                            //|| a.getKind() == SyntaxKind.ModuleDeclaration
-                        );//////////for global variable it must work
-
-                    // let accessor = this.fmxRep.getFamixElementby(scopeDeclaration.getSourceFile().getFilePath()
-                    //     , scopeDeclaration.getStart()) as Famix.BehaviouralEntity;
-                    // let fmxAccess = new Famix.Access(this.fmxRep);
-                    // fmxAccess.setAccessor(accessor);
-                    // fmxAccess.setVariable(famixStructuralElement);
-                    if (scopeDeclaration) {
-                        let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
-                        let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
-                        console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
-                        let fmxAccess = new Famix.Access(this.fmxRep);
-                        fmxAccess.setAccessor(accessor);
-                        fmxAccess.setVariable(famixStructuralElement);
-
-                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxAccess);
-                    } else {
-                        console.log(`---error--- Scope declaration is invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
-                    }
-                });
+                try {
+                    let nodes = value.findReferencesAsNodes() as Array<Identifier>;
+                    nodes.forEach(node => {
+                        console.log(`    ${node.getSymbol().getName()}`);
+                        let scopeDeclaration = node.getAncestors()
+                            .find(a => a.getKind() == SyntaxKind.MethodDeclaration
+                                || a.getKind() == SyntaxKind.Constructor
+                                || a.getKind() == SyntaxKind.FunctionDeclaration
+                                //|| a.getKind() == SyntaxKind.SourceFile
+                                //|| a.getKind() == SyntaxKind.ModuleDeclaration
+                            );//////////for global variable it must work
+    
+                        // let accessor = this.fmxRep.getFamixElementby(scopeDeclaration.getSourceFile().getFilePath()
+                        //     , scopeDeclaration.getStart()) as Famix.BehaviouralEntity;
+                        // let fmxAccess = new Famix.Access(this.fmxRep);
+                        // fmxAccess.setAccessor(accessor);
+                        // fmxAccess.setVariable(famixStructuralElement);
+                        if (scopeDeclaration) {
+                            let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
+                            let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                            console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
+                            let fmxAccess = new Famix.Access(this.fmxRep);
+                            fmxAccess.setAccessor(accessor);
+                            fmxAccess.setVariable(famixStructuralElement);
+    
+                            this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxAccess);
+                        } else {
+                            console.log(`---error--- Scope declaration is invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+                        }
+                    });
+                        
+                } catch (error) {
+                    console.info(`  > WARNING: got exception ${error}. Continuing...`);
+                }
             });
             console.log(`Creating invocations:`);
             this.arrayOfInvocation.forEach((value, key) => {
@@ -251,7 +258,11 @@ export class TS2Famix {
 
             console.info("Constructors:");
             cls.getConstructors().forEach(cstr => {
-                console.info(` > ${cstr.getSignature().getDeclaration().getText().split("\n")[0].trim()} ...`);
+                try {
+                    console.info(` > ${cstr.getSignature().getDeclaration().getText().split("\n")[0].trim()} ...`);                    
+                } catch (error) {
+                    console.info(` > WARNING: can't get signature for constructor!`);
+                }
                 let fmxMethod = this.createFamixMethod(cstr, filePath, false, true);
                 fmxClass.addMethods(fmxMethod);
             });
@@ -349,12 +360,23 @@ export class TS2Famix {
         }
 
 
-        let methodTypeName = this.getUsableName(method.getReturnType().getText());
+        let methodTypeName = UNKNOWN_VALUE; 
+        try {
+            methodTypeName = this.getUsableName(method.getReturnType().getText());            
+        } catch (error) {
+            console.info(`  > WARNING -- failed to get usable name for return type of method: ${fmxMethod.getName()}`);
+        }
         let fmxType = this.getFamixType(methodTypeName);
         fmxMethod.setDeclaredType(fmxType);
         fmxMethod.setKind(method.getKindName());
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
-        fmxMethod.setFullyQualifiedName(method.getSymbol().getFullyQualifiedName());
+        let fqn = UNKNOWN_VALUE;
+        try {
+            fqn = method.getSymbol().getFullyQualifiedName();
+        } catch (error) {
+            console.info(`  > WARNING -- failed to get fully qualified name for method: ${fmxMethod.getName()}`);
+        }
+        fmxMethod.setFullyQualifiedName(fqn);
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
         //Parameters
@@ -362,7 +384,12 @@ export class TS2Famix {
         if (parameters.length > 0) {
             parameters.forEach(param => {
                 let fmxParam = new Famix.Parameter(this.fmxRep);
-                let paramTypeName = this.getUsableName(param.getType().getText());
+                let paramTypeName = UNKNOWN_VALUE;
+                try {
+                    paramTypeName = this.getUsableName(param.getType().getText());
+                } catch (error) {
+                    console.info(`  > WARNING -- failed to get usable name for param: ${param.getName()}`);
+                }
                 fmxParam.setDeclaredType(this.getFamixType(paramTypeName));
                 fmxParam.setName(param.getName());
                 fmxMethod.addParameters(fmxParam);
@@ -385,11 +412,20 @@ export class TS2Famix {
                 console.info(`  Variables:`);
 
                 variables.forEach(variable => {
-                    let fullyQualifiedLocalVarName = `${method.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
-                    console.info(`  > ${fullyQualifiedLocalVarName}`);
+                    try {
+                        let fullyQualifiedLocalVarName = `${variable.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
+                        console.info(`  > ${fullyQualifiedLocalVarName}`);                        
+                    } catch (error) {
+                        console.info(`  > WARNING -- failed to get fullyQualifiedName for ${variable.getName()}`);
+                    }
 
                     let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
-                    let localVariableTypeName = this.getUsableName(variable.getType().getText());
+                    let localVariableTypeName:string = UNKNOWN_VALUE;
+                    try {
+                        localVariableTypeName = this.getUsableName(variable.getType().getText());
+                    } catch (error) {
+                        console.info(`  > WARNING -- failed to get text of type for ${variable.getName()}`);
+                    }
                     fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
                     fmxLocalVariable.setName(variable.getName());
                     fmxMethod.addLocalVariables(fmxLocalVariable);
@@ -411,11 +447,23 @@ export class TS2Famix {
         let fmxFunction = new Famix.Function(this.fmxRep);
         fmxFunction.setName(func.getName());
 
-        let functionTypeName = this.getUsableName(func.getReturnType().getText());
+        let functionTypeName = UNKNOWN_VALUE;
+        try {
+            functionTypeName = this.getUsableName(func.getReturnType().getText());
+        } catch (error) {
+            console.info(`  > WARNING - unable to get a usable name for function return type of: ${func.getName()}`)
+        }
         let fmxType = this.getFamixType(functionTypeName);
         fmxFunction.setDeclaredType(fmxType);
         fmxFunction.setNumberOfLinesOfCode(func.getEndLineNumber() - func.getStartLineNumber());
-        fmxFunction.setFullyQualifiedName(func.getSymbol().getFullyQualifiedName());
+
+        let fullyQualifiedName = UNKNOWN_VALUE;
+        try {
+            fullyQualifiedName = func.getSymbol().getFullyQualifiedName();
+        } catch (error) {
+            console.info(`  > WARNING - unable to get a fully qualified name for function return type of: ${func.getName()}`)
+        }
+        fmxFunction.setFullyQualifiedName(fullyQualifiedName);
 
         this.makeFamixIndexFileAnchor(filePath, func.getStart(), func.getEnd(), fmxFunction);
 
@@ -424,7 +472,12 @@ export class TS2Famix {
         if (parameters.length > 0) {
             parameters.forEach(param => {
                 let fmxParam = new Famix.Parameter(this.fmxRep);
-                let paramTypeName = this.getUsableName(param.getType().getText());
+                let paramTypeName = UNKNOWN_VALUE;
+                try {
+                    paramTypeName = this.getUsableName(param.getType().getText());
+                } catch (error) {
+                    console.info(`  > WARNING - unable to get a usable name for parameter: ${param.getName()}`)
+                }
                 fmxParam.setDeclaredType(this.getFamixType(paramTypeName));
                 fmxParam.setName(param.getName());
                 fmxFunction.addParameters(fmxParam);
@@ -443,11 +496,20 @@ export class TS2Famix {
             console.info(`  Variables:`);
 
             variables.forEach(variable => {
-                let fullyQualifiedLocalVarName = `${func.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
-                console.info(`  > ${fullyQualifiedLocalVarName}`);
+                try {
+                    let fullyQualifiedLocalVarName = `${variable.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
+                    console.info(`  > ${fullyQualifiedLocalVarName}`);                        
+                } catch (error) {
+                    console.info(`  > WARNING -- failed to get fullyQualifiedName for ${variable.getName()}`);
+                }
 
                 let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
-                let localVariableTypeName = this.getUsableName(variable.getType().getText());
+                let localVariableTypeName:string = '(uninitialized)';
+                try {
+                    localVariableTypeName = this.getUsableName(variable.getType().getText());
+                } catch (error) {
+                    console.info(`  > WARNING -- failed to get text of type for ${variable.getName()}`);
+                }
                 fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
                 fmxLocalVariable.setName(variable.getName());
                 fmxFunction.addLocalVariables(fmxLocalVariable);
@@ -467,7 +529,12 @@ export class TS2Famix {
         let fmxAttribute = new Famix.Attribute(this.fmxRep);
         fmxAttribute.setName(property.getName());
 
-        let propTypeName = property.getType().getText();
+        let propTypeName = UNKNOWN_VALUE;
+        try {
+            propTypeName = property.getType().getText();
+        } catch (error) {
+            console.info(`   > WARNING: unable to get type text for ${property.getName()}`);
+        }
         let fmxType = this.getFamixType(propTypeName);
         fmxAttribute.setDeclaredType(fmxType);
         fmxAttribute.setHasClassScope(true);
