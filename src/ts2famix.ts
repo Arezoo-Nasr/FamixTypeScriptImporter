@@ -132,8 +132,10 @@ export class TS2Famix {
                         const completeName = inter.getText();
                         const fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
                         const subImplements = this.fmxTypes.get(cls.getName());
-                        fmxImplements.setSuperclass(fmxSuperInter);
-                        fmxImplements.setSubclass(subImplements);
+                        if (fmxImplements) {
+                            fmxImplements.setSuperclass(fmxSuperInter);
+                            fmxImplements.setSubclass(subImplements);
+                        }
                     }
                 });
             });

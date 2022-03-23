@@ -17,7 +17,14 @@ export class Inheritance extends Association {
   // oneMany.Setter
   public setSuperclass(newSuperclass: Type) {
     this.inheritanceSuperclass = newSuperclass;
-    newSuperclass.getSubInheritances().add(this);
+    try {
+      newSuperclass.getSubInheritances().add(this);
+    } catch (error) {
+      if (newSuperclass) 
+        console.info(` > ERROR - couldn't get subInheritances() for class ${newSuperclass.getName()}`)
+      else 
+        console.info(` > ERROR - couldn't get subInheritances() for class (UNDEFINED)`)
+    }
   }
 
   private inheritanceSubclass: Type;
