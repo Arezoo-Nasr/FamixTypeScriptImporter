@@ -88,27 +88,31 @@ export class TS2Famix {
             this.arrayOfInvocation.forEach((value, key) => {
                 console.log(`  Invocation(s) to ${value.getName()}:`);
                 let famixBehaviouralElement = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
-                let nodes = value.findReferencesAsNodes() as Array<Identifier>;
-                nodes.forEach(node => {
-                    let scopeDeclaration = node.getAncestors()
-                        .find(a => a.getKind() == SyntaxKind.MethodDeclaration
-                            || a.getKind() == SyntaxKind.Constructor
-                            || a.getKind() == SyntaxKind.FunctionDeclaration
-                            //|| a.getKind() == SyntaxKind.SourceFile
-                        );//////////for global variable it must work
-                    if (scopeDeclaration) {
-                        let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
-                        let receiver = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
-                        let fmxInvovation = new Famix.Invocation(this.fmxRep);
-                        fmxInvovation.setReceiver(receiver);
-                        fmxInvovation.setSender(famixBehaviouralElement);
+                try {
+                    let nodes = value.findReferencesAsNodes() as Array<Identifier>;
+                    nodes.forEach(node => {
+                        let scopeDeclaration = node.getAncestors()
+                            .find(a => a.getKind() == SyntaxKind.MethodDeclaration
+                                || a.getKind() == SyntaxKind.Constructor
+                                || a.getKind() == SyntaxKind.FunctionDeclaration
+                                //|| a.getKind() == SyntaxKind.SourceFile
+                            );//////////for global variable it must work
+                        if (scopeDeclaration) {
+                            let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
+                            let receiver = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                            let fmxInvovation = new Famix.Invocation(this.fmxRep);
+                            fmxInvovation.setReceiver(receiver);
+                            fmxInvovation.setSender(famixBehaviouralElement);
 
-                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
-                    } else {
-                        console.error(`---error--- scopeDeclaration invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
-                    }
+                            this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
+                        } else {
+                            console.error(`---error--- scopeDeclaration invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+                        }
 
-                });
+                    });
+                } catch (error) {
+                    console.info(`  > WARNING: got exception ${error}. Continuing...`);
+                }
             });
             //Inheritance
             this.allClasses.forEach(cls => {
