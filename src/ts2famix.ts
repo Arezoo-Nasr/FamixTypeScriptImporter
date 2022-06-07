@@ -1,6 +1,6 @@
 import {
     ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration
-    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, VariableDeclaration
+    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, TypeParameterDeclaration, VariableDeclaration
 } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -265,8 +265,12 @@ export class TS2Famix {
         classesInFile.forEach(cls => {
             console.info(`> ${cls.getName()}`);
             let fmxClass
-            if (cls.getTypeParameters().length) {
+            const isGenerics = cls.getTypeParameters().length;
+            if (isGenerics) {
                 fmxClass = this.createFamixGenerics(cls, filePath);
+                cls.getTypeParameters().forEach(p => {
+                    fmxClass.addParameterType(this.createFamixParameterType(p));
+                })
             }
             else {
                  fmxClass = this.createFamixClass(cls, filePath);
@@ -565,6 +569,12 @@ export class TS2Famix {
         fmxFunction.setNumberOfStatements(func.getStatements().length);
 
         return fmxFunction;
+    }
+
+    private createFamixParameterType(tp: TypeParameterDeclaration) {
+        const fmxParameterType = new Famix.ParameterType(this.fmxRep);
+        fmxParameterType.setName(tp.getName());
+        return fmxParameterType;
     }
 
     private createFamixAttribute(property: PropertyDeclaration | PropertySignature, filePath, isSignature = false): Famix.Attribute {

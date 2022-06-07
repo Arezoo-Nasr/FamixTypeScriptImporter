@@ -16,5 +16,8 @@ describe('generics ts2famix', () => {
     it("should contain a generic class MyDao", () => {
         expect((fmxRep2.getAllEntitiesWithType("ParameterizableClass")[0] as ParameterizableClass).getName()).toBe("MyDao")
     });
+    it("should contain a generic class MyDao with a parameter type T", () => {
+        expect((fmxRep2.getAllEntitiesWithType("ParameterizableClass")[0] as ParameterizableClass).getParameterTypes().size).toBe(1)
+    });
 
 });
