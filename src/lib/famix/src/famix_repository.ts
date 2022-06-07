@@ -25,6 +25,12 @@ export class FamixRepository {
     this.repo = new FamixRepository();
   }
 
+  public getAllEntitiesWithType(theType: string) {
+    return Array.from(this.elements.values())
+    .filter(e => (e as any).constructor.name == theType).concat(Array.from(this.famixClasses.values())
+    .filter(e => (e as any).constructor.name == theType));
+  }
+
   public createOrGetFamixClass(name: string, isInterface?: boolean): Class {
     let newClass = this.getFamixClass(name);
     if (newClass === undefined) {
