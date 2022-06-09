@@ -11,7 +11,7 @@ let invocationCls;
 let invocationClsMethods: Array<any>;
 
 describe('Invocation', () => {
-    it("should contain a class Class3 with one method: getString", async () => {
+    it("should contain a class Class3 with one method: getString", () => {
         parsedModel = JSON.parse(jsonOutput);
         invocationCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Class3"))[0];
         expect(invocationCls.methods.length).toBe(1);
@@ -23,7 +23,7 @@ describe('Invocation', () => {
         expect(checkMethodName).toBe(true);
     });
 
-    it("should have one invocation for method", async () => {
+    it("should have one invocation for method",  () => {
         let checkMethodHasInvocation = invocationClsMethods.every(m => m.receivingInvocations !== undefined);
         expect(checkMethodHasInvocation).toBe(true);
 
