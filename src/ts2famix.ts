@@ -20,7 +20,7 @@ export class TS2Famix {
     private allClasses = new Array<ClassDeclaration>();
     private allInterfaces = Array<InterfaceDeclaration>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object(variable,attribute) and ts-morph object
-    private arrayOfInvocation = new Map<number, any>(); // id of famix object(method) and ts-morph object
+    private arrayOfMethodInvocations = new Map<number, any>(); // id of famix object(method) and ts-morph object
 
     private currentCC: any; // store cc metrics for current file
 
@@ -82,24 +82,26 @@ export class TS2Famix {
 
     private generateInvocations() {
         console.log(`Creating invocations:`);
-        this.arrayOfInvocation.forEach((value, key) => {
-            console.log(`  Invocation(s) to ${value.getName()}:`);
-            let famixBehaviouralElement = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
+        this.arrayOfMethodInvocations.forEach((savedMethod, key) => {
+            console.log(`  Invocation(s) to ${savedMethod.getName()}:`);
+            const fmxMethod = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
             try {
-                let nodes = value.findReferencesAsNodes() as Array<Identifier>;
+                const nodes = savedMethod.findReferencesAsNodes() as Array<Identifier>;
                 nodes.forEach(node => {
-                    let scopeDeclaration = node.getAncestors()
+                    const nodeReferenceAncestor = node.getAncestors()
                         .find(a => a.getKind() == SyntaxKind.MethodDeclaration
                             || a.getKind() == SyntaxKind.Constructor
                             || a.getKind() == SyntaxKind.FunctionDeclaration
                             //|| a.getKind() == SyntaxKind.SourceFile
                         ); //////////for global variable it must work
-                    if (scopeDeclaration) {
-                        let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName();
-                        let receiver = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                    if (nodeReferenceAncestor) {
+                        const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName();
+                        const sender = this.fmxRep.getFamixElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
+                        console.log(`   sender: ${sender.getName()}`);
+                        console.log(`   receiver: ${fmxMethod.getName()}`);
                         let fmxInvovation = new Famix.Invocation(this.fmxRep);
-                        fmxInvovation.setReceiver(receiver);
-                        fmxInvovation.setSender(famixBehaviouralElement);
+                        fmxInvovation.setSender(sender);
+                        fmxInvovation.setReceiver(fmxMethod); 
 
                         this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
                     } else {
@@ -280,7 +282,7 @@ export class TS2Famix {
             console.info("Methods:");
             cls.getMethods().forEach(method => {
                 console.info(` > ${method.getName()}`);
-                let fmxMethod = this.createFamixMethod(method, filePath);
+                const fmxMethod = this.createFamixMethod(method, filePath);
                 fmxClass.addMethods(fmxMethod);
             });
 
@@ -379,7 +381,7 @@ export class TS2Famix {
         if (isConstructor) {
             fmxMethod.setName("constructor");
         }
-        else if (isSignature) {
+        else if (isSignature) {  // interfaces
             let methodName = (method as MethodSignature).getName();
             fmxMethod.setName(methodName);
         }
@@ -390,7 +392,7 @@ export class TS2Famix {
             // fmxMethod.addModifiers(this.getAccessor(method));
             ////
             //for access
-            this.arrayOfInvocation.set(fmxMethod.id, method);
+            this.arrayOfMethodInvocations.set(fmxMethod.id, method);
             ///
         }
 

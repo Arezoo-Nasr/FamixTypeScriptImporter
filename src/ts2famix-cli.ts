@@ -1,5 +1,5 @@
 import * as fs from "fs"
-import yargs, { Argv, exit } from "yargs";
+import yargs from "yargs";
 import { TS2Famix } from "./ts2famix";
 
 const argv = yargs
