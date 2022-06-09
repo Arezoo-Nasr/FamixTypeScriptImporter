@@ -1,61 +1,58 @@
+import { Invocation, Method } from "../src/lib/famix/src/model/famix";
 import { TS2Famix } from "../src/ts2famix";
 
 const filePaths = ["test_src/Invocation.ts"];
 const importer = new TS2Famix();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
-const jsonOutput = fmxRep2.getJSON();
-
-let parsedModel: Array<any>;
-
 
 describe('Invocation', () => {
-    it("should contain a class Class3 with one method: getString", () => {
-        parsedModel = JSON.parse(jsonOutput);
-        const invocationCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Class3"))[0];
-        expect(invocationCls.methods.length).toBe(1);
-        let methodNames: string[] = ['getString'];
 
-        const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref == e.id));
-        expect(invocationClsMethods.length).toBeGreaterThan(0);
-        let checkMethodName = invocationClsMethods.every(m => methodNames.includes(m.name));
-        expect(checkMethodName).toBe(true);
-    });
-
-    it("should have one invocation for method returnHi in Class1",  () => {
-        const invocationCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Class1"))[0];
-        const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref == e.id));
-        const methodNames: string[] = ['returnHi'];
-        invocationClsMethods.forEach(m => expect(methodNames).toContain(m.name));
-        const foundMethods = invocationClsMethods.filter(m => methodNames.includes(m.name));
-        expect(foundMethods.length).toBe(1);
-        const checkMethodHasInvocation = foundMethods.every(m => m.receivingInvocations !== undefined);
-        expect(checkMethodHasInvocation).toBe(true);
-
-        invocationClsMethods.forEach(method => {
-            const invocationCls = parsedModel.filter(e => e.FM3 == "FamixTypeScript.Invocation"
-                && method.receivingInvocations.some(m => m.ref == e.id));
-            const checkHasRelatedToMethod = invocationCls.every(a => a.receiver !== undefined && a.receiver.ref == method.id);
-            expect(checkHasRelatedToMethod).toBe(true);
+    it("should contain method returnHi in Class1", () => {
+        const clsName = "Class1";
+        const mName = "returnHi";
+        const theClass = fmxRep2.getFamixClass(clsName);
+        expect(theClass).toBeTruthy();
+        const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
+        expect(methodFqn).toBe(clsName + '.' + mName);
+        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+            methodFqn);
+        expect(theMethod).toBeTruthy();
+    })
+    it("should contain method returnName in Class2", () => {
+        const clsName = "Class2";
+        const mName = "returnName";
+        const theClass = fmxRep2.getFamixClass(clsName);
+        expect(theClass).toBeTruthy();
+        const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
+        expect(methodFqn).toBe(clsName + '.' + mName);
+        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+            methodFqn);
+        expect(theMethod).toBeTruthy();
+    })
+    it("should contain method getString in Class3", () => {
+        const clsName = "Class3";
+        const mName = "getString";
+        const theClass = fmxRep2.getFamixClass(clsName);
+        expect(theClass).toBeTruthy();
+        const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
+        expect(methodFqn).toBe(clsName + '.' + mName);
+        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+            methodFqn);
+        expect(theMethod).toBeTruthy();
+    })
+    it("should contain an invocation for returnHi", () => {
+        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName("Class1.returnHi") as Method;
+        expect(theMethod).toBeTruthy();
+        const invocations = fmxRep2.getAllEntitiesWithType("Invocation");
+        expect(invocations).toBeTruthy();
+        expect(invocations.length).toBeTruthy();
+        const candidates = invocations.filter(i => {
+            const invocation = i as Invocation;
+            console.log(`candidates for ${theMethod} invocation ${invocation}: ${invocation.getCandidates()}`)
+            return invocation.getCandidates().has(theMethod)
         });
-    });
-
-    it("should have one invocation for method returnName in Class2",  () => {
-        const invocationCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Class2"))[0];
-        const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref == e.id));
-        const methodNames: string[] = ['returnName'];
-        invocationClsMethods.forEach(m => expect(methodNames).toContain(m.name));
-        const foundMethods = invocationClsMethods.filter(m => methodNames.includes(m.name));
-        expect(foundMethods.length).toBe(1);
-        const checkMethodHasInvocation = foundMethods.every(m => m.receivingInvocations !== undefined);
-        expect(checkMethodHasInvocation).toBe(true);
-
-        invocationClsMethods.forEach(method => {
-            const invocationCls = parsedModel.filter(e => e.FM3 == "FamixTypeScript.Invocation"
-                && method.receivingInvocations.some(m => m.ref == e.id));
-            const checkHasRelatedToMethod = invocationCls.every(a => a.receiver !== undefined && a.receiver.ref == method.id);
-            expect(checkHasRelatedToMethod).toBe(true);
-        });
-    });
+        expect(candidates).toHaveLength(1);
+    })
 
 })
