@@ -3,10 +3,13 @@
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { ParameterizedType } from "./../famix/parameterized_type";
 import { Class } from "./../famix/class";
+import { ParameterType } from "./parameter_type";
+import { Parameter } from "./parameter";
 
 export class ParameterizableClass extends Class {
 
   private parameterizableClassParameterizedTypes: Set<ParameterizedType> = new Set();
+  private parameters: Set<ParameterType> = new Set();
 
   // manyOne.Getter
   // @FameProperty(name = "parameterizedTypes", opposite = "parameterizableClass", derived = true)
@@ -33,6 +36,15 @@ export class ParameterizableClass extends Class {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("parameterizedTypes", this.getParameterizedTypes());
 
+  }
+
+  // added 
+  public getParameterTypes() {
+    return this.parameters;
+  }
+
+  public addParameterType(p: ParameterType) {
+    this.parameters.add(p);
   }
 
 }

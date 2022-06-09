@@ -1,6 +1,6 @@
 import {
     ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration
-    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, VariableDeclaration
+    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, TypeParameterDeclaration, VariableDeclaration
 } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -20,7 +20,7 @@ export class TS2Famix {
     private allClasses = new Array<ClassDeclaration>();
     private allInterfaces = Array<InterfaceDeclaration>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object(variable,attribute) and ts-morph object
-    private arrayOfInvocation = new Map<number, any>(); // id of famix object(method) and ts-morph object
+    private arrayOfMethodInvocations = new Map<number, any>(); // id of famix object(method) and ts-morph object
 
     private currentCC: any; // store cc metrics for current file
 
@@ -29,127 +29,10 @@ export class TS2Famix {
             console.info(`paths = ${paths}`);
             const project = new Project();
             const sourceFiles = project.addSourceFilesAtPaths(paths);
-            console.info("Source files:")
-            sourceFiles.forEach(file => {
-                console.info(`> ${file.getBaseName()}`);
-
-                this.makeFamixIndexFileAnchor(file.getFilePath(), file.getStart(), file.getEnd(), null);
-
-                this.currentCC = cyclomatic.calculate(file.getFilePath());
-
-                let currentModules: ModuleDeclaration[] = file.getModules();
-                console.info("Module(s):")
-                if (currentModules.length > 0) {
-                    this.readNamespace(currentModules, file.getFilePath(), null);
-                }
-                this.readNamespace(file, file.getFilePath(), null);
-            });
-            // Create accesses
-            console.log(`Creating accesses:`);
-            this.arrayOfAccess.forEach((value, key) => {
-                console.log(`  Access(es) to ${value.getName()}:`);
-                let famixStructuralElement = this.fmxRep.getFamixElementById(key) as Famix.StructuralEntity;
-                try {
-                    let nodes = value.findReferencesAsNodes() as Array<Identifier>;
-                    nodes.forEach(node => {
-                        console.log(`    ${node.getSymbol().getName()}`);
-                        let scopeDeclaration = node.getAncestors()
-                            .find(a => a.getKind() == SyntaxKind.MethodDeclaration
-                                || a.getKind() == SyntaxKind.Constructor
-                                || a.getKind() == SyntaxKind.FunctionDeclaration
-                                //|| a.getKind() == SyntaxKind.SourceFile
-                                //|| a.getKind() == SyntaxKind.ModuleDeclaration
-                            );//////////for global variable it must work
-    
-                        // let accessor = this.fmxRep.getFamixElementby(scopeDeclaration.getSourceFile().getFilePath()
-                        //     , scopeDeclaration.getStart()) as Famix.BehaviouralEntity;
-                        // let fmxAccess = new Famix.Access(this.fmxRep);
-                        // fmxAccess.setAccessor(accessor);
-                        // fmxAccess.setVariable(famixStructuralElement);
-                        if (scopeDeclaration) {
-                            let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
-                            let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
-                            console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
-                            let fmxAccess = new Famix.Access(this.fmxRep);
-                            fmxAccess.setAccessor(accessor);
-                            fmxAccess.setVariable(famixStructuralElement);
-    
-                            this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxAccess);
-                        } else {
-                            console.log(`---error--- Scope declaration is invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
-                        }
-                    });
-                        
-                } catch (error) {
-                    console.info(`  > WARNING: got exception ${error}. Continuing...`);
-                }
-            });
-            console.log(`Creating invocations:`);
-            this.arrayOfInvocation.forEach((value, key) => {
-                console.log(`  Invocation(s) to ${value.getName()}:`);
-                let famixBehaviouralElement = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
-                try {
-                    let nodes = value.findReferencesAsNodes() as Array<Identifier>;
-                    nodes.forEach(node => {
-                        let scopeDeclaration = node.getAncestors()
-                            .find(a => a.getKind() == SyntaxKind.MethodDeclaration
-                                || a.getKind() == SyntaxKind.Constructor
-                                || a.getKind() == SyntaxKind.FunctionDeclaration
-                                //|| a.getKind() == SyntaxKind.SourceFile
-                            );//////////for global variable it must work
-                        if (scopeDeclaration) {
-                            let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName()
-                            let receiver = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
-                            let fmxInvovation = new Famix.Invocation(this.fmxRep);
-                            fmxInvovation.setReceiver(receiver);
-                            fmxInvovation.setSender(famixBehaviouralElement);
-
-                            this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
-                        } else {
-                            console.error(`---error--- scopeDeclaration invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
-                        }
-
-                    });
-                } catch (error) {
-                    console.info(`  > WARNING: got exception ${error}. Continuing...`);
-                }
-            });
-            //Inheritance
-            this.allClasses.forEach(cls => {
-                const baseClass = cls.getBaseClass();
-                if (baseClass !== undefined) {
-                    const fmxInheritance = new Famix.Inheritance(this.fmxRep);
-                    const subClass = this.fmxTypes.get(cls.getName());
-                    const superClass = this.fmxTypes.get(baseClass.getName());
-                    fmxInheritance.setSubclass(subClass);
-                    fmxInheritance.setSuperclass(superClass);
-                }
-
-                const interfaces = cls.getImplements();
-                interfaces.forEach(inter => {
-                    if (!inter.getType().getText().endsWith('>')) { // ignore generics
-                        const fmxImplements = new Famix.Inheritance(this.fmxRep);
-                        const completeName = inter.getText();
-                        const fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-                        const subImplements = this.fmxTypes.get(cls.getName());
-                        if (fmxImplements) {
-                            fmxImplements.setSuperclass(fmxSuperInter);
-                            fmxImplements.setSubclass(subImplements);
-                        }
-                    }
-                });
-            });
-            this.allInterfaces.forEach(inter => {
-                const baseInter = inter.getBaseTypes()[0];
-                if (baseInter !== undefined && baseInter.getText() !== 'Object') {
-                    const fmxInher = new Famix.Inheritance(this.fmxRep);
-                    const sub = this.fmxTypes.get(inter.getName());
-                    const completeName = baseInter.getText();
-                    const fmxSuper = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-                    fmxInher.setSubclass(sub);
-                    fmxInher.setSuperclass(fmxSuper);
-                }
-            });
+            this.generateNamespaces(sourceFiles);
+            this.generateAccesses();
+            this.generateInvocations();
+            this.generateInheritances();
         }
         catch (error: any) {
             console.error(error.message);
@@ -157,6 +40,144 @@ export class TS2Famix {
             process.exit(1)
         }
         return this.fmxRep;
+    }
+
+    private generateInheritances() {
+        this.allClasses.forEach(cls => {
+            const baseClass = cls.getBaseClass();
+            if (baseClass !== undefined) {
+                const fmxInheritance = new Famix.Inheritance(this.fmxRep);
+                const subClass = this.fmxTypes.get(cls.getName());
+                const superClass = this.fmxTypes.get(baseClass.getName());
+                fmxInheritance.setSubclass(subClass);
+                fmxInheritance.setSuperclass(superClass);
+            }
+
+            const interfaces = cls.getImplements();
+            interfaces.forEach(inter => {
+                if (!inter.getType().getText().endsWith('>')) { // ignore generics
+                    const fmxImplements = new Famix.Inheritance(this.fmxRep);
+                    const completeName = inter.getText();
+                    const fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+                    const subImplements = this.fmxTypes.get(cls.getName());
+                    if (fmxImplements) {
+                        fmxImplements.setSuperclass(fmxSuperInter);
+                        fmxImplements.setSubclass(subImplements);
+                    }
+                }
+            });
+        });
+        this.allInterfaces.forEach(inter => {
+            const baseInter = inter.getBaseTypes()[0];
+            if (baseInter !== undefined && baseInter.getText() !== 'Object') {
+                const fmxInher = new Famix.Inheritance(this.fmxRep);
+                const sub = this.fmxTypes.get(inter.getName());
+                const completeName = baseInter.getText();
+                const fmxSuper = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
+                fmxInher.setSubclass(sub);
+                fmxInher.setSuperclass(fmxSuper);
+            }
+        });
+    }
+
+    private generateInvocations() {
+        console.log(`Creating invocations:`);
+        this.arrayOfMethodInvocations.forEach((savedMethod, key) => {
+            console.log(`  Invocation(s) to ${savedMethod.getName()}:`);
+            const fmxMethod = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
+            try {
+                const nodes = savedMethod.findReferencesAsNodes() as Array<Identifier>;
+                nodes.forEach(node => {
+                    const nodeReferenceAncestor = node.getAncestors()
+                        .find(a => a.getKind() == SyntaxKind.MethodDeclaration
+                            || a.getKind() == SyntaxKind.Constructor
+                            || a.getKind() == SyntaxKind.FunctionDeclaration
+                            //|| a.getKind() == SyntaxKind.SourceFile
+                        ); //////////for global variable it must work
+                    if (nodeReferenceAncestor) {
+                        const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName();
+                        const sender = this.fmxRep.getFamixElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
+                        console.log(`   sender: ${sender.getName()}`);
+                        console.log(`   candidate: ${fmxMethod.getName()}`);
+                        let fmxInvovation = new Famix.Invocation(this.fmxRep);
+                        fmxInvovation.setSender(sender);
+                        fmxInvovation.addCandidates(fmxMethod); 
+
+                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
+                    } else {
+                        console.error(`---error--- scopeDeclaration invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+                    }
+
+                });
+            } catch (error) {
+                console.info(`  > WARNING: got exception ${error}. Continuing...`);
+            }
+        });
+    }
+
+    private generateAccesses() {
+        console.log(`Creating accesses:`);
+        this.arrayOfAccess.forEach((value, key) => {
+            console.log(`  Access(es) to ${value.getName()}:`);
+            let famixStructuralElement = this.fmxRep.getFamixElementById(key) as Famix.StructuralEntity;
+            try {
+                let nodes = value.findReferencesAsNodes() as Array<Identifier>;
+                nodes.forEach(node => {
+                    console.log(`    ${node.getSymbol().getName()}`);
+                    let scopeDeclaration = node.getAncestors()
+                        .find(a => a.getKind() == SyntaxKind.MethodDeclaration
+                            || a.getKind() == SyntaxKind.Constructor
+                            || a.getKind() == SyntaxKind.FunctionDeclaration
+                            //|| a.getKind() == SyntaxKind.SourceFile
+                            //|| a.getKind() == SyntaxKind.ModuleDeclaration
+                        ); //////////for global variable it must work
+
+
+
+
+
+
+                    // let accessor = this.fmxRep.getFamixElementby(scopeDeclaration.getSourceFile().getFilePath()
+                    //     , scopeDeclaration.getStart()) as Famix.BehaviouralEntity;
+                    // let fmxAccess = new Famix.Access(this.fmxRep);
+                    // fmxAccess.setAccessor(accessor);
+                    // fmxAccess.setVariable(famixStructuralElement);
+                    if (scopeDeclaration) {
+                        let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName();
+                        let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                        console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
+                        let fmxAccess = new Famix.Access(this.fmxRep);
+                        fmxAccess.setAccessor(accessor);
+                        fmxAccess.setVariable(famixStructuralElement);
+
+                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxAccess);
+                    } else {
+                        console.log(`---error--- Scope declaration is invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+                    }
+                });
+
+            } catch (error) {
+                console.info(`  > WARNING: got exception ${error}. Continuing...`);
+            }
+        });
+    }
+
+    private generateNamespaces(sourceFiles: SourceFile[]) {
+        console.info("Source files:");
+        sourceFiles.forEach(file => {
+            console.info(`> ${file.getBaseName()}`);
+
+            this.makeFamixIndexFileAnchor(file.getFilePath(), file.getStart(), file.getEnd(), null);
+
+            this.currentCC = cyclomatic.calculate(file.getFilePath());
+
+            let currentModules: ModuleDeclaration[] = file.getModules();
+            console.info("Module(s):");
+            if (currentModules.length > 0) {
+                this.readNamespace(currentModules, file.getFilePath(), null);
+            }
+            this.readNamespace(file, file.getFilePath(), null);
+        });
     }
 
     private makeFamixIndexFileAnchor(filePath: string, startPos: number, endPos: number, famixElement: Famix.SourcedEntity) {
@@ -245,13 +266,23 @@ export class TS2Famix {
         console.info("Analyzing classes:");
         classesInFile.forEach(cls => {
             console.info(`> ${cls.getName()}`);
-            let fmxClass = this.createFamixClass(cls, filePath);
+            let fmxClass
+            const isGenerics = cls.getTypeParameters().length;
+            if (isGenerics) {
+                fmxClass = this.createFamixGenerics(cls, filePath);
+                cls.getTypeParameters().forEach(p => {
+                    fmxClass.addParameterType(this.createFamixParameterType(p));
+                })
+            }
+            else {
+                 fmxClass = this.createFamixClass(cls, filePath);
+            }
             fmxNamespace.addTypes(fmxClass);
 
             console.info("Methods:");
             cls.getMethods().forEach(method => {
                 console.info(` > ${method.getName()}`);
-                let fmxMethod = this.createFamixMethod(method, filePath);
+                const fmxMethod = this.createFamixMethod(method, filePath);
                 fmxClass.addMethods(fmxMethod);
             });
 
@@ -330,6 +361,18 @@ export class TS2Famix {
         return fmxClass;
     }
 
+    private createFamixGenerics(cls: ClassDeclaration | InterfaceDeclaration, filePath, isInterface = false): Famix.Class {
+        let fmxClass = new Famix.ParameterizableClass(this.fmxRep);
+        let clsName = cls.getName();
+        fmxClass.setName(clsName);
+        fmxClass.setIsInterface(isInterface);
+
+        this.makeFamixIndexFileAnchor(filePath, cls.getStart(), cls.getEnd(), fmxClass);
+
+        this.fmxTypes.set(clsName, fmxClass);
+        return fmxClass;
+    }
+
     private createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature,
         filePath: string, isSignature = false, isConstructor = false): Famix.Method {
         console.log(` creating a FamixFunction:`);
@@ -338,7 +381,7 @@ export class TS2Famix {
         if (isConstructor) {
             fmxMethod.setName("constructor");
         }
-        else if (isSignature) {
+        else if (isSignature) {  // interfaces
             let methodName = (method as MethodSignature).getName();
             fmxMethod.setName(methodName);
         }
@@ -349,7 +392,7 @@ export class TS2Famix {
             // fmxMethod.addModifiers(this.getAccessor(method));
             ////
             //for access
-            this.arrayOfInvocation.set(fmxMethod.id, method);
+            this.arrayOfMethodInvocations.set(fmxMethod.id, method);
             ///
         }
 
@@ -528,6 +571,12 @@ export class TS2Famix {
         fmxFunction.setNumberOfStatements(func.getStatements().length);
 
         return fmxFunction;
+    }
+
+    private createFamixParameterType(tp: TypeParameterDeclaration) {
+        const fmxParameterType = new Famix.ParameterType(this.fmxRep);
+        fmxParameterType.setName(tp.getName());
+        return fmxParameterType;
     }
 
     private createFamixAttribute(property: PropertyDeclaration | PropertySignature, filePath, isSignature = false): Famix.Attribute {

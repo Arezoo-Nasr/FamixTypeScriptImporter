@@ -1,17 +1,13 @@
 import { FamixBaseElement } from "./famix_base_element";
 import { Class, ContainerEntity } from "./model/famix";
-import { CustomSourceLanguage } from "./model/famix";
 
 export class FamixRepository {
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
   private famixClasses: Set<Class> = new Set<Class>();
   private idCounter: number = 1;
-  private lang: CustomSourceLanguage;
   private static repo: FamixRepository;
 
   constructor() {
-    this.lang = new CustomSourceLanguage(this);
-    this.lang.setName("TypeScript");
   }
 
   public static getFamixRepo(): FamixRepository {
@@ -23,6 +19,12 @@ export class FamixRepository {
 
   public static clearFamixRepo() {
     this.repo = new FamixRepository();
+  }
+
+  public getAllEntitiesWithType(theType: string) {
+    return Array.from(this.elements.values())
+    .filter(e => (e as any).constructor.name == theType).concat(Array.from(this.famixClasses.values())
+    .filter(e => (e as any).constructor.name == theType));
   }
 
   public createOrGetFamixClass(name: string, isInterface?: boolean): Class {
