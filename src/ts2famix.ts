@@ -98,10 +98,10 @@ export class TS2Famix {
                         const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName();
                         const sender = this.fmxRep.getFamixElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
                         console.log(`   sender: ${sender.getName()}`);
-                        console.log(`   receiver: ${fmxMethod.getName()}`);
+                        console.log(`   candidate: ${fmxMethod.getName()}`);
                         let fmxInvovation = new Famix.Invocation(this.fmxRep);
                         fmxInvovation.setSender(sender);
-                        fmxInvovation.setReceiver(fmxMethod); 
+                        fmxInvovation.addCandidates(fmxMethod); 
 
                         this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
                     } else {
