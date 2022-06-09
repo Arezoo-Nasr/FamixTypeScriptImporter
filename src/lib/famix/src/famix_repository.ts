@@ -1,17 +1,13 @@
 import { FamixBaseElement } from "./famix_base_element";
 import { Class, ContainerEntity } from "./model/famix";
-import { CustomSourceLanguage } from "./model/famix";
 
 export class FamixRepository {
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
   private famixClasses: Set<Class> = new Set<Class>();
   private idCounter: number = 1;
-  private lang: CustomSourceLanguage;
   private static repo: FamixRepository;
 
   constructor() {
-    this.lang = new CustomSourceLanguage(this);
-    this.lang.setName("TypeScript");
   }
 
   public static getFamixRepo(): FamixRepository {
