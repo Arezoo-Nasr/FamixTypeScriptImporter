@@ -1,5 +1,5 @@
 import { TS2Famix } from '../src/ts2famix';
-import { Exception, ParameterizableClass } from '../src/lib/famix/src/model/famix';
+import { ParameterizableClass } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/generics/**/*"];
 const importer = new TS2Famix();
