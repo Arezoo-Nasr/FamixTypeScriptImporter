@@ -380,6 +380,8 @@ export class TS2Famix {
 
         const fmxMethod = new Famix.Method(this.fmxRep);
         fmxMethod.setIsAbstract(isAbstract);
+        fmxMethod.setIsConstructor(isConstructor);
+
         if (isConstructor) {
             fmxMethod.setName("constructor");
         }
