@@ -6,72 +6,70 @@ const importer = new TS2Famix();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
 
+const theClass = fmxRep2.getFamixClass("EntityClass");
+
 describe('ts2famix', () => {
 
     it("should contain an EntityClass", () => {
-        //const theClass = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "EntityClass"))[0];
-        const theClass = fmxRep2.getFamixClass("EntityClass");
+        //const theClass = fmxRep2.getFamixClass("EntityClass");
         expect(theClass).toBeTruthy();
     })
     it("should contain an EntityClass with three methods.", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        expect(theClass.getMethods().size).toBe(3);
+        //const theClass = fmxRep2.getFamixClass("EntityClass");
+        if (theClass) expect(theClass.getMethods().size).toBe(3);
     })
     it("should contain methods with correct names.", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        const mNames: Set<string> = new Set();
-        theClass.getMethods().forEach(m => {
-            //const entityCls = fmxRep2.getFamixElementById(m.ref as number) as Method;
-            mNames.add(m.getName())
-        });
-        expect(mNames.has("move") &&
+        if (theClass) {
+            const mNames = methodNamesAsSetFromClass(theClass);    
+            expect(mNames.has("move") &&
             mNames.has("move2") &&
             mNames.has("constructor")).toBe(true);
+        } 
+    });
+
+    it("should contain a constructor in EntityClass", () => {
+        const theConstructor = fmxRep2.getFamixElementByFullyQualifiedName("MyNamespace.EntityClass.__constructor") as Method;
+        expect(theConstructor).toBeTruthy();
+        expect(theConstructor.getIsConstructor()).toBe(true);
     })
 
-    it("should contain methods with correct names.", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        const mNames: Set<string> = new Set();
-        theClass.getMethods().forEach(m => {
-            //const entityCls = fmxRep2.getFamixElementById(m.ref as number) as Method;
-            mNames.add(m.getName())
-        });
-        expect(mNames.has("move") &&
-            mNames.has("move2") &&
-            mNames.has("constructor")).toBe(true);
-    })
-
-    it("should have a relationship between Class and Method.", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-
-        const mNames: Set<Type> = new Set();
-        theClass.getMethods().forEach(m => {
-            //const entityCls = fmxRep2.getFamixElementById(m.ref as number) as Method;
-            mNames.add(m.getParentType())
-        });
-        expect(mNames.size).toBe(1);
-        expect(Array.from(mNames)[0]).toEqual(theClass)
+    it("should have a parent relationship between EntityClass and its methods.", () => {
+        if (theClass) { 
+            const mParents = methodParentsAsSetFromClass(theClass);
+            expect(mParents.size).toBe(1);
+            expect(Array.from(mParents)[0]).toEqual(theClass)
+        }
     })
 
     it("should contain an EntityClass with one attribute.", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        expect(theClass.getAttributes().size).toBe(1);
+        expect(theClass?.getAttributes().size).toBe(1);
     })
     it("should contain an EntityClass with an attribute named 'name'.", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        expect(Array.from(theClass.getAttributes())[0].getName()).toBe("name");
+        if (theClass) {
+            expect(Array.from(theClass.getAttributes())[0].getName()).toBe("name");
+        }
     })
     it("should contain an EntityClass with an attribute named 'name' of type string.", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        expect(Array.from(theClass.getAttributes())[0].getDeclaredType().getName()).toBe("string");
+        if (theClass) {
+            expect(Array.from(theClass.getAttributes())[0].getDeclaredType().getName()).toBe("string");
+        }
     })
     it("should contain an EntityClass with one subclass", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        expect(Array.from(theClass.getSubInheritances()).length).toBe(1);
+        if (theClass) {
+            expect(Array.from(theClass.getSubInheritances()).length).toBe(1);
+        }
     })
     it("should contain an EntityClass with one subclass named 'class2'", () => {
-        const theClass = fmxRep2.getFamixClass("EntityClass");
-        expect(Array.from(theClass.getSubInheritances())[0].getSubclass().getName()).toBe("class2");
+        if (theClass) {
+            expect(Array.from(theClass.getSubInheritances())[0].getSubclass().getName()).toBe("class2");
+        }
     })
 
 });
+function methodNamesAsSetFromClass(theClass: Class) {
+    return new Set(Array.from(theClass.getMethods()).map(m => m.getName()));
+}
+
+function methodParentsAsSetFromClass(theClass: Class) {
+    return new Set(Array.from(theClass.getMethods()).map(m => m.getParentType()));
+}
