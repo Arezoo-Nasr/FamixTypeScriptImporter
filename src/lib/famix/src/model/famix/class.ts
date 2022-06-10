@@ -1,4 +1,4 @@
-// automatically generated code, please do not change
+// NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./../famix/type";
@@ -6,6 +6,7 @@ import { Type } from "./../famix/type";
 export class Class extends Type {
 
   private classIsTestCase: boolean;
+  private classIsAbstract: boolean;
 
   // @FameProperty(name = "isTestCase")
   public getIsTestCase(): boolean {
@@ -27,6 +28,14 @@ export class Class extends Type {
     this.classIsInterface = classIsInterface;
   }
 
+  // @FameProperty(name = "isAbstract")
+  public getIsAbstract(): boolean {
+    return this.classIsAbstract;
+  }
+
+  public setIsAbstract(classIsAbstract: boolean) {
+    this.classIsAbstract = classIsAbstract;
+  }
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Class", this);
@@ -38,7 +47,7 @@ export class Class extends Type {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("isTestCase", this.getIsTestCase());
     exporter.addProperty("isInterface", this.getIsInterface());
-
+    exporter.addProperty("isAbstract", this.getIsAbstract());
   }
 
 }

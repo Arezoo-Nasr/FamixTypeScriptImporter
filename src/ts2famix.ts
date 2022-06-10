@@ -275,14 +275,14 @@ export class TS2Famix {
                 })
             }
             else {
-                 fmxClass = this.createFamixClass(cls, filePath);
+                 fmxClass = this.createFamixClass(cls, filePath, false, cls.isAbstract());
             }
             fmxNamespace.addTypes(fmxClass);
 
             console.info("Methods:");
             cls.getMethods().forEach(method => {
                 console.info(` > ${method.getName()}`);
-                const fmxMethod = this.createFamixMethod(method, filePath);
+                const fmxMethod = this.createFamixMethod(method, filePath, false, false, method.isAbstract());
                 fmxClass.addMethods(fmxMethod);
             });
 
@@ -349,11 +349,12 @@ export class TS2Famix {
         return fmxNamespace;
     }
 
-    private createFamixClass(cls: ClassDeclaration | InterfaceDeclaration, filePath, isInterface = false): Famix.Class {
+    private createFamixClass(cls: ClassDeclaration | InterfaceDeclaration, filePath, isInterface = false, isAbstract = false): Famix.Class {
         let fmxClass = new Famix.Class(this.fmxRep);
         let clsName = cls.getName();
         fmxClass.setName(clsName);
         fmxClass.setIsInterface(isInterface);
+        fmxClass.setIsAbstract(isAbstract);
 
         this.makeFamixIndexFileAnchor(filePath, cls.getStart(), cls.getEnd(), fmxClass);
 
@@ -374,10 +375,11 @@ export class TS2Famix {
     }
 
     private createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature,
-        filePath: string, isSignature = false, isConstructor = false): Famix.Method {
-        console.log(` creating a FamixFunction:`);
+        filePath: string, isSignature = false, isConstructor = false, isAbstract = false): Famix.Method {
+        console.log(` creating a FamixMethod:`);
 
-        let fmxMethod = new Famix.Method(this.fmxRep);
+        const fmxMethod = new Famix.Method(this.fmxRep);
+        fmxMethod.setIsAbstract(isAbstract);
         if (isConstructor) {
             fmxMethod.setName("constructor");
         }
@@ -426,6 +428,7 @@ export class TS2Famix {
             console.info(`  > WARNING -- failed to get fully qualified name for method: ${fmxMethod.getName()}`);
         }
         fmxMethod.setFullyQualifiedName(fqn);
+        console.info(`    > Fully qualified name: '${fqn}'`)
         this.makeFamixIndexFileAnchor(filePath, method.getStart(), method.getEnd(), fmxMethod);
 
         //Parameters
@@ -513,6 +516,7 @@ export class TS2Famix {
             console.info(`  > WARNING - unable to get a fully qualified name for function return type of: ${func.getName()}`)
         }
         fmxFunction.setFullyQualifiedName(fullyQualifiedName);
+        console.info(`    > Fully qualified name: '${fullyQualifiedName}'`)
 
         this.makeFamixIndexFileAnchor(filePath, func.getStart(), func.getEnd(), fmxFunction);
 

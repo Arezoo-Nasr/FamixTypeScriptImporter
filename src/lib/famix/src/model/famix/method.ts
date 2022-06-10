@@ -115,7 +115,17 @@ export class Method extends BehaviouralEntity {
     this.methodCategory = methodCategory;
   }
 
+  private isAbstract: boolean;
 
+  // @FameProperty(name = "category")
+  public getIsAbstract(): boolean {
+    return this.isAbstract;
+  }
+
+  public setIsAbstract(isAbstract: boolean) {
+    this.isAbstract = isAbstract;
+  }
+  
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Method", this);
     this.addPropertiesToExporter(mse);
@@ -132,6 +142,7 @@ export class Method extends BehaviouralEntity {
     exporter.addProperty("hasClassScope", this.getHasClassScope());
     exporter.addProperty("category", this.getCategory());
     exporter.addProperty("parentType", this.getParentType());
+    exporter.addProperty("isAbstract", this.getIsAbstract());
 
   }
 

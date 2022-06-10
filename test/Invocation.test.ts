@@ -13,34 +13,40 @@ describe('Invocation', () => {
         const mName = "returnHi";
         const theClass = fmxRep2.getFamixClass(clsName);
         expect(theClass).toBeTruthy();
-        const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
-        expect(methodFqn).toBe(clsName + '.' + mName);
-        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
-            methodFqn);
-        expect(theMethod).toBeTruthy();
+        if (theClass) {
+            const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
+            expect(methodFqn).toBe(clsName + '.' + mName);
+            const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+                methodFqn);
+            expect(theMethod).toBeTruthy();    
+        }
     })
     it("should contain method returnName in Class2", () => {
         const clsName = "Class2";
         const mName = "returnName";
         const theClass = fmxRep2.getFamixClass(clsName);
         expect(theClass).toBeTruthy();
-        const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
-        expect(methodFqn).toBe(clsName + '.' + mName);
-        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
-            methodFqn);
-        expect(theMethod).toBeTruthy();
+        if (theClass) {
+            const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
+            expect(methodFqn).toBe(clsName + '.' + mName);
+            const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+                methodFqn);
+            expect(theMethod).toBeTruthy();    
+        }
     })
     it("should contain method getString in Class3", () => {
         const clsName = "Class3";
         const mName = "getString";
         const theClass = fmxRep2.getFamixClass(clsName);
         expect(theClass).toBeTruthy();
-        const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
-        expect(methodFqn).toBe(clsName + '.' + mName);
-        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
-            methodFqn);
-        expect(theMethod).toBeTruthy();
-    })
+        if (theClass) {
+            const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
+            expect(methodFqn).toBe(clsName + '.' + mName);
+            const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+                methodFqn);
+            expect(theMethod).toBeTruthy();    
+        }
+    });
     it("should contain an invocation for returnHi", () => {
         const theMethod = fmxRep2.getFamixElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();

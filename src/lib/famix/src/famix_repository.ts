@@ -27,15 +27,14 @@ export class FamixRepository {
     .filter(e => (e as any).constructor.name == theType));
   }
 
-  public createOrGetFamixClass(name: string, isInterface?: boolean): Class {
+  public createOrGetFamixClass(name: string, isInterface?: boolean, isAbstract?: boolean): Class {
     let newClass = this.getFamixClass(name);
     if (newClass === undefined) {
       newClass = new Class(this);
       newClass.setName(name.toLowerCase());
       newClass.setIsStub(true);
-      if ((isInterface !== undefined) && (isInterface)) {
-        newClass.setIsInterface(true);
-      }
+      if (isInterface) newClass.setIsInterface(isInterface);
+      if (isAbstract) newClass.setIsAbstract(isAbstract);
     }
     return newClass;
   }

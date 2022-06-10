@@ -7,10 +7,6 @@ const importer = new TS2Famix();
 const fmxRep2 = importer.famixRepFromPath(filePaths);
 
 describe('ts2famix', () => {
-    // it("should generate valid json", () => { // smoke test parse (change to non-empty)
-    //     expect(parsedModel).toBeTruthy();
-    //     // initMapFromModel(parsedModel);
-    // });
 
     it("should contain an EntityClass", () => {
         //const theClass = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "EntityClass"))[0];
@@ -77,4 +73,5 @@ describe('ts2famix', () => {
         const theClass = fmxRep2.getFamixClass("EntityClass");
         expect(Array.from(theClass.getSubInheritances())[0].getSubclass().getName()).toBe("class2");
     })
+
 });
