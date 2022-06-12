@@ -135,14 +135,14 @@ export class Method extends BehaviouralEntity {
     this.isConstructor = isConstructor;
   }
 
-  private isStatic: boolean;
+  private isClassSide: boolean;
 
-  public getIsStatic(): boolean {
-    return this.isStatic;
+  public getIsClassSide(): boolean {
+    return this.isClassSide;
   }
 
-  public setIsStatic(isStatic: boolean) {
-    this.isStatic = isStatic;
+  public setIsClassSide(isClassSide: boolean) {
+    this.isClassSide = isClassSide;
   }
 
   public getJSON(): string {
@@ -163,7 +163,7 @@ export class Method extends BehaviouralEntity {
     exporter.addProperty("parentType", this.getParentType());
     exporter.addProperty("isAbstract", this.getIsAbstract());
     exporter.addProperty("isConstructor", this.getIsConstructor());
-    exporter.addProperty("isStatic", this.getIsStatic())
+    exporter.addProperty("isClassSide", this.getIsClassSide())
 
   }
 

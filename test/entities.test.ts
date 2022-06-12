@@ -70,16 +70,14 @@ describe('ts2famix', () => {
         }
     })
 
-    it("should contain an clsInNsp with a static named 'aStaticMethod'", () => {
+    it("should contain an clsInNsp with a class-side method named 'aStaticMethod'", () => {
         const clsInNSP = fmxRep2.getFamixClass("clsInNsp");
         expect(clsInNSP).toBeTruthy();
         if (clsInNSP) {
-            // const methodNames = methodNamesAsSetFromClass(clsInNSP);
-            // expect(methodNames.has("aStaticMethod")).toBe(true);
             const aStaticMethod = Array.from(clsInNSP.getMethods()).find(m => m.getName() == 'aStaticMethod');
             expect(aStaticMethod).toBeTruthy();
             if (aStaticMethod) {
-                expect(aStaticMethod.getIsStatic()).toBe(true);
+                expect(aStaticMethod.getIsClassSide()).toBe(true);
             }
         }
     })
