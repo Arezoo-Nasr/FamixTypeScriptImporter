@@ -117,7 +117,6 @@ export class Method extends BehaviouralEntity {
 
   private isAbstract: boolean;
 
-  // @FameProperty(name = "category")
   public getIsAbstract(): boolean {
     return this.isAbstract;
   }
@@ -128,7 +127,6 @@ export class Method extends BehaviouralEntity {
   
   private isConstructor: boolean;
 
-  // @FameProperty(name = "category")
   public getIsConstructor(): boolean {
     return this.isConstructor;
   }
@@ -136,7 +134,17 @@ export class Method extends BehaviouralEntity {
   public setIsConstructor(isConstructor: boolean) {
     this.isConstructor = isConstructor;
   }
-  
+
+  private isStatic: boolean;
+
+  public getIsStatic(): boolean {
+    return this.isStatic;
+  }
+
+  public setIsStatic(isStatic: boolean) {
+    this.isStatic = isStatic;
+  }
+
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Method", this);
     this.addPropertiesToExporter(mse);
@@ -155,6 +163,7 @@ export class Method extends BehaviouralEntity {
     exporter.addProperty("parentType", this.getParentType());
     exporter.addProperty("isAbstract", this.getIsAbstract());
     exporter.addProperty("isConstructor", this.getIsConstructor());
+    exporter.addProperty("isStatic", this.getIsStatic())
 
   }
 

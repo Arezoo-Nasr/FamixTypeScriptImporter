@@ -21,6 +21,9 @@ namespace MyNamespace {
 			public udf2(): string {
 				return "Hiiii";
 			}
+			public static aStaticMethod() {
+				const e = new EntityClass();
+			}
 		}
 	}
 

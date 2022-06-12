@@ -7,6 +7,7 @@ const importer = new TS2Famix();
 const fmxRep2 = importer.famixRepFromPath(filePaths);
 
 const theClass = fmxRep2.getFamixClass("EntityClass");
+const theSubclass = fmxRep2.getFamixClass("class2");
 
 describe('ts2famix', () => {
 
@@ -61,7 +62,25 @@ describe('ts2famix', () => {
     })
     it("should contain an EntityClass with one subclass named 'class2'", () => {
         if (theClass) {
-            expect(Array.from(theClass.getSubInheritances())[0].getSubclass().getName()).toBe("class2");
+            const theClassSubclass = Array.from(theClass.getSubInheritances())[0].getSubclass();
+            expect(theClassSubclass.getName()).toBe("class2");
+            if (theSubclass) {
+                expect(theSubclass).toBe(theClassSubclass);
+            }
+        }
+    })
+
+    it("should contain an clsInNsp with a static named 'aStaticMethod'", () => {
+        const clsInNSP = fmxRep2.getFamixClass("clsInNsp");
+        expect(clsInNSP).toBeTruthy();
+        if (clsInNSP) {
+            // const methodNames = methodNamesAsSetFromClass(clsInNSP);
+            // expect(methodNames.has("aStaticMethod")).toBe(true);
+            const aStaticMethod = Array.from(clsInNSP.getMethods()).find(m => m.getName() == 'aStaticMethod');
+            expect(aStaticMethod).toBeTruthy();
+            if (aStaticMethod) {
+                expect(aStaticMethod.getIsStatic()).toBe(true);
+            }
         }
     })
 
