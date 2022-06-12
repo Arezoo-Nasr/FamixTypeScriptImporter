@@ -20,7 +20,7 @@ export class TS2Famix {
     private allClasses = new Array<ClassDeclaration>();
     private allInterfaces = Array<InterfaceDeclaration>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object(variable,attribute) and ts-morph object
-    private arrayOfMethodInvocations = new Map<number, any>(); // id of famix object(method) and ts-morph object
+    private mapOfMethodsForFindingInvocations = new Map<number, MethodDeclaration | ConstructorDeclaration | MethodSignature>(); // id of famix object(method) and ts-morph object
 
     private currentCC: any; // store cc metrics for current file
 
@@ -82,8 +82,8 @@ export class TS2Famix {
 
     private generateInvocations() {
         console.log(`Creating invocations:`);
-        this.arrayOfMethodInvocations.forEach((savedMethod, key) => {
-            console.log(`  Invocation(s) to ${savedMethod.getName()}:`);
+        this.mapOfMethodsForFindingInvocations.forEach((savedMethod, key) => {
+            console.log(`  Invocation(s) to ${(savedMethod instanceof MethodDeclaration || savedMethod instanceof MethodSignature)?savedMethod.getName():"constructor"}:`);
             const fmxMethod = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
             try {
                 const nodes = savedMethod.findReferencesAsNodes() as Array<Identifier>;
@@ -381,10 +381,11 @@ export class TS2Famix {
         const fmxMethod = new Famix.Method(this.fmxRep);
         fmxMethod.setIsAbstract(isAbstract);
         fmxMethod.setIsConstructor(isConstructor);
-        fmxMethod.setIsStatic(isStatic);
+        fmxMethod.setIsClassSide(isStatic);
 
         if (isConstructor) {
             fmxMethod.setName("constructor");
+            this.mapOfMethodsForFindingInvocations.set(fmxMethod.id, method);
         }
         else if (isSignature) {  // interfaces
             let methodName = (method as MethodSignature).getName();
@@ -397,7 +398,7 @@ export class TS2Famix {
             // fmxMethod.addModifiers(this.getAccessor(method));
             ////
             //for access
-            this.arrayOfMethodInvocations.set(fmxMethod.id, method);
+            this.mapOfMethodsForFindingInvocations.set(fmxMethod.id, method);
             ///
         }
 
