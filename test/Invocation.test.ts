@@ -16,7 +16,7 @@ describe('Invocation', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+            const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
@@ -29,7 +29,7 @@ describe('Invocation', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+            const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
@@ -42,15 +42,15 @@ describe('Invocation', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep2.getFamixElementByFullyQualifiedName(
+            const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
     });
     it("should contain an invocation for returnHi", () => {
-        const theMethod = fmxRep2.getFamixElementByFullyQualifiedName("Class1.returnHi") as Method;
+        const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
-        const invocations = fmxRep2.getAllEntitiesWithType("Invocation");
+        const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBeTruthy();
         const candidates = invocations.filter(i => {

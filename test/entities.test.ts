@@ -29,7 +29,7 @@ describe('ts2famix', () => {
     });
 
     it("should contain a constructor in EntityClass", () => {
-        const theConstructor = fmxRep2.getFamixElementByFullyQualifiedName("MyNamespace.EntityClass.__constructor") as Method;
+        const theConstructor = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("MyNamespace.EntityClass.__constructor") as Method;
         expect(theConstructor).toBeTruthy();
         expect(theConstructor.getIsConstructor()).toBe(true);
     })
