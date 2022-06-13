@@ -22,9 +22,10 @@ export class FamixRepository {
   }
 
   public getAllEntitiesWithType(theType: string) {
-    return Array.from(this.elements.values())
-    .filter(e => (e as any).constructor.name == theType).concat(Array.from(this.famixClasses.values())
-    .filter(e => (e as any).constructor.name == theType));
+    return new Set(Array.from(this.elements.values())
+      .filter(e => (e as any).constructor.name == theType)
+      .concat(Array.from(this.famixClasses.values())
+      .filter(e => (e as any).constructor.name == theType)));
   }
 
   public createOrGetFamixClass(name: string, isInterface?: boolean, isAbstract?: boolean): Class {
@@ -54,7 +55,7 @@ export class FamixRepository {
     return element;
   }
 
-  public getFamixElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
+  public getFamixContainerEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
 
     let allContainerEntity = Array.from(this.elements.values())
       .filter(e => (e as any).constructor.name == 'Method'

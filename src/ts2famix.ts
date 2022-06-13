@@ -7,6 +7,7 @@ import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { getSyntaxKindName, ModuleKind, SyntaxKind } from "@ts-morph/common";
 import { number, string } from "yargs";
 import { Interface } from "readline";
+import { assert } from "console";
 
 const UNKNOWN_VALUE = '(unknown due to parsing error)';
 
@@ -29,7 +30,7 @@ export class TS2Famix {
             console.info(`paths = ${paths}`);
             const project = new Project();
             const sourceFiles = project.addSourceFilesAtPaths(paths);
-            this.generateNamespaces(sourceFiles);
+            this.generateNamespacesClassesInterfaces(sourceFiles);
             this.generateAccesses();
             this.generateInvocations();
             this.generateInheritances();
@@ -44,26 +45,32 @@ export class TS2Famix {
 
     private generateInheritances() {
         this.allClasses.forEach(cls => {
+            console.info(` checking class inheritance for ${cls.getName()}`)
             const baseClass = cls.getBaseClass();
             if (baseClass !== undefined) {
                 const fmxInheritance = new Famix.Inheritance(this.fmxRep);
                 const subClass = this.fmxTypes.get(cls.getName());
                 const superClass = this.fmxTypes.get(baseClass.getName());
+                console.info(`  extends ${superClass}`);
                 fmxInheritance.setSubclass(subClass);
                 fmxInheritance.setSuperclass(superClass);
             }
 
+            console.info(` checking interface inheritance for ${cls.getName()}`)
             const interfaces = cls.getImplements();
             interfaces.forEach(inter => {
-                if (!inter.getType().getText().endsWith('>')) { // ignore generics
-                    const fmxImplements = new Famix.Inheritance(this.fmxRep);
-                    const completeName = inter.getText();
-                    const fmxSuperInter = this.fmxTypes.get(completeName.substring(completeName.lastIndexOf('.') + 1));
-                    const subImplements = this.fmxTypes.get(cls.getName());
-                    if (fmxImplements) {
-                        fmxImplements.setSuperclass(fmxSuperInter);
-                        fmxImplements.setSubclass(subImplements);
-                    }
+                const fmxImplements = new Famix.Inheritance(this.fmxRep);
+                const completeName = inter.getText();
+                const fmxSuperInter = this.fmxTypes.get(inter.getExpression().getText());
+                const subImplements = this.fmxTypes.get(cls.getName());
+                console.info(`  implements ${completeName} (or ${inter.getExpression().getText()})`);
+                assert(fmxSuperInter);
+                assert(subImplements);
+                if (fmxImplements) {
+                    fmxImplements.setSuperclass(fmxSuperInter);
+                    fmxImplements.setSubclass(subImplements);
+                } else {
+                    console.error(`failed to allocate Famix.Inheritance.`)
                 }
             });
         });
@@ -96,7 +103,7 @@ export class TS2Famix {
                         ); //////////for global variable it must work
                     if (nodeReferenceAncestor) {
                         const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName();
-                        const sender = this.fmxRep.getFamixElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
+                        const sender = this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
                         console.log(`   sender: ${sender.getName()}`);
                         console.log(`   candidate: ${fmxMethod.getName()}`);
                         let fmxInvovation = new Famix.Invocation(this.fmxRep);
@@ -144,7 +151,7 @@ export class TS2Famix {
                     // fmxAccess.setVariable(famixStructuralElement);
                     if (scopeDeclaration) {
                         let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName();
-                        let accessor = this.fmxRep.getFamixElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                        let accessor = this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
                         console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
                         let fmxAccess = new Famix.Access(this.fmxRep);
                         fmxAccess.setAccessor(accessor);
@@ -162,7 +169,7 @@ export class TS2Famix {
         });
     }
 
-    private generateNamespaces(sourceFiles: SourceFile[]) {
+    private generateNamespacesClassesInterfaces(sourceFiles: SourceFile[]) {
         console.info("Source files:");
         sourceFiles.forEach(file => {
             console.info(`> ${file.getBaseName()}`);
@@ -266,7 +273,7 @@ export class TS2Famix {
         console.info("Analyzing classes:");
         classesInFile.forEach(cls => {
             console.info(`> ${cls.getName()}`);
-            let fmxClass
+            let fmxClass;
             const isGenerics = cls.getTypeParameters().length;
             if (isGenerics) {
                 fmxClass = this.createFamixGenerics(cls, filePath);
@@ -312,7 +319,19 @@ export class TS2Famix {
         console.info("Analyzing interfaces:");
         interfacesInFile.forEach(inter => {
             console.info(`> ${inter.getName()}`);
-            let fmxInterface = this.createFamixClass(inter, filePath, true);
+
+            let fmxInterface;
+            const isGenerics = inter.getTypeParameters().length;
+            if (isGenerics) {
+                fmxInterface = this.createFamixGenerics(inter, filePath);
+                inter.getTypeParameters().forEach(p => {
+                    fmxInterface.addParameterType(this.createFamixParameterType(p));
+                })
+            }
+            else {
+                fmxInterface = this.createFamixClass(inter, filePath, true);
+            }
+
             fmxNamespace.addTypes(fmxInterface);
 
             console.info("Methods:");
