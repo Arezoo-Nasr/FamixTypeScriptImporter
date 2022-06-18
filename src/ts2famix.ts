@@ -298,6 +298,11 @@ export class TS2Famix {
                 console.info(` > ${prop.getName()}`);
                 let fmxAttr = this.createFamixAttribute(prop, filePath);
                 fmxClass.addAttributes(fmxAttr);
+                if (prop.isReadonly()) fmxAttr.addModifiers("readonly");
+                console.info(`  modifiers: ${prop.getModifiers()}`);
+                prop.getModifiers().forEach(m => {fmxAttr.addModifiers(m.getText())});
+                if (prop.getExclamationTokenNode()) fmxAttr.addModifiers("!");
+                if (prop.getQuestionTokenNode()) fmxAttr.addModifiers("?");
             });
 
             console.info("Constructors:");

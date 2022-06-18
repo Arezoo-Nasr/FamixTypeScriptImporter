@@ -40,26 +40,86 @@ describe('ts2famix', () => {
             expect(mParents.size).toBe(1);
             expect(Array.from(mParents)[0]).toEqual(theClass)
         }
-    })
+    });
 
-    it("should contain an EntityClass with one attribute.", () => {
-        expect(theClass?.getAttributes().size).toBe(1);
-    })
-    it("should contain an EntityClass with an attribute named 'name'.", () => {
+    it("should contain an EntityClass with eight attributes.", () => {
+        expect(theClass?.getAttributes().size).toBe(8);
+    });
+    it("should contain an EntityClass with an attribute named 'name' that is public.", () => {
         if (theClass) {
-            expect(Array.from(theClass.getAttributes())[0].getName()).toBe("name");
+            const nameAttribute = Array.from(theClass.getAttributes())[0];
+            expect(nameAttribute.getName()).toBe("name");
+            expect(nameAttribute.getModifiers()).toContain("public");
         }
-    })
+    });
     it("should contain an EntityClass with an attribute named 'name' of type string.", () => {
         if (theClass) {
             expect(Array.from(theClass.getAttributes())[0].getDeclaredType().getName()).toBe("string");
         }
-    })
+    });
+    it("should contain an EntityClass with an attribute named 'p1' that is private and of type boolean.", () => {
+        if (theClass) {
+            const p1Attribute = Array.from(theClass.getAttributes())[1];
+            expect(p1Attribute.getName()).toBe("p1");
+            expect(p1Attribute.getModifiers()).toContain("private");
+            expect(p1Attribute.getDeclaredType().getName()).toBe("boolean");
+        }
+    });
+    it("should contain an EntityClass with an attribute named '#p2' that is run-time private and of type boolean.", () => {
+        if (theClass) {
+            const p2Attribute = Array.from(theClass.getAttributes())[2];
+            expect(p2Attribute.getName()).toBe("#p2");
+            //expect(p2Attribute.getModifiers()).toContain("private");
+            expect(p2Attribute.getDeclaredType().getName()).toBe("boolean");
+        }
+    });
+
+    it("should contain an EntityClass with an attribute named 'prot1' that is protected and of type Map<any, any>.", () => {
+        if (theClass) {
+            const prot1Attribute = Array.from(theClass.getAttributes())[3];
+            expect(prot1Attribute.getName()).toBe("prot1");
+            expect(prot1Attribute.getModifiers()).toContain("protected");
+            expect(prot1Attribute.getDeclaredType().getName()).toBe("Map<any, any>");
+        }
+    });
+    it("should contain an EntityClass with an attribute named 'trustMe' that is guaranteed to be there (!) and of type string.", () => {
+        if (theClass) {
+            const trustMeAttribute = Array.from(theClass.getAttributes())[4];
+            expect(trustMeAttribute.getName()).toBe("trustMe");
+            expect(trustMeAttribute.getModifiers()).toContain("!");
+            expect(trustMeAttribute.getDeclaredType().getName()).toBe("string");
+        }
+    });
+    it("should contain an EntityClass with an attribute named 'ro' that is readonly and of type \"yes\".", () => {
+        if (theClass) {
+            const roAttribute = Array.from(theClass.getAttributes())[5];
+            expect(roAttribute.getName()).toBe("ro");
+            expect(roAttribute.getModifiers()).toContain("readonly");
+            expect(roAttribute.getDeclaredType().getName()).toBe('"yes"');
+        }
+    });
+    it("should contain an EntityClass with an attribute named '#userCount' that is static and of type number.", () => {
+        if (theClass) {
+            const userCountAttribute = Array.from(theClass.getAttributes())[6];
+            expect(userCountAttribute.getName()).toBe("#userCount");
+            expect(userCountAttribute.getModifiers()).toContain("static");
+            expect(userCountAttribute.getDeclaredType().getName()).toBe('number');
+        }
+    });
+    it("should contain an EntityClass with an attribute named 'optional' that is optional (?) and of type string.", () => {
+        if (theClass) {
+            const userCountAttribute = Array.from(theClass.getAttributes())[7];
+            expect(userCountAttribute.getName()).toBe("optional");
+            expect(userCountAttribute.getModifiers()).toContain("?");
+            expect(userCountAttribute.getDeclaredType().getName()).toBe('string');
+        }
+    });
+
     it("should contain an EntityClass with one subclass", () => {
         if (theClass) {
             expect(Array.from(theClass.getSubInheritances()).length).toBe(1);
         }
-    })
+    });
     it("should contain an EntityClass with one subclass named 'class2'", () => {
         if (theClass) {
             const theClassSubclass = Array.from(theClass.getSubInheritances())[0].getSubclass();
@@ -68,7 +128,7 @@ describe('ts2famix', () => {
                 expect(theSubclass).toBe(theClassSubclass);
             }
         }
-    })
+    });
 
     it("should contain an clsInNsp with a class-side method named 'aStaticMethod'", () => {
         const clsInNSP = fmxRep2.getFamixClass("clsInNsp");
@@ -80,7 +140,7 @@ describe('ts2famix', () => {
                 expect(aStaticMethod.getIsClassSide()).toBe(true);
             }
         }
-    })
+    });
 
 });
 function methodNamesAsSetFromClass(theClass: Class) {

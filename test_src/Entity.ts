@@ -2,15 +2,28 @@ namespace MyNamespace {
 
 	export class EntityClass {
 		public name: string;
+		private p1: boolean;  // type-only private
+		#p2 = false; // runtime private
+		protected prot1: Map<any, any>;
+		trustMe!: string;
+		readonly ro = "yes";
+		static #userCount = 0;
+		optional?: string;
+		
 		constructor() {
 			this.name = "Arezoo";
+			console.log(this.#p2);
 		}
-		public move(): void { }
+		public move(): void {
+			this.move2("my family " + this.p1);
+		 }
 
-		public move2(family: string): void {
+		private move2(family: string): void {
 			var Str1: string = "hi" + family;
 			this.name = family + Str1;
 		}
+
+		static { this.#userCount++; console.log(this.#userCount) }
 	}
 
 	class class2 extends EntityClass {
