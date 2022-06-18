@@ -145,6 +145,36 @@ export class Method extends BehaviouralEntity {
     this.isClassSide = isClassSide;
   }
 
+  private isPrivate: boolean;
+
+  public getIsPrivate(): boolean {
+    return this.isPrivate;
+  }
+
+  public setIsPrivate(isPrivate: boolean) {
+    this.isPrivate = isPrivate;
+  }
+
+  private isPublic: boolean;
+
+  public getIsPublic(): boolean {
+    return this.isPublic;
+  }
+
+  public setIsPublic(isPublic: boolean) {
+    this.isPublic = isPublic;
+  }
+
+  private isProtected: boolean;
+
+  public getIsProtected(): boolean {
+    return this.isProtected;
+  }
+
+  public setIsProtected(isProtected: boolean) {
+    this.isProtected = isProtected;
+  }
+
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Method", this);
     this.addPropertiesToExporter(mse);
@@ -163,8 +193,10 @@ export class Method extends BehaviouralEntity {
     exporter.addProperty("parentType", this.getParentType());
     exporter.addProperty("isAbstract", this.getIsAbstract());
     exporter.addProperty("isConstructor", this.getIsConstructor());
-    exporter.addProperty("isClassSide", this.getIsClassSide())
-
+    exporter.addProperty("isClassSide", this.getIsClassSide());
+    exporter.addProperty("isPrivate", this.getIsPrivate());
+    exporter.addProperty("isPublic", this.getIsPrivate());
+    exporter.addProperty("isProtected", this.getIsPrivate());
   }
 
 }

@@ -28,6 +28,16 @@ describe('ts2famix', () => {
         } 
     });
 
+    it("should contain a private method named move2 that returns void.", () => {
+        if (theClass) {
+            const move2Method = methodByNameFromClass("move2", theClass);
+            expect(move2Method).toBeTruthy();
+            if (move2Method) {
+                expect(move2Method.getIsPrivate()).toBe(true);
+            }
+        } 
+    });
+
     it("should contain a constructor in EntityClass", () => {
         const theConstructor = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("MyNamespace.EntityClass.__constructor") as Method;
         expect(theConstructor).toBeTruthy();
@@ -150,3 +160,7 @@ function methodNamesAsSetFromClass(theClass: Class) {
 function methodParentsAsSetFromClass(theClass: Class) {
     return new Set(Array.from(theClass.getMethods()).map(m => m.getParentType()));
 }
+function methodByNameFromClass(methodName: string, theClass: Class) {
+    return Array.from(theClass.getMethods()).find(m => m.getName() == methodName);
+}
+

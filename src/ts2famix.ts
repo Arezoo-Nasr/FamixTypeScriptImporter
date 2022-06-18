@@ -406,6 +406,7 @@ export class TS2Famix {
         fmxMethod.setIsAbstract(isAbstract);
         fmxMethod.setIsConstructor(isConstructor);
         fmxMethod.setIsClassSide(isStatic);
+        fmxMethod.setIsPrivate(method instanceof MethodDeclaration? (method.getModifiers().find(x => x.getText() == 'private')) != undefined: false)
 
         if (isConstructor) {
             fmxMethod.setName("constructor");
