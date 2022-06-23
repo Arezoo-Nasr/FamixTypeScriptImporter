@@ -59,6 +59,15 @@ describe('Invocation', () => {
             return invocation.getCandidates().has(theMethod)
         });
         expect(candidates).toHaveLength(1);
+    });
+    it("should contain an invocation for returnHi with a signature 'public returnHi(): string'", () => {
+        const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
+        expect(theMethod).toBeTruthy();
+        const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
+        expect(invocations).toBeTruthy();
+        expect(invocations.length).toBeTruthy();
+        expect((invocations[0] as Invocation).getSignature()).toBeTruthy();
+        expect((invocations[0] as Invocation).getSignature()).toBe('public returnHi(): string');
     })
 
 })

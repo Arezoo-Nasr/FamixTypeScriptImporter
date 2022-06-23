@@ -37,6 +37,16 @@ describe('ts2famix', () => {
             }
         } 
     });
+   
+    it("should contain a private method named move2 with a signature 'private move2(family: string): void'.", () => {
+        if (theClass) {
+            const move2Method = methodByNameFromClass("move2", theClass);
+            expect(move2Method).toBeTruthy();
+            if (move2Method) {
+                expect(move2Method.getSignature()).toBe('private move2(family: string): void');
+            }
+        } 
+    });
 
     it("should contain a constructor in EntityClass", () => {
         const theConstructor = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("MyNamespace.EntityClass.__constructor") as Method;

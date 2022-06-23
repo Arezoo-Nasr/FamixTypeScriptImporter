@@ -106,11 +106,12 @@ export class TS2Famix {
                         const sender = this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
                         console.log(`   sender: ${sender.getName()}`);
                         console.log(`   candidate: ${fmxMethod.getName()}`);
-                        let fmxInvovation = new Famix.Invocation(this.fmxRep);
-                        fmxInvovation.setSender(sender);
-                        fmxInvovation.addCandidates(fmxMethod); 
+                        const fmxInvocation = new Famix.Invocation(this.fmxRep);
+                        fmxInvocation.setSender(sender);
+                        fmxInvocation.addCandidates(fmxMethod);
+                        fmxInvocation.setSignature(fmxMethod.getSignature())
 
-                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvovation);
+                        this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvocation);
                     } else {
                         console.error(`---error--- scopeDeclaration invalid for ${node.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
                     }
@@ -406,7 +407,8 @@ export class TS2Famix {
         fmxMethod.setIsAbstract(isAbstract);
         fmxMethod.setIsConstructor(isConstructor);
         fmxMethod.setIsClassSide(isStatic);
-        fmxMethod.setIsPrivate(method instanceof MethodDeclaration? (method.getModifiers().find(x => x.getText() == 'private')) != undefined: false)
+        fmxMethod.setIsPrivate(method instanceof MethodDeclaration? (method.getModifiers().find(x => x.getText() == 'private')) != undefined: false);
+        fmxMethod.setSignature(computeTSMethodSignature(method.getText()));
 
         if (isConstructor) {
             fmxMethod.setName("constructor");
@@ -675,3 +677,8 @@ export class TS2Famix {
             return "Protected";
     }
 }
+function computeTSMethodSignature(methodText: string): string {
+    const endSignatureText = methodText.indexOf("{");
+    return methodText.substring(0, endSignatureText).trim();
+}
+
