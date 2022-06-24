@@ -33,7 +33,7 @@ describe('ts2famix json', () => {
         });
         expect(mNames.has("move") &&
             mNames.has("move2") &&
-            mNames.has("constructor")).toBe(true);
+            mNames.has("EntityClass.constructor")).toBe(true);
     });
     it("should have method move", () => { 
         const theMethod = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Method" && el.name == "move"))[0];

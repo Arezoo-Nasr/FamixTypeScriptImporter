@@ -414,7 +414,7 @@ export class TS2Famix {
         fmxMethod.setSignature(computeTSMethodSignature(method.getText()));
 
         if (isConstructor) {
-            fmxMethod.setName("constructor");
+            fmxMethod.setName((method as ConstructorDeclaration).getParent().getName() + ".constructor");
             this.mapOfMethodsForFindingInvocations.set(fmxMethod.id, method);
         }
         else if (isSignature) {  // interfaces
