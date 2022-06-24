@@ -290,7 +290,7 @@ export class TS2Famix {
             console.info("Methods:");
             cls.getMethods().forEach(method => {
                 console.info(` > ${method.getName()}`);
-                const fmxMethod = this.createFamixMethod(method, filePath, false, false, method.isAbstract(), method.isStatic());
+                const fmxMethod = this.createFamixMethod(method, filePath, method.isAbstract(), method.isStatic());
                 fmxClass.addMethods(fmxMethod);
             });
 
@@ -313,7 +313,7 @@ export class TS2Famix {
                 } catch (error) {
                     console.info(` > WARNING: can't get signature for constructor!`);
                 }
-                let fmxMethod = this.createFamixMethod(cstr, filePath, false, true);
+                let fmxMethod = this.createFamixMethod(cstr, filePath);
                 fmxClass.addMethods(fmxMethod);
             });
         });
@@ -343,7 +343,7 @@ export class TS2Famix {
             console.info("Methods:");
             inter.getMethods().forEach(method => {
                 console.info(` > ${method.getName()}`);
-                let fmxMethod = this.createFamixMethod(method, filePath, true);
+                let fmxMethod = this.createFamixMethod(method, filePath);
                 fmxInterface.addMethods(fmxMethod);
             });
 
@@ -365,10 +365,11 @@ export class TS2Famix {
             if (parentScope != null) {
                 fmxNamespace.setParentScope(parentScope);
             }
-            this.fmxNamespacesMap[namespaceName] = fmxNamespace;
+            this.fmxNamespacesMap.set(namespaceName, fmxNamespace)
+            // this.fmxNamespacesMap[namespaceName] = fmxNamespace;
         }
         else {
-            fmxNamespace = this.fmxNamespacesMap[namespaceName];
+            fmxNamespace = this.fmxNamespacesMap.get(namespaceName);
         }
 
         return fmxNamespace;
@@ -400,9 +401,11 @@ export class TS2Famix {
     }
 
     private createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature,
-        filePath: string, isSignature = false, isConstructor = false, isAbstract = false, isStatic = false): Famix.Method {
+        filePath: string, isAbstract = false, isStatic = false): Famix.Method {
         console.log(` creating a FamixMethod:`);
 
+        const isConstructor = method instanceof ConstructorDeclaration;
+        const isSignature = method instanceof MethodSignature;
         const fmxMethod = new Famix.Method(this.fmxRep);
         fmxMethod.setIsAbstract(isAbstract);
         fmxMethod.setIsConstructor(isConstructor);
