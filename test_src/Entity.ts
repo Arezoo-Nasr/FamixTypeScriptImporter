@@ -55,3 +55,9 @@ namespace Nsp3 {
 		}
 	}
 }
+
+// global scope
+var globalA = "yes";
+function globalFunc(a: number){
+	return globalA == "yes" ? a - 10 : 0;
+}

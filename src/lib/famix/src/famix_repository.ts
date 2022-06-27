@@ -1,11 +1,10 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, ContainerEntity, Namespace } from "./model/famix";
+import { Attribute, Class, ContainerEntity, Namespace, Function } from "./model/famix";
 
 export class FamixRepository {
-
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
   private famixClasses: Set<Class> = new Set<Class>();
-  private famixNamespaces = new Set<Namespace>(); 
+  private famixNamespaces = new Set<Namespace>();
   private idCounter: number = 1;
   private static repo: FamixRepository;
 
@@ -27,7 +26,7 @@ export class FamixRepository {
     return new Set(Array.from(this.elements.values())
       .filter(e => (e as any).constructor.name == theType)
       .concat(Array.from(this.famixClasses.values())
-      .filter(e => (e as any).constructor.name == theType)));
+        .filter(e => (e as any).constructor.name == theType)));
   }
 
   public createOrGetFamixClass(name: string, isInterface?: boolean, isAbstract?: boolean): Class {
@@ -54,6 +53,18 @@ export class FamixRepository {
   }
 
   //Added by hand
+  // getFamixEntity(s: { name: string; container: string; kind: Attribute | Variable}) {
+  //   return Array.from(this.elements.values()).find(e => e.)
+  // }
+
+  getFamixFunction(namespace: string, func: string) {
+    return Array.from(this.elements)
+      .find(e => (e instanceof Function 
+                  && (e as Function).getName() === func 
+                  && (e as Function).getContainer().getName() === namespace))
+  }
+
+
   getFamixNamespace(moduleName: string) {
     return Array.from(this.famixNamespaces.values())
       .find(ns => ns.getName() === moduleName)

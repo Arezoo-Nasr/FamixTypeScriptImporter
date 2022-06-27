@@ -9,7 +9,7 @@ const jsonOutput = fmxRep2.getJSON();
 let parsedModel: Array<any>;
 
 
-describe('Invocation', () => {
+describe.skip('Invocation', () => {
     it("should contain a class Class3 with one method: getString", () => {
         parsedModel = JSON.parse(jsonOutput);
         const invocationCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Class3"))[0];

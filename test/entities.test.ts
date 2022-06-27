@@ -1,5 +1,5 @@
 import { TS2Famix } from '../src/ts2famix';
-import { Method, Class, Type} from '../src/lib/famix/src/model/famix';
+import { Method, Class, Type, Function} from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/Entity.ts"];
 const importer = new TS2Famix();
@@ -161,6 +161,22 @@ describe('ts2famix', () => {
             }
         }
     });
+
+    // global scope
+    it("should contain a function 'globalFunc` with global scope", () => {
+        const globalFunc = fmxRep2.getFamixFunction('__global', 'globalFunc') as Function;
+        expect(globalFunc).toBeTruthy();
+        expect(globalFunc.getName()).toBe('globalFunc');
+        expect(globalFunc.getContainer().getName()).toBe('__global');
+    });
+
+    it.skip("should contain a variable 'globalA' with global scope.", () => {
+        const globalVar = "not tested" // fmxRep2.getFamixEntity({name: 'globalA', container: '__global'});
+        expect(globalVar).toBeTruthy();
+        if (globalVar) {
+        }
+    });
+
 
 });
 function methodNamesAsSetFromClass(theClass: Class) {

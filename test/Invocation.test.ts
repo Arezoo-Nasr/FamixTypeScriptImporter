@@ -1,7 +1,7 @@
 import { Invocation, Method } from "../src/lib/famix/src/model/famix";
 import { TS2Famix } from "../src/ts2famix";
 
-const filePaths = ["test_src/Invocation.ts"];
+const filePaths = ["test_src/invocations/*.ts"];
 const importer = new TS2Famix();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
@@ -80,5 +80,15 @@ describe('Invocation', () => {
         expect((invocations[0] as Invocation).getSignature()).toBeTruthy();
         expect((invocations[0] as Invocation).getSignature()).toBe('public returnHi(): string');
     })
+
+    // it("should contain an invocation for a function 'a' with a signature 'function a(b: number)'", () => {
+    //     const theFunction = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("a") as FamixFunction;
+    //     expect(theFunction).toBeTruthy();
+    //     const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
+    //     expect(invocations).toBeTruthy();
+    //     expect(invocations.length).toBeTruthy();
+    //     expect((invocations[0] as Invocation).getSignature()).toBeTruthy();
+    //     expect((invocations[0] as Invocation).getSignature()).toBe('public returnHi(): string');
+    // })
 
 })

@@ -102,8 +102,8 @@ export class TS2Famix {
         // const callExpressions = this.allProjectCallExpressions();
         // callExpressions.forEach(ce => {
         //     console.log(`  CallExpression: ${ce.getText()}`);
-        //     const theType = this.typeChecker.getTypeAtLocation(ce);
-        //     console.log(`  theType: ${theType.getText()}`);
+        //     const returnType = this.project.getTypeChecker().getTypeAtLocation(ce);
+        //     console.log(`  returnType: ${returnType.getText()}`);
         //     const theDescendants = ce.getDescendants();
         //     console.log(`  theDescendants[0]: ${theDescendants[0].getText()}`);
         //     //const receiver = this.typeChecker.getType(ce.compilerNode.expression.getChildren()[0])
@@ -222,9 +222,11 @@ export class TS2Famix {
             let currentModules: ModuleDeclaration[] = file.getModules();
             console.info("Module(s):");
             if (currentModules.length > 0) {
+                console.info(" Found modules...");
                 this.readNamespace(currentModules, file.getFilePath(), null);
             }
-            this.readNamespace(file, file.getFilePath(), null);
+            console.info(` Namespace of the file: ${file.getBaseName()}`);
+            this.readNamespace(file, file.getFilePath(), null);    
         });
     }
 
@@ -246,7 +248,7 @@ export class TS2Famix {
         let classesInFile: ClassDeclaration[];
         let functionsInFile: FunctionDeclaration[];
 
-        if ((currentModules as SourceFile).getModules === undefined) {
+        if (currentModules[0] instanceof ModuleDeclaration) {
             (currentModules as ModuleDeclaration[]).forEach(namespace => {
 
                 namespaceName = namespace.getName();
@@ -272,6 +274,7 @@ export class TS2Famix {
                     console.info(` > ${func.getName()}`);
                     let fmxFunction = this.createFamixFunction(func, filePath);
                     fmxNamespace.addFunctions(fmxFunction);
+                    console.info(`   namespace: ${fmxNamespace.getName()}`);
                 });
                 if (namespace.getModules().length > 0) {
                     this.readNamespace(namespace.getModules(), filePath, fmxNamespace);
@@ -279,14 +282,14 @@ export class TS2Famix {
             });
         }
         else {
-            // namespaceName = "DefaultNamespace";
+            // namespaceName = "__global";
             // fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
             classesInFile = (currentModules as SourceFile).getClasses();
             interfacesInFile = (currentModules as SourceFile).getInterfaces();
             functionsInFile = (currentModules as SourceFile).getFunctions();
 
             if (classesInFile.length || interfacesInFile.length || functionsInFile.length) {
-                namespaceName = "DefaultNamespace";
+                namespaceName = "__global";
                 fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
             }
             console.info(`namespace: ${namespaceName}`);
@@ -304,6 +307,7 @@ export class TS2Famix {
                 console.info(` > ${func.getName()}`);
                 let fmxFunction = this.createFamixFunction(func, filePath);
                 fmxNamespace.addFunctions(fmxFunction);
+                console.info(`   namespace: ${fmxNamespace.getName()}`);
             });
         }
     }
