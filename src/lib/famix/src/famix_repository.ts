@@ -1,9 +1,11 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, ContainerEntity } from "./model/famix";
+import { Class, ContainerEntity, Namespace } from "./model/famix";
 
 export class FamixRepository {
+
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
   private famixClasses: Set<Class> = new Set<Class>();
+  private famixNamespaces = new Set<Namespace>(); 
   private idCounter: number = 1;
   private static repo: FamixRepository;
 
@@ -41,15 +43,28 @@ export class FamixRepository {
   }
 
   public getFamixClass(name: string): Class | undefined {
-    for (const fc of Array.from(this.famixClasses.values())) {
-      if (fc.getName().toLowerCase() === name.toLowerCase()) {
-        return fc;
-      }
-    }
-    return undefined;
+    return Array.from(this.famixClasses.values())
+      .find(ns => ns.getName() === name)
+    // for (const fc of Array.from(this.famixClasses.values())) {
+    //   if (fc.getName() === name) {
+    //     return fc;
+    //   }
+    // }
+    // return undefined;
   }
 
-  //Arezoo
+  //Added by hand
+  getFamixNamespace(moduleName: string) {
+    return Array.from(this.famixNamespaces.values())
+      .find(ns => ns.getName() === moduleName)
+    // for (const fc of Array.from(this.famixNamespaces.values())) {
+    //   if (fc.getName() === moduleName) {
+    //     return fc;
+    //   }
+    // }
+    // return undefined;
+  }
+
   public getFamixElementById(id: number): FamixBaseElement | undefined {
     let element = Array.from(this.elements.values()).find(e => e.id == id);
     return element;
@@ -69,6 +84,8 @@ export class FamixRepository {
   public addElement(element: FamixBaseElement) {
     if (element instanceof Class) {
       this.famixClasses.add(element);
+    } else if (element instanceof Namespace) {
+      this.famixNamespaces.add(element);
     } else {
       this.elements.add(element);
     }
