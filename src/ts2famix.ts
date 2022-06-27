@@ -1,6 +1,8 @@
 import {
+    ts,
+    CallExpression,
     ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration
-    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, TypeParameterDeclaration, VariableDeclaration
+    , MethodDeclaration, MethodSignature, ModuleDeclaration, ModuleDeclarationKind, Project, PropertyDeclaration, PropertySignature, SourceFile, StructureKind, TypeChecker, TypeParameterDeclaration, VariableDeclaration
 } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -22,14 +24,21 @@ export class TS2Famix {
     private allInterfaces = Array<InterfaceDeclaration>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object(variable,attribute) and ts-morph object
     private mapOfMethodsForFindingInvocations = new Map<number, MethodDeclaration | ConstructorDeclaration | MethodSignature>(); // id of famix object(method) and ts-morph object
+    private project = new Project();
+//    private typeChecker! : TypeChecker;
 
     private currentCC: any; // store cc metrics for current file
+
+    constructor() {
+
+//        this.typeChecker = this.project.getTypeChecker();
+
+    }
 
     famixRepFromPath(paths: Array<string>) {
         try {
             console.info(`paths = ${paths}`);
-            const project = new Project();
-            const sourceFiles = project.addSourceFilesAtPaths(paths);
+            const sourceFiles = this.project.addSourceFilesAtPaths(paths);
             this.generateNamespacesClassesInterfaces(sourceFiles);
             this.generateAccesses();
             this.generateInvocations();
@@ -89,11 +98,23 @@ export class TS2Famix {
 
     private generateInvocations() {
         console.log(`Creating invocations:`);
-        this.mapOfMethodsForFindingInvocations.forEach((savedMethod, key) => {
+
+        // const callExpressions = this.allProjectCallExpressions();
+        // callExpressions.forEach(ce => {
+        //     console.log(`  CallExpression: ${ce.getText()}`);
+        //     const theType = this.typeChecker.getTypeAtLocation(ce);
+        //     console.log(`  theType: ${theType.getText()}`);
+        //     const theDescendants = ce.getDescendants();
+        //     console.log(`  theDescendants[0]: ${theDescendants[0].getText()}`);
+        //     //const receiver = this.typeChecker.getType(ce.compilerNode.expression.getChildren()[0])
+        // });
+
+        this.mapOfMethodsForFindingInvocations.forEach((savedMethod, famixId) => {
             console.log(`  Invocation(s) to ${(savedMethod instanceof MethodDeclaration || savedMethod instanceof MethodSignature)?savedMethod.getName():"constructor"}:`);
-            const fmxMethod = this.fmxRep.getFamixElementById(key) as Famix.BehaviouralEntity;
+            const fmxMethod = this.fmxRep.getFamixElementById(famixId) as Famix.BehaviouralEntity;
             try {
                 const nodes = savedMethod.findReferencesAsNodes() as Array<Identifier>;
+                // 
                 nodes.forEach(node => {
                     const nodeReferenceAncestor = node.getAncestors()
                         .find(a => a.getKind() == SyntaxKind.MethodDeclaration
@@ -104,12 +125,21 @@ export class TS2Famix {
                     if (nodeReferenceAncestor) {
                         const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName();
                         const sender = this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
-                        console.log(`   sender: ${sender.getName()}`);
-                        console.log(`   candidate: ${fmxMethod.getName()}`);
+                        const receiverFullyQualifiedName = savedMethod.getParent().getSymbol().getFullyQualifiedName();
+                        console.log(`  Receiver fully qualified name: ${receiverFullyQualifiedName}`)
+                        const receiver = this.fmxRep.getFamixClass(receiverFullyQualifiedName);
+                        console.log(`  Receiver: ${receiver.getName()}`)
+
+                        // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind() // TODO
                         const fmxInvocation = new Famix.Invocation(this.fmxRep);
                         fmxInvocation.setSender(sender);
+                        fmxInvocation.setReceiver(receiver);
                         fmxInvocation.addCandidates(fmxMethod);
                         fmxInvocation.setSignature(fmxMethod.getSignature())
+                        console.log(`   sender: ${fmxInvocation.getSender().getName()}`);
+                        console.log(`   receiver: ${fmxInvocation.getReceiver().getName()}`);
+                        console.log(`   candidate(s): ${fmxInvocation.getCandidates().values()[0]}`);
+                        console.log(`   signature: ${fmxInvocation.getSignature()}`);
 
                         this.makeFamixIndexFileAnchor(node.getSourceFile().getFilePath(), node.getStart(), node.getEnd(), fmxInvocation);
                     } else {
@@ -121,6 +151,16 @@ export class TS2Famix {
                 console.info(`  > WARNING: got exception ${error}. Continuing...`);
             }
         });
+    }
+
+    private allProjectCallExpressions() {
+        const callExpressions = new Array<CallExpression>();
+        for (const file of this.project.getSourceFiles()) {
+            for (const ce of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
+                callExpressions.push(ce);
+            }
+        }
+        return callExpressions;
     }
 
     private generateAccesses() {
