@@ -288,7 +288,7 @@ export class TS2Famix {
                 }
                 moduleDeclaration.getFunctions().forEach(func => {
                     console.info(` Function> ${func.getName()}`);
-                    let fmxFunction = this.createFamixFunction(func, file.getFilePath());
+                    let fmxFunction = this.createFamixFunction(func);
                     fmxNamespace.addFunctions(fmxFunction);
                     console.info(`   Famix namespace: ${fmxNamespace.getName()}`);
                 });
@@ -322,7 +322,7 @@ export class TS2Famix {
             }
             (currentModules as SourceFile).getFunctions().forEach(func => {
                 console.info(` Function> ${func.getName()}`);
-                let fmxFunction = this.createFamixFunction(func, file.getFilePath());
+                let fmxFunction = this.createFamixFunction(func);
                 fmxNamespace.addFunctions(fmxFunction);
                 console.info(`   Famix namespace: ${fmxNamespace.getName()}`);
             });
@@ -589,7 +589,7 @@ export class TS2Famix {
         return fmxMethod;
     }
 
-    private createFamixFunction(func: FunctionDeclaration, filePath): Famix.Function {
+    private createFamixFunction(func: FunctionDeclaration): Famix.Function {
         console.log(` creating a FamixFunction:`);
         let fmxFunction = new Famix.Function(this.fmxRep);
         fmxFunction.setName(func.getName());
