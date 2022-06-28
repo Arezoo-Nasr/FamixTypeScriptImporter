@@ -171,7 +171,7 @@ describe('ts2famix', () => {
     });
 
     it.skip("should contain a variable 'globalA' with global scope.", () => {
-        const globalVar = "not tested" // fmxRep2.getFamixEntity({name: 'globalA', container: '__global'});
+        const globalVar = "globalA" // fmxRep2.getFamixEntity({name: 'globalA', container: '__global'});
         expect(globalVar).toBeTruthy();
         if (globalVar) {
         }
