@@ -24,7 +24,7 @@ describe('ts2famix', () => {
             const mNames = methodNamesAsSetFromClass(theClass);    
             expect(mNames.has("move") &&
             mNames.has("move2") &&
-            mNames.has("EntityClass.constructor")).toBe(true);
+            mNames.has("constructor")).toBe(true);
         } 
     });
 
