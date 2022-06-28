@@ -213,19 +213,17 @@ export class TS2Famix {
     private generateNamespacesClassesInterfaces(sourceFiles: SourceFile[]) {
         console.info("Source files:");
         sourceFiles.forEach(file => {
-            console.info(`> ${file.getBaseName()}`);
+            console.info(`File> ${file.getBaseName()}`);
 
             this.makeFamixIndexFileAnchor(file.getFilePath(), file.getStart(), file.getEnd(), null);
 
             this.currentCC = cyclomatic.calculate(file.getFilePath());
 
             let currentModules: ModuleDeclaration[] = file.getModules();
-            console.info("Module(s):");
             if (currentModules.length > 0) {
-                console.info(" Found modules...");
+                console.info(`Found ${currentModules.length} module declaration${currentModules.length > 1 ? "s" : ""}:`);
                 this.readNamespace(currentModules, file.getFilePath(), null);
             }
-            console.info(` Namespace of the file: ${file.getBaseName()}`);
             this.readNamespace(file, file.getFilePath(), null);    
         });
     }
@@ -249,19 +247,21 @@ export class TS2Famix {
         let functionsInFile: FunctionDeclaration[];
 
         if (currentModules[0] instanceof ModuleDeclaration) {
-            (currentModules as ModuleDeclaration[]).forEach(namespace => {
-
-                namespaceName = namespace.getName();
+            //console.info(` Analyzing ModuleDeclarations`);
+            (currentModules as ModuleDeclaration[]).forEach(moduleDeclaration => {
+                console.info(` moduleDeclarationKind: ${moduleDeclaration.getDeclarationKind()}`)
+                namespaceName = moduleDeclaration.getName();
+                console.info(` found namespace: ${namespaceName}`);
                 fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
-                classesInFile = namespace.getClasses();
+                classesInFile = moduleDeclaration.getClasses();
                 //get functions //get global var
-                interfacesInFile = namespace.getInterfaces();
+                interfacesInFile = moduleDeclaration.getInterfaces();
 
-                console.info(`namespace: ${namespaceName}`);
-                console.info(`classes: ${classesInFile.map(c => c.getName())}`);
+//                console.info(`namespace: ${namespaceName}`);
+//                console.info(` classes: ${classesInFile.map(c => c.getName())}`);
                 // console.info(`interfaces: ${interfaces.map(i => i.getName())}`);
 
-                this.makeFamixIndexFileAnchor(filePath, namespace.getStart(), namespace.getEnd(), fmxNamespace);
+                this.makeFamixIndexFileAnchor(filePath, moduleDeclaration.getStart(), moduleDeclaration.getEnd(), fmxNamespace);
 
                 if (classesInFile.length > 0) {
                     this.setClassElements(classesInFile, filePath, fmxNamespace);
@@ -269,21 +269,21 @@ export class TS2Famix {
                 if (interfacesInFile.length > 0) {
                     this.setInterfaceElements(interfacesInFile, filePath, fmxNamespace);
                 }
-                namespace.getFunctions().forEach(func => {
-                    console.info("functions: ");
-                    console.info(` > ${func.getName()}`);
+                moduleDeclaration.getFunctions().forEach(func => {
+                    console.info(` Function> ${func.getName()}`);
                     let fmxFunction = this.createFamixFunction(func, filePath);
                     fmxNamespace.addFunctions(fmxFunction);
-                    console.info(`   namespace: ${fmxNamespace.getName()}`);
+                    console.info(`   Famix namespace: ${fmxNamespace.getName()}`);
                 });
-                if (namespace.getModules().length > 0) {
-                    this.readNamespace(namespace.getModules(), filePath, fmxNamespace);
+                if (moduleDeclaration.getModules().length > 0) {
+                    this.readNamespace(moduleDeclaration.getModules(), filePath, fmxNamespace);
                 }
             });
         }
         else {
             // namespaceName = "__global";
             // fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
+            console.info(`  Analyzing file-level module:`)
             classesInFile = (currentModules as SourceFile).getClasses();
             interfacesInFile = (currentModules as SourceFile).getInterfaces();
             functionsInFile = (currentModules as SourceFile).getFunctions();
@@ -292,8 +292,8 @@ export class TS2Famix {
                 namespaceName = "__global";
                 fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
             }
-            console.info(`namespace: ${namespaceName}`);
-            console.info(`classes: ${classesInFile.map(c => c.getName())}`);
+            console.info(`  namespace: ${namespaceName}`);
+//            console.info(`  classes: ${classesInFile.map(c => c.getName())}`);
             //Arezoo  if there is not any classes but also it must be executed for global variables,functions,etc.
 
             if (classesInFile.length > 0) {
@@ -303,11 +303,10 @@ export class TS2Famix {
                 this.setInterfaceElements(interfacesInFile, filePath, fmxNamespace);
             }
             (currentModules as SourceFile).getFunctions().forEach(func => {
-                console.info("functions: ");
-                console.info(` > ${func.getName()}`);
+                console.info(` Function> ${func.getName()}`);
                 let fmxFunction = this.createFamixFunction(func, filePath);
                 fmxNamespace.addFunctions(fmxFunction);
-                console.info(`   namespace: ${fmxNamespace.getName()}`);
+                console.info(`   Famix namespace: ${fmxNamespace.getName()}`);
             });
         }
     }
@@ -333,14 +332,14 @@ export class TS2Famix {
 
             console.info("Methods:");
             cls.getMethods().forEach(method => {
-                console.info(` > ${method.getName()}`);
+                console.info(` Method> ${method.getName()}`);
                 const fmxMethod = this.createFamixMethod(method, filePath, method.isAbstract(), method.isStatic());
                 fmxClass.addMethods(fmxMethod);
             });
 
             console.info("Properties:");
             cls.getProperties().forEach(prop => {
-                console.info(` > ${prop.getName()}`);
+                console.info(` Property> ${prop.getName()}`);
                 let fmxAttr = this.createFamixAttribute(prop, filePath);
                 fmxClass.addAttributes(fmxAttr);
                 if (prop.isReadonly()) fmxAttr.addModifiers("readonly");
@@ -353,7 +352,7 @@ export class TS2Famix {
             console.info("Constructors:");
             cls.getConstructors().forEach(cstr => {
                 try {
-                    console.info(` > ${cstr.getSignature().getDeclaration().getText().split("\n")[0].trim()} ...`);                    
+                    console.info(` Constructor> ${cstr.getSignature().getDeclaration().getText().split("\n")[0].trim()} ...`);                    
                 } catch (error) {
                     console.info(` > WARNING: can't get signature for constructor!`);
                 }
@@ -368,7 +367,7 @@ export class TS2Famix {
         this.allInterfaces.push(...interfacesInFile);
         console.info("Analyzing interfaces:");
         interfacesInFile.forEach(inter => {
-            console.info(`> ${inter.getName()}`);
+            console.info(`Interface> ${inter.getName()}`);
 
             let fmxInterface;
             const isGenerics = inter.getTypeParameters().length;
@@ -386,14 +385,14 @@ export class TS2Famix {
 
             console.info("Methods:");
             inter.getMethods().forEach(method => {
-                console.info(` > ${method.getName()}`);
+                console.info(` Method> ${method.getName()}`);
                 let fmxMethod = this.createFamixMethod(method, filePath);
                 fmxInterface.addMethods(fmxMethod);
             });
 
             console.info("Properties:");
             inter.getProperties().forEach(prop => {
-                console.info(` > ${prop.getName()}`);
+                console.info(` Property> ${prop.getName()}`);
                 let fmxAttr = this.createFamixAttribute(prop, filePath, true);
                 fmxInterface.addAttributes(fmxAttr);
             });
