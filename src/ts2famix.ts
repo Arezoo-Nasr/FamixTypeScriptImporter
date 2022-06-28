@@ -590,9 +590,9 @@ export class TS2Famix {
     }
 
     private createFamixFunction(func: FunctionDeclaration): Famix.Function {
-        console.log(` creating a FamixFunction:`);
         let fmxFunction = new Famix.Function(this.fmxRep);
-        fmxFunction.setName(func.getName());
+        fmxFunction.setName(func.getSymbol().getFullyQualifiedName());
+        console.log(` creating a FamixFunction: ${fmxFunction.getName()}`);
 
         let functionTypeName = UNKNOWN_VALUE;
         try {
