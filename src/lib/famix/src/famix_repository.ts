@@ -57,10 +57,10 @@ export class FamixRepository {
   //   return Array.from(this.elements.values()).find(e => e.)
   // }
 
-  getFamixFunction(namespace: string, func: string) {
+  getFamixFunction(namespace: string, funcRegEx: string) {
     return Array.from(this.elements)
       .find(e => (e instanceof Function 
-                  && (e as Function).getName() === func 
+                  && (e as Function).getName().match(funcRegEx)  
                   && (e as Function).getContainer().getName() === namespace))
   }
 

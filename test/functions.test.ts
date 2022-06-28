@@ -18,8 +18,9 @@ describe('Functions', () => {
 
     it("should contain function 'b' in '__global'", () => {
         const moduleName = "__global";
-        const functionName = '"C:/Users/fuhrm/Documents/GitHub/FamixTypeScriptImporter/test_src/functions/function-import".b';
-        const theFunction = fmxRep2.getFamixFunction(moduleName, functionName);
+        const functionNameRegEx = 'test_src\\/functions\\/function-import"\\.b';
+        const theFunction = fmxRep2.getFamixFunction(moduleName, functionNameRegEx);
+        // "C:/Users/fuhrm/Documents/GitHub/FamixTypeScriptImporter/test_src/functions/function-import";
         expect(theFunction).toBeTruthy();
         if (theFunction) {
         }
