@@ -2,7 +2,7 @@
 
 [![Node.js CI](https://github.com/Arezoo-Nasr/FamixTypeScriptImporter/actions/workflows/node.js.yml/badge.svg)](https://github.com/Arezoo-Nasr/FamixTypeScriptImporter/actions/workflows/node.js.yml)
 
-Create a FAMIX model in JSON of TypeScript files. The JSON model is stored in the JSONModels folder.
+Create a [FamixTypeScript](https://github.com/Arezoo-Nasr/FamixTypeScript) model in JSON of TypeScript files. 
 
 ## Installation
 
@@ -28,9 +28,9 @@ ts-node src/ts2famix-cli.ts --help
 ts-node src/famix2puml.ts -i JSONModels/ModelName.json -o ModelName.puml
 ```
 
-## Import the JSON into the Moose
+## Import the JSON into Moose 🫎
 
-```
+```st
 '.\JSONModels\TypeScriptModel.json' asFileReference readStreamDo:
 [ :stream | model := FamixTypeScriptModel new importFromJSONStream: stream. model install ].
 ```
