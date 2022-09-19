@@ -51,6 +51,9 @@ functions.forEach(f => console.info(f.getName()))
 
 function processClass(c: ClassDeclaration): void {
     classes.push(c);
+
+    // Créer l'élément FAMIX ?
+
     console.log(`class: ${c.getName()} (${c.getType().getText()}), fqn = ${c.getSymbol()?.getFullyQualifiedName()}`)
 }
 
