@@ -1,0 +1,17 @@
+@startuml scoping
+skinparam style strictuml
+' skinparam Linetype ortho
+hide empty members
+class Namespace
+class Module
+class Function
+class LocalVariable
+class Scope
+Namespace *-- "*" Namespace
+File "1..*" --* Namespace
+LocalVariable "*" -- "1" Scope
+Scope <|-- Function
+Scope <|-- Module
+Scope <|-- Namespace
+Scope <|-- Global
+@enduml
