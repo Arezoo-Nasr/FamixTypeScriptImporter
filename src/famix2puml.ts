@@ -7,7 +7,7 @@ const argv = yargs
     .nargs('i', 1)
     .alias('o', 'output')
     .nargs('o', 1)
-    .demandOption('input').demandOption('output').argv;
+    .demandOption('input').demandOption('output').parseSync();
 
 const INHERITANCE_LINK_COLOR = 'blue';
 
@@ -78,6 +78,8 @@ function toPlantUML(element: FamixTypeScriptElement) {
     let plantUMLString: string = '';
     let optionalName = element.name || '';
     let nameWithoutPrefix = element.FM3.split('.')[1];
+    // remove convert " to ' in optional name
+    optionalName = optionalName.replace(/"/g, "'");
     plantUMLString += `object "${optionalName}:${nameWithoutPrefix}" as ${uniqueElementName(element)} {\n`;
     plantUMLString += `id = ${element.id}\n`;
     plantUMLString += propertiesToPlantUML(element);
