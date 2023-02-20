@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Attribute, Class, ContainerEntity, Namespace, Function } from "./model/famix";
+import { Attribute, Class, ContainerEntity, Namespace, Function, GlobalVariable } from "./model/famix";
 
 export class FamixRepository {
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
@@ -52,11 +52,12 @@ export class FamixRepository {
     // return undefined;
   }
 
-  //Added by hand
-  // getFamixEntity(s: { name: string; container: string; kind: Attribute | Variable}) {
-  //   return Array.from(this.elements.values()).find(e => e.)
-  // }
-
+ //Added by hand
+ public getFamixEntity(s: { name: string; container: string;}) {
+  return Array.from(this.elements.values()).find(e => e instanceof GlobalVariable
+                                                    && (e as GlobalVariable).getName() === s.name 
+                                                   )
+}
   getFamixFunction(namespace: string, funcRegEx: string) {
     return Array.from(this.elements)
       .find(e => (e instanceof Function 

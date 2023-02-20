@@ -1,3 +1,7 @@
+export {};
+declare global {
+	var globalAny :any;
+}
 namespace MyNamespace {
 
 	export class EntityClass {
@@ -57,6 +61,7 @@ namespace Nsp3 {
 }
 
 // global scope
+
 var globalA = "yes";
 function globalFunc(a: number){
 	return globalA == "yes" ? a - 10 : 0;
