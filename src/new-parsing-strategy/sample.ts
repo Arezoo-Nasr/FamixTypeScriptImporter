@@ -10,13 +10,21 @@ class A {
 
 namespace A {
     var w = 15;
+    let x;
+    x = w;
     class B {
         bFred: number;
         bWilma: "yellow" | "red";
         bMethod1(bMethodArg1: number) {
             return bMethodArg1 + 1;
+            function fInB() {
+                function fInfInB() {
+                    var w = 0;
+                }
+            }
         }
     }
+    let b = new B();
 }
 
 export const y = 12.5;
