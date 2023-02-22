@@ -1,14 +1,20 @@
+
 var x = "hello";
 
-class A {
+export class ClassA {
     aFred: number;
     aWilma: "green" | "blue" | 12;
     aMethod1(aMethodArg1: string) {
         return aMethodArg1 + "!"
-    }    
+        function fInAMethod() {
+            function fInfInAMethod() {
+                var w = 0;
+            }
+        }
+}    
 }
 
-namespace A {
+namespace ANamespace {
     var w = 15;
     let x;
     x = w;
@@ -16,9 +22,11 @@ namespace A {
         bFred: number;
         bWilma: "yellow" | "red";
         bMethod1(bMethodArg1: number) {
+            let varInBMethod;
             return bMethodArg1 + 1;
-            function fInB() {
-                function fInfInB() {
+            function fInBMethod() {
+                let varInFInBMethod;
+                function fInfInBMethod() {
                     var w = 0;
                 }
             }
@@ -31,6 +39,14 @@ export const y = 12.5;
 
 function f() {
     var k = 0;
+    { var blockVar = 66; }
+    switch (k) {
+        case 0:
+            var kSwitchCase = 99;
+            break;
+        default:
+            var kSwitchDefault = 90;
+    }
     if (true) {
         var ifBlockL = 12;
     }
@@ -43,6 +59,22 @@ function f() {
         var tryBlockL = 1;
     } catch (error) {
         var catchBlockL = 12;
+    }
+    while (false) {
+        var kWhile = 9;
+    }
+    let array = [1, 2, 3];
+    for (let forIndex = 0; forIndex < array.length; forIndex++) {
+        const elementInFor = array[forIndex];
+    }
+    let object = {}
+    for (const key in object) {
+        if (Object.prototype.hasOwnProperty.call(object, key)) {
+            const elementInForIn = object[key];
+        }
+    }
+    for (const iterator of array) {
+        let elementInForOf = "blah"
     }
     g();
 
