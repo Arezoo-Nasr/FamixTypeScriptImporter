@@ -22,12 +22,13 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
                 return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
             default:
                 // ancestor hasn't got a useful name
-                break;
+                return "";
         }
     }
 }
 
-function getFQN(node: ts.Node) {
+
+export function getFQN(node: ts.Node) {
     const symbol = node.getSymbol();
     if (!symbol) {
         return undefined;

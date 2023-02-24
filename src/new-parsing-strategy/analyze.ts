@@ -1,5 +1,6 @@
 import ts, { ClassDeclaration, MethodDeclaration, VariableStatement } from "ts-morph";
 import { Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration } from "ts-morph";
+import { getFQN } from "./fqn";
 
 const declarations: VariableDeclaration[] = [];
 const project = new Project();
@@ -41,16 +42,21 @@ sourceFile.getModules().forEach(m => {
     m.getFunctions().forEach(f => processFunction(f));
 });
 
-// console.info(`\nClasses:`);
-// classes.forEach(c => console.log(c.getName()))
-// console.info(`\nMethods:`);
-// methods.forEach(m => console.log(`${m.getParent().asKind(SyntaxKind.ClassDeclaration).getName()}.${m.getName()}`))
-// console.info(`\nVariables:`);
+console.info(`\nClasses:`);
+//classes.forEach(c => console.log(c.getName()))
+classes.forEach(c => console.log(getFQN(c)));
+console.info(`\nMethods:`);
+//methods.forEach(m => console.log(`${m.getParent().asKind(SyntaxKind.ClassDeclaration).getName()}.${m.getName()}`))
+methods.forEach(m => console.log(getFQN(m)));
+console.info(`\nVariables:`);
 // variables.forEach(v => console.log(`(${v.getParent().getParent().getParent().getKindName()}).${v.getName()}`))
-// console.info(`\nVariable Statements:`);
-// variableStatements.forEach(vs => console.log(vs.getDeclarations()[0].getName()))
-// console.info(`\nFunctions:`);
-// functions.forEach(f => console.info(f.getName()))
+variables.forEach(v => console.log(getFQN(v)));
+console.info(`\nVariable Statements:`);
+variableStatements.forEach(vs => console.log(vs.getDeclarationKind().toString(), vs.getDeclarations()[0].getName(), getFQN(vs.getDeclarations()[0])));
+// variableStatements.forEach(vs => console.log(getFQN(vs)));
+console.info(`\nFunctions:`);
+// functions.forEach(f => console.info(f.getName()));
+functions.forEach(f => console.info(getFQN(f)));
 
 
 function processClass(c: ClassDeclaration): void {
