@@ -170,14 +170,16 @@ describe('ts2famix', () => {
         expect(globalFunc.getContainer().getName()).toBe('__global');
     });
 
-    it("should contain a variable 'globalA' with global scope.", () => {
-        console.log("callin getFAmixEntity")
+    it("should contain a variable 'globalAny' with global scope for a declared global variable.", () => {
         const globalVar = fmxRep2.getFamixEntity({name: 'globalAny', container: '__global'}) as GlobalVariable;
         expect(globalVar).toBeTruthy();
         expect(globalVar.getName()).toBe('globalAny');
-        //expect(globalVar.getContainer().getName()).toBe('__global');
-        if (globalVar) {
-        }
+    });
+
+    it("should contain a variable 'globalExp' with global scope for a exported variable.", () => {        
+        const globalVar2 = fmxRep2.getFamixEntity({name: 'globalExp', container: '__global'}) as GlobalVariable;
+        expect(globalVar2).toBeTruthy();
+        expect(globalVar2.getName()).toBe('globalExp');
     });
 
 });

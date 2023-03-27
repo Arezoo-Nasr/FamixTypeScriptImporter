@@ -744,8 +744,10 @@ export class TS2Famix {
             return "Protected";
     }
     private getGlobaleVariableDeclarationInModule(file:SourceFile, moduleDeclaration: ModuleDeclaration) {
+        
         let variables = moduleDeclaration.getVariableDeclarations();
         let famixGobalVariableList = [];
+
         if (variables)
             console.log(variables.length);
         if (variables && variables.length > 0) {
@@ -756,8 +758,22 @@ export class TS2Famix {
                 famixGobalVariableList.push(fmxGlobalVariable);
             });
         } else {
-            console.log(`No variable in the module ${moduleDeclaration.getName()}`);
+            console.log(`No global declared variable in the module ${moduleDeclaration.getName()}`);
         }
+
+        const allVariables = file.getDescendantsOfKind(SyntaxKind.VariableDeclaration)
+        .filter(variable => !variable.getAncestors().some(a => a.getKind() === SyntaxKind.FunctionDeclaration));
+    
+        allVariables.forEach(variable => {
+        //console.log(variable.getName())
+        if (!variable.getAncestors().some(a => a.getKindName() === "MethodDeclaration" || a.getKindName() === "ClassDeclaration") &&
+            variable.getVariableStatement()?.getDeclarationKind() != "const" && (variable.hasExportKeyword())) {
+            // exported but not const
+            let fmxGlobalVariable = this.makeFamixGlobalVariable(variable);
+            famixGobalVariableList.push(fmxGlobalVariable);
+        }
+        });
+        
         return famixGobalVariableList;
     }
     private makeFamixGlobalVariable(variable:VariableDeclaration) {
