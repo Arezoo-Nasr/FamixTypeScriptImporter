@@ -750,7 +750,7 @@ export class TS2Famix {
 
         if (variables)
             console.log(variables.length);
-        if (variables && variables.length > 0) {
+        if (variables && variables.length > 0 && moduleDeclaration.getName() == "global") {
             console.log("Add globals variables");
             variables.forEach(variable => {
                 console.log(variable.getName());
