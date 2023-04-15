@@ -1,3 +1,10 @@
+export {};
+declare global {
+	var globalAny :any;
+}
+
+export var globalExp = "testExport";
+
 namespace MyNamespace {
 
 	export class EntityClass {

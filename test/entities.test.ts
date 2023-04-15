@@ -1,5 +1,5 @@
 import { TS2Famix } from '../src/ts2famix';
-import { Method, Class, Type, Function} from '../src/lib/famix/src/model/famix';
+import { Method, Class, Type, Function, GlobalVariable } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/Entity.ts"];
 const importer = new TS2Famix();
@@ -21,11 +21,11 @@ describe('ts2famix', () => {
     })
     it("should contain methods with correct names.", () => {
         if (theClass) {
-            const mNames = methodNamesAsSetFromClass(theClass);    
+            const mNames = methodNamesAsSetFromClass(theClass);
             expect(mNames.has("move") &&
-            mNames.has("move2") &&
-            mNames.has("constructor")).toBe(true);
-        } 
+                mNames.has("move2") &&
+                mNames.has("constructor")).toBe(true);
+        }
     });
 
     it("should contain a private method named move2 that returns void.", () => {
@@ -35,9 +35,9 @@ describe('ts2famix', () => {
             if (move2Method) {
                 expect(move2Method.getIsPrivate()).toBe(true);
             }
-        } 
+        }
     });
-   
+
     it("should contain a private method named move2 with a signature 'private move2(family: string): void'.", () => {
         if (theClass) {
             const move2Method = methodByNameFromClass("move2", theClass);
@@ -45,7 +45,7 @@ describe('ts2famix', () => {
             if (move2Method) {
                 expect(move2Method.getSignature()).toBe('private move2(family: string): void');
             }
-        } 
+        }
     });
 
     it("should contain a constructor in EntityClass", () => {
@@ -55,7 +55,7 @@ describe('ts2famix', () => {
     })
 
     it("should have a parent relationship between EntityClass and its methods.", () => {
-        if (theClass) { 
+        if (theClass) {
             const mParents = methodParentsAsSetFromClass(theClass);
             expect(mParents.size).toBe(1);
             expect(Array.from(mParents)[0]).toEqual(theClass)
@@ -170,13 +170,17 @@ describe('ts2famix', () => {
         expect(globalFunc.getContainer().getName()).toBe('__global');
     });
 
-    it.skip("should contain a variable 'globalA' with global scope.", () => {
-        const globalVar = "globalA" // fmxRep2.getFamixEntity({name: 'globalA', container: '__global'});
+    it("should contain a variable 'globalAny' with global scope for a declared global variable.", () => {
+        const globalVar = fmxRep2.getFamixEntity({name: 'globalAny', container: '__global'}) as GlobalVariable;
         expect(globalVar).toBeTruthy();
-        if (globalVar) {
-        }
+        expect(globalVar.getName()).toBe('globalAny');
     });
 
+    it("should contain a variable 'globalExp' with global scope for a exported variable.", () => {        
+        const globalVar2 = fmxRep2.getFamixEntity({name: 'globalExp', container: '__global'}) as GlobalVariable;
+        expect(globalVar2).toBeTruthy();
+        expect(globalVar2.getName()).toBe('globalExp');
+    });
 
 });
 function methodNamesAsSetFromClass(theClass: Class) {
