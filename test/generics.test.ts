@@ -1,5 +1,5 @@
-import { TS2Famix } from '../src/ts2famix';
-import { Inheritance, ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
+import { TS2Famix } from '../src/ts2famix-clean-version';
+import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/generics/**/*"];
 const importer = new TS2Famix();
@@ -7,17 +7,21 @@ const importer = new TS2Famix();
 const fmxRep2 = importer.famixRepFromPath(filePaths);
 
 describe('generics ts2famix', () => {
-    it("should parse generics.", () => {
+
+    it("should parse generics", () => {
         expect(fmxRep2).toBeTruthy()
     });
+    
     it("should contain two generic classes", () => {
-        expect(fmxRep2.getAllEntitiesWithType("ParameterizableClass").size).toBe(2)
+        expect(fmxRep2.getAllEntitiesWithType("ParameterizableClass").size).toBe(2);
     });
+
     it("should contain a generic class MyDao and generic interface MyDaoInterface", () => {
         const listOfNames = Array.from(fmxRep2.getAllEntitiesWithType("ParameterizableClass")).map(e => (e as ParameterizableClass).getName());
         expect(listOfNames).toContain("MyDao");
         expect(listOfNames).toContain("MyDaoInterface");
     });
+
     it("should contain a generic class MyDao with a parameter type T", () => {
         const pList = Array.from(fmxRep2.getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
@@ -28,6 +32,7 @@ describe('generics ts2famix', () => {
             expect((Array.from(myDao.getParameterTypes())[0] as ParameterizedType).getName()).toBe("T");
         }
     });
+
     it("should contain a generic interface MyDaoInterface with a parameter type T", () => {
         const pList = Array.from(fmxRep2.getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
@@ -38,6 +43,7 @@ describe('generics ts2famix', () => {
             expect((Array.from(myDaoInterface.getParameterTypes())[0] as ParameterizedType).getName()).toBe("T");
         }
     });
+
     it("should contain a generic class MyDao that implements generic interface MyDaoInterface<T>", () => {
         const pList = Array.from(fmxRep2.getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
@@ -52,5 +58,4 @@ describe('generics ts2famix', () => {
             expect(theInheritance.getSuperclass()).toBe(myDaoInterface);
         }
     });
-
 });

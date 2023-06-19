@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Attribute, Class, ContainerEntity, Namespace, Function } from "./model/famix";
+import { Class, ContainerEntity, Namespace, Function } from "./model/famix";
 
 export class FamixRepository {
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
@@ -27,6 +27,10 @@ export class FamixRepository {
       .filter(e => (e as any).constructor.name == theType)
       .concat(Array.from(this.famixClasses.values())
         .filter(e => (e as any).constructor.name == theType)));
+  }
+
+  public getAllEntities() {
+    return new Set(Array.from(this.elements.values()).concat(Array.from(this.famixClasses.values())));
   }
 
   public createOrGetFamixClass(name: string, isInterface?: boolean, isAbstract?: boolean): Class {
@@ -74,6 +78,10 @@ export class FamixRepository {
     //   }
     // }
     // return undefined;
+  }
+
+  getFamixNamespaces() {
+    return new Set(Array.from(this.famixNamespaces.values()));
   }
 
   public getFamixElementById(id: number): FamixBaseElement | undefined {

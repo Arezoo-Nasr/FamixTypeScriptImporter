@@ -1,5 +1,5 @@
 import { Invocation, Method } from "../src/lib/famix/src/model/famix";
-import { TS2Famix } from "../src/ts2famix";
+import { TS2Famix } from "../src/ts2famix-clean-version";
 
 const filePaths = ["test_src/invocations/*.ts"];
 const importer = new TS2Famix();
@@ -21,6 +21,7 @@ describe('Invocation', () => {
             expect(theMethod).toBeTruthy();    
         }
     })
+
     it("should contain method returnName in Class2", () => {
         const clsName = "Class2";
         const mName = "returnName";
@@ -34,6 +35,7 @@ describe('Invocation', () => {
             expect(theMethod).toBeTruthy();    
         }
     })
+
     it("should contain method getString in Class3", () => {
         const clsName = "Class3";
         const mName = "getString";
@@ -47,6 +49,7 @@ describe('Invocation', () => {
             expect(theMethod).toBeTruthy();    
         }
     });
+
     it("should contain an invocation for returnHi", () => {
         const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
@@ -90,5 +93,4 @@ describe('Invocation', () => {
     //     expect((invocations[0] as Invocation).getSignature()).toBeTruthy();
     //     expect((invocations[0] as Invocation).getSignature()).toBe('public returnHi(): string');
     // })
-
 })

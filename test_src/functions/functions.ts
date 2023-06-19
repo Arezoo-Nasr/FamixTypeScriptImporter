@@ -1,4 +1,4 @@
-import { b, c as d } from "./function-import"
+import { b, c as d } from "./function-import";
 
 function a(b: number) {
 	return b + 15;
