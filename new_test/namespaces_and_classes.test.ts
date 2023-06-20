@@ -1,6 +1,4 @@
-import { getAccessKind } from 'tsutils';
 import { TS2Famix } from '../src/ts2famix-clean-version';
-import { getDefaultLibFileName } from 'typescript';
 
 const filePaths = ["new_test_src/namespaces_and_classes.ts"];
 const importer = new TS2Famix();
