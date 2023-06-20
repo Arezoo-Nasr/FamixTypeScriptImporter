@@ -1,3 +1,7 @@
+import ts, { ClassDeclaration, MethodDeclaration, VariableStatement } from "ts-morph";
+import { Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration } from "ts-morph";
+//import { getFQN } from "./fqn";
+
 function computeTSMethodSignature(methodText: string): string {
     const endSignatureText = methodText.indexOf("{");
     return methodText.substring(0, endSignatureText).trim();
@@ -18,4 +22,4 @@ function test2() : any {
     return currentCC;
 }
 
-console.log(test2())
+console.log(test2().getText())

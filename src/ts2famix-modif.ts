@@ -60,9 +60,8 @@ export class TS2Famix {
                 // console.info(`Found ${currentModules.length} module declaration ${currentModules.length > 1 ? "s" : ""}:`);
                 this.readNamespaces(currentModules, file);
             }
-            else {
-                this.readNamespaces(file, file); // -> else ou pas ???
-            }
+            
+            this.readNamespaces(file, file); // -> else ou pas ???
         });
     }
 
@@ -111,9 +110,8 @@ export class TS2Famix {
         // console.info(`interfaces: ${interfaces.map(i => i.getName())}`);
         // Arezoo: if there is not any classes but also it must be executed for global variables,functions,etc.
 
-        if (module instanceof ModuleDeclaration) {
-            this.famixFunctions.makeFamixIndexFileAnchor(this.fmxRep, module, fmxNamespace); // -> seulement si moduleDeclaration ???
-        }
+        //if (module instanceof ModuleDeclaration) {
+        this.famixFunctions.makeFamixIndexFileAnchor(this.fmxRep, module, fmxNamespace); // -> seulement si moduleDeclaration ???
 
         if (classesInFile.length) {
             this.addClassElements(classesInFile, fmxNamespace);
@@ -128,14 +126,7 @@ export class TS2Famix {
             this.addVariableElements(variablesInFile, fmxNamespace);
         }
 
-        // module.getFunctions().forEach(func => {
-        //     console.info(` Function> ${func.getName()}`);
-        //     let fmxFunction = this.createFamixFunction(func);
-        //     fmxNamespace.addFunctions(fmxFunction);
-        //     console.info(`   Famix namespace: ${fmxNamespace.getName()}`);
-        // });
-
-        if (module instanceof ModuleDeclaration && module.getModules().length > 0) {
+        if (module.getModules().length > 0) {
             // nested namespaces
             this.readNamespaces(module.getModules(), file, fmxNamespace);
         }

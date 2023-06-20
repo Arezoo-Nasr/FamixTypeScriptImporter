@@ -13,12 +13,12 @@ const cyclomatic = require('./lib/ts-complex/cyclomatic-service');
 export class TS2Famix {
 
     private famixFunctions = new FamixFunctions();
-
-    private readonly fmxNamespacesMap = new Map<string, Famix.Namespace>();
-    private readonly fmxTypes = new Map<string, Famix.Type>();
+    // -> Map en readonly ???
     private fmxRep = new FamixRepository();
     private allClasses = new Array<ClassDeclaration>();
     private allInterfaces = new Array<InterfaceDeclaration>();
+    private readonly fmxNamespacesMap = new Map<string, Famix.Namespace>();
+    private readonly fmxTypes = new Map<string, Famix.Type>();
     private arrayOfAccess = new Map<number, any>(); // id of famix object (variable, attribute) and ts-morph object
     private mapOfMethodsForFindingInvocations = new Map<number, MethodDeclaration | ConstructorDeclaration | MethodSignature>(); // id of famix object (method) and ts-morph object
     
@@ -53,9 +53,8 @@ export class TS2Famix {
             if (currentModules.length > 0) {
                 this.readNamespaces(currentModules, file);
             }
-            else {
-                this.readNamespaces(file, file); // -> else ou pas ???
-            }
+
+            this.readNamespaces(file, file); // -> else ou pas ???
         });
     }
 
@@ -75,7 +74,9 @@ export class TS2Famix {
 
         let namespaceName: string;
         let fmxNamespace: Famix.Namespace;
+        let interfacesInFile: InterfaceDeclaration[];
         let classesInFile: ClassDeclaration[];
+        let functionsInFile: FunctionDeclaration[];
 
         if (module instanceof ModuleDeclaration) {
             namespaceName = module.getName();
@@ -84,32 +85,67 @@ export class TS2Famix {
             namespaceName = "__global";
         }
 
-        fmxNamespace = this.famixFunctions.createOrGetFamixNamespace(this.fmxRep, this.fmxNamespacesMap, namespaceName, parentScope);
         classesInFile = module.getClasses();
+        interfacesInFile = module.getInterfaces();
+        functionsInFile = module.getFunctions();
+        const variablesInFile = module.getVariableDeclarations();
 
-        if (module instanceof ModuleDeclaration) {
-            this.famixFunctions.makeFamixIndexFileAnchor(this.fmxRep, module, fmxNamespace); // -> seulement si moduleDeclaration ???
+        if (classesInFile.length || interfacesInFile.length || functionsInFile.length || variablesInFile) {
+            fmxNamespace = this.famixFunctions.createOrGetFamixNamespace(this.fmxRep, this.fmxNamespacesMap, namespaceName, parentScope);
         }
 
+        //if (module instanceof ModuleDeclaration) {
+        this.famixFunctions.makeFamixIndexFileAnchor(this.fmxRep, module, fmxNamespace); // -> seulement si moduleDeclaration ???
+
         if (classesInFile.length) {
-            this.addClassElements(classesInFile, fmxNamespace);
+            this.addClassOrInterfaceElements(classesInFile, fmxNamespace);
+        }
+        if (interfacesInFile.length) {
+            this.addClassOrInterfaceElements(interfacesInFile, fmxNamespace);
+        }
+        // if (functionsInFile.length) {
+        //     this.addFunctionElements(functionsInFile, fmxNamespace);
+        // }
+        // if (variablesInFile.length) {
+        //     this.addVariableElements(variablesInFile, fmxNamespace);
+        // }
+
+        if (module.getModules().length > 0) {
+            // nested namespaces
+            this.readNamespaces(module.getModules(), file, fmxNamespace);
         }
     }
 
-    private addClassElements(classesInFile: ClassDeclaration[], fmxNamespace: Famix.Namespace) {
+    private addClassOrInterfaceElements(objectsInFile: ClassDeclaration[] | InterfaceDeclaration[], fmxNamespace: Famix.Namespace) {
+        if (objectsInFile[0] instanceof ClassDeclaration) {
+            this.allClasses = [...objectsInFile] as ClassDeclaration[];
+        }
+        else {
+            this.allInterfaces = [...objectsInFile] as InterfaceDeclaration[];
+        }
 
-        this.allClasses = [...classesInFile];
-
-        classesInFile.forEach(cls => {
-            let fmxClass : any;
-            const isGenerics = cls.getTypeParameters().length;
-            fmxClass = this.famixFunctions.createOrGetFamixClass(this.fmxRep, this.fmxTypes, cls, false, cls.isAbstract());
+        objectsInFile.forEach(obj => {
+            let fmxObj : any;
+            const isGenerics = obj.getTypeParameters().length;
+            fmxObj = this.famixFunctions.createOrGetFamixClass(this.fmxRep, this.fmxTypes, obj, false, obj.isAbstract());
             if (isGenerics) {
-                cls.getTypeParameters().forEach(p => {
-                    fmxClass.addParameterType(this.famixFunctions.createOrGetFamixParameterType(this.fmxRep, p));
+                obj.getTypeParameters().forEach(p => {
+                    fmxObj.addParameterType(this.famixFunctions.createOrGetFamixParameterType(this.fmxRep, p));
                 })
             }
-            fmxNamespace.addTypes(fmxClass);
+            fmxNamespace.addTypes(fmxObj);
+
+            // if (obj instanceof InterfaceDeclaration) {
+            //     obj.getMethods().forEach(method => {
+            //         let fmxMethod = this.famixFunctions.createFamixMethod(this.fmxRep, this.fmxTypes, this.mapOfMethodsForFindingInvocations, method, this.currentCC);
+            //         fmxObj.addMethods(fmxMethod);
+            //     });
+
+            //     obj.getProperties().forEach(prop => {
+            //         let fmxAttr = this.famixFunctions.createFamixAttribute(this.fmxRep, this.fmxTypes, this.arrayOfAccess, prop, true);
+            //         fmxObj.addAttributes(fmxAttr);
+            //     });
+            // }
         });
     }
 }

@@ -1,4 +1,6 @@
+import { getAccessKind } from 'tsutils';
 import { TS2Famix } from '../src/ts2famix-clean-version';
+import { getDefaultLibFileName } from 'typescript';
 
 const filePaths = ["new_test_src/namespaces_and_classes.ts"];
 const importer = new TS2Famix();
@@ -10,13 +12,13 @@ const theClass3 = fmxRep2.getFamixClass("clsInNsp3");
 const theClass4 = fmxRep2.getFamixClass("clsOutNsp");
 
 describe('Tests for namespaces and classes', () => {
-    
+    // console.log(fmxRep2.getAllEntities());
     it("should parse generics", () => {
         expect(fmxRep2).toBeTruthy()
     });
     
-    it("should contain two namespaces", () => {
-        expect(fmxRep2.getFamixNamespaces().size).toBe(2);
+    it("should contain three namespaces", () => {
+        expect(fmxRep2.getFamixNamespaces().size).toBe(3);
     });
 
     it("should contain a namespace MyNamespace", () => {
@@ -27,8 +29,12 @@ describe('Tests for namespaces and classes', () => {
         expect(fmxRep2.getFamixNamespace("Nsp3")).toBeTruthy();
     });
 
-    it("should contain three generic classes", () => {
-        expect(fmxRep2.getAllEntitiesWithType("ParameterizableClass").size).toBe(3);
+    it("should contain a namespace __global", () => {
+        expect(fmxRep2.getFamixNamespace("__global")).toBeTruthy();
+    });
+
+    it("should contain four generic classes", () => {
+        expect(fmxRep2.getAllEntitiesWithType("ParameterizableClass").size).toBe(4);
     });
 
     it("should contain a class EntityClass", () => {
@@ -43,7 +49,7 @@ describe('Tests for namespaces and classes', () => {
         expect(theClass3).toBeTruthy();
     })
 
-    it("should not contain a class clsOutNsp", () => { // -> desired behavior ???
-        expect(theClass4).toBeUndefined();
+    it("should contain a class clsOutNsp", () => {
+        expect(theClass4).toBeTruthy();
     })
 });
