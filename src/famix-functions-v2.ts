@@ -6,7 +6,14 @@ const UNKNOWN_VALUE = '(unknown due to parsing error)';
 
 export class FamixFunctions {
 
+    private fmxRep = new FamixRepository();
+    private fmxTypes = new Map<string, Famix.Type>();
+
     constructor() {
+    }
+
+    public getFamixRepository(): FamixRepository {
+        return this.fmxRep;
     }
 
     public makeFamixIndexFileAnchor(fmxRep: FamixRepository, sourceElement: SourceFile | ModuleDeclaration | Identifier | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | MethodSignature | ConstructorDeclaration | ParameterDeclaration | VariableDeclaration | FunctionDeclaration | PropertyDeclaration | PropertySignature, famixElement: Famix.SourcedEntity) {
@@ -35,27 +42,27 @@ export class FamixFunctions {
         return fmxNamespace;
     }
 
-    public createOrGetFamixClass(fmxRep: FamixRepository, fmxTypes: Map<string, Famix.Type>, cls: ClassDeclaration | InterfaceDeclaration, isInterface = false, isAbstract = false): Famix.Class {
+    public createOrGetFamixClass(cls: ClassDeclaration | InterfaceDeclaration, isInterface = false, isAbstract = false): Famix.Class {
         let fmxClass: Famix.ParameterizableClass; // -> Famix.Class ???
         let clsName = cls.getName();
-        if (!fmxTypes.has(clsName)) {
-            fmxClass = new Famix.ParameterizableClass(fmxRep); // -> Famix.Class ???
+        if (!this.fmxTypes.has(clsName)) {
+            fmxClass = new Famix.ParameterizableClass(this.fmxRep); // -> Famix.Class ???
             fmxClass.setName(clsName);
             fmxClass.setIsInterface(isInterface);
             fmxClass.setIsAbstract(isAbstract);
 
-            this.makeFamixIndexFileAnchor(fmxRep, cls, fmxClass);
+            this.makeFamixIndexFileAnchor(this.fmxRep, cls, fmxClass);
 
-            fmxTypes.set(clsName, fmxClass);
+            this.fmxTypes.set(clsName, fmxClass);
         }
         else {
-            fmxClass = fmxTypes.get(clsName) as Famix.ParameterizableClass; // -> Famix.Class ???
+            fmxClass = this.fmxTypes.get(clsName) as Famix.ParameterizableClass; // -> Famix.Class ???
         }
         return fmxClass;
     }
 
-    public createOrGetFamixParameterType(fmxRep: FamixRepository, tp: TypeParameterDeclaration) {
-        const fmxParameterType = new Famix.ParameterType(fmxRep);
+    public createOrGetFamixParameterType(tp: TypeParameterDeclaration) {
+        const fmxParameterType = new Famix.ParameterType(this.fmxRep);
         fmxParameterType.setName(tp.getName());
         return fmxParameterType;
     }

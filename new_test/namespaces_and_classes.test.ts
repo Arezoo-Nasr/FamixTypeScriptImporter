@@ -1,9 +1,11 @@
-import { TS2Famix } from '../src/ts2famix-clean-version';
+//import { TS2Famix } from '../src/ts2famix-clean-version';
+import * as parser from '../src/new-parsing-strategy/analyze'
 
 const filePaths = ["new_test_src/namespaces_and_classes.ts"];
-const importer = new TS2Famix();
+//const importer = new TS2Famix();
 
-const fmxRep2 = importer.famixRepFromPath(filePaths);
+//const fmxRep2 = importer.famixRepFromPath(filePaths);
+const fmxRep2 = parser.famixRepFromPath(filePaths);
 const theClass = fmxRep2.getFamixClass("EntityClass");
 const theClass2 = fmxRep2.getFamixClass("class2");
 const theClass3 = fmxRep2.getFamixClass("clsInNsp3");

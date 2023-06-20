@@ -4,7 +4,6 @@ import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { ParameterizedType } from "./../famix/parameterized_type";
 import { Class } from "./../famix/class";
 import { ParameterType } from "./parameter_type";
-import { Parameter } from "./parameter";
 
 export class ParameterizableClass extends Class {
 
