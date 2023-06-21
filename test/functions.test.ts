@@ -1,4 +1,4 @@
-import { TS2Famix } from "../src/ts2famix-clean-version";
+import { TS2Famix } from "../src/ts2famix";
 
 const filePaths = ["test_src/functions/*.ts"];
 const importer = new TS2Famix();
@@ -20,8 +20,10 @@ describe('Functions', () => {
         const moduleName = "__global";
         const functionNameRegEx = 'test_src\\/functions\\/function-import"\\.b';
         const theFunction = fmxRep2.getFamixFunction(moduleName, functionNameRegEx);
+        // "C:/Users/fuhrm/Documents/GitHub/FamixTypeScriptImporter/test_src/functions/function-import";
         expect(theFunction).toBeTruthy();
         if (theFunction) {
         }
     })
+
 })

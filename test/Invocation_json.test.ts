@@ -1,4 +1,4 @@
-import { TS2Famix } from "../src/ts2famix-clean-version";
+import { TS2Famix } from "../src/ts2famix";
 
 const filePaths = ["test_src/invocations/*.ts"];
 const importer = new TS2Famix();
@@ -9,7 +9,6 @@ const jsonOutput = fmxRep2.getJSON();
 let parsedModel: Array<any>;
 
 describe('Invocation', () => {
-
     it("should contain a class Class3 with one method: getString", () => {
         parsedModel = JSON.parse(jsonOutput);
         const invocationCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "Class3"))[0];
@@ -33,7 +32,6 @@ describe('Invocation', () => {
 })
 
 function verifyInvocation(theClass: string, theMethod: string) {
-    
     const invocationCls = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == theClass))[0];
     const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref == e.id));
     const methodNames: string[] = [theMethod];
@@ -50,3 +48,4 @@ function verifyInvocation(theClass: string, theMethod: string) {
         expect(checkHasRelatedToMethod).toBe(true);
     });
 }
+

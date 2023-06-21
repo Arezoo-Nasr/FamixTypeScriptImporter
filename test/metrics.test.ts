@@ -1,4 +1,5 @@
-import { TS2Famix } from '../src/ts2famix-clean-version';
+import { TS2Famix } from '../src/ts2famix';
+import { Method } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/ForMetrics.ts"];
 const importer = new TS2Famix();

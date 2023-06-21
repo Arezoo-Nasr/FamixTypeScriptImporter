@@ -1,7 +1,6 @@
 namespace MyNamespace {
 
 	export class EntityClass {
-
 		public name: string;
 		private p1: boolean;  // type-only private
 		#p2 = false; // runtime private
@@ -15,10 +14,9 @@ namespace MyNamespace {
 			this.name = "Arezoo";
 			console.log(this.#p2);
 		}
-
 		public move(): void {
 			this.move2("my family " + this.p1);
-		}
+		 }
 
 		private move2(family: string): void {
 			var Str1: string = "hi" + family;
@@ -29,38 +27,29 @@ namespace MyNamespace {
 	}
 
 	class class2 extends EntityClass {
-
 		public cls2: number;
 	}
-
 	namespace Nsp2 {
-		
 		class clsInNsp {
-
 			public udf2(): string {
 				return "Hiiii";
 			}
-
 			public static aStaticMethod() {
 				const e = new EntityClass();
 			}
 		}
 	}
+
 }
-
 class clsOutNsp {
-
 	public att1: number = 10;
-
 	public udf(): string {
 		return "Hiiii in out of namespace";
 	}
 }
 
 namespace Nsp3 {
-
 	class clsInNsp3 {
-
 		public udf3(): string {
 			return "Hiiii";
 		}
@@ -69,6 +58,6 @@ namespace Nsp3 {
 
 // global scope
 var globalA = "yes";
-function globalFunc(a: number) {
+function globalFunc(a: number){
 	return globalA == "yes" ? a - 10 : 0;
 }

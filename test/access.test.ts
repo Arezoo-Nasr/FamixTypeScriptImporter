@@ -1,4 +1,4 @@
-import { TS2Famix } from "../src/ts2famix-clean-version";
+import { TS2Famix } from "../src/ts2famix";
 import { Attribute, Method } from "../src/lib/famix/src/model/famix";
 import { FamixTypeScriptElementStorage } from "../src/lib/famix/src/famix_JSON_exporter";
 
@@ -14,7 +14,7 @@ let accessClsMethods: Array<any>;
 let accessClsAttributes: Array<any>;
 
 describe('Access', () => {
-
+    // it("should contain an Access class with two methods (public returnAccessName, private privateMethod) and two attributes: (public accessName, private privateAttribute)", () => {
     it("should have a class with two methods and two attributes", () => {
         let expectedAttributeNames: string[] = ['privateAttribute', 'publicAttribute'];
         let expectedMethodNames: string[] = ['privateMethod', 'returnAccessName'];
@@ -36,9 +36,7 @@ describe('Access', () => {
     it("should have an access to privateAttribute in privateMethod", () => {
         const famixAccess = parsedModel.filter(el =>
             (el.FM3 == "FamixTypeScript.Access"
-                && el.accessor != undefined
-                && ((fmxRep2.getFamixElementById(el.accessor.ref) as Method).getName() == "privateMethod")
-                && el.variable != undefined 
+                && ((fmxRep2.getFamixElementById(el.accessor.ref) as Method).getName() == "privateMethod") 
                 && ((fmxRep2.getFamixElementById(el.variable.ref) as Attribute).getName() == "privateAttribute")
                 ))[0];
         expect(famixAccess).toBeTruthy();
@@ -47,11 +45,10 @@ describe('Access', () => {
     it("should have an access to publicAttribute in returnAccessName", () => {
         const famixAccess = parsedModel.filter(el =>
             (el.FM3 == "FamixTypeScript.Access"
-                && el.accessor != undefined
                 && ((fmxRep2.getFamixElementById(el.accessor.ref) as Method).getName() == "returnAccessName") 
-                && el.variable != undefined
                 && ((fmxRep2.getFamixElementById(el.variable.ref) as Attribute).getName() == "publicAttribute")
                 ))[0];
         expect(famixAccess).toBeTruthy();
     });
+
 })
