@@ -8,6 +8,9 @@ export class FamixFunctions {
 
     private fmxRep = new FamixRepository();
     private fmxTypes = new Map<string, Famix.Type>();
+    private fmxNamespacesMap = new Map<string, Famix.Namespace>();
+    private arrayOfAccess = new Map<number, any>(); // id of famix object (variable, attribute) and ts-morph object
+    private mapOfMethodsForFindingInvocations = new Map<number, MethodDeclaration | ConstructorDeclaration | MethodSignature>(); // id of famix object (method) and ts-morph object
 
     constructor() {
     }
@@ -16,12 +19,12 @@ export class FamixFunctions {
         return this.fmxRep;
     }
 
-    public makeFamixIndexFileAnchor(fmxRep: FamixRepository, sourceElement: SourceFile | ModuleDeclaration | Identifier | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | MethodSignature | ConstructorDeclaration | ParameterDeclaration | VariableDeclaration | FunctionDeclaration | PropertyDeclaration | PropertySignature, famixElement: Famix.SourcedEntity) {
-        let fmxIndexFileAnchor = new Famix.IndexedFileAnchor(fmxRep);
+    public makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | Identifier | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | MethodSignature | ConstructorDeclaration | ParameterDeclaration | VariableDeclaration | FunctionDeclaration | PropertyDeclaration | PropertySignature, famixElement: Famix.SourcedEntity) {
+        let fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.fmxRep);
         fmxIndexFileAnchor.setFileName(sourceElement.getSourceFile().getFilePath());
         fmxIndexFileAnchor.setStartPos(sourceElement.getStart());
         fmxIndexFileAnchor.setEndPos(sourceElement.getEnd());
-        if (famixElement != null) {
+        if (famixElement !== null) {
             fmxIndexFileAnchor.setElement(famixElement);
         }
     }
@@ -31,7 +34,7 @@ export class FamixFunctions {
         if (!fmxNamespacesMap.has(namespaceName)) {
             fmxNamespace = new Famix.Namespace(fmxRep);
             fmxNamespace.setName(namespaceName);
-            if (parentScope != null) {
+            if (parentScope !== null) {
                 fmxNamespace.setParentScope(parentScope);
             }
             fmxNamespacesMap.set(namespaceName, fmxNamespace);
@@ -42,7 +45,7 @@ export class FamixFunctions {
         return fmxNamespace;
     }
 
-    public createOrGetFamixClass(cls: ClassDeclaration | InterfaceDeclaration, isInterface = false, isAbstract = false): Famix.Class {
+    public createOrGetFamixClassOrInterface(cls: ClassDeclaration | InterfaceDeclaration, isInterface = false, isAbstract = false): Famix.ParameterizableClass {
         let fmxClass: Famix.ParameterizableClass; // -> Famix.Class ???
         let clsName = cls.getName();
         if (!this.fmxTypes.has(clsName)) {
@@ -51,7 +54,7 @@ export class FamixFunctions {
             fmxClass.setIsInterface(isInterface);
             fmxClass.setIsAbstract(isAbstract);
 
-            this.makeFamixIndexFileAnchor(this.fmxRep, cls, fmxClass);
+            this.makeFamixIndexFileAnchor(cls, fmxClass);
 
             this.fmxTypes.set(clsName, fmxClass);
         }
@@ -61,116 +64,154 @@ export class FamixFunctions {
         return fmxClass;
     }
 
-    public createOrGetFamixParameterType(tp: TypeParameterDeclaration) {
+    public createOrGetFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType {
         const fmxParameterType = new Famix.ParameterType(this.fmxRep);
         fmxParameterType.setName(tp.getName());
         return fmxParameterType;
     }
 
-    // public createFamixMethod(fmxRep: FamixRepository, fmxTypes: Map<string, Famix.Type>, arrayOfAccess: Map<number, any>, mapOfMethodsForFindingInvocations: Map<number, MethodDeclaration | ConstructorDeclaration | MethodSignature>, method: MethodDeclaration | ConstructorDeclaration | MethodSignature, currentCC: any, isAbstract = false, isStatic = false): Famix.Method {
-    //     // console.log(`creating a FamixMethod:`);
+    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, currentCC: any, isAbstract = false, isStatic = false): Famix.Method {
+        const fmxMethod = new Famix.Method(this.fmxRep);
+        const isConstructor = method instanceof ConstructorDeclaration;
+        const isSignature = method instanceof MethodSignature;
+        fmxMethod.setIsAbstract(isAbstract);
+        fmxMethod.setIsConstructor(isConstructor);
+        fmxMethod.setIsClassSide(isStatic);
+        fmxMethod.setIsPrivate(method instanceof MethodDeclaration ? (method.getModifiers().find(x => x.getText() === 'private')) !== undefined : false);
+        fmxMethod.setIsProtected(method instanceof MethodDeclaration ? (method.getModifiers().find(x => x.getText() === 'protected')) !== undefined : false);
+        if (!fmxMethod.getIsPrivate() && !fmxMethod.getIsProtected()) {
+            fmxMethod.setIsPublic(true);    
+        }
+        fmxMethod.setSignature(this.computeTSMethodSignature(method.getText()));
 
-    //     const fmxMethod = new Famix.Method(fmxRep);
-    //     const isConstructor = method instanceof ConstructorDeclaration;
-    //     const isSignature = method instanceof MethodSignature;
-    //     fmxMethod.setIsAbstract(isAbstract);
-    //     fmxMethod.setIsConstructor(isConstructor);
-    //     fmxMethod.setIsClassSide(isStatic);
-    //     fmxMethod.setIsPrivate(method instanceof MethodDeclaration ? (method.getModifiers().find(x => x.getText() == 'private')) != undefined : false);
-    //     fmxMethod.setIsProtected(method instanceof MethodDeclaration ? (method.getModifiers().find(x => x.getText() == 'protected')) != undefined : false);
-    //     if (!fmxMethod.getIsPrivate() && !fmxMethod.getIsProtected()) {
-    //         fmxMethod.setIsPublic(true);    
-    //     }
-    //     fmxMethod.setSignature(this.computeTSMethodSignature(method.getText()));
+        let methodName: string;
+        if (isConstructor) {
+            methodName = "constructor";
+        }
+        else if (isSignature) {  // interfaces
+            methodName = (method as MethodSignature).getName();
+        }
+        else {
+            methodName = (method as MethodDeclaration).getName();
+        }
+        fmxMethod.setName(methodName);
 
-    //     let methodName : string;
-    //     if (isConstructor) {
-    //         methodName = "constructor";
-    //     }
-    //     else if (isSignature) {  // interfaces
-    //         methodName = (method as MethodSignature).getName();
-    //     }
-    //     else {
-    //         methodName = (method as MethodDeclaration).getName();
-    //     }
-    //     fmxMethod.setName(methodName);
-    //     // for access
-    //     mapOfMethodsForFindingInvocations.set(fmxMethod.id, method); // -> pas pour les interfaces (isSignature = true) ???
+        // if (!isSignature) {
+        //     fmxMethod.setCyclomaticComplexity(currentCC[fmxMethod.getName()]);
+        // } // -> To modify ???
 
-    //     if (!isSignature) {
-    //         fmxMethod.setCyclomaticComplexity(currentCC[fmxMethod.getName()]);
-    //     }
+        let methodTypeName = UNKNOWN_VALUE; 
+        try {
+            methodTypeName = this.getUsableName(method.getReturnType().getText());            
+        } catch (error: any) {
+            console.error(`> WARNING -- failed to get usable name for return type of method: ${fmxMethod.getName()}`);
+        }
 
-    //     let methodTypeName = UNKNOWN_VALUE; 
-    //     try {
-    //         methodTypeName = this.getUsableName(method.getReturnType().getText());            
-    //     } catch (error: any) {
-    //         console.error(`> WARNING -- failed to get usable name for return type of method: ${fmxMethod.getName()}`);
-    //     }
+        let fmxType = this.createOrGetFamixType(methodTypeName);
+        fmxMethod.setDeclaredType(fmxType);
+        fmxMethod.setKind(method.getKindName());
+        fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
+        let parameters = method.getParameters();
+        fmxMethod.setNumberOfParameters(parameters.length);
+        fmxMethod.setNumberOfStatements((method as MethodDeclaration | ConstructorDeclaration).getStatements().length);
 
-    //     let fmxType = this.createOrGetFamixType(fmxRep, fmxTypes, methodTypeName);
-    //     fmxMethod.setDeclaredType(fmxType);
-    //     fmxMethod.setKind(method.getKindName());
-    //     fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
-
-    //     let fqn = UNKNOWN_VALUE;
-    //     try {
-    //         fqn = method.getSymbol().getFullyQualifiedName();
-    //     } catch (error: any) {
-    //         console.error(`> WARNING -- failed to get fully qualified name for method: ${fmxMethod.getName()}`);
-    //     }
-    //     fmxMethod.setFullyQualifiedName(fqn);
-    //     this.makeFamixIndexFileAnchor(fmxRep, method, fmxMethod);
-
-    //     // Parameters
-    //     let parameters = method.getParameters();
-    //     if (parameters.length > 0) {
-    //         parameters.forEach(param => {
-    //             let fmxParam = new Famix.Parameter(fmxRep);
-    //             let paramTypeName = UNKNOWN_VALUE;
-    //             try {
-    //                 paramTypeName = this.getUsableName(param.getType().getText());
-    //             } catch (error: any) {
-    //                 console.error(`> WARNING -- failed to get usable name for param: ${param.getName()}`);
-    //             }
-    //             fmxParam.setDeclaredType(this.createOrGetFamixType(fmxRep, fmxTypes, paramTypeName));
-    //             fmxParam.setName(param.getName());
-    //             fmxMethod.addParameters(fmxParam);
-    //             this.makeFamixIndexFileAnchor(fmxRep, param, fmxParam);
-    //             if (!isSignature) {
-    //                 // for access
-    //                 arrayOfAccess.set(fmxParam.id, param);
-    //             }
-    //         });
-    //     }
-    //     fmxMethod.setNumberOfParameters(parameters.length);
-
-    //     // Arezoo
-    //     // Variables
-    //     if (!isSignature) {
-    //         let variables = method.getVariableDeclarations();
-    //         if (variables.length > 0) {
-    //             variables.forEach(variable => {
-    //                 try {
-    //                     let fullyQualifiedLocalVarName = variable.getSymbol().getFullyQualifiedName();
-    //                 } catch (error: any) {
-    //                     console.error(`> WARNING -- failed to get fullyQualifiedName for ${variable.getName()}`);
-    //                 }
-
-    //                 let fmxLocalVariable = this.makeFamixLocalVariable(variable);
-    //                 fmxMethod.addLocalVariables(fmxLocalVariable);
-    //                 this.makeFamixIndexFileAnchor(variable, fmxLocalVariable);
-    //                 //var cf = variable.getSourceFile().getSymbol().getFullyQualifiedName();
-    //                 //for access
-    //                 console.log(`    Add local variable for eventual access> ${variable.getText()} with ${fmxLocalVariable.id}`);
-    //                 this.arrayOfAccess.set(fmxLocalVariable.id, variable);
-    //             });
-    //         }
-    //         fmxMethod.setNumberOfStatements(method.getStatements().length);
-    //     }
+        // let fqn = UNKNOWN_VALUE;
+        // try {
+        //     fqn = method.getSymbol().getFullyQualifiedName();
+        // } catch (error: any) {
+        //     console.error(`> WARNING -- failed to get fully qualified name for method: ${fmxMethod.getName()}`);
+        // }
+        // fmxMethod.setFullyQualifiedName(fqn);
         
-    //     return fmxMethod;
-    // }
+        this.makeFamixIndexFileAnchor(method, fmxMethod);
+
+        // for access
+        this.mapOfMethodsForFindingInvocations.set(fmxMethod.id, method); // -> pas pour les interfaces (isSignature === true) ???
+
+        return fmxMethod;
+    }
+
+    public createFamixParameter(param: ParameterDeclaration): Famix.Parameter {
+        let fmxParam = new Famix.Parameter(this.fmxRep);
+        let paramTypeName = UNKNOWN_VALUE;
+        try {
+            paramTypeName = this.getUsableName(param.getType().getText());
+        } catch (error: any) {
+            console.error(`> WARNING -- failed to get usable name for param: ${param.getName()}`);
+        }
+        fmxParam.setDeclaredType(this.createOrGetFamixType(paramTypeName));
+        fmxParam.setName(param.getName());
+
+        this.makeFamixIndexFileAnchor(param, fmxParam);
+
+        // for access
+        this.arrayOfAccess.set(fmxParam.id, param);
+
+        return fmxParam;
+    }
+
+    public createFamixVariable(variable: VariableDeclaration): Famix.LocalVariable {
+
+        // try {
+        //     let fullyQualifiedLocalVarName = variable.getSymbol().getFullyQualifiedName();
+        // } catch (error: any) {
+        //     console.error(`> WARNING -- failed to get fullyQualifiedName for ${variable.getName()}`);
+        // }
+
+        let fmxLocalVariable = new Famix.LocalVariable(this.fmxRep);
+        let localVariableTypeName = UNKNOWN_VALUE;
+        try {
+            localVariableTypeName = this.getUsableName(variable.getType().getText());
+        } catch (error: any) {
+            console.info(`> WARNING -- failed to get text of type for ${variable.getName()}`);
+        }
+        fmxLocalVariable.setDeclaredType(this.createOrGetFamixType(localVariableTypeName));
+        fmxLocalVariable.setName(variable.getName());
+
+        this.makeFamixIndexFileAnchor(variable, fmxLocalVariable);
+
+        // for access
+        this.arrayOfAccess.set(fmxLocalVariable.id, variable);
+
+        return fmxLocalVariable;
+    }
+
+    private createOrGetFamixType(typeName: string): Famix.Type {
+        let fmxType: Famix.Type;
+        if (!this.fmxTypes.has(typeName)) {
+            fmxType = new Famix.Type(this.fmxRep);
+            fmxType.setName(typeName);
+            this.fmxTypes.set(typeName, fmxType);
+        }
+        else {
+            fmxType = this.fmxTypes.get(typeName);
+        }
+        return fmxType;
+    }
+
+    public createFamixAttribute(fmxRep: FamixRepository, fmxTypes: Map<string, Famix.Type>, arrayOfAccess: Map<number, any>, property: PropertyDeclaration | PropertySignature, isSignature = false): Famix.Attribute {
+        let fmxAttribute = new Famix.Attribute(fmxRep);
+        fmxAttribute.setName(property.getName());
+
+        let propTypeName = UNKNOWN_VALUE;
+        try {
+            propTypeName = property.getType().getText();
+        } catch (error: any) {
+            console.error(`> WARNING: unable to get type text for ${property.getName()}`);
+        }
+
+        let fmxType = this.createOrGetFamixType(propTypeName);
+        fmxAttribute.setDeclaredType(fmxType);
+        fmxAttribute.setHasClassScope(true);
+        this.makeFamixIndexFileAnchor(property, fmxAttribute);
+
+        if (!isSignature) { // -> enlever le if ???
+            // for access
+            arrayOfAccess.set(fmxAttribute.id, property);
+        }
+
+        return fmxAttribute;
+    }
 
     private computeTSMethodSignature(methodText: string): string {
         const endSignatureText = methodText.indexOf("{");
@@ -185,42 +226,5 @@ export class FamixFunctions {
             name = name.substring(name.lastIndexOf('.') + 1);
         }
         return name;
-    }
-
-    public createFamixAttribute(fmxRep: FamixRepository, fmxTypes: Map<string, Famix.Type>, arrayOfAccess: Map<number, any>, property: PropertyDeclaration | PropertySignature, isSignature = false): Famix.Attribute {
-
-        let fmxAttribute = new Famix.Attribute(fmxRep);
-        fmxAttribute.setName(property.getName());
-
-        let propTypeName = UNKNOWN_VALUE;
-        try {
-            propTypeName = property.getType().getText();
-        } catch (error: any) {
-            console.error(`> WARNING: unable to get type text for ${property.getName()}`);
-        }
-
-        let fmxType = this.createOrGetFamixType(fmxRep, fmxTypes, propTypeName);
-        fmxAttribute.setDeclaredType(fmxType);
-        fmxAttribute.setHasClassScope(true);
-        this.makeFamixIndexFileAnchor(fmxRep, property, fmxAttribute);
-
-        if (!isSignature) { // -> enlever le if ???
-            // for access
-            arrayOfAccess.set(fmxAttribute.id, property);
-        }
-        return fmxAttribute;
-    }
-
-    private createOrGetFamixType(fmxRep: FamixRepository, fmxTypes: Map<string, Famix.Type>, typeName: string): Famix.Type {
-        let fmxType: Famix.Type;
-        if (!fmxTypes.has(typeName)) {
-            fmxType = new Famix.Type(fmxRep);
-            fmxType.setName(typeName);
-            fmxTypes.set(typeName, fmxType);
-        }
-        else {
-            fmxType = fmxTypes.get(typeName);
-        }
-        return fmxType;
     }
 }

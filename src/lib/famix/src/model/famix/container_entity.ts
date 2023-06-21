@@ -10,19 +10,19 @@ export class ContainerEntity extends NamedEntity {
 
   private containerEntityTypes: Set<Type> = new Set();
 
-  // Arezoo
-  private fullyQualifiedName: string;
+  // // Arezoo
+  // private fullyQualifiedName: string;
 
-  // manyOne.Getter
-  // @FameProperty(name = "fullyQualifiedName")
-  public getFullyQualifiedName(): string {
-    return this.fullyQualifiedName;
-  }
+  // // manyOne.Getter
+  // // @FameProperty(name = "fullyQualifiedName")
+  // public getFullyQualifiedName(): string {
+  //   return this.fullyQualifiedName;
+  // }
 
-  // manyOne.Setter
-  public setFullyQualifiedName(fullyQualifiedName: string) {
-    this.fullyQualifiedName = fullyQualifiedName;
-  }
+  // // manyOne.Setter
+  // public setFullyQualifiedName(fullyQualifiedName: string) {
+  //   this.fullyQualifiedName = fullyQualifiedName;
+  // }
 
   // manyOne.Getter
   // @FameProperty(name = "types", opposite = "container", derived = true)

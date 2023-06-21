@@ -28,7 +28,7 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
 }
 
 
-export function getFQN(node: ts.Node) {
+export function getFQN(node: ts.Node): string {
     const symbol = node.getSymbol();
     if (!symbol) {
         return undefined;

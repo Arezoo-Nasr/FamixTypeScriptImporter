@@ -1,5 +1,5 @@
-import ts, { ClassDeclaration, MethodDeclaration, VariableStatement } from "ts-morph";
-import { Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration } from "ts-morph";
+//import ts, { ClassDeclaration, MethodDeclaration, VariableStatement } from "ts-morph";
+//import { Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration } from "ts-morph";
 //import { getFQN } from "./fqn";
 
 function computeTSMethodSignature(methodText: string): string {
@@ -22,4 +22,12 @@ function test2() : any {
     return currentCC;
 }
 
-console.log(test2().getText())
+function aaa(): string {
+    return undefined;
+}
+
+function test3(x: string) {
+    console.log("ok", x);
+}
+
+test3(aaa());
