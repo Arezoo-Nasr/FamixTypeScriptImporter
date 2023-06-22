@@ -145,6 +145,37 @@ export class FamixFunctions {
         return fmxMethod;
     }
 
+    public createFamixFunction(func: FunctionDeclaration): Famix.Function {
+        let fmxFunction = new Famix.Function(this.fmxRep);
+        fmxFunction.setName(func.getSymbol().getFullyQualifiedName());
+
+        let functionTypeName = UNKNOWN_VALUE;
+        try {
+            functionTypeName = this.getUsableName(func.getReturnType().getText());
+        } catch (error: any) {
+            console.error(`> WARNING - unable to get a usable name for function return type of: ${func.getName()}`)
+        }
+
+        let fmxType = this.createOrGetFamixType(functionTypeName);
+        fmxFunction.setDeclaredType(fmxType);
+        fmxFunction.setNumberOfLinesOfCode(func.getEndLineNumber() - func.getStartLineNumber());
+        let parameters = func.getParameters();
+        fmxFunction.setNumberOfParameters(parameters.length);
+        fmxFunction.setNumberOfStatements(func.getStatements().length);
+
+        // let fullyQualifiedName = UNKNOWN_VALUE;
+        // try {
+        //     fullyQualifiedName = func.getSymbol().getFullyQualifiedName();
+        // } catch (error) {
+        //     console.info(`  > WARNING - unable to get a fully qualified name for function return type of: ${func.getName()}`)
+        // }
+        // fmxFunction.setFullyQualifiedName(fullyQualifiedName);
+
+        this.makeFamixIndexFileAnchor(func, fmxFunction);
+
+        return fmxFunction;
+    }
+
     public createFamixParameter(param: ParameterDeclaration): Famix.Parameter {
         let fmxParam = new Famix.Parameter(this.fmxRep);
         let paramTypeName = UNKNOWN_VALUE;
@@ -231,7 +262,7 @@ export class FamixFunctions {
     }
 
     public getFamixContainerEntityElementByFullyQualifiedName(ancestorFQN: string): Famix.BehaviouralEntity {
-        return this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFQN) as Famix.BehaviouralEntity;
+        return this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFQN) as Famix.BehaviouralEntity; // -> Famix.Entity ???
     }
 
     public getFamixClass(name: string): Famix.Class {

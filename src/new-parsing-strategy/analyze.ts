@@ -25,6 +25,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
     const methods = new Array<MethodDeclaration>();
     const declarations =  new Array<VariableDeclaration>;
     const parameters =  new Array<ParameterDeclaration>;
+    const nodes =  new Array<Identifier>;
     // const fields = new Array<>();
 
     // For each element scanned for at the sourceFile, it should also be scanned for at the module level.
@@ -111,14 +112,44 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
     function processFunction(f: FunctionDeclaration): void {
         functions.push(f);
-        console.log(`function: ${f.getName()}`);
-        f.getVariableStatements().forEach(v => processVariableStatement(v));
-        f.getVariableDeclarations().forEach(v => processVariable(v));
-        processStatements(f.getStatements());
+
+        let fmxFunction: any;
+        fmxFunction = famixFunctions.createFamixFunction(f);
+
+        fmxFunction.setFullyQualifiedName(getFQN(f)); 
+
+        console.log(`function: ${f.getName()} (${f.getType().getText()}), fqn = ${f.getSymbol()?.getFullyQualifiedName()}, ${fmxFunction.getFullyQualifiedName()}`)
+
+        f.getParameters().forEach(param => {
+            let fmxParam: any;
+            fmxParam = processParameter(param);
+            fmxFunction.addParameters(fmxParam);
+        });
+
+        f.getVariableDeclarations().forEach(variable => {
+            let fmxVar: any;
+            fmxVar = processVariable(variable);
+            fmxFunction.addLocalVariables(fmxVar);
+        });
+
+        // processInvocations(f, fmxFunction.id); -> valide pour les fonctions ???
+
+        f.getVariableStatements().forEach(v => {
+            let temp_variables: any;
+            temp_variables = processVariableStatement(v)
+            temp_variables.forEach(variable => fmxFunction.addLocalVariables(variable));
+        }); // -> doublon avec getVariableDeclarations ??? (à retirer si oui)
+
+        let temp_variables: any;
+        temp_variables = processStatements(f.getStatements());
+        temp_variables.forEach(variable => fmxFunction.addLocalVariables(variable)); // -> doublon avec getVariableDeclarations ??? (à retirer si oui)
+
         f.getFunctions().forEach(ff => processFunction(ff));
     }
 
-    function processStatements(statements: Statement[]) {
+    function processStatements(statements: Statement[]): any {
+        const temp_variables = new Array<any>();
+
         for (const statement of statements) {
             console.log(`processing statements...`);
             // the following can contain VariableDeclaration
@@ -133,21 +164,33 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
                 || Node.isSwitchStatement(statement)
                 || Node.isWhileStatement(statement)
                 || Node.isVariableStatement(statement)
-                /* etc.*/ ) {
+                /* etc.*/ ) { // To complete 
                 console.log(`variables in ${statement.getKindName()}`);
                 statement.getDescendantsOfKind(SyntaxKind.VariableDeclaration).forEach(vd => {
-                    processVariable(vd);
                     declarations.push(vd);
+                    let fmxVar: any;
+                    fmxVar = processVariable(vd);
+                    temp_variables.push(fmxVar);
                 })
             }
-
         }
 
+        return temp_variables;
     }
 
-    function processVariableStatement(v: ts.VariableStatement): void {
+    function processVariableStatement(v: ts.VariableStatement): any {
         variableStatements.push(v);
+
+        const temp_variables = new Array<any>();
+        v.getDeclarations().forEach(variable => {
+            let fmxVar: any;
+            fmxVar = processVariable(variable);
+            temp_variables.push(fmxVar);
+        }); 
+
         console.log(`Variable statement: ${v.getDeclarationKindKeyword().getText()} '${v.getText()}' ${v.getDeclarations()[0].getName()}`)
+
+        return temp_variables;
     }
 
     function processMethod(m: ts.MethodDeclaration): void {
@@ -195,14 +238,16 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
     function processInvocations(m: ts.MethodDeclaration, id: number): void {
         try {
-            const nodes = m.findReferencesAsNodes() as Array<Identifier>; 
-            nodes.forEach(node => processNode(node, m, id));
+            const temp_nodes = m.findReferencesAsNodes() as Array<Identifier>; 
+            temp_nodes.forEach(node => processNode(node, m, id));
         } catch (error: any) {
             console.error(`> WARNING: got exception ${error}. Continuing...`);
         }
     }
 
     function processNode(n: ts.Identifier, m: ts.MethodDeclaration, id: number): void {
+        nodes.push(n);
+
         const fmxMethod = famixFunctions.getFamixElementById(id);
         const nodeReferenceAncestor = n.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration // || a.getKind() === SyntaxKind.SourceFile
         ); // for global variable it must work
