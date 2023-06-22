@@ -1,6 +1,7 @@
 import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
+import { SyntaxKind } from "@ts-morph/common";
 
 const UNKNOWN_VALUE = '(unknown due to parsing error)';
 
@@ -65,13 +66,26 @@ export class FamixFunctions {
     }
 
     public createOrGetFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType {
-        const fmxParameterType = new Famix.ParameterType(this.fmxRep);
+        let fmxParameterType = new Famix.ParameterType(this.fmxRep);
         fmxParameterType.setName(tp.getName());
         return fmxParameterType;
     }
 
+    private createOrGetFamixType(typeName: string): Famix.Type {
+        let fmxType: Famix.Type;
+        if (!this.fmxTypes.has(typeName)) {
+            fmxType = new Famix.Type(this.fmxRep);
+            fmxType.setName(typeName);
+            this.fmxTypes.set(typeName, fmxType);
+        }
+        else {
+            fmxType = this.fmxTypes.get(typeName);
+        }
+        return fmxType;
+    }
+
     public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, currentCC: any, isAbstract = false, isStatic = false): Famix.Method {
-        const fmxMethod = new Famix.Method(this.fmxRep);
+        let fmxMethod = new Famix.Method(this.fmxRep);
         const isConstructor = method instanceof ConstructorDeclaration;
         const isSignature = method instanceof MethodSignature;
         fmxMethod.setIsAbstract(isAbstract);
@@ -163,7 +177,7 @@ export class FamixFunctions {
         try {
             localVariableTypeName = this.getUsableName(variable.getType().getText());
         } catch (error: any) {
-            console.info(`> WARNING -- failed to get text of type for ${variable.getName()}`);
+            console.error(`> WARNING -- failed to get text of type for ${variable.getName()}`);
         }
         fmxLocalVariable.setDeclaredType(this.createOrGetFamixType(localVariableTypeName));
         fmxLocalVariable.setName(variable.getName());
@@ -174,19 +188,6 @@ export class FamixFunctions {
         this.arrayOfAccess.set(fmxLocalVariable.id, variable);
 
         return fmxLocalVariable;
-    }
-
-    private createOrGetFamixType(typeName: string): Famix.Type {
-        let fmxType: Famix.Type;
-        if (!this.fmxTypes.has(typeName)) {
-            fmxType = new Famix.Type(this.fmxRep);
-            fmxType.setName(typeName);
-            this.fmxTypes.set(typeName, fmxType);
-        }
-        else {
-            fmxType = this.fmxTypes.get(typeName);
-        }
-        return fmxType;
     }
 
     public createFamixAttribute(fmxRep: FamixRepository, fmxTypes: Map<string, Famix.Type>, arrayOfAccess: Map<number, any>, property: PropertyDeclaration | PropertySignature, isSignature = false): Famix.Attribute {
@@ -213,6 +214,30 @@ export class FamixFunctions {
         return fmxAttribute;
     }
 
+    public createFamixInvocation(sender: Famix.BehaviouralEntity, receiver: Famix.Class, fmxMethod: Famix.BehaviouralEntity, node: Identifier): Famix.Invocation {
+        let fmxInvocation = new Famix.Invocation(this.fmxRep);
+        fmxInvocation.setSender(sender);
+        fmxInvocation.setReceiver(receiver);
+        fmxInvocation.addCandidates(fmxMethod);
+        fmxInvocation.setSignature(fmxMethod.getSignature())
+
+        this.makeFamixIndexFileAnchor(node, fmxInvocation);
+
+        return fmxInvocation;
+    }
+
+    public getFamixElementById(famixId: number): Famix.BehaviouralEntity {
+        return this.fmxRep.getFamixElementById(famixId) as Famix.BehaviouralEntity; // -> Famix.Entity ???
+    }
+
+    public getFamixContainerEntityElementByFullyQualifiedName(ancestorFQN: string): Famix.BehaviouralEntity {
+        return this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFQN) as Famix.BehaviouralEntity;
+    }
+
+    public getFamixClass(name: string): Famix.Class {
+        return this.fmxRep.getFamixClass(name) as Famix.Class;
+    }
+
     private computeTSMethodSignature(methodText: string): string {
         const endSignatureText = methodText.indexOf("{");
         return methodText.substring(0, endSignatureText).trim();
@@ -226,5 +251,12 @@ export class FamixFunctions {
             name = name.substring(name.lastIndexOf('.') + 1);
         }
         return name;
+    }
+
+    public getClassNameOfMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature): string {
+        if (method instanceof MethodDeclaration) {
+            const md = method as MethodDeclaration;
+            return (md.getFirstAncestorByKind(SyntaxKind.ClassDeclaration) as ClassDeclaration).getName();
+        }
     }
 }

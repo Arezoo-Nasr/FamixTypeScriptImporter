@@ -1,4 +1,4 @@
-import ts, { ClassDeclaration, MethodDeclaration, VariableStatement, Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration } from "ts-morph";
+import ts, { ClassDeclaration, MethodDeclaration, VariableStatement, Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier } from "ts-morph";
 import { getFQN } from "./fqn";
 // import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
@@ -32,11 +32,11 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
     console.info(`----------Finding Classes:`)
     sourceFile.getClasses().forEach(c => processClass(c));
 
-    console.info(`----------Finding VariableStatements:`)
-    sourceFile.getVariableStatements().forEach(v => processVariableStatement(v));
-
     console.info(`----------Finding VariableDeclarations:`)
     sourceFile.getVariableDeclarations().forEach(v => processVariable(v));
+
+    console.info(`----------Finding VariableStatements:`)
+    sourceFile.getVariableStatements().forEach(v => processVariableStatement(v));
 
     console.info(`----------Finding Functions:`)
     sourceFile.getFunctions().forEach(f => processFunction(f));
@@ -67,8 +67,8 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
     variableStatements.forEach(vs => console.log(vs.getDeclarationKind().toString(), vs.getDeclarations()[0].getName(), getFQN(vs.getDeclarations()[0])));
     // variableStatements.forEach(vs => console.log(getFQN(vs)));
     console.info(`\nFunctions:`);
-    // functions.forEach(f => console.info(f.getName()));
-    functions.forEach(f => console.info(getFQN(f)));
+    // functions.forEach(f => console.log(f.getName()));
+    functions.forEach(f => console.log(getFQN(f)));
 
 
     function processClass(c: ClassDeclaration): void {
@@ -176,6 +176,8 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         });
 
         m.getFunctions().forEach(fun => processFunction(fun));
+
+        processInvocations(m, fmxMethod.id);
     }
 
     function processParameter(p: ts.ParameterDeclaration): any {
@@ -189,6 +191,42 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         console.log(`parameter: ${p.getName()} (${p.getType().getText()}), fqn = ${p.getSymbol()?.getFullyQualifiedName()}, ${fmxParam.getFullyQualifiedName()}`)
 
         return fmxParam;
+    }
+
+    function processInvocations(m: ts.MethodDeclaration, id: number): void {
+        try {
+            const nodes = m.findReferencesAsNodes() as Array<Identifier>; 
+            nodes.forEach(node => processNode(node, m, id));
+        } catch (error: any) {
+            console.error(`> WARNING: got exception ${error}. Continuing...`);
+        }
+    }
+
+    function processNode(n: ts.Identifier, m: ts.MethodDeclaration, id: number): void {
+        const fmxMethod = famixFunctions.getFamixElementById(id);
+        const nodeReferenceAncestor = n.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration // || a.getKind() === SyntaxKind.SourceFile
+        ); // for global variable it must work
+        // if (nodeReferenceAncestor) {
+        try {
+            const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName(); // -> utiliser getFQN ???
+            const sender = famixFunctions.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);
+            // const receiverFullyQualifiedName = savedMethod.getParent().getSymbol().getFullyQualifiedName();
+            const receiverFullyQualifiedName = famixFunctions.getClassNameOfMethod(m); // -> utiliser getFQN ???
+            // console.log(`  Receiver fully qualified name: ${receiverFullyQualifiedName}`)
+            const receiver = famixFunctions.getFamixClass(receiverFullyQualifiedName);
+            // console.log(`  Receiver: ${receiver.getName()}`)
+
+            // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind() // TODO
+
+            let fmxInvocation: any;
+            fmxInvocation = famixFunctions.createFamixInvocation(sender, receiver, fmxMethod, n);
+
+            fmxInvocation.setFullyQualifiedName(getFQN(n)); 
+
+            console.log(`node: (${n.getType().getText()}), fqn = ${n.getSymbol()?.getFullyQualifiedName()}, ${fmxInvocation.getFullyQualifiedName()}`)
+        } catch (error: any) {
+            console.error(`---error--- scopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+        }
     }
 
 
