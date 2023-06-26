@@ -1,35 +1,34 @@
 import * as ts from "ts-morph";
 
 function getNameOfNode(a: ts.Node<ts.ts.Node>) {
-    switch (a.getKind()) {
-        case ts.SyntaxKind.ClassDeclaration:
-            return a.asKind(ts.SyntaxKind.ClassDeclaration)?.getName();
+    {
+        switch (a.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+                return a.asKind(ts.SyntaxKind.ClassDeclaration)?.getName();
 
-        case ts.SyntaxKind.MethodDeclaration:
-            return a.asKind(ts.SyntaxKind.MethodDeclaration)?.getName();
+            case ts.SyntaxKind.MethodDeclaration:
+                return a.asKind(ts.SyntaxKind.MethodDeclaration)?.getName();
 
-        case ts.SyntaxKind.FunctionDeclaration:
-            return a.asKind(ts.SyntaxKind.FunctionDeclaration)?.getName();
+            case ts.SyntaxKind.FunctionDeclaration:
+                return a.asKind(ts.SyntaxKind.FunctionDeclaration)?.getName();
 
-        case ts.SyntaxKind.VariableDeclaration:
-            return a.asKind(ts.SyntaxKind.VariableDeclaration)?.getName();
-        
-        case ts.SyntaxKind.Parameter:
-            return a.asKind(ts.SyntaxKind.Parameter)?.getName();
+            case ts.SyntaxKind.VariableDeclaration:
+                return a.asKind(ts.SyntaxKind.VariableDeclaration)?.getName();
 
-        case ts.SyntaxKind.ModuleBlock:
-            return a.asKind(ts.SyntaxKind.ModuleBlock)?.getParent().getName();
+            case ts.SyntaxKind.ModuleBlock:
+                return a.asKind(ts.SyntaxKind.ModuleBlock)?.getParent().getName();
 
-        case ts.SyntaxKind.SourceFile:
-            return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
-        
-        default:
-            // ancestor hasn't got a useful name
-            return "";
+            case ts.SyntaxKind.SourceFile:
+                return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
+            default:
+                // ancestor hasn't got a useful name
+                return "";
+        }
     }
 }
 
-export function getFQN(node: ts.Node, debug = false): string {
+
+export function getFQN(node: ts.Node) {
     const symbol = node.getSymbol();
     if (!symbol) {
         return undefined;
@@ -51,7 +50,7 @@ export function getFQN(node: ts.Node, debug = false): string {
     const qualifiedNameParts: string[] = [];
 
     const nodeName = getNameOfNode(node);
-    if (nodeName) qualifiedNameParts.push(nodeName);
+    if (nodeName) qualifiedNameParts.push(nodeName)
 
     const ancestors = node.getAncestors();
     ancestors.forEach(a => {
@@ -64,6 +63,7 @@ export function getFQN(node: ts.Node, debug = false): string {
     } else {
         return undefined;
     }
+
 }
 
 const project = new ts.Project();
@@ -92,3 +92,4 @@ const variableDeclaration = sourceFile.getModuleOrThrow("A").getClassOrThrow("B"
 const result = getFQN(variableDeclaration);
 
 console.log(result);
+

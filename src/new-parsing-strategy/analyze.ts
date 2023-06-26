@@ -251,26 +251,27 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         const fmxMethod = famixFunctions.getFamixElementById(id);
         const nodeReferenceAncestor = n.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration // || a.getKind() === SyntaxKind.SourceFile
         ); // for global variable it must work
-        // if (nodeReferenceAncestor) {
-        try {
-            const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName(); // -> utiliser getFQN ???
-            const sender = famixFunctions.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);
-            // const receiverFullyQualifiedName = savedMethod.getParent().getSymbol().getFullyQualifiedName();
-            const receiverFullyQualifiedName = famixFunctions.getClassNameOfMethod(m); // -> utiliser getFQN ???
-            // console.log(`  Receiver fully qualified name: ${receiverFullyQualifiedName}`)
-            const receiver = famixFunctions.getFamixClass(receiverFullyQualifiedName);
-            // console.log(`  Receiver: ${receiver.getName()}`)
+        if (nodeReferenceAncestor) {
+            try {
+                const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName(); // -> utiliser getFQN ???
+                const sender = famixFunctions.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);
+                // const receiverFullyQualifiedName = savedMethod.getParent().getSymbol().getFullyQualifiedName();
+                const receiverFullyQualifiedName = famixFunctions.getClassNameOfMethod(m); // -> utiliser getFQN ???
+                // console.log(`  Receiver fully qualified name: ${receiverFullyQualifiedName}`)
+                const receiver = famixFunctions.getFamixClass(receiverFullyQualifiedName);
+                // console.log(`  Receiver: ${receiver.getName()}`)
 
-            // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind() // TODO
+                // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind() // TODO
 
-            let fmxInvocation: any;
-            fmxInvocation = famixFunctions.createFamixInvocation(sender, receiver, fmxMethod, n);
+                let fmxInvocation: any;
+                fmxInvocation = famixFunctions.createFamixInvocation(sender, receiver, fmxMethod, n);
 
-            fmxInvocation.setFullyQualifiedName(getFQN(n)); 
+                fmxInvocation.setFullyQualifiedName(getFQN(n)); 
 
-            console.log(`node: (${n.getType().getText()}), fqn = ${n.getSymbol()?.getFullyQualifiedName()}, ${fmxInvocation.getFullyQualifiedName()}`)
-        } catch (error: any) {
-            console.error(`---error--- scopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+                console.log(`node: (${n.getType().getText()}), fqn = ${n.getSymbol()?.getFullyQualifiedName()}, ${fmxInvocation.getFullyQualifiedName()}`)
+            } catch (error: any) {
+                console.error(`---error--- scopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
+            }
         }
     }
 

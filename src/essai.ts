@@ -1,6 +1,7 @@
 //import ts, { ClassDeclaration, MethodDeclaration, VariableStatement } from "ts-morph";
 //import { Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration } from "ts-morph";
 //import { getFQN } from "./fqn";
+import * as ts from "ts-morph";
 
 function computeTSMethodSignature(methodText: string): string {
     const endSignatureText = methodText.indexOf("{");
@@ -31,3 +32,5 @@ function test3(x: string) {
 }
 
 test3(aaa());
+
+console.log(ts.SyntaxKind);

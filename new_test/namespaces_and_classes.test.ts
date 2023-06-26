@@ -12,7 +12,7 @@ const theClass3 = fmxRep2.getFamixClass("clsInNsp3");
 const theClass4 = fmxRep2.getFamixClass("clsOutNsp");
 
 describe('Tests for namespaces and classes', () => {
-    // console.log(fmxRep2.getAllEntities());
+
     it("should parse generics", () => {
         expect(fmxRep2).toBeTruthy()
     });
