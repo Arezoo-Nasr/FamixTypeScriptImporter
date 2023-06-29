@@ -1,5 +1,5 @@
 
-var z = "hello";
+var x = "hello";
 
 export class ClassA {
     aFred: number;
@@ -14,24 +14,26 @@ export class ClassA {
 }    
 }
 
-var w = 15;
-let x;
-x = w;
-class B {
-    bFred: number;
-    bWilma: "yellow" | "red";
-    bMethod1(bMethodArg1: number) {
-        let varInBMethod;
-        return bMethodArg1 + 1;
-        function fInBMethod() {
-            let varInFInBMethod;
-            function fInfInBMethod() {
-                var w = 0;
+namespace ANamespace {
+    var w = 15;
+    let x;
+    x = w;
+    class B {
+        bFred: number;
+        bWilma: "yellow" | "red";
+        bMethod1(bMethodArg1: number) {
+            let varInBMethod;
+            return bMethodArg1 + 1;
+            function fInBMethod() {
+                let varInFInBMethod;
+                function fInfInBMethod() {
+                    var w = 0;
+                }
             }
         }
     }
+    let b = new B();
 }
-let b = new B();
 
 export const y = 12.5;
 

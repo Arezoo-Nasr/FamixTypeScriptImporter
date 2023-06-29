@@ -1,9 +1,9 @@
 class A {
-    x() {}
+    public x(): void {}
 }
 
 class B {
-    y() {
+    public y(): void {
         new A().x();
     }
 }
