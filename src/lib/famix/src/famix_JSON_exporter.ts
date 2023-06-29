@@ -14,9 +14,9 @@ export interface FamixTypeScriptElementStorage {
 
 export class FamixJSONExporter {
   private element: FamixBaseElement;
-  private bufferArray: any = {}
+  private bufferArray: any = []
   //Arezoo
-  private FamixPrefix: string = "FamixTypeScript";
+  private FamixPrefix = "FamixTypeScript";
   //End
   constructor(packageClass: string, element: FamixBaseElement) {
     this.element = element;
@@ -31,8 +31,8 @@ export class FamixJSONExporter {
     if ((prop instanceof Set) && (prop.size === 0)) { return; }
 
     if (prop instanceof Set) {
-      let valueBuffer: string = "";
-      let valueArray = [];
+      const valueBuffer = "";
+      const valueArray = [];
       for (const value of Array.from(prop.values())) {
         if (valueBuffer.length > 0) {
           //valueBuffer = valueBuffer + " ";

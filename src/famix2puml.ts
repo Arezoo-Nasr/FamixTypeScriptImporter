@@ -75,9 +75,9 @@ function uniqueElementName(element: FamixTypeScriptElement): string {
 }
 
 function toPlantUML(element: FamixTypeScriptElement) {
-    let plantUMLString: string = '';
-    let optionalName = element.name || '';
-    let nameWithoutPrefix = element.FM3.split('.')[1];
+    let plantUMLString = '';
+    const optionalName = element.name || '';
+    const nameWithoutPrefix = element.FM3.split('.')[1];
     plantUMLString += `object "${optionalName}:${nameWithoutPrefix}" as ${uniqueElementName(element)} {\n`;
     plantUMLString += `id = ${element.id}\n`;
     plantUMLString += propertiesToPlantUML(element);
@@ -86,9 +86,12 @@ function toPlantUML(element: FamixTypeScriptElement) {
 }
 
 function propertiesToPlantUML(element: FamixTypeScriptElement) {
-    var plantUMLString: string = '';
+    let plantUMLString = '';
     // element.attrs.forEach(attr => {
     for (const property in element) {
+        const attribute = element[property];
+        const isOneToManyReference = typeof attribute != 'string' && attribute.length; // Array but not a string
+
         switch (property) {
             // ignore these properties
             case 'subclass':
@@ -99,8 +102,6 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
                 break;
 
             default:
-                const attribute = element[property];
-                const isOneToManyReference = typeof attribute != 'string' && attribute.length; // Array but not a string
                 if (isOneToManyReference) {
                     attribute.forEach((composite, index) => {
                         associations.push({ from: element.id, to: composite.ref, name: `${property}[${index}]` })

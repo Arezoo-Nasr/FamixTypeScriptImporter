@@ -1,6 +1,6 @@
 class AA {
-    i <T> (j : T): void {};
+    i <T> (j : T): void {true;}
 }
 
-let x = new AA();
+const x = new AA();
 x.i<string>("ok");

@@ -6,11 +6,11 @@ export class FamixRepository {
   private famixClasses: Set<Class> = new Set<Class>();
   private famixNamespaces = new Set<Namespace>();
   private famixMethods = new Set<Method>();
-  private idCounter: number = 1;
+  private idCounter = 1;
   private static repo: FamixRepository;
 
-  constructor() {
-  }
+  // constructor() {
+  // }
 
   public static getFamixRepo(): FamixRepository {
     if (this.repo === undefined) {
@@ -98,18 +98,18 @@ export class FamixRepository {
   }
 
   public getFamixElementById(id: number): FamixBaseElement | undefined {
-    let element = Array.from(this.elements.values()).find(e => e.id == id);
+    const element = Array.from(this.elements.values()).find(e => e.id == id);
     return element;
   }
   // Arezoo
   public getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
-    let allEntity = Array.from(this.elements.values())
+    const allEntity = Array.from(this.elements.values())
       .filter(e => (e as any).constructor.name == 'Method'
         || (e as any).constructor.name == 'Function'
         || (e as any).constructor.name == 'Namespace'
         || (e as any).constructor.name == 'IndexedFileAnchor') as Entity[];
 
-    let entityElement = allEntity.find(c => c.getFullyQualifiedName() == FullyQualifiedName);
+    const entityElement = allEntity.find(c => c.getFullyQualifiedName() == FullyQualifiedName);
     return entityElement;
   }
   // Arezoo
@@ -127,7 +127,7 @@ export class FamixRepository {
   }
 
   public getJSON(): string {
-    let ret: string = "[";///////
+    let ret = "[";///////
     for (const element of Array.from(this.famixClasses.values())) {
       ret = ret + element.getJSON() + ",";
     }

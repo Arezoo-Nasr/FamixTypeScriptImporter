@@ -39,7 +39,8 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
 
 // }
 
-export function getFQN(node: ts.Node, debug = false): string {
+// export function getFQN(node: ts.Node, debug = false): string {
+export function getFQN(node: ts.Node): string {
     if (node instanceof ts.SourceFile) {
         return `"${node.getFilePath()}"`;
     }
