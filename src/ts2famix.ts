@@ -137,7 +137,7 @@ export class TS2Famix {
                         fmxInvocation.setReceiver(receiver);
                         fmxInvocation.addCandidates(fmxMethod);
                         fmxInvocation.setSignature(fmxMethod.getSignature())
-                        console.log(`   sender: ${fmxInvocation.getSender().getName()}`);
+                        // console.log(`   sender: ${fmxInvocation.getSender().getName()}`);
                         console.log(`   receiver: ${fmxInvocation.getReceiver().getName()}`);
                         console.log(`   candidate(s): ${fmxInvocation.getCandidates().values()[0]}`);
                         console.log(`   signature: ${fmxInvocation.getSignature()}`);

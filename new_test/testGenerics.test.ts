@@ -30,7 +30,7 @@ describe('Tests for testGenerics', () => {
     it("should contain a generic class AA with no parameter type", () => {
         const pList = Array.from(fmxRep2.getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
-        const AA = pList.find(p => p.getName() == "AA");
+        const AA = pList.find(p => p.getName() === "AA");
         expect(AA).toBeTruthy();
         expect(AA?.getParameterTypes().size).toBe(0);
     });
@@ -48,14 +48,14 @@ describe('Tests for testGenerics', () => {
     it("should contain a generic method i for class AA with parameter type T", () => {
         const cList = Array.from(fmxRep2.getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(cList).toBeTruthy();
-        const AA = cList.find(c => c.getName() == "AA");
+        const AA = cList.find(c => c.getName() === "AA");
         const mList = Array.from(AA?.getMethods() as Set<Method>);
-        const i = mList?.find(m => m.getName() == "i");
+        const i = mList?.find(m => m.getName() === "i");
         expect(i).toBeTruthy();
         expect(i?.getDeclaredType().getName()).toBe("void");
         expect(i?.getParameters().size).toBe(1);
         const pList = Array.from(i?.getParameters() as Set<Parameter>);
-        const j = pList?.find(p => p.getName() == "j");
+        const j = pList?.find(p => p.getName() === "j");
         expect(j).toBeTruthy();
         expect(j?.getDeclaredType().getName()).toBe("T");
     });
@@ -63,7 +63,7 @@ describe('Tests for testGenerics', () => {
     it("should contain a public method i", () => {
         const pList = Array.from(fmxRep2.getAllEntitiesWithType("Method") as Set<Method>);
         expect(pList).toBeTruthy();
-        const i = pList.find(p => p.getName() == "i");
+        const i = pList.find(p => p.getName() === "i");
         expect(i).toBeTruthy();
         if (i) {
             expect(i.getIsAbstract()).toBe(false);
@@ -78,7 +78,7 @@ describe('Tests for testGenerics', () => {
     it("should contain a variable x", () => {
         const pList = Array.from(fmxRep2.getAllEntitiesWithType("LocalVariable") as Set<LocalVariable>);
         expect(pList).toBeTruthy();
-        const x = pList.find(p => p.getName() == "x");
+        const x = pList.find(p => p.getName() === "x");
         expect(x).toBeTruthy();
         expect(x?.getDeclaredType().getName()).toBe("AA");
     });    

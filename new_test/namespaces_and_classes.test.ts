@@ -30,7 +30,7 @@ describe('Tests for namespaces and classes', () => {
     });
 
     it("should contain a namespace __global", () => {
-        expect(fmxRep2.getFamixNamespace("__global")).toBeTruthy();
+        expect(fmxRep2.getFamixNamespace("__global__")).toBeTruthy();
     });
 
     it("should contain four generic classes", () => {

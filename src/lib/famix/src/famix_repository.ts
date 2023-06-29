@@ -88,26 +88,25 @@ export class FamixRepository {
     let element = Array.from(this.elements.values()).find(e => e.id == id);
     return element;
   }
-
+  // Arezoo
   public getFamixContainerEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
-
     let allContainerEntity = Array.from(this.elements.values())
       .filter(e => (e as any).constructor.name == 'Method'
         || (e as any).constructor.name == 'Function'
-        || (e as any).constructor.name == 'Namespace') as ContainerEntity[];
+        || (e as any).constructor.name == 'Namespace'
+        || (e as any).constructor.name == 'IndexedFileAnchor') as ContainerEntity[];
 
     let containerEntityElement = allContainerEntity.find(c => c.getFullyQualifiedName() == FullyQualifiedName);
     return containerEntityElement;
   }
-
+  // Arezoo
   public addElement(element: FamixBaseElement) {
     if (element instanceof Class) {
       this.famixClasses.add(element);
     } else if (element instanceof Namespace) {
       this.famixNamespaces.add(element);
-    } else {
-      this.elements.add(element);
     }
+    this.elements.add(element);
     element.id = this.idCounter;
     this.idCounter++;
   }

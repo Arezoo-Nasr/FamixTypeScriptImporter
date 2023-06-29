@@ -17,8 +17,11 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
         case ts.SyntaxKind.Parameter:
             return a.asKind(ts.SyntaxKind.Parameter)?.getName();
 
-        case ts.SyntaxKind.ModuleBlock:
-            return a.asKind(ts.SyntaxKind.ModuleBlock)?.getParent().getName();
+        case ts.SyntaxKind.ModuleDeclaration:
+            return a.asKind(ts.SyntaxKind.ModuleDeclaration)?.getName();
+
+        // case ts.SyntaxKind.ModuleBlock:
+        //     return a.asKind(ts.SyntaxKind.ModuleBlock)?.getParent().getName();
 
         case ts.SyntaxKind.SourceFile:
             return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
@@ -29,7 +32,15 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
     }
 }
 
+// if (debug) {
+
+// }
+
 export function getFQN(node: ts.Node, debug = false): string {
+    if (node instanceof ts.SourceFile) {
+        return `"${node.getFilePath()}"`;
+    }
+
     const symbol = node.getSymbol();
     if (!symbol) {
         return undefined;
@@ -66,29 +77,29 @@ export function getFQN(node: ts.Node, debug = false): string {
     }
 }
 
-const project = new ts.Project();
-const sourceFile = project.createSourceFile(
-    "test.ts",
-    "namespace A {\
-        class B {\
-            m1() {\
-                return;\
-                function f() {const x = 1;\
-                                var y = 3;}\
-                }\
-            }\
-        }\
-    }",
-);
+// const project = new ts.Project();
+// const sourceFile = project.createSourceFile(
+//     "test.ts",
+//     "namespace A {\
+//         class B {\
+//             m1() {\
+//                 return;\
+//                 function f() {const x = 1;\
+//                                 var y = 3;}\
+//                 }\
+//             }\
+//         }\
+//     }",
+// );
 
-sourceFile.getVariableDeclarations().forEach(vd => {
-    console.log(`vd: ${vd.getName()}`);
-});
+// sourceFile.getVariableDeclarations().forEach(vd => {
+//     console.log(`vd: ${vd.getName()}`);
+// });
 
-const checker = project.getTypeChecker();
+// // const checker = project.getTypeChecker();
 
-const variableDeclaration = sourceFile.getModuleOrThrow("A").getClassOrThrow("B")//.getMethodOrThrow("m1").getFunctionOrThrow("f").getVariableDeclarationOrThrow("x");
-//const result = getFullyQualifiedName(variableDeclaration, checker);
-const result = getFQN(variableDeclaration);
+// const variableDeclaration = sourceFile.getModuleOrThrow("A").getClassOrThrow("B")//.getMethodOrThrow("m1").getFunctionOrThrow("f").getVariableDeclarationOrThrow("x");
+// //const result = getFullyQualifiedName(variableDeclaration, checker);
+// const result = getFQN(variableDeclaration);
 
-console.log(result);
+// console.log(result);

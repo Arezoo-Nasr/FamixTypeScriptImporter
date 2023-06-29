@@ -1,22 +1,26 @@
 // automatically generated code, please do not change
-
+// Arezoo
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { NamedEntity } from "./../famix/named_entity";
 import { Association } from "./../famix/association";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
+// import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { Entity } from "./entity";
 
 export class Invocation extends Association {
 
-  private invocationCandidates: Set<BehaviouralEntity> = new Set();
+  // private invocationCandidates: Set<BehaviouralEntity> = new Set();
+  private invocationCandidates: Set<Entity> = new Set();
 
   // manyMany.Getter
   // @FameProperty(name = "candidates", opposite = "incomingInvocations")
-  public getCandidates(): Set<BehaviouralEntity> {
+  // public getCandidates(): Set<BehaviouralEntity> {
+  public getCandidates(): Set<Entity> {
     return this.invocationCandidates;
   }
 
   // manyMany.Setter
-  public addCandidates(newCandidates: BehaviouralEntity) {
+  // public addCandidates(newCandidates: BehaviouralEntity) {
+  public addCandidates(newCandidates: Entity) {  
     if (!this.invocationCandidates.has(newCandidates)) {
       this.invocationCandidates.add(newCandidates);
       newCandidates.getIncomingInvocations().add(this);
@@ -37,16 +41,19 @@ export class Invocation extends Association {
     newReceiver.getReceivingInvocations().add(this);
   }
 
-  private invocationSender: BehaviouralEntity;
+  // private invocationSender: BehaviouralEntity;
+  private invocationSender: Entity;
 
   // oneMany.Getter
   // @FameProperty(name = "sender", opposite = "outgoingInvocations")
-  public getSender(): BehaviouralEntity {
+  // public getSender(): BehaviouralEntity {
+  public getSender(): Entity {
     return this.invocationSender;
   }
 
   // oneMany.Setter
-  public setSender(newSender: BehaviouralEntity) {
+  // public setSender(newSender: BehaviouralEntity) {
+  public setSender(newSender: Entity) {
     this.invocationSender = newSender;
     newSender.getOutgoingInvocations().add(this);
   }

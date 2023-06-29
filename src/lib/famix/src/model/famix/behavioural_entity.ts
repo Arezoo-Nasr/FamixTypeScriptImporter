@@ -3,7 +3,7 @@
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./../famix/type";
 import { ImplicitVariable } from "./../famix/implicit_variable";
-import { Invocation } from "./../famix/invocation";
+// import { Invocation } from "./../famix/invocation";
 import { ContainerEntity } from "./../famix/container_entity";
 import { Reference } from "./../famix/reference";
 import { LocalVariable } from "./../famix/local_variable";
@@ -140,37 +140,38 @@ export class BehaviouralEntity extends ContainerEntity {
     this.behaviouralEntityNumberOfLinesOfCode = behaviouralEntityNumberOfLinesOfCode;
   }
 
-  private behaviouralEntityOutgoingInvocations: Set<Invocation> = new Set();
+  // Arezoo
+  // private behaviouralEntityOutgoingInvocations: Set<Invocation> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "outgoingInvocations", opposite = "sender", derived = true)
-  public getOutgoingInvocations(): Set<Invocation> {
-    return this.behaviouralEntityOutgoingInvocations;
-  }
+  // // manyOne.Getter
+  // // @FameProperty(name = "outgoingInvocations", opposite = "sender", derived = true)
+  // public getOutgoingInvocations(): Set<Invocation> {
+  //   return this.behaviouralEntityOutgoingInvocations;
+  // }
 
-  // manyOne.Setter
-  public addOutgoingInvocations(behaviouralEntityOutgoingInvocations: Invocation) {
-    if (!this.behaviouralEntityOutgoingInvocations.has(behaviouralEntityOutgoingInvocations)) {
-      this.behaviouralEntityOutgoingInvocations.add(behaviouralEntityOutgoingInvocations);
-      behaviouralEntityOutgoingInvocations.setSender(this);
-    }
-  }
+  // // manyOne.Setter
+  // public addOutgoingInvocations(behaviouralEntityOutgoingInvocations: Invocation) {
+  //   if (!this.behaviouralEntityOutgoingInvocations.has(behaviouralEntityOutgoingInvocations)) {
+  //     this.behaviouralEntityOutgoingInvocations.add(behaviouralEntityOutgoingInvocations);
+  //     behaviouralEntityOutgoingInvocations.setSender(this);
+  //   }
+  // }
 
-  private behaviouralEntityIncomingInvocations: Set<Invocation> = new Set();
+  // private behaviouralEntityIncomingInvocations: Set<Invocation> = new Set();
 
-  // manyMany.Getter
-  // @FameProperty(name = "incomingInvocations", opposite = "candidates", derived = true)
-  public getIncomingInvocations(): Set<Invocation> {
-    return this.behaviouralEntityIncomingInvocations;
-  }
+  // // manyMany.Getter
+  // // @FameProperty(name = "incomingInvocations", opposite = "candidates", derived = true)
+  // public getIncomingInvocations(): Set<Invocation> {
+  //   return this.behaviouralEntityIncomingInvocations;
+  // }
 
-  // manyMany.Setter
-  public addIncomingInvocations(newIncomingInvocations: Invocation) {
-    if (!this.behaviouralEntityIncomingInvocations.has(newIncomingInvocations)) {
-      this.behaviouralEntityIncomingInvocations.add(newIncomingInvocations);
-      newIncomingInvocations.getCandidates().add(this);
-    }
-  }
+  // // manyMany.Setter
+  // public addIncomingInvocations(newIncomingInvocations: Invocation) {
+  //   if (!this.behaviouralEntityIncomingInvocations.has(newIncomingInvocations)) {
+  //     this.behaviouralEntityIncomingInvocations.add(newIncomingInvocations);
+  //     newIncomingInvocations.getCandidates().add(this);
+  //   }
+  // }
 
   private behaviouralEntityNumberOfConditionals: number;
 
