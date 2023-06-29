@@ -1,10 +1,11 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, ContainerEntity, Namespace, Function } from "./model/famix";
+import { Class, Entity, Namespace, Function, Method } from "./model/famix";
 
 export class FamixRepository {
   private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
   private famixClasses: Set<Class> = new Set<Class>();
   private famixNamespaces = new Set<Namespace>();
+  private famixMethods = new Set<Method>();
   private idCounter: number = 1;
   private static repo: FamixRepository;
 
@@ -24,13 +25,13 @@ export class FamixRepository {
 
   public getAllEntitiesWithType(theType: string) {
     return new Set(Array.from(this.elements.values())
-      .filter(e => (e as any).constructor.name == theType)
-      .concat(Array.from(this.famixClasses.values())
-        .filter(e => (e as any).constructor.name == theType)));
+      .filter(e => (e as any).constructor.name == theType));
+      // .concat(Array.from(this.famixClasses.values())
+      //   .filter(e => (e as any).constructor.name == theType)));
   }
 
   public getAllEntities() {
-    return new Set(Array.from(this.elements.values()).concat(Array.from(this.famixClasses.values())));
+    return new Set(Array.from(this.elements.values()));//.concat(Array.from(this.famixClasses.values())));
   }
 
   public createOrGetFamixClass(name: string, isInterface?: boolean, isAbstract?: boolean): Class {
@@ -55,6 +56,18 @@ export class FamixRepository {
     // }
     // return undefined;
   }
+
+  public getFamixMethod(name: string): Method | undefined {
+    return Array.from(this.famixMethods.values())
+      .find(ns => ns.getName() === name)
+    // for (const fc of Array.from(this.famixClasses.values())) {
+    //   if (fc.getName() === name) {
+    //     return fc;
+    //   }
+    // }
+    // return undefined;
+  }
+
 
   //Added by hand
   // getFamixEntity(s: { name: string; container: string; kind: Attribute | Variable}) {
@@ -89,15 +102,15 @@ export class FamixRepository {
     return element;
   }
   // Arezoo
-  public getFamixContainerEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
-    let allContainerEntity = Array.from(this.elements.values())
+  public getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
+    let allEntity = Array.from(this.elements.values())
       .filter(e => (e as any).constructor.name == 'Method'
         || (e as any).constructor.name == 'Function'
         || (e as any).constructor.name == 'Namespace'
-        || (e as any).constructor.name == 'IndexedFileAnchor') as ContainerEntity[];
+        || (e as any).constructor.name == 'IndexedFileAnchor') as Entity[];
 
-    let containerEntityElement = allContainerEntity.find(c => c.getFullyQualifiedName() == FullyQualifiedName);
-    return containerEntityElement;
+    let entityElement = allEntity.find(c => c.getFullyQualifiedName() == FullyQualifiedName);
+    return entityElement;
   }
   // Arezoo
   public addElement(element: FamixBaseElement) {
@@ -105,6 +118,8 @@ export class FamixRepository {
       this.famixClasses.add(element);
     } else if (element instanceof Namespace) {
       this.famixNamespaces.add(element);
+    } else if (element instanceof Method) {
+      this.famixMethods.add(element);
     }
     this.elements.add(element);
     element.id = this.idCounter;

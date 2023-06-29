@@ -10,12 +10,8 @@ const theAbstractClass = fmxRep2.getFamixClass("MyAbstractClass");
 
 describe('Tests for abstract class', () => {
     
-    it("should parse generics", () => {
-        expect(fmxRep2).toBeTruthy()
-    });
-    
-    it("should contain one generic class", () => {
-        expect(fmxRep2.getAllEntitiesWithType("ParameterizableClass").size).toBe(1);
+    it("should contain one class", () => {
+        expect(fmxRep2.getAllEntitiesWithType("Class").size).toBe(1);
     });
 
     it("should contain an abstract class MyAbstractClass", () => {

@@ -16,7 +16,7 @@ describe('Invocation', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName(
+            const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
@@ -29,7 +29,7 @@ describe('Invocation', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName(
+            const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
@@ -42,13 +42,13 @@ describe('Invocation', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName(
+            const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
     });
     it("should contain an invocation for returnHi", () => {
-        const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
+        const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
         const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
@@ -62,7 +62,7 @@ describe('Invocation', () => {
     });
 
     it("should contain an invocation for returnHi with a receiver of 'Class1'", () => {
-        const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
+        const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
         const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
@@ -72,7 +72,7 @@ describe('Invocation', () => {
     });
 
     it("should contain an invocation for returnHi with a signature 'public returnHi(): string'", () => {
-        const theMethod = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
+        const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
         const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();

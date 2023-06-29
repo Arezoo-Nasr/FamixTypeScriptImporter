@@ -20,34 +20,34 @@ export class Entity extends FamixBaseElement {
     this.fullyQualifiedName = fullyQualifiedName;
   }
 
-  private behaviouralEntityOutgoingInvocations: Set<Invocation> = new Set();
+  private entityOutgoingInvocations: Set<Invocation> = new Set();
 
   // manyOne.Getter
   // @FameProperty(name = "outgoingInvocations", opposite = "sender", derived = true)
   public getOutgoingInvocations(): Set<Invocation> {
-    return this.behaviouralEntityOutgoingInvocations;
+    return this.entityOutgoingInvocations;
   }
 
   // manyOne.Setter
-  public addOutgoingInvocations(behaviouralEntityOutgoingInvocations: Invocation) {
-    if (!this.behaviouralEntityOutgoingInvocations.has(behaviouralEntityOutgoingInvocations)) {
-      this.behaviouralEntityOutgoingInvocations.add(behaviouralEntityOutgoingInvocations);
-      behaviouralEntityOutgoingInvocations.setSender(this);
+  public addOutgoingInvocations(entityOutgoingInvocations: Invocation) {
+    if (!this.entityOutgoingInvocations.has(entityOutgoingInvocations)) {
+      this.entityOutgoingInvocations.add(entityOutgoingInvocations);
+      entityOutgoingInvocations.setSender(this);
     }
   }
 
-  private behaviouralEntityIncomingInvocations: Set<Invocation> = new Set();
+  private entityIncomingInvocations: Set<Invocation> = new Set();
 
   // manyMany.Getter
   // @FameProperty(name = "incomingInvocations", opposite = "candidates", derived = true)
   public getIncomingInvocations(): Set<Invocation> {
-    return this.behaviouralEntityIncomingInvocations;
+    return this.entityIncomingInvocations;
   }
 
   // manyMany.Setter
   public addIncomingInvocations(newIncomingInvocations: Invocation) {
-    if (!this.behaviouralEntityIncomingInvocations.has(newIncomingInvocations)) {
-      this.behaviouralEntityIncomingInvocations.add(newIncomingInvocations);
+    if (!this.entityIncomingInvocations.has(newIncomingInvocations)) {
+      this.entityIncomingInvocations.add(newIncomingInvocations);
       newIncomingInvocations.getCandidates().add(this);
     }
   }

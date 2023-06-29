@@ -12,10 +12,6 @@ const theClass3 = fmxRep2.getFamixClass("clsInNsp3");
 const theClass4 = fmxRep2.getFamixClass("clsOutNsp");
 
 describe('Tests for namespaces and classes', () => {
-
-    it("should parse generics", () => {
-        expect(fmxRep2).toBeTruthy()
-    });
     
     it("should contain three namespaces", () => {
         expect(fmxRep2.getFamixNamespaces().size).toBe(3);
@@ -33,8 +29,8 @@ describe('Tests for namespaces and classes', () => {
         expect(fmxRep2.getFamixNamespace("__global__")).toBeTruthy();
     });
 
-    it("should contain four generic classes", () => {
-        expect(fmxRep2.getAllEntitiesWithType("ParameterizableClass").size).toBe(4);
+    it("should contain four classes", () => {
+        expect(fmxRep2.getAllEntitiesWithType("Class").size).toBe(4);
     });
 
     it("should contain a class EntityClass", () => {

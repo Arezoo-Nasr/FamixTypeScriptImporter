@@ -16,7 +16,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
     const sourceFile = sourceFiles[0];
     // const sourceFile = project.getSourceFileOrThrow(paths[0]);
 
-    famixFunctions.makeFamixIndexFileAnchor(sourceFile, null);
+    famixFunctions.makeFamixIndexFileAnchor(sourceFile, null); // -> createFile ???
 
     let currentCC = cyclomatic.calculate(sourceFile.getFilePath());
 
@@ -40,7 +40,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
     // console.info(`----------Finding Classes:`)
     // sourceFile.getClasses().forEach(c => {
-    //     let fmxClass: Famix.ParameterizableClass;
+    //     let fmxClass: Famix.Class | Famix.ParameterizableClass;
     //     fmxClass = processClass(c);
     //     fmxGlobalNamespace.addTypes(fmxClass);
     // });
@@ -68,7 +68,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         
     //     console.info(`----------Finding Classes in Module "${m.getName()}":`)
     //     m.getClasses().forEach(c => {
-    //         let fmxClass: Famix.ParameterizableClass;
+    //         let fmxClass: Famix.Class | Famix.ParameterizableClass;
     //         fmxClass = processClass(c);
     //         fmxNamespace.addTypes(fmxClass);
     //     });
@@ -129,7 +129,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
         console.info(`----------Finding Classes:`)
         m.getClasses().forEach(c => {
-            let fmxClass: Famix.ParameterizableClass;
+            let fmxClass: Famix.Class | Famix.ParameterizableClass;
             fmxClass = processClass(c);
             fmxNamespace.addTypes(fmxClass);
         });
@@ -155,11 +155,11 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         });
     }
 
-    function processClass(c: ClassDeclaration): Famix.ParameterizableClass {
+    function processClass(c: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {
         classes.push(c);
 
         // Créer l'élément FAMIX ???
-        let fmxClass: Famix.ParameterizableClass;
+        let fmxClass: Famix.Class | Famix.ParameterizableClass;
         fmxClass = famixFunctions.createOrGetFamixClassOrInterface(c, false, c.isAbstract());
 
         console.log(`class: ${c.getName()} (${c.getType().getText()}), fqn = ${c.getSymbol()?.getFullyQualifiedName()}, ${fmxClass.getFullyQualifiedName()}`)
@@ -184,7 +184,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         return fmxVar;
     }
 
-    function processFunction(f: FunctionDeclaration): Famix.Function {
+    function processFunction(f: FunctionDeclaration): Famix.Function { // -> invocations ???
         functions.push(f);
 
         let fmxFunction: Famix.Function;

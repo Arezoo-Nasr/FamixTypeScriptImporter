@@ -56,7 +56,7 @@ export class FamixFunctions {
                 this.makeFamixIndexFileAnchor(m, fmxNamespace);
             }
             else {
-                fmxNamespace.setFullyQualifiedName(`${getFQN(m)}.__global__`);
+                fmxNamespace.setFullyQualifiedName(`${getFQN(m)}.__global__`); // -> makeIndex ???
             }
 
             this.fmxNamespacesMap.set(namespaceName, fmxNamespace);
@@ -67,28 +67,31 @@ export class FamixFunctions {
         return fmxNamespace;
     }
 
-    public createOrGetFamixClassOrInterface(cls: ClassDeclaration | InterfaceDeclaration, isInterface = false, isAbstract = false): Famix.ParameterizableClass {
-        let fmxClass: Famix.ParameterizableClass; // -> Famix.Class ???
+    public createOrGetFamixClassOrInterface(cls: ClassDeclaration | InterfaceDeclaration, isInterface = false, isAbstract = false): Famix.Class | Famix.ParameterizableClass {
+        let fmxClass: Famix.Class | Famix.ParameterizableClass;
         let clsName = cls.getName();
         if (!this.fmxTypes.has(clsName)) {
-            fmxClass = new Famix.ParameterizableClass(this.fmxRep); // -> Famix.Class ???
+            const isGenerics = cls.getTypeParameters().length;
+            if (isGenerics) {
+                fmxClass = new Famix.ParameterizableClass(this.fmxRep);
+                cls.getTypeParameters().forEach(tp => {
+                    (fmxClass as Famix.ParameterizableClass).addParameterType(this.createOrGetFamixParameterType(tp));
+                })
+            }
+            else {
+                fmxClass = new Famix.Class(this.fmxRep);
+            }
+
             fmxClass.setName(clsName);
             fmxClass.setIsInterface(isInterface);
             fmxClass.setIsAbstract(isAbstract);
-
-            const isGenerics = cls.getTypeParameters().length;
-            if (isGenerics) {
-                cls.getTypeParameters().forEach(tp => {
-                    fmxClass.addParameterType(this.createOrGetFamixParameterType(tp));
-                })
-            }
 
             this.makeFamixIndexFileAnchor(cls, fmxClass);
 
             this.fmxTypes.set(clsName, fmxClass);
         }
         else {
-            fmxClass = this.fmxTypes.get(clsName) as Famix.ParameterizableClass; // -> Famix.Class ???
+            fmxClass = this.fmxTypes.get(clsName) as (Famix.Class | Famix.ParameterizableClass);
         }
         return fmxClass;
     }
@@ -280,7 +283,7 @@ export class FamixFunctions {
 
         let ancestorFullyQualifiedName: string;
         ancestorFullyQualifiedName = getFQN(nodeReferenceAncestor);
-        const sender = this.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);
+        const sender = this.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);
         
         let receiverFullyQualifiedName: string;
         receiverFullyQualifiedName = this.getClassNameOfMethod(m); // -> utiliser getFQN ???
@@ -305,8 +308,8 @@ export class FamixFunctions {
         return this.fmxRep.getFamixElementById(famixId) as Famix.BehaviouralEntity; // -> Famix.Entity ???
     }
 
-    public getFamixContainerEntityElementByFullyQualifiedName(ancestorFQN: string): Famix.BehaviouralEntity {
-        return this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFQN) as Famix.BehaviouralEntity; // -> Famix.Entity ???
+    public getFamixEntityElementByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
+        return this.fmxRep.getFamixEntityElementByFullyQualifiedName(ancestorFQN) as Famix.Entity;
     }
 
     public getFamixClass(name: string): Famix.Class {
