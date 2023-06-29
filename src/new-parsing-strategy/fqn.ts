@@ -20,6 +20,9 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
         case ts.SyntaxKind.ModuleDeclaration:
             return a.asKind(ts.SyntaxKind.ModuleDeclaration)?.getName();
 
+        case ts.SyntaxKind.InterfaceDeclaration:
+            return a.asKind(ts.SyntaxKind.InterfaceDeclaration)?.getName();    
+
         // case ts.SyntaxKind.ModuleBlock:
         //     return a.asKind(ts.SyntaxKind.ModuleBlock)?.getParent().getName();
 

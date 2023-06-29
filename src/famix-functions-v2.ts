@@ -197,7 +197,7 @@ export class FamixFunctions {
         // let fullyQualifiedName = UNKNOWN_VALUE;
         // try {
         //     fullyQualifiedName = func.getSymbol().getFullyQualifiedName();
-        // } catch (error) {
+        // } catch (error: any) {
         //     console.info(`  > WARNING - unable to get a fully qualified name for function return type of: ${func.getName()}`)
         // }
         // fmxFunction.setFullyQualifiedName(fullyQualifiedName);
