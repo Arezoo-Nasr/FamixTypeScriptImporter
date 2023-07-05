@@ -235,8 +235,8 @@ export class BehaviouralEntity extends ContainerEntity {
     exporter.addProperty("numberOfStatements", this.getNumberOfStatements());
     exporter.addProperty("outgoingReferences", this.getOutgoingReferences());
     exporter.addProperty("numberOfLinesOfCode", this.getNumberOfLinesOfCode());
-    exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
-    exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
+    // exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
+    // exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
     exporter.addProperty("numberOfConditionals", this.getNumberOfConditionals());
     exporter.addProperty("accesses", this.getAccesses());
     exporter.addProperty("parameters", this.getParameters());

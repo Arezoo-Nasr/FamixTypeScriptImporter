@@ -11,8 +11,7 @@ export class FamixFunctions {
     private fmxRep = new FamixRepository();
     private fmxTypes = new Map<string, Famix.Type>();
     private fmxNamespacesMap = new Map<string, Famix.Namespace>();
-    private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature>(); // id of famix object (variable, attribute) and ts-morph object
-    private mapOfMethodsForFindingInvocations = new Map<number, MethodDeclaration | ConstructorDeclaration | MethodSignature>(); // id of famix object (method) and ts-morph object
+    private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // id of famix object (variable, attribute) and ts-morph object -> utile ???
 
     // constructor() {
     // }
@@ -170,9 +169,6 @@ export class FamixFunctions {
         
         this.makeFamixIndexFileAnchor(method, fmxMethod);
 
-        // for access
-        this.mapOfMethodsForFindingInvocations.set(fmxMethod.id, method); // -> pas pour les interfaces (isSignature === true) ???
-
         return fmxMethod;
     }
 
@@ -252,8 +248,8 @@ export class FamixFunctions {
         return fmxLocalVariable;
     }
 
-    public createFamixAttribute(fmxRep: FamixRepository, fmxTypes: Map<string, Famix.Type>, arrayOfAccess: Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature>, property: PropertyDeclaration | PropertySignature, isSignature = false): Famix.Attribute {
-        const fmxAttribute = new Famix.Attribute(fmxRep);
+    public createFamixAttribute(property: PropertyDeclaration | PropertySignature, isSignature = false): Famix.Attribute {
+        const fmxAttribute = new Famix.Attribute(this.fmxRep);
         fmxAttribute.setName(property.getName());
 
         let propTypeName = UNKNOWN_VALUE;
@@ -267,11 +263,22 @@ export class FamixFunctions {
         fmxAttribute.setDeclaredType(fmxType);
         fmxAttribute.setHasClassScope(true);
 
+        property.getModifiers().forEach(m => fmxAttribute.addModifiers(m.getText()));
+        if (property.isReadonly()) {
+            fmxAttribute.addModifiers("readonly");
+        }
+        if (property instanceof PropertyDeclaration && property.getExclamationTokenNode()) {
+            fmxAttribute.addModifiers("!");
+        }
+        if (property.getQuestionTokenNode()) {
+            fmxAttribute.addModifiers("?");
+        }
+
         this.makeFamixIndexFileAnchor(property, fmxAttribute);
 
         if (!isSignature) { // -> enlever le if ???
             // for access
-            arrayOfAccess.set(fmxAttribute.id, property);
+            this.arrayOfAccess.set(fmxAttribute.id, property as PropertyDeclaration);
         }
 
         return fmxAttribute;
@@ -279,7 +286,7 @@ export class FamixFunctions {
 
     public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration | MethodSignature, id: number): Famix.Invocation {
         const fmxMethod = this.getFamixElementById(id);
-        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile); // for global variable it must work
+        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile); // for global variable it must work -> a => a.getKind() === any ???
 
         const ancestorFullyQualifiedName = getFQN(nodeReferenceAncestor);
         const sender = this.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);

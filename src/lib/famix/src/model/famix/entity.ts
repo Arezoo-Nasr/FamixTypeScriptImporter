@@ -61,6 +61,8 @@ export class Entity extends FamixBaseElement {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
+    exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
 
   }
 
