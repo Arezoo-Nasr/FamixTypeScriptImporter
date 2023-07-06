@@ -1,5 +1,5 @@
 //import { TS2Famix } from '../src/ts2famix-clean-version';
-import * as parser from '../src/new-parsing-strategy/analyze'
+import * as parser from '../src/new-parsing-strategy/analyze';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
@@ -73,5 +73,5 @@ describe('Tests for testInvoc', () => {
         expect(invocations.length).toBe(1);
         expect((invocations[0] as Invocation).getSignature()).toBeTruthy();
         expect((invocations[0] as Invocation).getSignature()).toBe('public x(): void');
-    })
+    });
 });

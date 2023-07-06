@@ -8,7 +8,7 @@ function computeTSMethodSignature(methodText: string): string {
     return methodText.substring(0, endSignatureText).trim();
 }
 
-console.log(computeTSMethodSignature('function computeTSMethodSignature(methodText: string): string {const endSignatureText = methodText.indexOf("{");return methodText.substring(0, endSignatureText).trim();}'))
+console.log(computeTSMethodSignature('function computeTSMethodSignature(methodText: string): string {const endSignatureText = methodText.indexOf("{");return methodText.substring(0, endSignatureText).trim();}'));
 
 function test1() : string {
     return "ok";

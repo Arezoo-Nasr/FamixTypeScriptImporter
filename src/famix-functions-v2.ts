@@ -20,7 +20,7 @@ export class FamixFunctions {
         return this.fmxRep;
     }
 
-    public makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | Identifier | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | MethodSignature | ConstructorDeclaration | ParameterDeclaration | VariableDeclaration | FunctionDeclaration | PropertyDeclaration | PropertySignature, famixElement: Famix.SourcedEntity): void {
+    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | Identifier | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | MethodSignature | ConstructorDeclaration | ParameterDeclaration | VariableDeclaration | FunctionDeclaration | PropertyDeclaration | PropertySignature, famixElement: Famix.SourcedEntity): void {
         const fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.fmxRep);
         fmxIndexFileAnchor.setFileName(sourceElement.getSourceFile().getFilePath());
         fmxIndexFileAnchor.setStartPos(sourceElement.getStart());
@@ -40,6 +40,7 @@ export class FamixFunctions {
             namespaceName = (m as ModuleDeclaration).getName();
         }
         else {
+            this.makeFamixIndexFileAnchor(m, null); // -> createFile ???
             namespaceName = "__global__";
         }
 
@@ -75,7 +76,7 @@ export class FamixFunctions {
                 fmxClass = new Famix.ParameterizableClass(this.fmxRep);
                 cls.getTypeParameters().forEach(tp => {
                     (fmxClass as Famix.ParameterizableClass).addParameterType(this.createOrGetFamixParameterType(tp));
-                })
+                });
             }
             else {
                 fmxClass = new Famix.Class(this.fmxRep);
@@ -95,7 +96,7 @@ export class FamixFunctions {
         return fmxClass;
     }
 
-    public createOrGetFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType { // -> makeIndex ???
+    private createOrGetFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType { // -> makeIndex ???
         const fmxParameterType = new Famix.ParameterType(this.fmxRep);
         fmxParameterType.setName(tp.getName());
         return fmxParameterType;
@@ -157,7 +158,13 @@ export class FamixFunctions {
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
         const parameters = method.getParameters();
         fmxMethod.setNumberOfParameters(parameters.length);
-        fmxMethod.setNumberOfStatements((method as MethodDeclaration | ConstructorDeclaration).getStatements().length);
+        
+        if (method instanceof MethodDeclaration || method instanceof ConstructorDeclaration) {
+            fmxMethod.setNumberOfStatements(method.getStatements().length);
+        }
+        else {
+            fmxMethod.setNumberOfStatements(0);
+        }
 
         // let fqn = UNKNOWN_VALUE;
         // try {
@@ -180,7 +187,7 @@ export class FamixFunctions {
         try {
             functionTypeName = this.getUsableName(func.getReturnType().getText());
         } catch (error) {
-            console.error(`> WARNING - unable to get a usable name for function return type of: ${func.getName()}`)
+            console.error(`> WARNING - unable to get a usable name for function return type of: ${func.getName()}`);
         }
 
         const fmxType = this.createOrGetFamixType(functionTypeName);
@@ -292,6 +299,7 @@ export class FamixFunctions {
         const sender = this.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);
         
         const receiverFullyQualifiedName = this.getClassNameOfMethod(m); // -> utiliser getFQN ???
+        //console.log("youhou", receiverFullyQualifiedName)
         const receiver = this.getFamixClass(receiverFullyQualifiedName);
 
         // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind() // TODO
@@ -300,7 +308,7 @@ export class FamixFunctions {
         fmxInvocation.setSender(sender);
         fmxInvocation.setReceiver(receiver);
         fmxInvocation.addCandidates(fmxMethod);
-        fmxInvocation.setSignature(fmxMethod.getSignature())
+        fmxInvocation.setSignature(fmxMethod.getSignature());
 
         fmxInvocation.setFullyQualifiedName(`${fmxMethod.getFullyQualifiedName()}.__invocation__`);
 
@@ -309,15 +317,15 @@ export class FamixFunctions {
         return fmxInvocation;
     }
 
-    public getFamixElementById(famixId: number): Famix.BehaviouralEntity {
+    private getFamixElementById(famixId: number): Famix.BehaviouralEntity {
         return this.fmxRep.getFamixElementById(famixId) as Famix.BehaviouralEntity; // -> Famix.Entity ???
     }
 
-    public getFamixEntityElementByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
+    private getFamixEntityElementByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
         return this.fmxRep.getFamixEntityElementByFullyQualifiedName(ancestorFQN) as Famix.Entity;
     }
 
-    public getFamixClass(name: string): Famix.Class {
+    private getFamixClass(name: string): Famix.Class {
         return this.fmxRep.getFamixClass(name) as Famix.Class;
     }
 
@@ -336,7 +344,7 @@ export class FamixFunctions {
         return name;
     }
 
-    public getClassNameOfMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature): string {
+    private getClassNameOfMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature): string {
         return (method.getFirstAncestorByKind(SyntaxKind.ClassDeclaration) as ClassDeclaration).getName();
     }
 }

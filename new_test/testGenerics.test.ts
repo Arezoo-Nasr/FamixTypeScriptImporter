@@ -1,5 +1,5 @@
 //import { TS2Famix } from '../src/ts2famix-clean-version';
-import * as parser from '../src/new-parsing-strategy/analyze'
+import * as parser from '../src/new-parsing-strategy/analyze';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Parameter } from "../src/lib/famix/src/model/famix/parameter";
@@ -17,7 +17,7 @@ const theMethod = fmxRep2.getFamixMethod("i") as Method;
 describe('Tests for testGenerics', () => {
 
     it("should parse generics", () => {
-        expect(fmxRep2).toBeTruthy()
+        expect(fmxRep2).toBeTruthy();
     });
     
     it("should contain one class", () => {
@@ -105,5 +105,5 @@ describe('Tests for testGenerics', () => {
         expect(invocations.length).toBe(1);
         expect((invocations[0] as Invocation).getSignature()).toBeTruthy();
         expect((invocations[0] as Invocation).getSignature()).toBe('i <T> (j : T): void');
-    })
+    });
 });

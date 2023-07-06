@@ -21,9 +21,9 @@ export class Inheritance extends Association {
       newSuperclass.getSubInheritances().add(this);
     } catch (error) {
       if (newSuperclass) 
-        console.info(` > ERROR - couldn't get subInheritances() for class ${newSuperclass.getName()}`)
+        console.info(` > ERROR - couldn't get subInheritances() for class ${newSuperclass.getName()}`);
       else 
-        console.info(` > ERROR - couldn't get subInheritances() for class (UNDEFINED)`)
+        console.info(` > ERROR - couldn't get subInheritances() for class (UNDEFINED)`);
     }
   }
 

@@ -14,7 +14,7 @@ export interface FamixTypeScriptElementStorage {
 
 export class FamixJSONExporter {
   private element: FamixBaseElement;
-  private bufferArray: any = {}
+  private bufferArray: any = {};
   //Arezoo
   private FamixPrefix = "FamixTypeScript";
   //End

@@ -21,7 +21,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         const sourceFile = file;
         // const sourceFile = project.getSourceFileOrThrow(paths[0]);
 
-        famixFunctions.makeFamixIndexFileAnchor(sourceFile, null); // -> createFile ???
+        // famixFunctions.makeFamixIndexFileAnchor(sourceFile, null); // -> createFile ???
 
         const currentCC = cyclomatic.calculate(sourceFile.getFilePath()); // store cc metrics for current file -> TODO ???
 
@@ -112,8 +112,10 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
         //     m.getModules().forEach(md => processModule(md, fmxNamespace));
         // });
 
-        console.info(`----------Finding Invocations:`)
-        processInvocations()
+        console.info(`----------Finding Invocations:`);
+        processInvocations();
+        //console.info(`----------Finding Invocations By CE:`);
+        //processInvocationsByCE();
 
         console.info(`\nClasses:`);
         // classes.forEach(c => console.log(c.getName()))
@@ -184,11 +186,11 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
             const fmxClass = famixFunctions.createOrGetFamixClassOrInterface(c, false, c.isAbstract());
 
-            console.log(`class: ${c.getName()} (${c.getType().getText()}), fqn = ${c.getSymbol()?.getFullyQualifiedName()}, ${fmxClass.getFullyQualifiedName()}`)
+            console.log(`class: ${c.getName()} (${c.getType().getText()}), fqn = ${c.getSymbol()?.getFullyQualifiedName()}, ${fmxClass.getFullyQualifiedName()}`);
 
             c.getMethods().forEach(m => {
                 const fmxMethod = processMethod(m);
-                fmxClass.addMethods(fmxMethod)
+                fmxClass.addMethods(fmxMethod);
             });
 
             // c.getConstructors().forEach(con => processConstructor(con));
@@ -207,11 +209,11 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
             const fmxInterface = famixFunctions.createOrGetFamixClassOrInterface(i, true, false);
 
-            console.log(`interface: ${i.getName()} (${i.getType().getText()}), fqn = ${i.getSymbol()?.getFullyQualifiedName()}, ${fmxInterface.getFullyQualifiedName()}`)
+            console.log(`interface: ${i.getName()} (${i.getType().getText()}), fqn = ${i.getSymbol()?.getFullyQualifiedName()}, ${fmxInterface.getFullyQualifiedName()}`);
 
             i.getMethods().forEach(m => {
                 const fmxMethod = processMethod(m);
-                fmxInterface.addMethods(fmxMethod)
+                fmxInterface.addMethods(fmxMethod);
             });
 
             // c.getConstructors().forEach(con => processConstructor(con));
@@ -233,7 +235,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
             console.log(`variable declaration: ${v.getName()} (${v.getType().getText()}), fqn = ${v.getSymbol()?.getFullyQualifiedName()} ${v.getInitializer() ? "initializer: '" + v.getInitializer().getText() + "'" : ''} `);
 
-            console.log(`variable declaration: ${v.getName()} (${v.getType().getText()}), fqn = ${v.getSymbol()?.getFullyQualifiedName()}, ${fmxVar.getFullyQualifiedName()}`)
+            console.log(`variable declaration: ${v.getName()} (${v.getType().getText()}), fqn = ${v.getSymbol()?.getFullyQualifiedName()}, ${fmxVar.getFullyQualifiedName()}`);
 
             return fmxVar;
         }
@@ -243,7 +245,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
             const fmxFunction = famixFunctions.createFamixFunction(f);
 
-            console.log(`function: ${f.getName()} (${f.getType().getText()}), fqn = ${f.getSymbol()?.getFullyQualifiedName()}, ${fmxFunction.getFullyQualifiedName()}`)
+            console.log(`function: ${f.getName()} (${f.getType().getText()}), fqn = ${f.getSymbol()?.getFullyQualifiedName()}, ${fmxFunction.getFullyQualifiedName()}`);
 
             f.getParameters().forEach(param => {
                 const fmxParam = processParameter(param);
@@ -257,7 +259,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
             // });
 
             f.getVariableStatements().forEach(v => {
-                const temp_variables = processVariableStatement(v)
+                const temp_variables = processVariableStatement(v);
                 temp_variables.forEach(variable => fmxFunction.addLocalVariables(variable));
             }); // -> doublon avec getVariableDeclarations ??? (à retirer si oui)
 
@@ -296,7 +298,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
                         declarations.push(vd);
                         const fmxVar = processVariable(vd);
                         temp_variables.push(fmxVar);
-                    })
+                    });
                 }
             }
 
@@ -312,7 +314,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
                 temp_variables.push(fmxVar);
             }); 
 
-            console.log(`Variable statement: ${v.getDeclarationKindKeyword().getText()} '${v.getText()}' ${v.getDeclarations()[0].getName()}`)
+            console.log(`Variable statement: ${v.getDeclarationKindKeyword().getText()} '${v.getText()}' ${v.getDeclarations()[0].getName()}`);
 
             return temp_variables;
         }
@@ -338,7 +340,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
             console.log(`Method declaration: ${(m.getParent() as ClassDeclaration).getName()}, ${famixFunctions.createOrGetFamixClassOrInterface(m.getParent() as (ClassDeclaration | InterfaceDeclaration)).getName()}`);
 
-            console.log(`method: (${m.getType().getText()}), fqn = ${m.getSymbol()?.getFullyQualifiedName()}, ${fmxMethod.getFullyQualifiedName()}`)
+            console.log(`method: (${m.getType().getText()}), fqn = ${m.getSymbol()?.getFullyQualifiedName()}, ${fmxMethod.getFullyQualifiedName()}`);
 
             m.getParameters().forEach(param => {
                 const fmxParam = processParameter(param);
@@ -353,7 +355,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
             if (m instanceof MethodDeclaration || m instanceof ConstructorDeclaration) {
                 m.getVariableStatements().forEach(v => {
-                    const temp_variables = processVariableStatement(v)
+                    const temp_variables = processVariableStatement(v);
                     temp_variables.forEach(variable => fmxMethod.addLocalVariables(variable));
                 });
 
@@ -373,7 +375,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
 
             const fmxParam = famixFunctions.createFamixParameter(p);
 
-            console.log(`parameter: ${p.getName()} (${p.getType().getText()}), fqn = ${p.getSymbol()?.getFullyQualifiedName()}, ${fmxParam.getFullyQualifiedName()}`)
+            console.log(`parameter: ${p.getName()} (${p.getType().getText()}), fqn = ${p.getSymbol()?.getFullyQualifiedName()}, ${fmxParam.getFullyQualifiedName()}`);
 
             return fmxParam;
         }
@@ -383,7 +385,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
                             
             const fmxAttr = famixFunctions.createFamixAttribute(p, false);
 
-            console.log(`attribute: ${p.getName()} (${p.getType().getText()}), fqn = ${p.getSymbol()?.getFullyQualifiedName()}, ${fmxAttr.getFullyQualifiedName()}`)
+            console.log(`attribute: ${p.getName()} (${p.getType().getText()}), fqn = ${p.getSymbol()?.getFullyQualifiedName()}, ${fmxAttr.getFullyQualifiedName()}`);
 
             return fmxAttr;
         }
@@ -405,12 +407,42 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository {
             try {
                 const fmxInvocation = famixFunctions.createFamixInvocation(n, m, id);
 
-                console.log(`node: (${n.getType().getText()}), fqn = ${n.getSymbol()?.getFullyQualifiedName()}, ${fmxInvocation.getFullyQualifiedName()}`)
+                console.log(`node: (${n.getType().getText()}), fqn = ${n.getSymbol()?.getFullyQualifiedName()}, ${fmxInvocation.getFullyQualifiedName()}`);
             } catch (error) {
                 console.error(`---error--- scopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing parse...`);
             }
         }
     });
+
+    function processInvocationsByCE(): void { // process après avoir traité tous les fichiers ???
+        const callExpressions = allProjectCallExpressions();
+        callExpressions.forEach(ce => {
+            console.log(`  CallExpression: ${ce.getText()}`);
+            const returnType = project.getTypeChecker().getTypeAtLocation(ce);
+            console.log(`  returnType: ${returnType.getText()}`);
+            const theDescendants = ce.getDescendants();
+            const DAncest = theDescendants[3].getAncestors();
+            console.log(DAncest.length);
+            for (let pas = 0; pas < DAncest.length; pas++) {
+                console.log(pas, DAncest[pas].getText(), DAncest[pas].getKindName());
+            }
+            console.log(theDescendants.length);
+            for (let pas = 0; pas < theDescendants.length; pas++) {
+                console.log(pas, theDescendants[pas].getKindName(), theDescendants[pas].getText());
+            }
+            //const receiver = this.typeChecker.getType(ce.compilerNode.expression.getChildren()[0]);
+        });
+    }
+
+    function allProjectCallExpressions() {
+        const callExpressions = [];
+        for (const file of project.getSourceFiles()) {
+            for (const ce of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
+                callExpressions.push(ce);
+            }
+        }
+        return callExpressions;
+    }
 
 
 

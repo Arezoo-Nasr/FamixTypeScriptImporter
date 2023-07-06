@@ -48,7 +48,7 @@ export class FamixRepository {
 
   public getFamixClass(name: string): Class | undefined {
     return Array.from(this.famixClasses.values())
-      .find(ns => ns.getName() === name)
+      .find(ns => ns.getName() === name);
     // for (const fc of Array.from(this.famixClasses.values())) {
     //   if (fc.getName() === name) {
     //     return fc;
@@ -59,7 +59,7 @@ export class FamixRepository {
 
   public getFamixMethod(name: string): Method | undefined {
     return Array.from(this.famixMethods.values())
-      .find(ns => ns.getName() === name)
+      .find(ns => ns.getName() === name);
     // for (const fc of Array.from(this.famixClasses.values())) {
     //   if (fc.getName() === name) {
     //     return fc;
@@ -78,13 +78,13 @@ export class FamixRepository {
     return Array.from(this.elements)
       .find(e => (e instanceof Function 
                   && (e as Function).getName().match(funcRegEx)  
-                  && (e as Function).getContainer().getName() === namespace))
+                  && (e as Function).getContainer().getName() === namespace));
   }
 
 
   getFamixNamespace(moduleName: string) {
     return Array.from(this.famixNamespaces.values())
-      .find(ns => ns.getName() === moduleName)
+      .find(ns => ns.getName() === moduleName);
     // for (const fc of Array.from(this.famixNamespaces.values())) {
     //   if (fc.getName() === moduleName) {
     //     return fc;
@@ -134,7 +134,7 @@ export class FamixRepository {
     for (const element of Array.from(this.elements.values())) {
       ret = ret + element.getJSON() + ",";
     }
-    ret = ret.substring(0, ret.length - 1)
+    ret = ret.substring(0, ret.length - 1);
     return ret + "]";//////////
   }
 }

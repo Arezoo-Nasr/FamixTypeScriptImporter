@@ -38,7 +38,7 @@ parsedModel.forEach(element => {
     if (nameWithoutPrefix.endsWith('Inheritance')) {
         const subclass = element['subclass'].ref;
         const superclass = element['superclass'].ref;
-        associations.push({ from: subclass, to: superclass, name: nameWithoutPrefix })
+        associations.push({ from: subclass, to: superclass, name: nameWithoutPrefix });
     }
 });
 
@@ -71,7 +71,7 @@ fs.writeFile(argv.output as string, plantUMLOutString, (err) => {
 
 function uniqueElementName(element: FamixTypeScriptElement): string {
     // console.error(`uniqueElementName for ${JSON.stringify(element)}`);
-    return `${element.FM3}${element.id}`
+    return `${element.FM3}${element.id}`;
 }
 
 function toPlantUML(element: FamixTypeScriptElement) {
@@ -104,13 +104,13 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
             default:
                 if (isOneToManyReference) {
                     attribute.forEach((composite, index) => {
-                        associations.push({ from: element.id, to: composite.ref, name: `${property}[${index}]` })
+                        associations.push({ from: element.id, to: composite.ref, name: `${property}[${index}]` });
                     });
                 } else if (typeof attribute == 'object') {
                     associations.push({ from: element.id, to: attribute.ref, name: property });
                 } else {  // typeof string, boolean, number, etc.
                     // treat it as a simple attribute
-                    plantUMLString += `${property} = ${element[property]}\n`
+                    plantUMLString += `${property} = ${element[property]}\n`;
                 }
 
                 break;

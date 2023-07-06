@@ -2,11 +2,26 @@ import * as ts from "ts-morph";
 
 function getNameOfNode(a: ts.Node<ts.ts.Node>) {
     switch (a.getKind()) {
+        case ts.SyntaxKind.SourceFile:
+            return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
+
+        // default:
+        //     return (a as any).getName();
+
+        case ts.SyntaxKind.ModuleDeclaration:
+            return a.asKind(ts.SyntaxKind.ModuleDeclaration)?.getName(); 
+
         case ts.SyntaxKind.ClassDeclaration:
             return a.asKind(ts.SyntaxKind.ClassDeclaration)?.getName();
 
+        case ts.SyntaxKind.InterfaceDeclaration:
+            return a.asKind(ts.SyntaxKind.InterfaceDeclaration)?.getName();              
+
         case ts.SyntaxKind.MethodDeclaration:
             return a.asKind(ts.SyntaxKind.MethodDeclaration)?.getName();
+
+        case ts.SyntaxKind.MethodSignature:
+            return a.asKind(ts.SyntaxKind.MethodSignature)?.getName();   
 
         case ts.SyntaxKind.FunctionDeclaration:
             return a.asKind(ts.SyntaxKind.FunctionDeclaration)?.getName();
@@ -15,19 +30,19 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
             return a.asKind(ts.SyntaxKind.VariableDeclaration)?.getName();
         
         case ts.SyntaxKind.Parameter:
-            return a.asKind(ts.SyntaxKind.Parameter)?.getName();
+            return a.asKind(ts.SyntaxKind.Parameter)?.getName();  
 
-        case ts.SyntaxKind.ModuleDeclaration:
-            return a.asKind(ts.SyntaxKind.ModuleDeclaration)?.getName();
+        case ts.SyntaxKind.PropertyDeclaration:
+            return a.asKind(ts.SyntaxKind.PropertyDeclaration)?.getName();    
 
-        case ts.SyntaxKind.InterfaceDeclaration:
-            return a.asKind(ts.SyntaxKind.InterfaceDeclaration)?.getName();    
+        case ts.SyntaxKind.PropertySignature:
+            return a.asKind(ts.SyntaxKind.PropertySignature)?.getName();    
+
+        case ts.SyntaxKind.Constructor:
+            return "constructor";    
 
         // case ts.SyntaxKind.ModuleBlock:
         //     return a.asKind(ts.SyntaxKind.ModuleBlock)?.getParent().getName();
-
-        case ts.SyntaxKind.SourceFile:
-            return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
         
         default:
             // ancestor hasn't got a useful name

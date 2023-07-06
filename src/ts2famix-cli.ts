@@ -1,7 +1,7 @@
-import * as fs from "fs"
+import * as fs from "fs";
 import yargs from "yargs";
 // import { TS2Famix } from "./ts2famix";
-import * as parser from '../src/new-parsing-strategy/analyze'
+import * as parser from '../src/new-parsing-strategy/analyze';
 
 // const argv = yargs
 //     .example('$0 -i ../myTypescriptProject -o myTypeScriptProject.json', 'creates JSON-format model of typescript project')

@@ -35,7 +35,7 @@ describe('Access', () => {
 
     it("should have an access to privateAttribute in privateMethod", () => {
         const famixAccess = parsedModel.filter(el =>
-            (el.FM3 == "FamixTypeScript.Access"
+            (el.accessor != undefined && el.variable != undefined && el.FM3 == "FamixTypeScript.Access"
                 && ((fmxRep2.getFamixElementById(el.accessor.ref) as Method).getName() == "privateMethod") 
                 && ((fmxRep2.getFamixElementById(el.variable.ref) as Attribute).getName() == "privateAttribute")
                 ))[0];
@@ -44,7 +44,7 @@ describe('Access', () => {
 
     it("should have an access to publicAttribute in returnAccessName", () => {
         const famixAccess = parsedModel.filter(el =>
-            (el.FM3 == "FamixTypeScript.Access"
+            (el.accessor != undefined && el.variable != undefined && el.FM3 == "FamixTypeScript.Access"
                 && ((fmxRep2.getFamixElementById(el.accessor.ref) as Method).getName() == "returnAccessName") 
                 && ((fmxRep2.getFamixElementById(el.variable.ref) as Attribute).getName() == "publicAttribute")
                 ))[0];

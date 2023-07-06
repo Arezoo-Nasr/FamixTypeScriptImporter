@@ -1,5 +1,5 @@
 //import { TS2Famix } from '../src/ts2famix-clean-version';
-import * as parser from '../src/new-parsing-strategy/analyze'
+import * as parser from '../src/new-parsing-strategy/analyze';
 
 const filePaths = ["new_test_src/namespaces_and_classes.ts"];
 //const importer = new TS2Famix();
@@ -35,17 +35,17 @@ describe('Tests for namespaces and classes', () => {
 
     it("should contain a class EntityClass", () => {
         expect(theClass).toBeTruthy();
-    })
+    });
 
     it("should contain a class class2", () => {
         expect(theClass2).toBeTruthy();
-    })
+    });
 
     it("should contain a class clsInNsp3", () => {
         expect(theClass3).toBeTruthy();
-    })
+    });
 
     it("should contain a class clsOutNsp", () => {
         expect(theClass4).toBeTruthy();
-    })
+    });
 });

@@ -1,5 +1,5 @@
 class A {
-    public x(): void {true;}
+    public x(): void {}
 }
 
 class B {
