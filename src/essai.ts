@@ -6,7 +6,7 @@
 let var_global = 4;
 console.log(var_global);
 
-function test0() {
+function test0(): void {
     var_global = 5;
     console.log(var_global);
 }

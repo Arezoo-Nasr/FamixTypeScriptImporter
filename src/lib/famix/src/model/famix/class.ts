@@ -48,6 +48,7 @@ export class Class extends Type {
     exporter.addProperty("isTestCase", this.getIsTestCase());
     exporter.addProperty("isInterface", this.getIsInterface());
     exporter.addProperty("isAbstract", this.getIsAbstract());
+    
   }
 
 }

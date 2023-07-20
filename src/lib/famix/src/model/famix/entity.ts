@@ -1,6 +1,6 @@
 // NOT any more (automatically generated code, please do not change)
 
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { FamixBaseElement } from "./../../famix_base_element";
 import { Invocation } from "./../famix/invocation";
 import { SourceAnchor } from "./../famix/source_anchor";
@@ -31,6 +31,36 @@ export class Entity extends FamixBaseElement {
     if (this.entitySourceAnchor === undefined) {
       this.entitySourceAnchor = newSourceAnchor;
       newSourceAnchor.setElement(this);
+    }
+  }
+
+  private entityParentScope: Entity;
+
+  // oneMany.Getter
+  // @FameProperty(name = "parentScope", opposite = "childScopes")
+  public getParentScope(): Entity {
+    return this.entityParentScope;
+  }
+
+  // oneMany.Setter
+  public setParentScope(newParentScope: Entity) {
+    this.entityParentScope = newParentScope;
+    newParentScope.getChildScopes().add(this);
+  }
+
+  private entityChildScopes: Set<Entity> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "childScopes", opposite = "parentScope", derived = true)
+  public getChildScopes(): Set<Entity> {
+    return this.entityChildScopes;
+  }
+
+  // manyOne.Setter
+  public addChildScopes(entityChildScopes: Entity) {
+    if (!this.entityChildScopes.has(entityChildScopes)) {
+      this.entityChildScopes.add(entityChildScopes);
+      entityChildScopes.setParentScope(this);
     }
   }
 
@@ -77,9 +107,11 @@ export class Entity extends FamixBaseElement {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
     exporter.addProperty("sourceAnchor", this.getSourceAnchor());
+    exporter.addProperty("parentScope", this.getParentScope());
+    exporter.addProperty("childScopes", this.getChildScopes());
     exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
     exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
-
+  
   }
 
 }

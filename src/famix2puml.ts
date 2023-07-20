@@ -90,7 +90,7 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
     // element.attrs.forEach(attr => {
     for (const property in element) {
         const attribute = element[property];
-        const isOneToManyReference = typeof attribute != 'string' && attribute.length; // Array but not a string
+        const isOneToManyReference = typeof attribute !== 'string' && attribute.length; // Array but not a string
 
         switch (property) {
             // ignore these properties
@@ -106,7 +106,7 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
                     attribute.forEach((composite, index) => {
                         associations.push({ from: element.id, to: composite.ref, name: `${property}[${index}]` });
                     });
-                } else if (typeof attribute == 'object') {
+                } else if (typeof attribute === 'object') {
                     associations.push({ from: element.id, to: attribute.ref, name: property });
                 } else {  // typeof string, boolean, number, etc.
                     // treat it as a simple attribute

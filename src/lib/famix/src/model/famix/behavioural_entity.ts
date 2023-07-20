@@ -6,7 +6,7 @@ import { ImplicitVariable } from "./../famix/implicit_variable";
 // import { Invocation } from "./../famix/invocation";
 import { ContainerEntity } from "./../famix/container_entity";
 import { Reference } from "./../famix/reference";
-import { LocalVariable } from "./../famix/local_variable";
+// import { LocalVariable } from "./../famix/local_variable";
 import { Access } from "./../famix/access";
 import { Parameter } from "./../famix/parameter";
 
@@ -86,21 +86,21 @@ export class BehaviouralEntity extends ContainerEntity {
     }
   }
 
-  private behaviouralEntityLocalVariables: Set<LocalVariable> = new Set();
+  // private behaviouralEntityLocalVariables: Set<LocalVariable> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "localVariables", opposite = "parentBehaviouralEntity", derived = true)
-  public getLocalVariables(): Set<LocalVariable> {
-    return this.behaviouralEntityLocalVariables;
-  }
+  // // manyOne.Getter
+  // // @FameProperty(name = "localVariables", opposite = "parentBehaviouralEntity", derived = true)
+  // public getLocalVariables(): Set<LocalVariable> {
+  //   return this.behaviouralEntityLocalVariables;
+  // }
 
-  // manyOne.Setter
-  public addLocalVariables(behaviouralEntityLocalVariables: LocalVariable) {
-    if (!this.behaviouralEntityLocalVariables.has(behaviouralEntityLocalVariables)) {
-      this.behaviouralEntityLocalVariables.add(behaviouralEntityLocalVariables);
-      behaviouralEntityLocalVariables.setParentBehaviouralEntity(this);
-    }
-  }
+  // // manyOne.Setter
+  // public addLocalVariables(behaviouralEntityLocalVariables: LocalVariable) {
+  //   if (!this.behaviouralEntityLocalVariables.has(behaviouralEntityLocalVariables)) {
+  //     this.behaviouralEntityLocalVariables.add(behaviouralEntityLocalVariables);
+  //     behaviouralEntityLocalVariables.setParentBehaviouralEntity(this);
+  //   }
+  // }
 
   private behaviouralEntityNumberOfStatements: number;
 
@@ -230,7 +230,7 @@ export class BehaviouralEntity extends ContainerEntity {
     exporter.addProperty("cyclomaticComplexity", this.getCyclomaticComplexity());
     exporter.addProperty("numberOfComments", this.getNumberOfComments());
     exporter.addProperty("implicitVariables", this.getImplicitVariables());
-    exporter.addProperty("localVariables", this.getLocalVariables());
+    // exporter.addProperty("localVariables", this.getLocalVariables());
     exporter.addProperty("numberOfStatements", this.getNumberOfStatements());
     exporter.addProperty("outgoingReferences", this.getOutgoingReferences());
     exporter.addProperty("numberOfLinesOfCode", this.getNumberOfLinesOfCode());

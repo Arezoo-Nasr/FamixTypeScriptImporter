@@ -1,9 +1,9 @@
-// automatically generated code, please do not change
+// NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Entity } from "./../famix/entity";
+import { ContainerEntity } from "./../famix/container_entity";
 
-export class AbstractFile extends Entity {
+export class AbstractFile extends ContainerEntity {
 
   private abstractFileName: string;
 

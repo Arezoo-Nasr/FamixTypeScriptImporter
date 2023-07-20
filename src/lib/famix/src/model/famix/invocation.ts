@@ -1,10 +1,10 @@
 // NOT any more (automatically generated code, please do not change)
 
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { NamedEntity } from "./../famix/named_entity";
 import { Association } from "./../famix/association";
 // import { BehaviouralEntity } from "./../famix/behavioural_entity";
-import { Entity } from "./entity";
+import { Entity } from "./../famix/entity";
 
 export class Invocation extends Association {
 
