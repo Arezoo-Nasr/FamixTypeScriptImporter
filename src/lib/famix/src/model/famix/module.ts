@@ -33,7 +33,7 @@ export class Module extends ScopingEntity {
   public addLocalVariables(scopingEntityLocalVariables: LocalVariable) {
     if (!this.scopingEntityLocalVariables.has(scopingEntityLocalVariables)) {
       this.scopingEntityLocalVariables.add(scopingEntityLocalVariables);
-      // TODO scopingEntityLocalVariables.setParentBehaviouralEntity(this);
+      // TODO scopingEntityLocalVariables.setParentBehaviouralEntity(this); -> ???
     }
   }
 

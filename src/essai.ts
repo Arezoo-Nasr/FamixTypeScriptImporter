@@ -3,6 +3,16 @@
 //import { getFQN } from "./fqn";
 //import * as ts from "ts-morph";
 
+let var_global = 4;
+console.log(var_global);
+
+function test0() {
+    var_global = 5;
+    console.log(var_global);
+}
+
+test0();
+
 function computeTSMethodSignature(methodText: string): string {
     const endSignatureText = methodText.indexOf("{");
     return methodText.substring(0, endSignatureText).trim();

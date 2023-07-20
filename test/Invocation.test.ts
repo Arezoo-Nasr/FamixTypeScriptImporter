@@ -50,7 +50,7 @@ describe('Invocation', () => {
     it("should contain an invocation for returnHi", () => {
         const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBeTruthy();
         const candidates = invocations.filter(i => {
@@ -64,7 +64,7 @@ describe('Invocation', () => {
     it("should contain an invocation for returnHi with a receiver of 'Class1'", () => {
         const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBeTruthy();
         expect((invocations[0] as Invocation).getReceiver()).toBeTruthy();
@@ -74,7 +74,7 @@ describe('Invocation', () => {
     it("should contain an invocation for returnHi with a signature 'public returnHi(): string'", () => {
         const theMethod = fmxRep2.getFamixEntityElementByFullyQualifiedName("Class1.returnHi") as Method;
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBeTruthy();
         expect((invocations[0] as Invocation).getSignature()).toBeTruthy();
@@ -84,7 +84,7 @@ describe('Invocation', () => {
     // it("should contain an invocation for a function 'a' with a signature 'function a(b: number)'", () => {
     //     const theFunction = fmxRep2.getFamixContainerEntityElementByFullyQualifiedName("a") as FamixFunction;
     //     expect(theFunction).toBeTruthy();
-    //     const invocations = Array.from(fmxRep2.getAllEntitiesWithType("Invocation"));
+    //     const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
     //     expect(invocations).toBeTruthy();
     //     expect(invocations.length).toBeTruthy();
     //     expect((invocations[0] as Invocation).getSignature()).toBeTruthy();

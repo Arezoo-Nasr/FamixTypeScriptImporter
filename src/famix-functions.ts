@@ -138,7 +138,6 @@ export class FamixFunctions {
     //     }
     //     fmxMethod.setNumberOfParameters(parameters.length);
 
-    //     // Arezoo
     //     // Variables
     //     if (!isSignature) {
     //         let variables = method.getVariableDeclarations();

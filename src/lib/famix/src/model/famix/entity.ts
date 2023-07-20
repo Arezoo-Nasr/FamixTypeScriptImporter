@@ -1,12 +1,12 @@
-// automatically generated code, please do not change
+// NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { FamixBaseElement } from "./../../famix_base_element";
 import { Invocation } from "./../famix/invocation";
+import { SourceAnchor } from "./../famix/source_anchor";
 
 export class Entity extends FamixBaseElement {
 
-  // Arezoo
   private fullyQualifiedName: string;
 
   // manyOne.Getter
@@ -18,6 +18,20 @@ export class Entity extends FamixBaseElement {
   // manyOne.Setter
   public setFullyQualifiedName(fullyQualifiedName: string) {
     this.fullyQualifiedName = fullyQualifiedName;
+  }
+
+  private entitySourceAnchor: SourceAnchor;
+
+  // @FameProperty(name = "sourceAnchor", opposite = "element")
+  public getSourceAnchor(): SourceAnchor {
+    return this.entitySourceAnchor;
+  }
+
+  public setSourceAnchor(newSourceAnchor: SourceAnchor) {
+    if (this.entitySourceAnchor === undefined) {
+      this.entitySourceAnchor = newSourceAnchor;
+      newSourceAnchor.setElement(this);
+    }
   }
 
   private entityOutgoingInvocations: Set<Invocation> = new Set();
@@ -61,6 +75,8 @@ export class Entity extends FamixBaseElement {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
+    exporter.addProperty("sourceAnchor", this.getSourceAnchor());
     exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
     exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
 

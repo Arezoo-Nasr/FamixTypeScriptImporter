@@ -108,9 +108,9 @@ export class TS2Famix {
         // console.info(`namespace: ${namespaceName}`);
         // console.info(`classes: ${classesInFile.map(c => c.getName())}`);
         // console.info(`interfaces: ${interfaces.map(i => i.getName())}`);
-        // Arezoo: if there is not any classes but also it must be executed for global variables,functions,etc.
+        // if there is not any classes but also it must be executed for global variables,functions,etc.
 
-        //if (module instanceof ModuleDeclaration) {
+        // if (module instanceof ModuleDeclaration) {
         this.famixFunctions.makeFamixIndexFileAnchor(this.fmxRep, module, fmxNamespace); // -> seulement si moduleDeclaration ???
 
         if (classesInFile.length) {
@@ -307,14 +307,13 @@ export class TS2Famix {
                         ); //////////for global variable it must work
                     if (nodeReferenceAncestor) {
                         const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName();
-                        const sender = this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
+                        const sender = this.fmxRep.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehaviouralEntity;
                         //const receiverFullyQualifiedName = savedMethod.getParent().getSymbol().getFullyQualifiedName();
                         const receiverFullyQualifiedName = this.getClassNameOfMethod(savedMethod);
                         console.log(`  Receiver fully qualified name: ${receiverFullyQualifiedName}`)
                         const receiver = this.fmxRep.getFamixClass(receiverFullyQualifiedName);
                         console.log(`  Receiver: ${receiver.getName()}`)
 
-                        // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind() // TODO
                         const fmxInvocation = new Famix.Invocation(this.fmxRep);
                         fmxInvocation.setSender(sender);
                         fmxInvocation.setReceiver(receiver);
@@ -382,7 +381,7 @@ export class TS2Famix {
                     // fmxAccess.setVariable(famixStructuralElement);
                     if (scopeDeclaration) {
                         let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName();
-                        let accessor = this.fmxRep.getFamixContainerEntityElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
+                        let accessor = this.fmxRep.getFamixEntityElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehaviouralEntity;
                         console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
                         let fmxAccess = new Famix.Access(this.fmxRep);
                         fmxAccess.setAccessor(accessor);
@@ -404,7 +403,6 @@ export class TS2Famix {
         variablesInFile.forEach(variable => {
             console.info(` Variable> ${variable.getName()}`);
             let fmxVariable = this.makeFamixLocalVariable(variable);
-            // TODO fmxScope.addVariables(fmxVariable);
             console.info(`   Famix scope: ${fmxScope.getName()} (${fmxScope instanceof Famix.Function ? "function" : fmxScope instanceof Famix.Namespace ? "namespace" : "Module"})`);
         });
     }
@@ -477,7 +475,6 @@ export class TS2Famix {
             fmxMethod.setName(methodName);
         }
         else {
-            //Arezoo
             let methodName = (method as MethodDeclaration).getName();
             fmxMethod.setName(methodName);
             // fmxMethod.addModifiers(this.getAccessor(method));
@@ -544,7 +541,6 @@ export class TS2Famix {
         }
         fmxMethod.setNumberOfParameters(parameters.length);
 
-        //Arezoo
         //Variables
         if (!isSignature) {
             method = method as MethodDeclaration;
@@ -636,7 +632,6 @@ export class TS2Famix {
         }
         fmxFunction.setNumberOfParameters(parameters.length);
 
-        //Arezoo
         //Variables
         let variables = func.getVariableDeclarations();
         if (variables.length > 0) {

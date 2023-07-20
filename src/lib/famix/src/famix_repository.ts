@@ -2,117 +2,64 @@ import { FamixBaseElement } from "./famix_base_element";
 import { Class, Entity, Namespace, Function, Method } from "./model/famix";
 
 export class FamixRepository {
-  private elements: Set<FamixBaseElement> = new Set<FamixBaseElement>();
-  private famixClasses: Set<Class> = new Set<Class>();
+
+  private elements = new Set<FamixBaseElement>();
+  private famixClasses = new Set<Class>();
   private famixNamespaces = new Set<Namespace>();
   private famixMethods = new Set<Method>();
   private idCounter = 1;
-  private static repo: FamixRepository;
 
   // constructor() {
   // }
 
-  public static getFamixRepo(): FamixRepository {
-    if (this.repo === undefined) {
-      this.repo = new FamixRepository();
-    }
-    return this.repo;
-  }
-
-  public static clearFamixRepo() {
-    this.repo = new FamixRepository();
-  }
-
-  public getAllEntitiesWithType(theType: string) {
-    return new Set(Array.from(this.elements.values())
-      .filter(e => (e as any).constructor.name == theType));
-      // .concat(Array.from(this.famixClasses.values())
-      //   .filter(e => (e as any).constructor.name == theType)));
-  }
-
-  public getAllEntities() {
-    return new Set(Array.from(this.elements.values()));//.concat(Array.from(this.famixClasses.values())));
-  }
-
-  public createOrGetFamixClass(name: string, isInterface?: boolean, isAbstract?: boolean): Class {
-    let newClass = this.getFamixClass(name);
-    if (newClass === undefined) {
-      newClass = new Class(this);
-      newClass.setName(name.toLowerCase());
-      newClass.setIsStub(true);
-      if (isInterface) newClass.setIsInterface(isInterface);
-      if (isAbstract) newClass.setIsAbstract(isAbstract);
-    }
-    return newClass;
-  }
-
   public getFamixClass(name: string): Class | undefined {
-    return Array.from(this.famixClasses.values())
-      .find(ns => ns.getName() === name);
-    // for (const fc of Array.from(this.famixClasses.values())) {
-    //   if (fc.getName() === name) {
-    //     return fc;
-    //   }
-    // }
-    // return undefined;
-  }
-
-  public getFamixMethod(name: string): Method | undefined {
-    return Array.from(this.famixMethods.values())
-      .find(ns => ns.getName() === name);
-    // for (const fc of Array.from(this.famixClasses.values())) {
-    //   if (fc.getName() === name) {
-    //     return fc;
-    //   }
-    // }
-    // return undefined;
-  }
-
-
-  //Added by hand
-  // getFamixEntity(s: { name: string; container: string; kind: Attribute | Variable}) {
-  //   return Array.from(this.elements.values()).find(e => e.)
-  // }
-
-  getFamixFunction(namespace: string, funcRegEx: string) {
-    return Array.from(this.elements)
-      .find(e => (e instanceof Function 
-                  && (e as Function).getName().match(funcRegEx)  
-                  && (e as Function).getContainer().getName() === namespace));
-  }
-
-
-  getFamixNamespace(moduleName: string) {
-    return Array.from(this.famixNamespaces.values())
-      .find(ns => ns.getName() === moduleName);
-    // for (const fc of Array.from(this.famixNamespaces.values())) {
-    //   if (fc.getName() === moduleName) {
-    //     return fc;
-    //   }
-    // }
-    // return undefined;
-  }
-
-  getFamixNamespaces() {
-    return new Set(Array.from(this.famixNamespaces.values()));
+    return Array.from(this.famixClasses.values()).find(ns => ns.getFullyQualifiedName() === name);
   }
 
   public getFamixElementById(id: number): FamixBaseElement | undefined {
-    const element = Array.from(this.elements.values()).find(e => e.id == id);
+    const element = Array.from(this.elements.values()).find(e => e.id === id);
     return element;
   }
-  // Arezoo
-  public getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
-    const allEntity = Array.from(this.elements.values())
-      .filter(e => (e as any).constructor.name == 'Method'
-        || (e as any).constructor.name == 'Function'
-        || (e as any).constructor.name == 'Namespace'
-        || (e as any).constructor.name == 'IndexedFileAnchor') as Entity[];
 
-    const entityElement = allEntity.find(c => c.getFullyQualifiedName() == FullyQualifiedName);
+  public getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
+    const allEntity = Array.from(this.elements.values()).filter(e => (e as any).constructor.name === 'Method' || (e as any).constructor.name === 'Function' || (e as any).constructor.name === 'Namespace' || (e as any).constructor.name === 'File') as Entity[];
+
+    const entityElement = allEntity.find(c => c.getFullyQualifiedName() === FullyQualifiedName);
     return entityElement;
   }
-  // Arezoo
+
+  
+  // Only for tests
+
+  public _getAllEntities() {
+    return new Set(Array.from(this.elements.values()));
+  }
+
+  public _getAllEntitiesWithType(theType: string) {
+    return new Set(Array.from(this.elements.values()).filter(e => (e as any).constructor.name === theType));
+  }
+
+  public _getFamixClass(name: string): Class | undefined {
+    return Array.from(this.famixClasses.values()).find(ns => ns.getName() === name);
+  }
+
+  public _getFamixMethod(name: string): Method | undefined {
+    return Array.from(this.famixMethods.values()).find(ns => ns.getName() === name);
+  }
+
+  public _getFamixFunction(namespace: string, funcRegEx: string) {
+    return Array.from(this.elements).find(e => (e instanceof Function && (e as Function).getName().match(funcRegEx) && (e as Function).getContainer().getName() === namespace));
+  }
+
+  public _getFamixNamespace(moduleName: string) {
+    return Array.from(this.famixNamespaces.values()).find(ns => ns.getName() === moduleName);
+  }
+
+  public _getFamixNamespaces() {
+    return new Set(Array.from(this.famixNamespaces.values()));
+  }
+
+
   public addElement(element: FamixBaseElement) {
     if (element instanceof Class) {
       this.famixClasses.add(element);
@@ -127,7 +74,7 @@ export class FamixRepository {
   }
 
   public getJSON(): string {
-    let ret = "[";///////
+    let ret = "[";
     for (const element of Array.from(this.famixClasses.values())) {
       ret = ret + element.getJSON() + ",";
     }
@@ -135,6 +82,6 @@ export class FamixRepository {
       ret = ret + element.getJSON() + ",";
     }
     ret = ret.substring(0, ret.length - 1);
-    return ret + "]";//////////
+    return ret + "]";
   }
 }

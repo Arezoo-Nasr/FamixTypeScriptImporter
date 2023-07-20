@@ -1,6 +1,6 @@
 import MyDaoInterface from "./interface";
 
-export default class MyDao<T> implements MyDaoInterface<T> {
+class MyDao<T> implements MyDaoInterface<T> {
 
     tableName = '';
 
@@ -9,12 +9,10 @@ export default class MyDao<T> implements MyDaoInterface<T> {
     }
 
     get(id: number): T {
-        // get logic
         return Object();
     }
 
     getAll(): [T] {
-        // getAll logic
         return Object();
     }
 }

@@ -1,4 +1,4 @@
-// automatically generated code, please do not change
+// NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./../famix/type";
@@ -140,7 +140,6 @@ export class BehaviouralEntity extends ContainerEntity {
     this.behaviouralEntityNumberOfLinesOfCode = behaviouralEntityNumberOfLinesOfCode;
   }
 
-  // Arezoo
   // private behaviouralEntityOutgoingInvocations: Set<Invocation> = new Set();
 
   // // manyOne.Getter

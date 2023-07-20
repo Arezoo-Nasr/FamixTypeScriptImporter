@@ -1,5 +1,5 @@
-// automatically generated code, please do not change
-// Arezoo
+// NOT any more (automatically generated code, please do not change)
+
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { NamedEntity } from "./../famix/named_entity";
 import { Association } from "./../famix/association";

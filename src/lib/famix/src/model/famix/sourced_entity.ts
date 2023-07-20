@@ -1,26 +1,26 @@
-// automatically generated code, please do not change
+// NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { SourceLanguage } from "./../famix/source_language";
 import { Entity } from "./../famix/entity";
 import { Comment } from "./../famix/comment";
-import { SourceAnchor } from "./../famix/source_anchor";
+// import { SourceAnchor } from "./../famix/source_anchor";
 
 export class SourcedEntity extends Entity {
 
-  private sourcedEntitySourceAnchor: SourceAnchor;
+  // private sourcedEntitySourceAnchor: SourceAnchor;
 
-  // @FameProperty(name = "sourceAnchor", opposite = "element")
-  public getSourceAnchor(): SourceAnchor {
-    return this.sourcedEntitySourceAnchor;
-  }
+  // // @FameProperty(name = "sourceAnchor", opposite = "element")
+  // public getSourceAnchor(): SourceAnchor {
+  //   return this.sourcedEntitySourceAnchor;
+  // }
 
-  public setSourceAnchor(newSourceAnchor: SourceAnchor) {
-    if (this.sourcedEntitySourceAnchor === undefined) {
-      this.sourcedEntitySourceAnchor = newSourceAnchor;
-      newSourceAnchor.setElement(this);
-    }
-  }
+  // public setSourceAnchor(newSourceAnchor: SourceAnchor) {
+  //   if (this.sourcedEntitySourceAnchor === undefined) {
+  //     this.sourcedEntitySourceAnchor = newSourceAnchor;
+  //     newSourceAnchor.setElement(this);
+  //   }
+  // }
 
   private sourcedEntityComments: Set<Comment> = new Set();
 
@@ -61,7 +61,7 @@ export class SourcedEntity extends Entity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("sourceAnchor", this.getSourceAnchor());
+    // exporter.addProperty("sourceAnchor", this.getSourceAnchor());
     exporter.addProperty("comments", this.getComments());
     exporter.addProperty("declaredSourceLanguage", this.getDeclaredSourceLanguage());
 

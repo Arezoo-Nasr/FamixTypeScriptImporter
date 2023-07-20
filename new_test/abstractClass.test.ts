@@ -6,12 +6,12 @@ const filePaths = ["new_test_src/abstractClass.ts"];
 
 //const fmxRep2 = importer.famixRepFromPath(filePaths);
 const fmxRep2 = parser.famixRepFromPath(filePaths);
-const theAbstractClass = fmxRep2.getFamixClass("MyAbstractClass");
+const theAbstractClass = fmxRep2._getFamixClass("MyAbstractClass");
 
 describe('Tests for abstract class', () => {
     
     it("should contain one class", () => {
-        expect(fmxRep2.getAllEntitiesWithType("Class").size).toBe(1);
+        expect(fmxRep2._getAllEntitiesWithType("Class").size).toBe(1);
     });
 
     it("should contain an abstract class MyAbstractClass", () => {

@@ -1,5 +1,5 @@
 class AA {
-    i <T> (j : T): void {}
+    i<T> (j : T): void {}
 }
 
 const x = new AA();

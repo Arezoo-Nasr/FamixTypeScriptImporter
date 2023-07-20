@@ -1,16 +1,17 @@
-// automatically generated code, please do not change
+// NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Function } from "./../famix/function";
 import { NamedEntity } from "./../famix/named_entity";
 import { Type } from "./../famix/type";
 import { AnnotationType } from "./../famix/annotation_type";
+import { LocalVariable } from "./local_variable";
+// import { GlobalVariable } from "./global_variable";
 
 export class ContainerEntity extends NamedEntity {
 
   private containerEntityTypes: Set<Type> = new Set();
 
-  // // Arezoo
   // private fullyQualifiedName: string;
 
   // // manyOne.Getter
@@ -54,6 +55,38 @@ export class ContainerEntity extends NamedEntity {
     }
   }
 
+  private containerEntityLocalVariables: Set<LocalVariable> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "local variables", opposite = "container", derived = true)
+  public getLocalVariables(): Set<LocalVariable> {
+    return this.containerEntityLocalVariables;
+  }
+
+  // manyOne.Setter
+  public addLocalVariables(containerEntityLocalVariables: LocalVariable) {
+    if (!this.containerEntityLocalVariables.has(containerEntityLocalVariables)) {
+      this.containerEntityLocalVariables.add(containerEntityLocalVariables);
+      containerEntityLocalVariables.setContainer(this);
+    }
+  }
+
+  // private containerEntityGlobalVariables: Set<GlobalVariable> = new Set();
+
+  // // manyOne.Getter
+  // // @FameProperty(name = "global variables", opposite = "container", derived = true)
+  // public getGlobalVariables(): Set<GlobalVariable> {
+  //   return this.containerEntityGlobalVariables;
+  // }
+
+  // // manyOne.Setter
+  // public addGlobalVariables(containerEntityGlobalVariables: GlobalVariable) {
+  //   if (!this.containerEntityGlobalVariables.has(containerEntityGlobalVariables)) {
+  //     this.containerEntityGlobalVariables.add(containerEntityGlobalVariables);
+  //     containerEntityGlobalVariables.setContainer(this);
+  //   }
+  // }
+
   private containerEntityDefinedAnnotationTypes: Set<AnnotationType> = new Set();
 
   // manyOne.Getter
@@ -82,7 +115,7 @@ export class ContainerEntity extends NamedEntity {
     exporter.addProperty("types", this.getTypes());
     exporter.addProperty("functions", this.getFunctions());
     exporter.addProperty("definedAnnotationTypes", this.getDefinedAnnotationTypes());
-    exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
+    // exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
   }
 }
 

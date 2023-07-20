@@ -1,6 +1,6 @@
 namespace MyNamespace {
 
-	export class EntityClass {
+	class EntityClass {
 	}
 
 	class class2 {
