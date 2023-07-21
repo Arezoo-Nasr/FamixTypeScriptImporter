@@ -1,5 +1,6 @@
 //import { TS2Famix } from '../src/ts2famix-clean-version';
-import * as parser from '../src/new-parsing-strategy/analyze';
+//import * as parser from '../src/new-parsing-strategy/analyze';
+import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { LocalVariable } from "../src/lib/famix/src/model/famix/local_variable";
@@ -7,20 +8,23 @@ import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
 const filePaths = ["new_test_src/invocationWithVariable.ts"];
 //const importer = new TS2Famix();
+const importer = new Importer();
 
-//const fmxRep2 = importer.famixRepFromPath(filePaths);
-const fmxRep2 = parser.famixRepFromPath(filePaths);
-const theClass = fmxRep2._getFamixClass("AAA");
-const theMethod = fmxRep2._getFamixMethod("method") as Method;
+//const fmxRep = importer.famixRepFromPath(filePaths);
+//const fmxRep = parser.famixRepFromPath(filePaths);
+const fmxRep = importer.famixRepFromPath(filePaths);
+
+const theClass = fmxRep._getFamixClass("AAA");
+const theMethod = fmxRep._getFamixMethod("method") as Method;
 
 describe('Tests for invocationWithVariable', () => {
     
     it("should contain one class", () => {
-        expect(fmxRep2._getAllEntitiesWithType("Class").size).toBe(1);
+        expect(fmxRep._getAllEntitiesWithType("Class").size).toBe(1);
     });
 
     it("should contain a class 'AAA'", () => {
-        const listOfNames = Array.from(fmxRep2._getAllEntitiesWithType("Class")).map(e => (e as Class).getName());
+        const listOfNames = Array.from(fmxRep._getAllEntitiesWithType("Class")).map(e => (e as Class).getName());
         expect(listOfNames).toContain("AAA");
     });
 
@@ -35,7 +39,7 @@ describe('Tests for invocationWithVariable', () => {
     });
 
     it("should contain a method 'method' for class 'AAA' with no parameter", () => {
-        const cList = Array.from(fmxRep2._getAllEntitiesWithType("Class") as Set<Class>);
+        const cList = Array.from(fmxRep._getAllEntitiesWithType("Class") as Set<Class>);
         expect(cList).toBeTruthy();
         const AAA = cList.find(c => c.getName() === "AAA");
         const mList = Array.from(AAA?.getMethods() as Set<Method>);
@@ -46,7 +50,7 @@ describe('Tests for invocationWithVariable', () => {
     });
 
     it("should contain a public method 'method", () => {
-        const pList = Array.from(fmxRep2._getAllEntitiesWithType("Method") as Set<Method>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("Method") as Set<Method>);
         expect(pList).toBeTruthy();
         const method = pList.find(p => p.getName() === "method");
         expect(method).toBeTruthy();
@@ -61,7 +65,7 @@ describe('Tests for invocationWithVariable', () => {
     });
 
     it("should contain a variable 'x1' instance of 'AAA'", () => {
-        const pList = Array.from(fmxRep2._getAllEntitiesWithType("GlobalVariable") as Set<LocalVariable>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("GlobalVariable") as Set<LocalVariable>);
         expect(pList).toBeTruthy();
         const x1 = pList.find(p => p.getName() === "x1");
         expect(x1).toBeTruthy();
@@ -70,7 +74,7 @@ describe('Tests for invocationWithVariable', () => {
     
     it("should contain an invocation for 'method'", () => {
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBe(1);
         const candidates = invocations.filter(i => {
@@ -82,16 +86,16 @@ describe('Tests for invocationWithVariable', () => {
 
     it("should contain an invocation for 'method' with a receiver 'AAA'", () => {
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBe(1);
         expect((invocations[0] as Invocation).getReceiver()).toBeTruthy();
-        expect((invocations[0] as Invocation).getReceiver()).toBe(fmxRep2._getFamixClass("AAA"));
+        expect((invocations[0] as Invocation).getReceiver()).toBe(fmxRep._getFamixClass("AAA"));
     });
 
     it("should contain an invocation for 'method' with a signature 'public method(): void'", () => {
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBe(1);
         expect((invocations[0] as Invocation).getSignature()).toBeTruthy();

@@ -7,6 +7,8 @@ import { Type } from "./../famix/type";
 import { AnnotationType } from "./../famix/annotation_type";
 import { LocalVariable } from "./../famix/local_variable";
 import { GlobalVariable } from "./../famix/global_variable";
+import { Namespace } from "./../famix/namespace";
+import { Class } from "./../famix/class";
 
 export class ContainerEntity extends NamedEntity {
 
@@ -52,6 +54,38 @@ export class ContainerEntity extends NamedEntity {
     if (!this.containerEntityFunctions.has(containerEntityFunctions)) {
       this.containerEntityFunctions.add(containerEntityFunctions);
       containerEntityFunctions.setContainer(this);
+    }
+  }
+
+  private containerEntityClasses: Set<Class> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "classes", opposite = "container", derived = true)
+  public getClasses(): Set<Class> {
+    return this.containerEntityClasses;
+  }
+
+  // manyOne.Setter
+  public addClasses(containerEntityClasses: Class) {
+    if (!this.containerEntityClasses.has(containerEntityClasses)) {
+      this.containerEntityClasses.add(containerEntityClasses);
+      containerEntityClasses.setContainer(this);
+    }
+  }
+
+  private containerEntityNamespaces: Set<Namespace> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "namespaces", opposite = "container", derived = true)
+  public getNamespaces(): Set<Namespace> {
+    return this.containerEntityNamespaces;
+  }
+
+  // manyOne.Setter
+  public addNamespaces(containerEntityNamespaces: Namespace) {
+    if (!this.containerEntityNamespaces.has(containerEntityNamespaces)) {
+      this.containerEntityNamespaces.add(containerEntityNamespaces);
+      containerEntityNamespaces.setContainer(this);
     }
   }
 
@@ -115,6 +149,8 @@ export class ContainerEntity extends NamedEntity {
     // exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
     exporter.addProperty("types", this.getTypes());
     exporter.addProperty("functions", this.getFunctions());
+    exporter.addProperty("classes", this.getClasses());
+    exporter.addProperty("namespaces", this.getNamespaces());
     exporter.addProperty("localVariables", this.getLocalVariables());
     exporter.addProperty("globalVariables", this.getGlobalVariables());
     exporter.addProperty("definedAnnotationTypes", this.getDefinedAnnotationTypes());

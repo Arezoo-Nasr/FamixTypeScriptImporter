@@ -703,7 +703,7 @@ export class TS2Famix {
         return fmxParameterType;
     }
 
-    private createFamixAttribute(property: PropertyDeclaration | PropertySignature, isSignature = false): Famix.Attribute { // todo*
+    private createFamixAttribute(property: PropertyDeclaration | PropertySignature, isSignature = false): Famix.Attribute { // check
 
         let fmxAttribute = new Famix.Attribute(this.fmxRep);
         fmxAttribute.setName(property.getName());
@@ -755,7 +755,7 @@ export class TS2Famix {
         return fmxType;
     }
 
-    private getAccessor(object: any): string { // not used*
+    private getAccessor(object: any): string { // check
         const keyword: string = "";
         const xx = object.hasModifier(SyntaxKind.ProtectedKeyword);
         if (object.hasModifier(SyntaxKind.PrivateKeyword))

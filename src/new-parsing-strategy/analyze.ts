@@ -73,12 +73,12 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository { // -> 
 
             console.info(`----------Finding Modules:`);
             f.getModules().forEach(md => {
-                processModule(md, fmxFile);
-                // -> addModule ???
+                const fmxNamespace = processModule(md, fmxFile);
+                fmxFile.addNamespaces(fmxNamespace);
             });
         }
 
-        function processModule(m: ModuleDeclaration, parentScope: Famix.Namespace | FamixFile.File): void { // -> fusionner avec processFile ???
+        function processModule(m: ModuleDeclaration, parentScope: Famix.Namespace | FamixFile.File): Famix.Namespace { // -> fusionner avec processFile ???
             modules.push(m);
 
             const fmxNamespace = famixFunctions.createOrGetFamixNamespace(m, parentScope);
@@ -113,9 +113,11 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository { // -> 
 
             console.info(`----------Finding Modules:`);
             m.getModules().forEach(md => {
-                processModule(md, fmxNamespace);
-                // -> addModule ???
+                const fmxNsp = processModule(md, fmxNamespace);
+                fmxNamespace.addNamespaces(fmxNsp);
             });
+
+            return fmxNamespace;
         }
 
         function processClass(c: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {

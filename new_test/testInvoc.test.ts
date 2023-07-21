@@ -1,30 +1,34 @@
 //import { TS2Famix } from '../src/ts2famix-clean-version';
-import * as parser from '../src/new-parsing-strategy/analyze';
+//import * as parser from '../src/new-parsing-strategy/analyze';
+import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
 const filePaths = ["new_test_src/testInvoc.ts"];
 //const importer = new TS2Famix();
+const importer = new Importer();
 
-//const fmxRep2 = importer.famixRepFromPath(filePaths);
-const fmxRep2 = parser.famixRepFromPath(filePaths);
-const theMethod = fmxRep2._getFamixMethod("x") as Method;
+//const fmxRep = importer.famixRepFromPath(filePaths);
+//const fmxRep = parser.famixRepFromPath(filePaths);
+const fmxRep = importer.famixRepFromPath(filePaths);
+
+const theMethod = fmxRep._getFamixMethod("x") as Method;
 
 describe('Tests for testInvoc', () => {
 
     it("should contain two class", () => {
-        expect(fmxRep2._getAllEntitiesWithType("Class").size).toBe(2);
+        expect(fmxRep._getAllEntitiesWithType("Class").size).toBe(2);
     });
 
     it("should contain a class A and a class B", () => {
-        const listOfNames = Array.from(fmxRep2._getAllEntitiesWithType("Class")).map(e => (e as Class).getName());
+        const listOfNames = Array.from(fmxRep._getAllEntitiesWithType("Class")).map(e => (e as Class).getName());
         expect(listOfNames).toContain("A");
         expect(listOfNames).toContain("B");
     });
 
     it("should contain a method x for class A", () => {
-        const cList = Array.from(fmxRep2._getAllEntitiesWithType("Class") as Set<Class>);
+        const cList = Array.from(fmxRep._getAllEntitiesWithType("Class") as Set<Class>);
         expect(cList).toBeTruthy();
         const A = cList.find(c => c.getName() === "A");
         const mList = Array.from(A?.getMethods() as Set<Method>);
@@ -35,7 +39,7 @@ describe('Tests for testInvoc', () => {
     });
 
     it("should contain a method y for class B", () => {
-        const cList = Array.from(fmxRep2._getAllEntitiesWithType("Class") as Set<Class>);
+        const cList = Array.from(fmxRep._getAllEntitiesWithType("Class") as Set<Class>);
         expect(cList).toBeTruthy();
         const B = cList.find(c => c.getName() === "B");
         const mList = Array.from(B?.getMethods() as Set<Method>);
@@ -47,7 +51,7 @@ describe('Tests for testInvoc', () => {
 
     it("should contain an invocation for x", () => {
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBe(1);
         const candidates = invocations.filter(i => {
@@ -59,16 +63,16 @@ describe('Tests for testInvoc', () => {
 
     it("should contain an invocation for x with a receiver 'A'", () => {
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBe(1);
         expect((invocations[0] as Invocation).getReceiver()).toBeTruthy();
-        expect((invocations[0] as Invocation).getReceiver()).toBe(fmxRep2._getFamixClass("A"));
+        expect((invocations[0] as Invocation).getReceiver()).toBe(fmxRep._getFamixClass("A"));
     });
 
     it("should contain an invocation for x with a signature 'public x(): void'", () => {
         expect(theMethod).toBeTruthy();
-        const invocations = Array.from(fmxRep2._getAllEntitiesWithType("Invocation"));
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBe(1);
         expect((invocations[0] as Invocation).getSignature()).toBeTruthy();

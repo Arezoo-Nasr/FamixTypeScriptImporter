@@ -238,13 +238,10 @@ export class FamixFunctions {
         fmxAttribute.setHasClassScope(true);
 
         property.getModifiers().forEach(m => fmxAttribute.addModifiers(m.getText()));
-        if (property.isReadonly()) {
-            fmxAttribute.addModifiers("readonly");
-        }
-        if (!isSignature && property.getExclamationTokenNode()) {
+        if (!isSignature && property.getExclamationTokenNode()) { // -> !isSignature ???
             fmxAttribute.addModifiers("!");
         }
-        if (property.getQuestionTokenNode()) {
+        if (property.getQuestionTokenNode()) { // -> !isSignature ???
             fmxAttribute.addModifiers("?");
         }
 
