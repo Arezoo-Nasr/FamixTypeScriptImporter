@@ -9,9 +9,6 @@ export class FamixRepository {
   private famixMethods = new Set<Method>();
   private idCounter = 1;
 
-  // constructor() {
-  // }
-
   public getFamixClass(name: string): Class | undefined {
     return Array.from(this.famixClasses.values()).find(ns => ns.getFullyQualifiedName() === name);
   }

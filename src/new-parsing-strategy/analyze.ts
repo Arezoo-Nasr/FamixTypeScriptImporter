@@ -5,7 +5,7 @@ import * as FamixFile from "../lib/famix/src/model/file";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FamixFunctions } from "../famix-functions-v2";
 
-const cyclomatic = require('../lib/ts-complex/cyclomatic-service');
+import { calculate } from "../lib/ts-complex/cyclomatic-service";
 
 export function famixRepFromPath(paths: Array<string>): FamixRepository { // -> faire une classe ??? + remplacer les addTypes par le bon add ???
 
@@ -25,7 +25,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository { // -> 
         console.info(`File >>>>>>>>>> ${file.getBaseName()}`);
         console.info(``);
 
-        const currentCC = cyclomatic.calculate(file.getFilePath()); // store cc metrics for current file
+        const currentCC = calculate(file.getFilePath()); // store cc metrics for current file
 
         // -> utile ???, global ???
         const modules = new Array<ModuleDeclaration>;

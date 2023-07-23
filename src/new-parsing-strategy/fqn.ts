@@ -1,6 +1,6 @@
 import * as ts from "ts-morph";
 
-function getNameOfNode(a: ts.Node<ts.ts.Node>) {
+function getNameOfNode(a: ts.Node<ts.ts.Node>): string {
     switch (a.getKind()) {
         case ts.SyntaxKind.SourceFile:
             return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
@@ -44,11 +44,6 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>) {
     }
 }
 
-// if (debug) {
-
-// }
-
-// export function getFQN(node: ts.Node, debug = false): string {
 export function getFQN(node: ts.Node): string {
     if (node instanceof ts.SourceFile) {
         return `"${node.getFilePath()}"`;

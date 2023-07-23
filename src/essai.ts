@@ -1,7 +1,4 @@
-//import ts, { ClassDeclaration, MethodDeclaration, VariableStatement } from "ts-morph";
-//import { Node, Statement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration } from "ts-morph";
-//import { getFQN } from "./fqn";
-//import * as ts from "ts-morph";
+import { calculate } from "./lib/ts-complex/cyclomatic-service";
 
 let var_global = 4;
 console.log(var_global);
@@ -26,10 +23,8 @@ function test1() : string {
 
 console.log(test1());
 
-const cyclomatic = require('./lib/ts-complex/cyclomatic-service');
-
 function test2(): any {
-    const currentCC = cyclomatic.calculate("src/new-parsing-strategy/sample.ts");
+    const currentCC = calculate("src/new-parsing-strategy/sample.ts");
     return currentCC;
 }
 
@@ -44,5 +39,3 @@ function test3(x: string) {
 }
 
 test3(aaa());
-
-//console.log(ts.SyntaxKind);
