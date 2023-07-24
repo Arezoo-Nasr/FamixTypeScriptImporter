@@ -89,35 +89,7 @@ export class Importer {
 
         console.log(`processFile: file: ${f.getBaseName()}, fqn = ${fmxFile.getFullyQualifiedName()}`);
 
-        console.info(`processFile: ----------Finding Classes: ${f.getClasses().length}`);
-        f.getClasses().forEach(c => {
-            const fmxClass = this.processClass(c);
-            fmxFile.addClasses(fmxClass);
-        });
-
-        console.info(`----------Finding Interfaces:`);
-        f.getInterfaces().forEach(i => {
-            const fmxInterface = this.processInterface(i);
-            fmxFile.addClasses(fmxInterface);
-        });
-    
-        console.info(`processFile: ----------Finding VariableStatements`);        
-        f.getVariableStatements().forEach(v => {
-            const temp_variables = this.processVariableStatement(v, true) as Array<Famix.GlobalVariable>;
-            temp_variables.forEach(variable => fmxFile.addGlobalVariables(variable));
-        });
-    
-        console.info(`processFile: ----------Finding Functions:`);
-        f.getFunctions().forEach(f => {
-            const fmxFunction = this.processFunction(f);
-            fmxFile.addFunctions(fmxFunction);
-        });
-
-        console.info(`processFile: ----------Finding Modules:`);
-        f.getModules().forEach(md => {
-            const fmxNamespace = this.processModule(md, fmxFile);
-            fmxFile.addNamespaces(fmxNamespace);
-        });
+        this.processContainer(f, fmxFile);
     }
 
     // builds a Famix model for a module
@@ -128,37 +100,50 @@ export class Importer {
         
         console.log(`module declaration: ${m.getName()}, (${m.getType().getText()}), ${fmxNamespace.getFullyQualifiedName()}`);
 
+        this.processContainer(m, fmxNamespace);
+
+        return fmxNamespace;
+    }
+
+    // processing declarations of classes, interfaces, modules, variableStatements, functions
+    private processContainer(m: ModuleDeclaration | SourceFile, fmxScope: Famix.Namespace | FamixFile.File) {
         console.info(`----------Finding Classes:`);
         m.getClasses().forEach(c => {
             const fmxClass = this.processClass(c);
-            fmxNamespace.addClasses(fmxClass);
+            fmxScope.addClasses(fmxClass);
         });
 
         console.info(`----------Finding Interfaces:`);
         m.getInterfaces().forEach(i => {
             const fmxInterface = this.processInterface(i);
-            fmxNamespace.addClasses(fmxInterface);
-        });
-    
-        console.info(`----------Finding VariableStatements`);        
-        m.getVariableStatements().forEach(v => {
-            const temp_variables = this.processVariableStatement(v, false) as Array<Famix.LocalVariable>;
-            temp_variables.forEach(variable => fmxNamespace.addLocalVariables(variable));
-        });
-    
-        console.info(`----------Finding Functions:`);
-        m.getFunctions().forEach(f => {
-            const fmxFunction = this.processFunction(f);
-            fmxNamespace.addFunctions(fmxFunction);
+            fmxScope.addClasses(fmxInterface);
         });
 
         console.info(`----------Finding Modules:`);
         m.getModules().forEach(md => {
-            const fmxNsp = this.processModule(md, fmxNamespace);
-            fmxNamespace.addNamespaces(fmxNsp);
+            const fmxNsp = this.processModule(md, fmxScope);
+            fmxScope.addNamespaces(fmxNsp);
         });
 
-        return fmxNamespace;
+        this.processBehavioural(m, fmxScope);
+    }
+
+    // processing declarations of variableStatements, functions
+    private processBehavioural(
+            m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration,
+            fmxScope: Famix.Namespace | Famix.Function | FamixFile.File | Famix.Method)
+        {
+        console.info(`----------Finding VariableStatements`);
+        m.getVariableStatements().forEach(v => {
+            const temp_variables = this.processVariableStatement(v, false) as Array<Famix.LocalVariable>;
+            temp_variables.forEach(variable => fmxScope.addLocalVariables(variable));
+        });
+
+        console.info(`----------Finding Functions:`);
+        m.getFunctions().forEach(f => {
+            const fmxFunction = this.processFunction(f);
+            fmxScope.addFunctions(fmxFunction);
+        });
     }
 
     private processClass(c: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {
@@ -168,19 +153,11 @@ export class Importer {
 
         console.log(`class: ${c.getName()}, (${c.getType().getText()}), fqn = ${fmxClass.getFullyQualifiedName()}`);
 
-        c.getProperties().forEach(prop => {
-            const fmxAttr = this.processAttribute(prop);
-            fmxClass.addAttributes(fmxAttr);
-        });
+        this.processStructuredType(c, fmxClass);
 
         c.getConstructors().forEach(con => {
             const fmxCon = this.processMethod(con);
             fmxClass.addMethods(fmxCon);
-        });
-
-        c.getMethods().forEach(m => {
-            const fmxMethod = this.processMethod(m);
-            fmxClass.addMethods(fmxMethod);
         });
 
         return fmxClass;
@@ -193,17 +170,21 @@ export class Importer {
 
         console.log(`interface: ${i.getName()}, (${i.getType().getText()}), fqn = ${fmxInterface.getFullyQualifiedName()}`);
 
-        i.getProperties().forEach(prop => {
-            const fmxAttr = this.processAttribute(prop);
-            fmxInterface.addAttributes(fmxAttr);
-        });
-
-        i.getMethods().forEach(m => {
-            const fmxMethod = this.processMethod(m);
-            fmxInterface.addMethods(fmxMethod);
-        });
+        this.processStructuredType(i, fmxInterface);
 
         return fmxInterface;
+    }
+
+    private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass) {
+        c.getProperties().forEach(prop => {
+            const fmxAttr = this.processAttribute(prop);
+            fmxScope.addAttributes(fmxAttr);
+        });
+
+        c.getMethods().forEach(m => {
+            const fmxMethod = this.processMethod(m);
+            fmxScope.addMethods(fmxMethod);
+        });
     }
 
     private processMethod(m: MethodDeclaration | ConstructorDeclaration | MethodSignature): Famix.Method {
@@ -219,26 +200,22 @@ export class Importer {
 
         console.log(`method: ${!(m instanceof ConstructorDeclaration) ? m.getName() : "constructor"}, (${m.getType().getText()}), parent: ${(m.getParent() as ClassDeclaration | InterfaceDeclaration).getName()}, fqn = ${fmxMethod.getFullyQualifiedName()}`);
 
-        m.getParameters().forEach(param => {
-            const fmxParam = this.processParameter(param);
-            fmxMethod.addParameters(fmxParam);
-        });
+        this.processParameters(m, fmxMethod);
 
         if (!(m instanceof MethodSignature)) {
-            m.getVariableStatements().forEach(v => {
-                const temp_variables = this.processVariableStatement(v, false) as Array<Famix.LocalVariable>;
-                temp_variables.forEach(variable => fmxMethod.addLocalVariables(variable));
-            });
-
-            m.getFunctions().forEach(fun => {
-                const fmxFunction = this.processFunction(fun);
-                fmxMethod.addFunctions(fmxFunction);
-            });
+            this.processBehavioural(m, fmxMethod);
 
             this.methodsWithId.set(fmxMethod.id, m);
         }
 
         return fmxMethod;
+    }
+
+    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration, fmxScope: Famix.Method | Famix.Function) {
+        m.getParameters().forEach(param => {
+            const fmxParam = this.processParameter(param);
+            fmxScope.addParameters(fmxParam);
+        });
     }
 
     private processFunction(f: FunctionDeclaration): Famix.Function { // -> invocations ???
@@ -248,21 +225,10 @@ export class Importer {
 
         console.log(`function: ${f.getName()}, (${f.getType().getText()}), fqn = ${fmxFunction.getFullyQualifiedName()}`);
 
-        f.getParameters().forEach(param => {
-            const fmxParam = this.processParameter(param);
-            fmxFunction.addParameters(fmxParam);
-        });
+        this.processParameters(f, fmxFunction);
 
-        f.getVariableStatements().forEach(v => {
-            const temp_variables = this.processVariableStatement(v, false) as Array<Famix.LocalVariable>;
-            temp_variables.forEach(variable => fmxFunction.addLocalVariables(variable));
-        });
+        this.processBehavioural(f, fmxFunction);
 
-        f.getFunctions().forEach(ff => {
-            const fmxFunc = this.processFunction(ff);
-            fmxFunction.addFunctions(fmxFunc);
-        });
-        
         return fmxFunction;
     }
 
