@@ -1,5 +1,4 @@
-//import { TS2Famix } from '../src/ts2famix-clean-version';
-//import * as parser from '../src/new-parsing-strategy/analyze';
+
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
 
