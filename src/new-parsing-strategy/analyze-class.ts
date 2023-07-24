@@ -11,13 +11,13 @@ export class Importer {
     private famixFunctions = new FamixFunctions();
     private project = new Project();
     private methodsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration>(); // id of famix object(method) and ts-morph object
+    private classes = new Array<ClassDeclaration>();
+    private interfaces = new Array<InterfaceDeclaration>();
     private currentCC: any; // store cyclomatic complexity metrics for current file
 
     // -> not used
     private files = new Array<SourceFile>();
     private modules = new Array<ModuleDeclaration>;
-    private classes = new Array<ClassDeclaration>();
-    private interfaces = new Array<InterfaceDeclaration>();
     private methods = new Array<MethodDeclaration | ConstructorDeclaration | MethodSignature>();
     private functions = new Array<FunctionDeclaration>();
     private parameters = new Array<ParameterDeclaration>;
