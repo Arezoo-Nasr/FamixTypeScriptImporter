@@ -1,8 +1,9 @@
 // NOT any more (automatically generated code, please do not change)
 
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { FamixBaseElement } from "./../../famix_base_element";
 import { Invocation } from "./../famix/invocation";
+import { Access } from "./../famix/access";
 
 export class Entity extends FamixBaseElement {
 
@@ -51,6 +52,22 @@ export class Entity extends FamixBaseElement {
     }
   }
 
+  private behaviouralEntityAccesses: Set<Access> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "accesses", opposite = "accessor", derived = true)
+  public getAccesses(): Set<Access> {
+    return this.behaviouralEntityAccesses;
+  }
+
+  // manyOne.Setter
+  public addAccesses(behaviouralEntityAccesses: Access) {
+    if (!this.behaviouralEntityAccesses.has(behaviouralEntityAccesses)) {
+      this.behaviouralEntityAccesses.add(behaviouralEntityAccesses);
+      behaviouralEntityAccesses.setAccessor(this);
+    }
+  }
+
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Entity", this);
@@ -63,6 +80,7 @@ export class Entity extends FamixBaseElement {
     exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
     exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
     exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
+    exporter.addProperty("accesses", this.getAccesses());
   
   }
 

@@ -7,6 +7,7 @@ export class FamixRepository {
   private famixClasses = new Set<Class>();
   private famixNamespaces = new Set<Namespace>();
   private famixMethods = new Set<Method>();
+  private famixFunctions = new Set<Function>();
   private idCounter = 1;
 
   public getFamixClass(name: string): Class | undefined {
@@ -28,11 +29,11 @@ export class FamixRepository {
   
   // Only for tests
 
-  public _getAllEntities() {
+  public _getAllEntities(): Set<FamixBaseElement> {
     return new Set(Array.from(this.elements.values()));
   }
 
-  public _getAllEntitiesWithType(theType: string) {
+  public _getAllEntitiesWithType(theType: string): Set<FamixBaseElement> {
     return new Set(Array.from(this.elements.values()).filter(e => (e as any).constructor.name === theType));
   }
 
@@ -44,26 +45,28 @@ export class FamixRepository {
     return Array.from(this.famixMethods.values()).find(ns => ns.getName() === name);
   }
 
-  public _getFamixFunction(namespace: string, funcRegEx: string) {
-    return Array.from(this.elements).find(e => (e instanceof Function && (e as Function).getName().match(funcRegEx) && (e as Function).getContainer().getName() === namespace));
+  public _getFamixFunction(name: string): Function | undefined {
+    return Array.from(this.famixFunctions.values()).find(ns => ns.getName() === name);
   }
 
-  public _getFamixNamespace(moduleName: string) {
+  public _getFamixNamespace(moduleName: string): Namespace | undefined {
     return Array.from(this.famixNamespaces.values()).find(ns => ns.getName() === moduleName);
   }
 
-  public _getFamixNamespaces() {
+  public _getFamixNamespaces(): Set<Namespace> {
     return new Set(Array.from(this.famixNamespaces.values()));
   }
 
 
-  public addElement(element: FamixBaseElement) {
+  public addElement(element: FamixBaseElement): void {
     if (element instanceof Class) {
       this.famixClasses.add(element);
     } else if (element instanceof Namespace) {
       this.famixNamespaces.add(element);
     } else if (element instanceof Method) {
       this.famixMethods.add(element);
+    } else if (element instanceof Function) {
+      this.famixFunctions.add(element);
     }
     this.elements.add(element);
     element.id = this.idCounter;

@@ -1,22 +1,23 @@
-// automatically generated code, please do not change
+// NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./../famix/structural_entity";
 import { Association } from "./../famix/association";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
+// import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { Entity } from "./../famix/entity";
 
 export class Access extends Association {
 
-  private accessAccessor: BehaviouralEntity;
+  private accessAccessor: Entity;
 
   // oneMany.Getter
   // @FameProperty(name = "accessor", opposite = "accesses")
-  public getAccessor(): BehaviouralEntity {
+  public getAccessor(): Entity {
     return this.accessAccessor;
   }
 
   // oneMany.Setter
-  public setAccessor(newAccessor: BehaviouralEntity) {
+  public setAccessor(newAccessor: Entity) {
     this.accessAccessor = newAccessor;
     newAccessor.getAccesses().add(this);
   }

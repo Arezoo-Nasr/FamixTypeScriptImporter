@@ -164,7 +164,7 @@ describe('ts2famix', () => {
 
     // global scope
     it("should contain a function 'globalFunc` with global scope", () => {
-        const globalFunc = fmxRep2._getFamixFunction('__global', 'globalFunc') as Function;
+        const globalFunc = fmxRep2._getFamixFunction('globalFunc') as Function;
         expect(globalFunc).toBeTruthy();
         expect(globalFunc.getName()).toBe('globalFunc');
         expect(globalFunc.getContainer().getName()).toBe('__global');

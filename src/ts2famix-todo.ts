@@ -40,7 +40,7 @@ export class TS2Famix {
             console.info(`paths = ${paths}`);
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
             this.generateNamespacesClassesInterfaces(sourceFiles); // check
-            this.generateAccesses(); // todo
+            this.generateAccesses(); // check
             this.generateInvocations(); // todo
             this.generateInheritances(); // check
         }
@@ -170,7 +170,7 @@ export class TS2Famix {
         return callExpressions;
     }
 
-    private generateAccesses() { // todo
+    private generateAccesses() { // check
         console.log(`Creating accesses:`);
         this.arrayOfAccess.forEach((value, key) => {
             console.log(`  Access(es) to ${value.getName()}:`);

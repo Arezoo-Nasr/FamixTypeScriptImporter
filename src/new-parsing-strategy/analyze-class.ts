@@ -10,12 +10,13 @@ export class Importer {
 
     private famixFunctions = new FamixFunctions();
     private project = new Project();
-    private methodsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration>(); // id of famix object(method) and ts-morph object
+    private methodsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration>(); // id of famix object (method) and ts-morph object
+    private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // id of famix object (parameter, variable, attribute) and ts-morph object
     private classes = new Array<ClassDeclaration>();
     private interfaces = new Array<InterfaceDeclaration>();
     private currentCC: any; // store cyclomatic complexity metrics for current file
 
-    // -> not used
+    // not used
     private files = new Array<SourceFile>();
     private modules = new Array<ModuleDeclaration>;
     private methods = new Array<MethodDeclaration | ConstructorDeclaration | MethodSignature>();
@@ -24,14 +25,15 @@ export class Importer {
     private variableStatements = new Array<VariableStatement>();
     private variables = new Array<VariableDeclaration>();
     private attributes = new Array <PropertyDeclaration | PropertySignature>;
-    private nodes = new Array<Identifier>;
+    private access_nodes = new Array<Identifier>;
+    private invoc_nodes = new Array<Identifier>;
 
     public famixRepFromPath(paths: Array<string>): FamixRepository {
         try {
             console.info(`paths = ${paths}`);
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
             this.processFiles(sourceFiles);
-            // this.processAccesses(); // todo
+            this.processAccesses();
             this.processInvocations(); // todo
             this.processInheritances();
         }
@@ -62,7 +64,7 @@ export class Importer {
     private processFile(f: SourceFile): void {
         this.files.push(f);
 
-        const fmxFile = this.famixFunctions.createFile(f);
+        const fmxFile = this.famixFunctions.createOrGetFile(f);
 
         console.log(`file: ${f.getBaseName()}, fqn = ${fmxFile.getFullyQualifiedName()}`);
 
@@ -249,6 +251,12 @@ export class Importer {
 
         console.log(`parameter: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxParam.getFullyQualifiedName()}`);
 
+        const parent = p.getParent();
+
+        if (!(parent instanceof MethodSignature)) {
+            this.arrayOfAccess.set(fmxParam.id, p);
+        }
+
         return fmxParam;
     }
 
@@ -257,7 +265,7 @@ export class Importer {
 
         const temp_variables = new Array<Famix.LocalVariable | Famix.GlobalVariable>();
 
-        console.log(`variable statement: ${v.getDeclarationKindKeyword().getText()}, ${v.getText()}`);
+        console.log(`variable statement: variable statement, (${v.getType().getText()}), ${v.getDeclarationKindKeyword().getText()}`);
 
         v.getDeclarations().forEach(variable => {
             const fmxVar = this.processVariable(variable, isGlobal);
@@ -274,6 +282,8 @@ export class Importer {
 
         console.log(`variable: ${v.getName()}, (${v.getType().getText()}), ${v.getInitializer() ? "initializer: " + v.getInitializer().getText() : ""}, fqn = ${fmxVar.getFullyQualifiedName()}`);
 
+        this.arrayOfAccess.set(fmxVar.id, v);
+
         return fmxVar;
     }
 
@@ -284,22 +294,53 @@ export class Importer {
 
         console.log(`attribute: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxAttr.getFullyQualifiedName()}`);
 
+        if (!(p instanceof PropertySignature)) {
+            this.arrayOfAccess.set(fmxAttr.id, p);
+        }
+
         return fmxAttr;
     }
 
+    private processAccesses(): void {
+        console.log(`Creating accesses:`);
+        this.arrayOfAccess.forEach((v, id) => {
+            console.log(`Accesses to ${v.getName()}`);
+            try {
+                const temp_nodes = v.findReferencesAsNodes() as Array<Identifier>;
+                temp_nodes.forEach(node => this.processNodeForAccesses(node, id));
+            } catch (error) {
+                console.info(`> WARNING: got exception ${error}. Continuing...`);
+            }
+        });
+    }
+
+    private processNodeForAccesses(n: Identifier, id: number): void {
+        this.access_nodes.push(n);
+
+        try {
+            const fmxAccess = this.famixFunctions.createFamixAccess(n, id);
+
+            console.log(`node: node, (${n.getType().getText()}), fqn = ${fmxAccess.getFullyQualifiedName()}`);
+        } catch (error) {
+            console.error(`> WARNING: got exception ${error}. ScopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing...`);
+        }
+    }
+
     private processInvocations(): void {
+        console.log(`Creating invocations:`);
         this.methodsWithId.forEach((m, id) => {
+            console.log(`Invocations to ${m instanceof MethodDeclaration ? m.getName() : "constructor"}`);
             try {
                 const temp_nodes = m.findReferencesAsNodes() as Array<Identifier>;
-                temp_nodes.forEach(node => this.processNode(node, m, id));
+                temp_nodes.forEach(node => this.processNodeForInvocations(node, m, id));
             } catch (error) {
                 console.error(`> WARNING: got exception ${error}. Continuing...`);
             }
         });
     }
 
-    private processNode(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | MethodSignature, id: number): void {
-        this.nodes.push(n);
+    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | MethodSignature, id: number): void {
+        this.invoc_nodes.push(n);
 
         try {
             const fmxInvocation = this.famixFunctions.createFamixInvocation(n, m, id);
@@ -340,7 +381,8 @@ export class Importer {
         return callExpressions;
     }
 
-    private processInheritances() {
+    private processInheritances(): void {
+        console.log(`Creating inheritances:`);
         this.classes.forEach(cls => {
             console.info(`Checking class inheritance for ${cls.getName()}`);
             const extClass = cls.getBaseClass();

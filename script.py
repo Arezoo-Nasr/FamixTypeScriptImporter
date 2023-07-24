@@ -20,9 +20,10 @@ if __name__ == "__main__":
     #file = "abstract_file.ts" #ok
     # add
     #file = "container_entity.ts" #ok
-    # invocation
+    # invocation + access
     #file = "behavioural_entity.ts" #ok (+ variables)
     #file = "invocation.ts" #ok
+    #file = "access.ts" #ok
     #file = "entity.ts" #ok (+ fqn)
     file1 = "./src/lib/famix/src/model/famix/" + file
     file2 = "./../../fuhrmanator/FamixTypeScriptImporter/src/lib/famix/src/model/famix/" + file

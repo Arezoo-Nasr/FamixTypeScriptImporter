@@ -7,7 +7,7 @@ import { ImplicitVariable } from "./../famix/implicit_variable";
 import { ContainerEntity } from "./../famix/container_entity";
 import { Reference } from "./../famix/reference";
 // import { LocalVariable } from "./../famix/local_variable";
-import { Access } from "./../famix/access";
+// import { Access } from "./../famix/access";
 import { Parameter } from "./../famix/parameter";
 
 export class BehaviouralEntity extends ContainerEntity {
@@ -183,21 +183,21 @@ export class BehaviouralEntity extends ContainerEntity {
     this.behaviouralEntityNumberOfConditionals = behaviouralEntityNumberOfConditionals;
   }
 
-  private behaviouralEntityAccesses: Set<Access> = new Set();
+  // private behaviouralEntityAccesses: Set<Access> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "accesses", opposite = "accessor", derived = true)
-  public getAccesses(): Set<Access> {
-    return this.behaviouralEntityAccesses;
-  }
+  // // manyOne.Getter
+  // // @FameProperty(name = "accesses", opposite = "accessor", derived = true)
+  // public getAccesses(): Set<Access> {
+  //   return this.behaviouralEntityAccesses;
+  // }
 
-  // manyOne.Setter
-  public addAccesses(behaviouralEntityAccesses: Access) {
-    if (!this.behaviouralEntityAccesses.has(behaviouralEntityAccesses)) {
-      this.behaviouralEntityAccesses.add(behaviouralEntityAccesses);
-      behaviouralEntityAccesses.setAccessor(this);
-    }
-  }
+  // // manyOne.Setter
+  // public addAccesses(behaviouralEntityAccesses: Access) {
+  //   if (!this.behaviouralEntityAccesses.has(behaviouralEntityAccesses)) {
+  //     this.behaviouralEntityAccesses.add(behaviouralEntityAccesses);
+  //     behaviouralEntityAccesses.setAccessor(this);
+  //   }
+  // }
 
   private behaviouralEntityParameters: Set<Parameter> = new Set();
 
@@ -237,7 +237,7 @@ export class BehaviouralEntity extends ContainerEntity {
     // exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
     // exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
     exporter.addProperty("numberOfConditionals", this.getNumberOfConditionals());
-    exporter.addProperty("accesses", this.getAccesses());
+    // exporter.addProperty("accesses", this.getAccesses());
     exporter.addProperty("parameters", this.getParameters());
 
   }

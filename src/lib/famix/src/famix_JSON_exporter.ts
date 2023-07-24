@@ -24,7 +24,7 @@ export class FamixJSONExporter {
     this.bufferArray["id"] = this.element.id;
   }
 
-  public addProperty(name: string, prop: unknown) {
+  public addProperty(name: string, prop: unknown): void {
     if (prop === undefined) { return; }
     if ((prop instanceof Set) && (prop.size === 0)) { return; }
 

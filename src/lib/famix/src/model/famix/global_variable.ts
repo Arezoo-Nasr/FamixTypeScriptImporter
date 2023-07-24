@@ -1,6 +1,6 @@
 // NOT any more (automatically generated code, please do not change)
 
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./../famix/structural_entity";
 import { ScopingEntity } from "./../famix/scoping_entity";
 import { Module } from "./../famix/module";
