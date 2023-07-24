@@ -8,7 +8,6 @@ import { ParameterType } from "./../famix/parameter_type";
 export class ParameterizableClass extends Class {
 
   private parameterizableClassParameterizedTypes: Set<ParameterizedType> = new Set();
-  private parameters: Set<ParameterType> = new Set();
 
   // manyOne.Getter
   // @FameProperty(name = "parameterizedTypes", opposite = "parameterizableClass", derived = true)
@@ -23,6 +22,8 @@ export class ParameterizableClass extends Class {
       parameterizableClassParameterizedTypes.setParameterizableClass(this);
     }
   }
+
+  private parameters: Set<ParameterType> = new Set();
 
   public getParameterTypes() {
     return this.parameters;

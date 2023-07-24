@@ -3,7 +3,6 @@
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 // import { GlobalVariable } from "./../famix/global_variable";
 import { ContainerEntity } from "./../famix/container_entity";
-// import { Entity } from "./../famix/entity";
 
 export class ScopingEntity extends ContainerEntity {
 
@@ -23,35 +22,35 @@ export class ScopingEntity extends ContainerEntity {
   //   }
   // }
 
-  // private entityParentScope: Entity;
+  private scopingEntityParentScope: ScopingEntity;
 
-  // // oneMany.Getter
-  // // @FameProperty(name = "parentScope", opposite = "childScopes")
-  // public getParentScope(): Entity {
-  //   return this.entityParentScope;
-  // }
+  // oneMany.Getter
+  // @FameProperty(name = "parentScope", opposite = "childScopes")
+  public getParentScope(): ScopingEntity {
+    return this.scopingEntityParentScope;
+  }
 
-  // // oneMany.Setter
-  // public setParentScope(newParentScope: Entity) {
-  //   this.entityParentScope = newParentScope;
-  //   newParentScope.getChildScopes().add(this);
-  // }
+  // oneMany.Setter
+  public setParentScope(newParentScope: ScopingEntity) {
+    this.scopingEntityParentScope = newParentScope;
+    newParentScope.getChildScopes().add(this);
+  }
 
-  // private entityChildScopes: Set<Entity> = new Set();
+  private scopingEntityChildScopes: Set<ScopingEntity> = new Set();
 
-  // // manyOne.Getter
-  // // @FameProperty(name = "childScopes", opposite = "parentScope", derived = true)
-  // public getChildScopes(): Set<Entity> {
-  //   return this.entityChildScopes;
-  // }
+  // manyOne.Getter
+  // @FameProperty(name = "childScopes", opposite = "parentScope", derived = true)
+  public getChildScopes(): Set<ScopingEntity> {
+    return this.scopingEntityChildScopes;
+  }
 
-  // // manyOne.Setter
-  // public addChildScopes(entityChildScopes: Entity) {
-  //   if (!this.entityChildScopes.has(entityChildScopes)) {
-  //     this.entityChildScopes.add(entityChildScopes);
-  //     entityChildScopes.setParentScope(this);
-  //   }
-  // }
+  // manyOne.Setter
+  public addChildScopes(scopingEntityChildScopes: ScopingEntity) {
+    if (!this.scopingEntityChildScopes.has(scopingEntityChildScopes)) {
+      this.scopingEntityChildScopes.add(scopingEntityChildScopes);
+      scopingEntityChildScopes.setParentScope(this);
+    }
+  }
 
 
   public getJSON(): string {
@@ -63,8 +62,8 @@ export class ScopingEntity extends ContainerEntity {
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     // exporter.addProperty("globalVariables", this.getGlobalVariables());
-    // exporter.addProperty("parentScope", this.getParentScope());
-    // exporter.addProperty("childScopes", this.getChildScopes());
+    exporter.addProperty("parentScope", this.getParentScope());
+    exporter.addProperty("childScopes", this.getChildScopes());
 
   }
 

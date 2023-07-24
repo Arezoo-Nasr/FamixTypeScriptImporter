@@ -3,7 +3,6 @@
 import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { FamixBaseElement } from "./../../famix_base_element";
 import { Invocation } from "./../famix/invocation";
-import { SourceAnchor } from "./../famix/source_anchor";
 
 export class Entity extends FamixBaseElement {
 
@@ -18,50 +17,6 @@ export class Entity extends FamixBaseElement {
   // manyOne.Setter
   public setFullyQualifiedName(fullyQualifiedName: string) {
     this.fullyQualifiedName = fullyQualifiedName;
-  }
-
-  private entitySourceAnchor: SourceAnchor;
-
-  // @FameProperty(name = "sourceAnchor", opposite = "element")
-  public getSourceAnchor(): SourceAnchor {
-    return this.entitySourceAnchor;
-  }
-
-  public setSourceAnchor(newSourceAnchor: SourceAnchor) {
-    if (this.entitySourceAnchor === undefined) {
-      this.entitySourceAnchor = newSourceAnchor;
-      newSourceAnchor.setElement(this);
-    }
-  }
-
-  private entityParentScope: Entity;
-
-  // oneMany.Getter
-  // @FameProperty(name = "parentScope", opposite = "childScopes")
-  public getParentScope(): Entity {
-    return this.entityParentScope;
-  }
-
-  // oneMany.Setter
-  public setParentScope(newParentScope: Entity) {
-    this.entityParentScope = newParentScope;
-    newParentScope.getChildScopes().add(this);
-  }
-
-  private entityChildScopes: Set<Entity> = new Set();
-
-  // manyOne.Getter
-  // @FameProperty(name = "childScopes", opposite = "parentScope", derived = true)
-  public getChildScopes(): Set<Entity> {
-    return this.entityChildScopes;
-  }
-
-  // manyOne.Setter
-  public addChildScopes(entityChildScopes: Entity) {
-    if (!this.entityChildScopes.has(entityChildScopes)) {
-      this.entityChildScopes.add(entityChildScopes);
-      entityChildScopes.setParentScope(this);
-    }
   }
 
   private entityOutgoingInvocations: Set<Invocation> = new Set();
@@ -106,9 +61,6 @@ export class Entity extends FamixBaseElement {
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
-    exporter.addProperty("sourceAnchor", this.getSourceAnchor());
-    exporter.addProperty("parentScope", this.getParentScope());
-    exporter.addProperty("childScopes", this.getChildScopes());
     exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
     exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
   
