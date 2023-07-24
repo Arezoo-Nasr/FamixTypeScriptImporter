@@ -28,6 +28,8 @@ export class Importer {
     private access_nodes = new Array<Identifier>;
     private invoc_nodes = new Array<Identifier>;
 
+    // main method.
+    // Takes a list of files to analyze
     public famixRepFromPath(paths: Array<string>): FamixRepository {
         try {
             console.info(`paths = ${paths}`);
@@ -49,21 +51,25 @@ export class Importer {
         return fmxRep;
     }
 
+    // takes a list of files and processFile each of them
     private processFiles(sourceFiles: Array<SourceFile>): void {
         sourceFiles.forEach(file => {
             console.info(``);
             console.info(`File >>>>>>>>>> ${file.getBaseName()}`);
             console.info(``);
 
+            // computes cyclomatic complexity for the file
             this.currentCC = calculate(file.getFilePath());
 
             this.processFile(file);
         });
     }
 
+    // build a Famix model for one file
     private processFile(f: SourceFile): void {
         this.files.push(f);
 
+        // creates FamixFile for the current file
         const fmxFile = this.famixFunctions.createOrGetFile(f);
 
         console.log(`file: ${f.getBaseName()}, fqn = ${fmxFile.getFullyQualifiedName()}`);
@@ -99,6 +105,7 @@ export class Importer {
         });
     }
 
+    // builds a Famix model for a module
     private processModule(m: ModuleDeclaration, parentScope: Famix.Namespace | FamixFile.File): Famix.Namespace {
         this.modules.push(m);
 
