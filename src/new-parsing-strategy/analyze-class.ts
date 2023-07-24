@@ -1,4 +1,5 @@
 import { ClassDeclaration, MethodDeclaration, VariableStatement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature } from "ts-morph";
+import * as fs from 'fs';
 import * as Famix from "../lib/famix/src/model/famix";
 import * as FamixFile from "../lib/famix/src/model/file";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
@@ -29,11 +30,16 @@ export class Importer {
     private invoc_nodes = new Array<Identifier>;
 
     // main method.
+//const fmxRep = importer.famixRepFromPath(filePaths);
+//const fmxRep = parser.famixRepFromPath(filePaths);
     // Takes a list of files to analyze
+    // Returns the Famix repository containing this model
     public famixRepFromPath(paths: Array<string>): FamixRepository {
         try {
-            console.info(`paths = ${paths}`);
+            console.info(`famixRepFromPath: paths = ${paths}`);
+
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
+            console.info(`famixRepFromPath: sourceFiles(${sourceFiles.length}) = ${sourceFiles}`);
             this.processFiles(sourceFiles);
             this.processAccesses();
             this.processInvocations(); // todo
@@ -51,12 +57,21 @@ export class Importer {
         return fmxRep;
     }
 
+    // main method for tests
+    // takes a Typescript source code and build a model for it
+    // Returns the Famix repository containing this model
+    public famixRepFromSource(source: string): FamixRepository {
+        const filePath = './famixTypescriptTest.ts';
+
+        fs.writeFileSync(filePath, source, 'utf-8');
+
+        return this.famixRepFromPath([filePath]);
+    }
+
     // takes a list of files and processFile each of them
     private processFiles(sourceFiles: Array<SourceFile>): void {
         sourceFiles.forEach(file => {
-            console.info(``);
-            console.info(`File >>>>>>>>>> ${file.getBaseName()}`);
-            console.info(``);
+            console.info(`processFiles\n\processFiles: File >>>>>>>>>> ${file.getBaseName()}\n`);
 
             // computes cyclomatic complexity for the file
             this.currentCC = calculate(file.getFilePath());
@@ -72,9 +87,9 @@ export class Importer {
         // creates FamixFile for the current file
         const fmxFile = this.famixFunctions.createOrGetFile(f);
 
-        console.log(`file: ${f.getBaseName()}, fqn = ${fmxFile.getFullyQualifiedName()}`);
+        console.log(`processFile: file: ${f.getBaseName()}, fqn = ${fmxFile.getFullyQualifiedName()}`);
 
-        console.info(`----------Finding Classes:`);
+        console.info(`processFile: ----------Finding Classes: ${f.getClasses().length}`);
         f.getClasses().forEach(c => {
             const fmxClass = this.processClass(c);
             fmxFile.addClasses(fmxClass);
@@ -86,19 +101,19 @@ export class Importer {
             fmxFile.addClasses(fmxInterface);
         });
     
-        console.info(`----------Finding VariableStatements`);        
+        console.info(`processFile: ----------Finding VariableStatements`);        
         f.getVariableStatements().forEach(v => {
             const temp_variables = this.processVariableStatement(v, true) as Array<Famix.GlobalVariable>;
             temp_variables.forEach(variable => fmxFile.addGlobalVariables(variable));
         });
     
-        console.info(`----------Finding Functions:`);
+        console.info(`processFile: ----------Finding Functions:`);
         f.getFunctions().forEach(f => {
             const fmxFunction = this.processFunction(f);
             fmxFile.addFunctions(fmxFunction);
         });
 
-        console.info(`----------Finding Modules:`);
+        console.info(`processFile: ----------Finding Modules:`);
         f.getModules().forEach(md => {
             const fmxNamespace = this.processModule(md, fmxFile);
             fmxFile.addNamespaces(fmxNamespace);
