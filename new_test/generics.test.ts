@@ -64,18 +64,26 @@ describe('Tests for generics', () => {
         if (theInterface) expect(theInterface.getIsInterface()).toBe(true);
     });
 
-    // it("should contain a generic class MyDao that implements generic interface MyDaoInterface<T>", () => {
-    //     const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
-    //     expect(pList).toBeTruthy();
-    //     const myDao = pList.find(p => p.getName() === "MyDao");
-    //     expect(myDao).toBeTruthy();
-    //     const myDaoInterface = pList.find(p => p.getName() === "MyDaoInterface");
-    //     expect(myDaoInterface).toBeTruthy();
-    //     if (myDao) {
-    //         expect(myDao.getSuperInheritances().size).toBe(1);
-    //         const theInheritance = (Array.from(myDao.getSuperInheritances())[0]);
-    //         expect(theInheritance.getSuperclass()).toBeTruthy();
-    //         expect(theInheritance.getSuperclass()).toBe(myDaoInterface);
-    //     }
-    // });
+    it("should contain a generic class MyDao that implements a generic interface MyDaoInterface", () => {
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
+        expect(pList).toBeTruthy();
+        const myDao = pList.find(p => p.getName() === "MyDao");
+        expect(myDao).toBeTruthy();
+        const myDaoInterface = pList.find(p => p.getName() === "MyDaoInterface");
+        expect(myDaoInterface).toBeTruthy();
+        if (myDao) {
+            expect(myDao.getSubInheritances().size).toBe(0);
+            expect(myDao.getSuperInheritances().size).toBe(1);
+            const theInheritance = (Array.from(myDao.getSuperInheritances())[0]);
+            expect(theInheritance.getSuperclass()).toBeTruthy();
+            expect(theInheritance.getSuperclass()).toBe(myDaoInterface);
+        }
+        if (myDaoInterface) {
+            expect(myDaoInterface.getSubInheritances().size).toBe(1);
+            expect(myDaoInterface.getSuperInheritances().size).toBe(0);
+            const theInheritance = (Array.from(myDaoInterface.getSubInheritances())[0]);
+            expect(theInheritance.getSubclass()).toBeTruthy();
+            expect(theInheritance.getSubclass()).toBe(myDao);
+        }
+    });
 });

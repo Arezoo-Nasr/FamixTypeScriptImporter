@@ -33,7 +33,7 @@ export class Importer {
             this.processFiles(sourceFiles);
             // this.processAccesses(); // todo
             this.processInvocations(); // todo
-            // this.processInheritances(); // todo
+            this.processInheritances();
         }
         catch (error) {
             console.error(`> ERROR: got exception ${error}. Exiting...`);
@@ -193,14 +193,7 @@ export class Importer {
             fmxMethod = this.famixFunctions.createFamixMethod(m, this.currentCC, false, false);
         }
 
-        if (!(m instanceof ConstructorDeclaration)) {
-            console.log(`method: ${m.getName()}`);
-        }
-        else {
-            console.log(`method: constructor`);
-        }
-
-        console.log(`method: ${(m.getParent() as ClassDeclaration | InterfaceDeclaration).getName()}, (${m.getType().getText()}), fqn = ${fmxMethod.getFullyQualifiedName()}`);
+        console.log(`method: ${!(m instanceof ConstructorDeclaration) ? m.getName() : "constructor"}, (${m.getType().getText()}), parent: ${(m.getParent() as ClassDeclaration | InterfaceDeclaration).getName()}, fqn = ${fmxMethod.getFullyQualifiedName()}`);
 
         m.getParameters().forEach(param => {
             const fmxParam = this.processParameter(param);
@@ -264,12 +257,12 @@ export class Importer {
 
         const temp_variables = new Array<Famix.LocalVariable | Famix.GlobalVariable>();
 
+        console.log(`variable statement: ${v.getDeclarationKindKeyword().getText()}, ${v.getText()}`);
+
         v.getDeclarations().forEach(variable => {
             const fmxVar = this.processVariable(variable, isGlobal);
             temp_variables.push(fmxVar);
         }); 
-
-        console.log(`variable statement: ${v.getDeclarationKindKeyword().getText()}, ${v.getText()}, ${v.getDeclarations()[0].getName()}`);
 
         return temp_variables;
     }
@@ -279,7 +272,7 @@ export class Importer {
 
         const fmxVar = this.famixFunctions.createFamixVariable(v, isGlobal);
 
-        console.log(`variable: ${v.getName()}, (${v.getType().getText()}), ${v.getInitializer() ? "initializer: " + v.getInitializer().getText() : ''}, fqn = ${fmxVar.getFullyQualifiedName()}`);
+        console.log(`variable: ${v.getName()}, (${v.getType().getText()}), ${v.getInitializer() ? "initializer: " + v.getInitializer().getText() : ""}, fqn = ${fmxVar.getFullyQualifiedName()}`);
 
         return fmxVar;
     }
@@ -311,7 +304,7 @@ export class Importer {
         try {
             const fmxInvocation = this.famixFunctions.createFamixInvocation(n, m, id);
 
-            console.log(`node: (${n.getType().getText()}), fqn = ${fmxInvocation.getFullyQualifiedName()}`);
+            console.log(`node: node, (${n.getType().getText()}), fqn = ${fmxInvocation.getFullyQualifiedName()}`);
         } catch (error) {
             console.error(`> WARNING: got exception ${error}. ScopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing...`);
         }
@@ -345,5 +338,34 @@ export class Importer {
             }
         }
         return callExpressions;
+    }
+
+    private processInheritances() {
+        this.classes.forEach(cls => {
+            console.info(`Checking class inheritance for ${cls.getName()}`);
+            const extClass = cls.getBaseClass();
+            if (extClass !== undefined) {
+                const fmxInheritance = this.famixFunctions.createFamixInheritance(cls, extClass);
+                
+                console.log(`class: ${cls.getName()}, (${cls.getType().getText()}), extClass: ${extClass.getName()}, (${extClass.getType().getText()}), fqn = ${fmxInheritance.getFullyQualifiedName()}`);
+            }
+
+            console.info(`Checking interface inheritance for ${cls.getName()}`);
+            const implementsInter = cls.getImplements();
+            implementsInter.forEach(impInter => {
+                const fmxInheritance = this.famixFunctions.createFamixInheritance(cls, impInter);
+
+                console.log(`class: ${cls.getName()}, (${cls.getType().getText()}), impInter: ${impInter.getExpression().getText()}, (${impInter.getType().getText()}), fqn = ${fmxInheritance.getFullyQualifiedName()}`);
+            });
+        });
+
+        this.interfaces.forEach(inter => {
+            console.info(`Checking interface inheritance for ${inter.getName()}`);
+            inter.getExtends().forEach(extInter => {
+                const fmxInheritance = this.famixFunctions.createFamixInheritance(inter, extInter);
+
+                console.log(`inter: ${inter.getName()}, (${inter.getType().getText()}), extInter: ${extInter.getExpression().getText()}, (${extInter.getType().getText()}), fqn = ${fmxInheritance.getFullyQualifiedName()}`);
+            });
+        });
     }
 }

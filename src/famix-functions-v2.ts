@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, ExpressionWithTypeArguments } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import * as FamixFile from "./lib/famix/src/model/file";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -15,7 +15,7 @@ export class FamixFunctions {
     private fmxFiles = new Map<string, FamixFile.File>();
     private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // id of famix object (variable, attribute) and ts-morph object -> utile ???
 
-    private UNKNOWN_VALUE = '(unknown due to parsing error)';
+    private UNKNOWN_VALUE = '(unknown due to parsing error)'; // -> utile ???
 
     public getFamixRepository(): FamixRepository {
         return this.fmxRep;
@@ -28,7 +28,7 @@ export class FamixFunctions {
         fmxIndexFileAnchor.setEndPos(sourceElement.getEnd());
         fmxIndexFileAnchor.setElement(famixElement);
 
-        if (!(famixElement instanceof Famix.Invocation)) {
+        if (!(famixElement instanceof Famix.Invocation) && !(famixElement instanceof Famix.Inheritance)) {
             famixElement.setFullyQualifiedName(getFQN(sourceElement));
         }
     }
@@ -289,6 +289,30 @@ export class FamixFunctions {
         this.makeFamixIndexFileAnchor(node, fmxInvocation);
 
         return fmxInvocation;
+    }
+
+    public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | ExpressionWithTypeArguments): Famix.Inheritance {
+        const fmxInheritance = new Famix.Inheritance(this.fmxRep);
+        const clsName = cls.getName();
+        
+        let inhClassName: string;
+        if (inhClass instanceof ClassDeclaration) {
+            inhClassName = inhClass.getName();
+        }
+        else {
+            inhClassName = inhClass.getExpression().getText();
+        }
+
+        const subClass = this.fmxClasses.get(clsName);
+        const superClass = this.fmxClasses.get(inhClassName);
+        fmxInheritance.setSubclass(subClass);
+        fmxInheritance.setSuperclass(superClass);
+
+        fmxInheritance.setFullyQualifiedName(`${subClass.getFullyQualifiedName()}.__inheritance__`);
+
+        this.makeFamixIndexFileAnchor(cls, fmxInheritance);
+
+        return fmxInheritance;
     }
 
     private createOrGetFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType {

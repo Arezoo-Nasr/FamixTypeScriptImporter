@@ -39,10 +39,10 @@ export class TS2Famix {
         try {
             console.info(`paths = ${paths}`);
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
-            this.generateNamespacesClassesInterfaces(sourceFiles);
+            this.generateNamespacesClassesInterfaces(sourceFiles); // check
             this.generateAccesses(); // todo
             this.generateInvocations(); // todo
-            this.generateInheritances(); // todo
+            this.generateInheritances(); // check
         }
         catch (error: any) {
             console.error(error.message);
@@ -52,7 +52,7 @@ export class TS2Famix {
         return this.fmxRep;
     }
 
-    private generateInheritances() { // todo
+    private generateInheritances() { // check
         this.allClasses.forEach(cls => {
             console.info(` checking class inheritance for ${cls.getName()}`)
             const baseClass = cls.getBaseClass();
