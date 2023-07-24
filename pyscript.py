@@ -41,7 +41,14 @@ directory2 = '../../fuhrmanator/FamixTypeScriptImporter/src/lib/famix/src/model/
 directory3 = './src/lib/famix/src/model/file/'
 directory4 = '../../fuhrmanator/FamixTypeScriptImporter/src/lib/famix/src/model/file/'
 
+directory5 = './test'
+directory6 = '../../fuhrmanator/FamixTypeScriptImporter/test'
+
 L1 = directory_diff(directory1, directory2)
 L2 = directory_diff(directory3, directory4)
 
-print(L1, L2)
+#print(L1, L2)
+
+L3 = directory_diff(directory5, directory6)
+
+print(L3)

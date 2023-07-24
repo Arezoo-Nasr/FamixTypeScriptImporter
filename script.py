@@ -6,7 +6,7 @@ def execute_command(file1, file2):
 
 if __name__ == "__main__":
     # rien
-    file = "inheritance.ts" #ok
+    #file = "inheritance.ts" #ok
     #file = "class.ts" #ok
     #file = "parameterizable_class.ts" #ok
     # setContainer
@@ -25,6 +25,21 @@ if __name__ == "__main__":
     #file = "invocation.ts" #ok
     #file = "access.ts" #ok
     #file = "entity.ts" #ok (+ fqn)
-    file1 = "./src/lib/famix/src/model/famix/" + file
-    file2 = "./../../fuhrmanator/FamixTypeScriptImporter/src/lib/famix/src/model/famix/" + file
+
+    file = "abstracts.test.ts"
+    #file = "access.test.ts"
+    #file = "entities.test.ts"
+    #file = "entities_json.test.ts"
+    #file = "functions.test.ts"
+    #file = "generics.test.ts"
+    #file = "Invocation.test.ts"
+    #file = "Invocation_json.test.ts"
+    #file = "metrics.test.ts"
+    #file = "inheritance.test.ts"
+
+    #file1 = "./src/lib/famix/src/model/famix/" + file
+    #file2 = "./../../fuhrmanator/FamixTypeScriptImporter/src/lib/famix/src/model/famix/" + file
+
+    file1 = "./test/" + file
+    file2 = "./../../fuhrmanator/FamixTypeScriptImporter/test/" + file
     execute_command(file1, file2)
