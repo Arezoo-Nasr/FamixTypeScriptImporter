@@ -1,11 +1,13 @@
-import { TS2Famix } from '../src/ts2famix';
+//import { TS2Famix } from '../src/ts2famix';
+import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Method } from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/Abstracts.ts"];
-const importer = new TS2Famix();
+//const importer = new TS2Famix();
+const importer = new Importer();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
-const theClass = fmxRep2.getFamixClass("MyAbstractClass");
+const theClass = fmxRep2._getFamixClass("MyAbstractClass");
 const theMethods = theClass?.getMethods();
 
 describe('abstract classes and methods', () => {

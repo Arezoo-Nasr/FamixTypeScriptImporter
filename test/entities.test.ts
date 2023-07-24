@@ -1,13 +1,15 @@
-import { TS2Famix } from '../src/ts2famix';
+//import { TS2Famix } from '../src/ts2famix';
+import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Method, Class, Type, Function} from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/Entity.ts"];
-const importer = new TS2Famix();
+//const importer = new TS2Famix();
+const importer = new Importer();
 
 const fmxRep2 = importer.famixRepFromPath(filePaths);
 
-const theClass = fmxRep2.getFamixClass("EntityClass");
-const theSubclass = fmxRep2.getFamixClass("class2");
+const theClass = fmxRep2._getFamixClass("EntityClass");
+const theSubclass = fmxRep2._getFamixClass("class2");
 
 describe('ts2famix', () => {
 
@@ -49,7 +51,7 @@ describe('ts2famix', () => {
     });
 
     it("should contain a constructor in EntityClass", () => {
-        const theConstructor = fmxRep2.getFamixEntityElementByFullyQualifiedName("MyNamespace.EntityClass.__constructor") as Method;
+        const theConstructor = fmxRep2._getFamixMethod("constructor") as Method;
         expect(theConstructor).toBeTruthy();
         expect(theConstructor.getIsConstructor()).toBe(true);
     })
@@ -151,7 +153,7 @@ describe('ts2famix', () => {
     });
 
     it("should contain an clsInNsp with a class-side method named 'aStaticMethod'", () => {
-        const clsInNSP = fmxRep2.getFamixClass("clsInNsp");
+        const clsInNSP = fmxRep2._getFamixClass("clsInNsp");
         expect(clsInNSP).toBeTruthy();
         if (clsInNSP) {
             const aStaticMethod = Array.from(clsInNSP.getMethods()).find(m => m.getName() == 'aStaticMethod');
@@ -167,7 +169,7 @@ describe('ts2famix', () => {
         const globalFunc = fmxRep2._getFamixFunction('globalFunc') as Function;
         expect(globalFunc).toBeTruthy();
         expect(globalFunc.getName()).toBe('globalFunc');
-        expect(globalFunc.getContainer().getName()).toBe('__global');
+        expect(globalFunc.getContainer().getName()).toBe('Entity.ts');
     });
 
     it.skip("should contain a variable 'globalA' with global scope.", () => {
