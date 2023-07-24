@@ -2,31 +2,40 @@
 //import * as parser from '../src/new-parsing-strategy/analyze';
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 
-const filePaths = ["new_test_src/namespaces_and_classes.ts"];
-//const importer = new TS2Famix();
+
 const importer = new Importer();
 
-//const fmxRep = importer.famixRepFromPath(filePaths);
-//const fmxRep = parser.famixRepFromPath(filePaths);
-const fmxRep = importer.famixRepFromPath(filePaths);
+const fmxRep = importer.famixRepFromSource('namespace MyNamespace {\n\
+	class EntityClass { }\n\
+	class class2 { }\n\
+}\n\
+class clsOutNsp { }\n\
+namespace Nsp3 {\n\
+	class clsInNsp3 { }\n\
+}\n\
+');
 
-const theClass = fmxRep._getFamixClass("EntityClass");
-const theClass2 = fmxRep._getFamixClass("class2");
-const theClass3 = fmxRep._getFamixClass("clsInNsp3");
-const theClass4 = fmxRep._getFamixClass("clsOutNsp");
 
 describe('Tests for namespaces and classes', () => {
     
-    it("should contain three namespaces", () => {
+    it("should contain two namespaces", () => {
         expect(fmxRep._getFamixNamespaces().size).toBe(2);
     });
 
+    let theNamespace1 = fmxRep._getFamixNamespace("MyNamespace");
     it("should contain a namespace MyNamespace", () => {
-        expect(fmxRep._getFamixNamespace("MyNamespace")).toBeTruthy();
+        expect(theNamespace1).toBeTruthy();
+    });
+    it("should contain 2 classes", () => {
+        expect(theNamespace1?.getClasses().size).toBe(2);
     });
 
-    it("should contain a namespace Nsp3", () => {
-        expect(fmxRep._getFamixNamespace("Nsp3")).toBeTruthy();
+    let theNamespace2 = fmxRep._getFamixNamespace("Nsp3");
+   it("should contain a namespace Nsp3", () => {
+        expect( theNamespace2 ).toBeTruthy();
+    });
+    it("should contain 2 classes", () => {
+        expect(theNamespace2?.getClasses().size).toBe(1);
     });
 
     it("should contain four classes", () => {
@@ -34,18 +43,18 @@ describe('Tests for namespaces and classes', () => {
     });
 
     it("should contain a class EntityClass", () => {
-        expect(theClass).toBeTruthy();
+        expect( fmxRep._getFamixClass("EntityClass") ).toBeTruthy();
     });
 
     it("should contain a class class2", () => {
-        expect(theClass2).toBeTruthy();
+        expect( fmxRep._getFamixClass("class2") ).toBeTruthy();
     });
 
     it("should contain a class clsInNsp3", () => {
-        expect(theClass3).toBeTruthy();
+        expect( fmxRep._getFamixClass("clsInNsp3") ).toBeTruthy();
     });
 
     it("should contain a class clsOutNsp", () => {
-        expect(theClass4).toBeTruthy();
+        expect( fmxRep._getFamixClass("clsOutNsp") ).toBeTruthy();
     });
 });
