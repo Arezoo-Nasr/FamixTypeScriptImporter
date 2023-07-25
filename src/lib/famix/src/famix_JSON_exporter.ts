@@ -12,6 +12,9 @@ export interface FamixTypeScriptElementStorage {
     variable?: RefType
 }
 
+/**
+ * This class is used to export FamixTypeScriptElements to JSON
+ */
 export class FamixJSONExporter {
 
   private element: FamixBaseElement;

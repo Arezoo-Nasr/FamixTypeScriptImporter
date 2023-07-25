@@ -22,4 +22,5 @@ const jsonFilePath = argv.output as string;
 fs.writeFile(jsonFilePath, jsonOutput, (err) => {
     if (err) { throw err; }
 });
-console.info(`created ${jsonFilePath}`); 
+
+console.info(`Created: ${jsonFilePath}`); 

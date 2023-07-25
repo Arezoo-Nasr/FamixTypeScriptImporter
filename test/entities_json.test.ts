@@ -30,7 +30,7 @@ describe('ts2famix json', () => {
         const theClass = parsedModel.filter(el => (el.FM3 == "FamixTypeScript.Class" && el.name == "EntityClass"))[0];
         let mNames: Set<string> = new Set();
         theClass.methods.forEach(m => {
-            const entityCls = fmxRep2.getFamixElementById(m.ref as number) as Method;
+            const entityCls = fmxRep2.getFamixEntityById(m.ref as number) as Method;
             mNames.add(entityCls.getName())
         });
         expect(mNames.has("move") &&
