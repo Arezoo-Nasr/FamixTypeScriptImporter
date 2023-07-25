@@ -1,9 +1,5 @@
-//import { TS2Famix } from '../src/ts2famix-clean-version';
-//import * as parser from '../src/new-parsing-strategy/analyze';
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
-import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
-
-const filePaths = ["new_test_src/generics/*.ts"];
+import { ParameterizableClass } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -13,7 +9,7 @@ class MyDao<T> implements MyDaoInterface<T> {\n\
 }\n\
 ');
 
-describe('Tests for generics', () => {
+describe('Tests for generic class inherits interface', () => {
 
     it("should parse generics", () => {
         expect(fmxRep).toBeTruthy();

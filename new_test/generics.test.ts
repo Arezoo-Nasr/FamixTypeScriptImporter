@@ -1,24 +1,19 @@
-//import { TS2Famix } from '../src/ts2famix-clean-version';
-//import * as parser from '../src/new-parsing-strategy/analyze';
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Parameter } from "../src/lib/famix/src/model/famix/parameter";
-import { LocalVariable } from "../src/lib/famix/src/model/famix/local_variable";
+import { GlobalVariable } from "../src/lib/famix/src/model/famix/global_variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
-const filePaths = ["new_test_src/testGenerics.ts"];
-//const importer = new TS2Famix();
+const filePaths = ["new_test_src/generics.ts"];
 const importer = new Importer();
 
-//const fmxRep = importer.famixRepFromPaths(filePaths);
-//const fmxRep = parser.famixRepFromPaths(filePaths);
 const fmxRep = importer.famixRepFromPaths(filePaths);
 
 const theClass = fmxRep._getFamixClass("AA");
 const theMethod = fmxRep._getFamixMethod("i") as Method;
 
-describe('Tests for testGenerics', () => {
+describe('Tests for generics', () => {
 
     it("should parse generics", () => {
         expect(fmxRep).toBeTruthy();
@@ -74,7 +69,7 @@ describe('Tests for testGenerics', () => {
     });
 
     it("should contain a variable x instance of AA", () => {
-        const pList = Array.from(fmxRep._getAllEntitiesWithType("GlobalVariable") as Set<LocalVariable>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("GlobalVariable") as Set<GlobalVariable>);
         expect(pList).toBeTruthy();
         const x = pList.find(p => p.getName() === "x");
         expect(x).toBeTruthy();

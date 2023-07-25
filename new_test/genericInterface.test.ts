@@ -1,8 +1,5 @@
-
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
-
-const filePaths = ["new_test_src/generics/*.ts"];
 
 const importer = new Importer();
 
@@ -10,7 +7,7 @@ const fmxRep = importer.famixRepFromSource('interface MyDaoInterface<T> {\n\
 }\n\
 ');
 
-describe('Tests for generics', () => {
+describe('Tests for generic interface', () => {
 
     it("should parse generics", () => {
         expect(fmxRep).toBeTruthy();
@@ -35,7 +32,6 @@ describe('Tests for generics', () => {
             expect((Array.from(myDaoInterface.getParameterTypes())[0] as ParameterizedType).getName()).toBe("T");
         }
     });
-
 
     const theInterface = fmxRep._getFamixClass("MyDaoInterface");
     it ("should not be an abstract class and it should be an interface", () => {

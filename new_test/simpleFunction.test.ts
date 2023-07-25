@@ -1,4 +1,3 @@
-
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Function } from "../src/lib/famix/src/model/famix/function";
 
@@ -9,10 +8,9 @@ const fmxRep = importer.famixRepFromSource('function fct() : number {\n\
 }\n\
 ');
 
-
 describe('Tests for simple function', () => {
     
-    let functionList = fmxRep._getAllEntitiesWithType('Function');
+    const functionList = fmxRep._getAllEntitiesWithType('Function');
     it("should have 1 function", () => {
         expect(functionList?.size).toBe(1);
     });
@@ -23,7 +21,6 @@ describe('Tests for simple function', () => {
         expect(theFunction?.getName()).toBe('fct');
     });
 
-
     it("should return number", () => {
         expect(theFunction?.getDeclaredType().getName()).toBe("number");
     });
@@ -31,5 +28,4 @@ describe('Tests for simple function', () => {
     it("should have no parameter", () => {
         expect(theFunction?.getParameters().size).toBe(0);
     });
-
 });

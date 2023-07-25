@@ -6,7 +6,7 @@ const importer = new Importer();
 
 const fmxRep2 = importer.famixRepFromPaths(filePaths);
 
-describe('Invocation', () => {
+describe('Invocations', () => {
 
     it("should contain method returnHi in Class1", () => {
         const clsName = "Class1";

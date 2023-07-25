@@ -1,21 +1,16 @@
-//import { TS2Famix } from '../src/ts2famix-clean-version';
-//import * as parser from '../src/new-parsing-strategy/analyze';
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
-const filePaths = ["new_test_src/testInvoc.ts"];
-//const importer = new TS2Famix();
+const filePaths = ["new_test_src/invocation.ts"];
 const importer = new Importer();
 
-//const fmxRep = importer.famixRepFromPaths(filePaths);
-//const fmxRep = parser.famixRepFromPaths(filePaths);
 const fmxRep = importer.famixRepFromPaths(filePaths);
 
 const theMethod = fmxRep._getFamixMethod("x") as Method;
 
-describe('Tests for testInvoc', () => {
+describe('Tests for invocation', () => {
 
     it("should contain two class", () => {
         expect(fmxRep._getAllEntitiesWithType("Class").size).toBe(2);

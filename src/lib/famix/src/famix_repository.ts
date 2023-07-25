@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, Entity, Namespace, Function, Method } from "./model/famix";
+import { Class, Entity, Namespace, Function, Method, Type } from "./model/famix";
 
 /**
  * This class is used to store all Famix elements
@@ -106,6 +106,40 @@ export class FamixRepository {
    */
   public _getFamixNamespaces(): Set<Namespace> {
     return new Set(Array.from(this.famixNamespaces.values()));
+  }
+
+  /**
+   * Gets all method names as a set from a class
+   * @param className A class name
+   * @returns The set of class "className" method names
+   */
+  public _methodNamesAsSetFromClass(className: string): Set<string> {
+    const theClass = this._getFamixClass(className) as Class;
+    return new Set(Array.from(theClass.getMethods()).map(m => m.getName()));
+  }
+
+  /**
+   * Gets all method parents as a set from a class
+   * @param className A class name
+   * @returns The set of class "className" method parents
+   */
+  public _methodParentsAsSetFromClass(className: string): Set<Type> {
+    const theClass = this._getFamixClass(className) as Class;
+    return new Set(Array.from(theClass.getMethods()).map(m => m.getParentType()));
+  }
+
+  /**
+   * Gets the map of Famix elements ids and their Famix element from a JSON model
+   * @param model A JSON model
+   * @returns The map of Famix elements ids and their Famix element from the JSON model
+   */
+  public _initMapFromModel(model: string): Map<number, any> {
+    const parsedModel: Array<any> = JSON.parse(model);
+    const idToElementMap: Map<number, any> = new Map();
+    parsedModel.forEach(element => {
+        idToElementMap.set(element.id, element);
+    });
+    return idToElementMap;
   }
 
 

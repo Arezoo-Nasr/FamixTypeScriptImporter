@@ -1,7 +1,5 @@
-
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Method } from "../src/lib/famix/src/model/famix/method";
-
 
 const importer = new Importer();
 
@@ -10,10 +8,9 @@ const fmxRep = importer.famixRepFromSource('class AAA {\n\
 }\n\
 ');
 
-
-describe('Tests for invocationWithVariable', () => {
+describe('Tests for methods', () => {
     
-    let methodList = fmxRep._getAllEntitiesWithType('Method');
+    const methodList = fmxRep._getAllEntitiesWithType('Method');
     it("should have  method", () => {
         expect(methodList?.size).toBe(1);
     });

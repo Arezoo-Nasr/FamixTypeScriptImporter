@@ -1,15 +1,18 @@
 import { FamixBaseElement } from "./famix_base_element";
 
-type RefType = {
-  ref: number
+type RefType = { // Reference to another element
+  ref: number // Id of the referenced element
 }
 
+/**
+ * This interface is used to store Famix elements in JSON format
+ */
 export interface FamixTypeScriptElementStorage {
-    FM3: string
-    name: string
-    id?: string
-    accessor?: RefType
-    variable?: RefType
+    FM3: string // Type of the Famix element
+    name: string // Name of the Famix element
+    id?: string // Id of the Famix element
+    accessor?: RefType // Reference to a Famix entity
+    variable?: RefType // Reference to a Famix parameter, variable or attribute
 }
 
 /**
@@ -17,27 +20,31 @@ export interface FamixTypeScriptElementStorage {
  */
 export class FamixJSONExporter {
 
-  private element: FamixBaseElement;
-  private bufferArray: any = {};
-  private FamixPrefix = "FamixTypeScript";
+  private element: FamixBaseElement; // A Famix element to export
+  private bufferArray: any = {}; // A buffer to store the properties of the Famix element
+  private FamixPrefix = "FamixTypeScript"; // Prefix of the Famix element
 
+  /**
+   * Constructor of the FamixJSONExporter class
+   * @param packageClass Name of a Famix class
+   * @param element A Famix element to export, this element is an instance of the class named "packageClass"
+   */
   constructor(packageClass: string, element: FamixBaseElement) {
     this.element = element;
     this.bufferArray["FM3"] = this.FamixPrefix + "." + packageClass;
     this.bufferArray["id"] = this.element.id;
   }
 
+  /**
+   * Adds a property to the Famix element
+   * @param name Name of the property
+   * @param prop A property
+   */
   public addProperty(name: string, prop: unknown): void {
-    if (prop === undefined) { return; }
-    if ((prop instanceof Set) && (prop.size === 0)) { return; }
-
     if (prop instanceof Set) {
       const valueArray = [];
       for (const value of Array.from(prop.values())) {
-        if (typeof (value) === "string") {
-          valueArray.push(value);
-        } 
-        else if (value instanceof FamixBaseElement) {
+        if (value instanceof FamixBaseElement) {
           valueArray.push({ "ref": value.id });
         }
         else {
@@ -48,15 +55,16 @@ export class FamixJSONExporter {
     }
     else if (prop instanceof FamixBaseElement) {
       this.bufferArray[name] = { "ref": prop.id };
-    } 
-    else if (typeof (prop) === "string") {
-      this.bufferArray[name] = prop;
-    } 
-    else {
+    }
+    else if (prop !== undefined && (!(prop instanceof Set) || (prop.size !== 0))) {
       this.bufferArray[name] = prop;
     }
   }
 
+  /**
+   * Gets a JSON representation of the Famix element
+   * @returns A JSON representation of the Famix element
+   */
   public getJSON(): string {
     return JSON.stringify(this.bufferArray);
   }

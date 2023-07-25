@@ -12,7 +12,7 @@ let testAccessCls;
 let accessClsMethods;
 let accessClsAttributes;
 
-describe('Access', () => {
+describe('Accesses', () => {
 
     it("should have a class with two methods and two attributes", () => {
         const expectedAttributeNames: string[] = ['privateAttribute', 'publicAttribute'];

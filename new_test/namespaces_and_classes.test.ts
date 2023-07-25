@@ -1,6 +1,4 @@
-
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
-
 
 const importer = new Importer();
 
@@ -14,25 +12,26 @@ namespace Nsp3 {\n\
 }\n\
 ');
 
-
 describe('Tests for namespaces and classes', () => {
     
     it("should contain two namespaces", () => {
         expect(fmxRep._getFamixNamespaces().size).toBe(2);
     });
 
-    let theNamespace1 = fmxRep._getFamixNamespace("MyNamespace");
+    const theNamespace1 = fmxRep._getFamixNamespace("MyNamespace");
     it("should contain a namespace MyNamespace", () => {
         expect(theNamespace1).toBeTruthy();
     });
+
     it("should contain 2 classes", () => {
         expect(theNamespace1?.getClasses().size).toBe(2);
     });
 
-    let theNamespace2 = fmxRep._getFamixNamespace("Nsp3");
-   it("should contain a namespace Nsp3", () => {
+    const theNamespace2 = fmxRep._getFamixNamespace("Nsp3");
+    it("should contain a namespace Nsp3", () => {
         expect( theNamespace2 ).toBeTruthy();
     });
+    
     it("should contain 2 classes", () => {
         expect(theNamespace2?.getClasses().size).toBe(1);
     });

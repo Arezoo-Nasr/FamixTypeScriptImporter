@@ -7,13 +7,12 @@ const fmxRep2 = importer.famixRepFromPaths(filePaths);
 const jsonOutput = fmxRep2.getJSON();
 const parsedModel = JSON.parse(jsonOutput);
 
-describe('Invocation json', () => {
+describe('Invocations json', () => {
 
     it("should contain a class Class3 with one method: getString", () => {
         const invocationCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "Class3"))[0];
         expect(invocationCls.methods.length).toBe(1);
         const methodNames: string[] = ['getString'];
-
         const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref === e.id));
         expect(invocationClsMethods.length).toBeGreaterThan(0);
         const checkMethodName = invocationClsMethods.every(m => methodNames.includes(m.name));
@@ -38,7 +37,6 @@ function verifyInvocation(theClass: string, theMethod: string) {
     expect(foundMethods.length).toBe(1);
     const checkMethodHasInvocation = foundMethods.every(m => m.incomingInvocations !== undefined);
     expect(checkMethodHasInvocation).toBe(true);
-
     invocationClsMethods.forEach(method => {
         const invocationCls = parsedModel.filter(e => e.FM3 === "FamixTypeScript.Invocation"
             && method.incomingInvocations.some(m => m.ref === e.id));

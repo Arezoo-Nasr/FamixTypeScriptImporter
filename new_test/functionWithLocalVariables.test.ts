@@ -1,4 +1,3 @@
-
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Function } from "../src/lib/famix/src/model/famix/function";
 
@@ -11,36 +10,37 @@ const fmxRep = importer.famixRepFromSource('function fct() : number {\n\
 }\n\
 ');
 
-
-describe('Tests for simple function', () => {
+describe('Tests for simple function with local variables', () => {
     
-    const theFunction = Array.from( fmxRep._getAllEntitiesWithType('Function') )[0] as Function;
+    const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as Function;
     it("should have two local variables", () => {
         expect(theFunction?.getLocalVariables().size).toBe(3);
     });
 
-    const firstVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() == "i");
+    const firstVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() === "i");
     it("should have a local variable 'i'", () => {
         expect(firstVariable).toBeTruthy();
     });
+
     it("should be of type number", () => {
         expect(firstVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const secondVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() == "j");
+    const secondVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() === "j");
     it("should have a local variable 'j'", () => {
         expect(secondVariable).toBeTruthy();
     });
+    
     it("should be of type number", () => {
         expect(secondVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const thirdVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() == "x");
+    const thirdVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() === "x");
     it("should have a local variable 'x'", () => {
         expect(thirdVariable).toBeTruthy();
     });
+
     it("should be of type string", () => {
         expect(thirdVariable?.getDeclaredType().getName()).toBe("string");
     });
-
 });

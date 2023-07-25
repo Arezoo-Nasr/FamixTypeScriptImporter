@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as Famix from "../lib/famix/src/model/famix";
 import * as FamixFile from "../lib/famix/src/model/file";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
-import { FamixFunctions } from "../famix-functions-v2";
+import { FamixFunctions } from "../famix-functions";
 import { calculate } from "../lib/ts-complex/cyclomatic-service";
 // -> enlever les try catch ???
 

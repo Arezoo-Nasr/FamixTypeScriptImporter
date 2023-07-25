@@ -1,9 +1,7 @@
-
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Method } from "../src/lib/famix/src/model/famix/method";
-import { LocalVariable } from "../src/lib/famix/src/model/famix/local_variable";
+import { GlobalVariable } from "../src/lib/famix/src/model/famix/global_variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
-
 
 const importer = new Importer();
 
@@ -14,11 +12,10 @@ const x1 = new AAA();\n\
 x1.method();\n\
 ');
 
-
-describe('Tests for invocationWithVariable', () => {
+describe('Tests for invocation with variable', () => {
     
     it("should contain a variable 'x1' instance of 'AAA'", () => {
-        const pList = Array.from(fmxRep._getAllEntitiesWithType("GlobalVariable") as Set<LocalVariable>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("GlobalVariable") as Set<GlobalVariable>);
         expect(pList).toBeTruthy();
         const x1 = pList.find(p => p.getName() === "x1");
         expect(x1).toBeTruthy();
@@ -35,10 +32,9 @@ describe('Tests for invocationWithVariable', () => {
     theMethod = fmxRep._getFamixMethod("method") as Method;
     it("should contain an invocation for 'method'", () => {
         expect((invocations[0] as Invocation).getCandidates().has(theMethod));
-     });
+    });
 
     it("should contain an invocation with a receiver of type 'AAA'", () => {
         expect((invocations[0] as Invocation).getReceiver()).toBe(fmxRep._getFamixClass("AAA"));
     });
-
 });
