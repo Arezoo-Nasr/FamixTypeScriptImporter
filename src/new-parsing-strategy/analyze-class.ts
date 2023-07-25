@@ -8,7 +8,7 @@ import { calculate } from "../lib/ts-complex/cyclomatic-service";
 // -> enlever les try catch ???
 
 /**
- * This class is used to build a Famix model from a Typescript source code
+ * This class is used to build a Famix model from a TypeScript source code
  */
 export class Importer {
 
@@ -80,7 +80,7 @@ export class Importer {
         sourceFiles.forEach(file => {
             console.info(`processFiles: File >>>>>>>>>> ${file.getBaseName()}`);
 
-            // computes cyclomatic complexity for the current source file
+            // computes cyclomatic complexity metrics for current source file
             this.currentCC = calculate(file.getFilePath());
 
             this.processFile(file);

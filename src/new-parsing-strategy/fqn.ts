@@ -1,5 +1,10 @@
 import * as ts from "ts-morph";
 
+/**
+ * Gets the name of a node, if it has one
+ * @param a A node
+ * @returns The name of the node, or an empty string if it doesn't have one
+ */
 function getNameOfNode(a: ts.Node<ts.ts.Node>): string {
     switch (a.getKind()) {
         case ts.SyntaxKind.SourceFile:
@@ -44,6 +49,11 @@ function getNameOfNode(a: ts.Node<ts.ts.Node>): string {
     }
 }
 
+/**
+ * Gets the fully qualified name of a node
+ * @param node A node
+ * @returns The fully qualified name of the node, or undefined if it doesn't have one
+ */
 export function getFQN(node: ts.Node): string {
     if (node instanceof ts.SourceFile) {
         return `"${node.getFilePath()}"`;

@@ -29,7 +29,7 @@ const parsedModel: Array<FamixTypeScriptElement> = JSON.parse(fs.readFileSync(js
 const classNameMap = new Map<string, string>();
 const associations = new Array<Association>();
 
-// map all the classnames to their ids
+// maps all the classnames to their ids
 parsedModel.forEach(element => {
     // map has id as key and unique (plantuml) class name
     classNameMap.set(element.id, uniqueElementName(element));
@@ -42,7 +42,7 @@ parsedModel.forEach(element => {
     }
 });
 
-// generate plantuml
+// generates plantuml
 let plantUMLOutString = `@startuml
 skinparam style strictuml
 title Object diagram for ${jsonFileName}
@@ -51,7 +51,7 @@ parsedModel.forEach(element => {
     plantUMLOutString += `${toPlantUML(element)}\n`;
 });
 
-// create associations
+// creates associations
 associations.forEach(association => {
     // inheritance is a special case - show it in UML even though it doesn't make 100% sense in object diagrams
     const isInheritance = association.name.startsWith('Inheritance');
@@ -64,7 +64,7 @@ associations.forEach(association => {
 
 plantUMLOutString += '@enduml';
 
-// write to output file
+// writes to output file
 fs.writeFile(argv.output as string, plantUMLOutString, (err) => {
     if (err) { throw err; }
 });
@@ -88,10 +88,10 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
     let plantUMLString = '';
     for (const property in element) {
         const attribute = element[property];
-        const isOneToManyReference = typeof attribute !== 'string' && attribute.length; // Array but not a string
+        const isOneToManyReference = typeof attribute !== 'string' && attribute.length; // array but not a string
 
         switch (property) {
-            // ignore these properties
+            // ignores these properties
             case 'subclass':
             case 'superclass':
             case 'FM3':
@@ -107,7 +107,7 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
                 } else if (typeof attribute === 'object') {
                     associations.push({ from: element.id, to: attribute.ref, name: property });
                 } else {  // typeof string, boolean, number, etc.
-                    // treat it as a simple attribute
+                    // treats it as a simple attribute
                     plantUMLString += `${property} = ${element[property]}\n`;
                 }
 
