@@ -1,4 +1,4 @@
-import * as mm from "./exp1"
+import * as mm from "./Exemple1";
 
 namespace MyNamespace2 {
     class class12 extends mm.MyNamespace.class1 {

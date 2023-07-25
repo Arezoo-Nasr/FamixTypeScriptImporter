@@ -10,9 +10,7 @@
 			}
 		}
 
-		export interface interface1 {
-
-		}
+		export interface interface1 {}
 
 		export class class2 extends class1 implements interface1 {
 

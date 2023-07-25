@@ -34,7 +34,7 @@ namespace MyNamespace {
 	}
 
 }
-class clsOutNsp {
+class clsOutNsp2 {
 	public att1: number = 10;
 	public udf(): string {
 		return "Hiiii in out of namespace";

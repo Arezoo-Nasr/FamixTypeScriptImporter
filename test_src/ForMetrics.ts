@@ -13,7 +13,7 @@ export class ForMetrics {
         // make higher cyclomatic complexity
         for (let i = 0; i < 50; i++) { // 2
             for (let j = 0; j < 50; j++) { // 3
-                if (i < 10) console.log(i) // 4
+                if (i < 10) console.log(i); // 4
             }
         }
     }

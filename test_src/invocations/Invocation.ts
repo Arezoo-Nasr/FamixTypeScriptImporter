@@ -1,4 +1,4 @@
-import {b} from "./invocation-import"
+import {b} from "./Invocation-import";
 
 class Class1 {
 	public returnHi(): string {

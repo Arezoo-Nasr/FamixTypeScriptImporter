@@ -1,9 +1,7 @@
-//import { TS2Famix } from '../src/ts2famix';
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
-import { Method, Class, Type, Function} from '../src/lib/famix/src/model/famix';
+import { Method, Function, GlobalVariable} from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/Entity.ts"];
-//const importer = new TS2Famix();
 const importer = new Importer();
 
 const fmxRep2 = importer.famixRepFromPaths(filePaths);
@@ -11,19 +9,21 @@ const fmxRep2 = importer.famixRepFromPaths(filePaths);
 const theClass = fmxRep2._getFamixClass("EntityClass");
 const theSubclass = fmxRep2._getFamixClass("class2");
 
-describe('ts2famix', () => {
+describe('Entities', () => {
 
     it("should contain an EntityClass", () => {
-        //const theClass = fmxRep2.getFamixClass("EntityClass");
+        const theClass = fmxRep2._getFamixClass("EntityClass");
         expect(theClass).toBeTruthy();
-    })
+    });
+
     it("should contain an EntityClass with three methods.", () => {
-        //const theClass = fmxRep2.getFamixClass("EntityClass");
+        const theClass = fmxRep2._getFamixClass("EntityClass");
         if (theClass) expect(theClass.getMethods().size).toBe(3);
-    })
+    });
+
     it("should contain methods with correct names.", () => {
         if (theClass) {
-            const mNames = methodNamesAsSetFromClass(theClass);    
+            const mNames = fmxRep2._methodNamesAsSetFromClass("EntityClass");    
             expect(mNames.has("move") &&
             mNames.has("move2") &&
             mNames.has("constructor")).toBe(true);
@@ -32,7 +32,7 @@ describe('ts2famix', () => {
 
     it("should contain a private method named move2 that returns void.", () => {
         if (theClass) {
-            const move2Method = methodByNameFromClass("move2", theClass);
+            const move2Method = fmxRep2._getFamixMethod("move2");
             expect(move2Method).toBeTruthy();
             if (move2Method) {
                 expect(move2Method.getIsPrivate()).toBe(true);
@@ -42,7 +42,7 @@ describe('ts2famix', () => {
    
     it("should contain a private method named move2 with a signature 'private move2(family: string): void'.", () => {
         if (theClass) {
-            const move2Method = methodByNameFromClass("move2", theClass);
+            const move2Method = fmxRep2._getFamixMethod("move2");
             expect(move2Method).toBeTruthy();
             if (move2Method) {
                 expect(move2Method.getSignature()).toBe('private move2(family: string): void');
@@ -54,19 +54,20 @@ describe('ts2famix', () => {
         const theConstructor = fmxRep2._getFamixMethod("constructor") as Method;
         expect(theConstructor).toBeTruthy();
         expect(theConstructor.getIsConstructor()).toBe(true);
-    })
+    });
 
     it("should have a parent relationship between EntityClass and its methods.", () => {
         if (theClass) { 
-            const mParents = methodParentsAsSetFromClass(theClass);
+            const mParents = fmxRep2._methodParentsAsSetFromClass("EntityClass");
             expect(mParents.size).toBe(1);
-            expect(Array.from(mParents)[0]).toEqual(theClass)
+            expect(Array.from(mParents)[0]).toEqual(theClass);
         }
     });
 
     it("should contain an EntityClass with eight attributes.", () => {
         expect(theClass?.getAttributes().size).toBe(8);
     });
+
     it("should contain an EntityClass with an attribute named 'name' that is public.", () => {
         if (theClass) {
             const nameAttribute = Array.from(theClass.getAttributes())[0];
@@ -74,11 +75,13 @@ describe('ts2famix', () => {
             expect(nameAttribute.getModifiers()).toContain("public");
         }
     });
+
     it("should contain an EntityClass with an attribute named 'name' of type string.", () => {
         if (theClass) {
             expect(Array.from(theClass.getAttributes())[0].getDeclaredType().getName()).toBe("string");
         }
     });
+
     it("should contain an EntityClass with an attribute named 'p1' that is private and of type boolean.", () => {
         if (theClass) {
             const p1Attribute = Array.from(theClass.getAttributes())[1];
@@ -87,11 +90,11 @@ describe('ts2famix', () => {
             expect(p1Attribute.getDeclaredType().getName()).toBe("boolean");
         }
     });
+
     it("should contain an EntityClass with an attribute named '#p2' that is run-time private and of type boolean.", () => {
         if (theClass) {
             const p2Attribute = Array.from(theClass.getAttributes())[2];
             expect(p2Attribute.getName()).toBe("#p2");
-            //expect(p2Attribute.getModifiers()).toContain("private");
             expect(p2Attribute.getDeclaredType().getName()).toBe("boolean");
         }
     });
@@ -104,6 +107,7 @@ describe('ts2famix', () => {
             expect(prot1Attribute.getDeclaredType().getName()).toBe("Map<any, any>");
         }
     });
+
     it("should contain an EntityClass with an attribute named 'trustMe' that is guaranteed to be there (!) and of type string.", () => {
         if (theClass) {
             const trustMeAttribute = Array.from(theClass.getAttributes())[4];
@@ -112,6 +116,7 @@ describe('ts2famix', () => {
             expect(trustMeAttribute.getDeclaredType().getName()).toBe("string");
         }
     });
+
     it("should contain an EntityClass with an attribute named 'ro' that is readonly and of type \"yes\".", () => {
         if (theClass) {
             const roAttribute = Array.from(theClass.getAttributes())[5];
@@ -120,6 +125,7 @@ describe('ts2famix', () => {
             expect(roAttribute.getDeclaredType().getName()).toBe('"yes"');
         }
     });
+
     it("should contain an EntityClass with an attribute named '#userCount' that is static and of type number.", () => {
         if (theClass) {
             const userCountAttribute = Array.from(theClass.getAttributes())[6];
@@ -128,6 +134,7 @@ describe('ts2famix', () => {
             expect(userCountAttribute.getDeclaredType().getName()).toBe('number');
         }
     });
+
     it("should contain an EntityClass with an attribute named 'optional' that is optional (?) and of type string.", () => {
         if (theClass) {
             const userCountAttribute = Array.from(theClass.getAttributes())[7];
@@ -142,6 +149,7 @@ describe('ts2famix', () => {
             expect(Array.from(theClass.getSubInheritances()).length).toBe(1);
         }
     });
+
     it("should contain an EntityClass with one subclass named 'class2'", () => {
         if (theClass) {
             const theClassSubclass = Array.from(theClass.getSubInheritances())[0].getSubclass();
@@ -156,7 +164,7 @@ describe('ts2famix', () => {
         const clsInNSP = fmxRep2._getFamixClass("clsInNsp");
         expect(clsInNSP).toBeTruthy();
         if (clsInNSP) {
-            const aStaticMethod = Array.from(clsInNSP.getMethods()).find(m => m.getName() == 'aStaticMethod');
+            const aStaticMethod = Array.from(clsInNSP.getMethods()).find(m => m.getName() === 'aStaticMethod');
             expect(aStaticMethod).toBeTruthy();
             if (aStaticMethod) {
                 expect(aStaticMethod.getIsClassSide()).toBe(true);
@@ -172,23 +180,10 @@ describe('ts2famix', () => {
         expect(globalFunc.getContainer().getName()).toBe('Entity.ts');
     });
 
-    it.skip("should contain a variable 'globalA' with global scope.", () => {
-        const globalVar = "globalA" // fmxRep2.getFamixEntity({name: 'globalA', container: '__global'});
+    it("should contain a variable 'globalA' with global scope.", () => {
+        const list = Array.from(fmxRep2._getAllEntitiesWithType("GlobalVariable") as Set<GlobalVariable>);
+        expect(list).toBeTruthy();
+        const globalVar = list.find(p => p.getName() === "globalA");
         expect(globalVar).toBeTruthy();
-        if (globalVar) {
-        }
     });
-
-
 });
-function methodNamesAsSetFromClass(theClass: Class) {
-    return new Set(Array.from(theClass.getMethods()).map(m => m.getName()));
-}
-
-function methodParentsAsSetFromClass(theClass: Class) {
-    return new Set(Array.from(theClass.getMethods()).map(m => m.getParentType()));
-}
-function methodByNameFromClass(methodName: string, theClass: Class) {
-    return Array.from(theClass.getMethods()).find(m => m.getName() == methodName);
-}
-

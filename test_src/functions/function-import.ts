@@ -3,5 +3,5 @@ export function b(i: number) {
 }
 
 export function c(a: string) {
-    return a + "."
+    return a + ".";
 }

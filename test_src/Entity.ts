@@ -16,14 +16,14 @@ namespace MyNamespace {
 		}
 		public move(): void {
 			this.move2("my family " + this.p1);
-		 }
+		}
 
 		private move2(family: string): void {
 			var Str1: string = "hi" + family;
 			this.name = family + Str1;
 		}
 
-		static { this.#userCount++; console.log(this.#userCount) }
+		static { this.#userCount++; console.log(this.#userCount); }
 	}
 
 	class class2 extends EntityClass {
@@ -59,5 +59,5 @@ namespace Nsp3 {
 // global scope
 var globalA = "yes";
 function globalFunc(a: number){
-	return globalA == "yes" ? a - 10 : 0;
+	return globalA === "yes" ? a - 10 : 0;
 }
