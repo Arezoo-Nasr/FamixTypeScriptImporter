@@ -10,11 +10,11 @@ export class FamixRepository {
   private famixFunctions = new Set<Function>();
   private idCounter = 1;
 
-  public getFamixClass(name: string): Class | undefined {
+  public getFamixClassByFullyQualifiedName(name: string): Class | undefined {
     return Array.from(this.famixClasses.values()).find(ns => ns.getFullyQualifiedName() === name);
   }
 
-  public getFamixElementById(id: number): FamixBaseElement | undefined {
+  public getFamixEntityById(id: number): FamixBaseElement | undefined {
     const element = Array.from(this.elements.values()).find(e => e.id === id);
     return element;
   }

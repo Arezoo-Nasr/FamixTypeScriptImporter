@@ -111,7 +111,7 @@ export class TS2Famix {
 
         this.mapOfMethodsForFindingInvocations.forEach((savedMethod, famixId) => {
             console.log(`  Invocation(s) to ${(savedMethod instanceof MethodDeclaration || savedMethod instanceof MethodSignature)?savedMethod.getName():"constructor"}:`);
-            const fmxMethod = this.fmxRep.getFamixElementById(famixId) as Famix.BehaviouralEntity;
+            const fmxMethod = this.fmxRep.getFamixEntityById(famixId) as Famix.BehaviouralEntity;
             try {
                 const nodes = savedMethod.findReferencesAsNodes() as Array<Identifier>;
                 // 
@@ -174,7 +174,7 @@ export class TS2Famix {
         console.log(`Creating accesses:`);
         this.arrayOfAccess.forEach((value, key) => {
             console.log(`  Access(es) to ${value.getName()}:`);
-            let famixStructuralElement = this.fmxRep.getFamixElementById(key) as Famix.StructuralEntity;
+            let famixStructuralElement = this.fmxRep.getFamixEntityById(key) as Famix.StructuralEntity;
             try {
                 let nodes = value.findReferencesAsNodes() as Array<Identifier>;
                 nodes.forEach(node => {
