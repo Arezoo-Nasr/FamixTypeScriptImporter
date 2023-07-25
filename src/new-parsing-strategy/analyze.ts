@@ -43,7 +43,7 @@ export function famixRepFromPath(paths: Array<string>): FamixRepository { // -> 
         function processFile(f: SourceFile): void { // -> global namespace ???
             files.push(f);
 
-            const fmxFile = famixFunctions.createFile(f);
+            const fmxFile = famixFunctions.createOrGetFile(f);
 
             console.log(`file: ${f.getBaseName()} fqn = ${f.getSymbol()?.getFullyQualifiedName()}, ${getFQN(f)}, ${fmxFile.getFullyQualifiedName()}`);
 

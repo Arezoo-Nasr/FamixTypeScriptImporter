@@ -7,6 +7,9 @@ import { FamixFunctions } from "../famix-functions-v2";
 import { calculate } from "../lib/ts-complex/cyclomatic-service";
 // -> enlever les try catch ???
 
+/**
+ * This class is used to build a Famix model from a Typescript source code
+ */
 export class Importer {
 
     private famixFunctions = new FamixFunctions();
@@ -15,7 +18,7 @@ export class Importer {
     private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // id of famix object (parameter, variable, attribute) and ts-morph object
     private classes = new Array<ClassDeclaration>();
     private interfaces = new Array<InterfaceDeclaration>();
-    private currentCC: any; // store cyclomatic complexity metrics for current file
+    private currentCC: any; // stores cyclomatic complexity metrics for current source file
 
     // not used
     private files = new Array<SourceFile>();
@@ -29,17 +32,16 @@ export class Importer {
     private access_nodes = new Array<Identifier>;
     private invoc_nodes = new Array<Identifier>;
 
-    // main method.
-//const fmxRep = importer.famixRepFromPath(filePaths);
-//const fmxRep = parser.famixRepFromPath(filePaths);
-    // Takes a list of files to analyze
-    // Returns the Famix repository containing this model
+    /**
+     * Main method
+     * @param paths An array of paths to the source files to analyze
+     * @returns The Famix repository containing the Famix model
+     */
     public famixRepFromPath(paths: Array<string>): FamixRepository {
         try {
-            console.info(`famixRepFromPath: paths = ${paths}`);
+            console.info(`famixRepFromPath: paths: ${paths}`);
 
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
-            console.info(`famixRepFromPath: sourceFiles(${sourceFiles.length}) = ${sourceFiles}`);
             this.processFiles(sourceFiles);
             this.processAccesses();
             this.processInvocations(); // todo
@@ -57,34 +59,41 @@ export class Importer {
         return fmxRep;
     }
 
-    // main method for tests
-    // takes a Typescript source code and build a model for it
-    // Returns the Famix repository containing this model
+    /**
+     * Main method for tests
+     * @param source A TypeScript source code
+     * @returns The Famix repository containing the Famix model
+     */
     public famixRepFromSource(source: string): FamixRepository {
-        const filePath = './famixTypescriptTest.ts';
+        const filePath = './famixTypeScriptTest.ts';
 
         fs.writeFileSync(filePath, source, 'utf-8');
 
         return this.famixRepFromPath([filePath]);
     }
 
-    // takes a list of files and processFile each of them
+    /**
+     * Builds a Famix model for an array of source files
+     * @param sourceFiles An array of source files
+     */
     private processFiles(sourceFiles: Array<SourceFile>): void {
         sourceFiles.forEach(file => {
-            console.info(`processFiles\n\processFiles: File >>>>>>>>>> ${file.getBaseName()}\n`);
+            console.info(`processFiles: File >>>>>>>>>> ${file.getBaseName()}`);
 
-            // computes cyclomatic complexity for the file
+            // computes cyclomatic complexity for the current source file
             this.currentCC = calculate(file.getFilePath());
 
             this.processFile(file);
         });
     }
 
-    // build a Famix model for one file
+    /**
+     * Builds a Famix model for a source file
+     * @param f A source file
+     */
     private processFile(f: SourceFile): void {
         this.files.push(f);
 
-        // creates FamixFile for the current file
         const fmxFile = this.famixFunctions.createOrGetFile(f);
 
         console.log(`processFile: file: ${f.getBaseName()}, fqn = ${fmxFile.getFullyQualifiedName()}`);
@@ -93,88 +102,128 @@ export class Importer {
 
         this.processInterfaces(f, fmxFile);
 
-        this.processModules(f, fmxFile);
-
         this.processGlobalVariables(f, fmxFile);
 
         this.processFunctions(f, fmxFile);
+
+        this.processModules(f, fmxFile);
     }
 
-    // builds a Famix model for a module
-    private processModule(m: ModuleDeclaration, parentScope: Famix.Namespace | FamixFile.File): Famix.Namespace {
+    /**
+     * Builds a Famix model for a module
+     * @param m A module
+     * @param parentScope The Famix model of the module's parent (the parent can be a source file or a module)
+     * @returns A Famix.Namespace representing the module
+     */
+    private processModule(m: ModuleDeclaration, parentScope: FamixFile.File | Famix.Namespace): Famix.Namespace {
         this.modules.push(m);
 
         const fmxNamespace = this.famixFunctions.createOrGetFamixNamespace(m, parentScope);
         
-        console.log(`module declaration: ${m.getName()}, (${m.getType().getText()}), ${fmxNamespace.getFullyQualifiedName()}`);
+        console.log(`processModule: module declaration: ${m.getName()}, (${m.getType().getText()}), ${fmxNamespace.getFullyQualifiedName()}`);
 
         this.processClasses(m, fmxNamespace);
 
         this.processInterfaces(m, fmxNamespace);
 
-        this.processModules(m, fmxNamespace);
-
         this.processLocalVariables(m, fmxNamespace);
 
         this.processFunctions(m, fmxNamespace);
 
+        this.processModules(m, fmxNamespace);
+
         return fmxNamespace;
     }
 
-    private processModules(m: SourceFile | ModuleDeclaration, fmxScope: FamixFile.File | Famix.Namespace) {
-        console.info(`----------Finding Modules:`);
-        m.getModules().forEach(md => {
-            const fmxNsp = this.processModule(md, fmxScope);
-            fmxScope.addNamespaces(fmxNsp);
-        });
-    }
-
-    private processInterfaces(m: SourceFile | ModuleDeclaration, fmxScope: FamixFile.File | Famix.Namespace) {
-        console.info(`----------Finding Interfaces:`);
-        m.getInterfaces().forEach(i => {
-            const fmxInterface = this.processInterface(i);
-            fmxScope.addClasses(fmxInterface);
-        });
-    }
-
+    /**
+     * Builds a Famix model for the classes of a container
+     * @param m A container (a source file or a module)
+     * @param fmxScope The Famix model of the container
+     */
     private processClasses(m: SourceFile | ModuleDeclaration, fmxScope: FamixFile.File | Famix.Namespace) {
-        console.info(`----------Finding Classes:`);
+        console.info(`processClasses: ----------Finding Classes:`);
         m.getClasses().forEach(c => {
             const fmxClass = this.processClass(c);
             fmxScope.addClasses(fmxClass);
         });
     }
 
-    private processFunctions(m: ModuleDeclaration | SourceFile | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.Namespace | FamixFile.File | Famix.Function | Famix.Method) {
-        console.info(`----------Finding Functions:`);
-        m.getFunctions().forEach(f => {
-            const fmxFunction = this.processFunction(f);
-            fmxScope.addFunctions(fmxFunction);
+    /**
+     * Builds a Famix model for the interfaces of a container
+     * @param m A container (a source file or a module)
+     * @param fmxScope The Famix model of the container
+     */
+    private processInterfaces(m: SourceFile | ModuleDeclaration, fmxScope: FamixFile.File | Famix.Namespace) {
+        console.info(`processInterfaces: ----------Finding Interfaces:`);
+        m.getInterfaces().forEach(i => {
+            const fmxInterface = this.processInterface(i);
+            fmxScope.addClasses(fmxInterface);
         });
     }
 
-    private processLocalVariables(m: ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.Namespace | Famix.Function | Famix.Method) {
-        console.info(`----------Finding VariableStatements`);
-        m.getVariableStatements().forEach(v => {
-            const temp_variables = this.processVariableStatement(v, false) as Array<Famix.LocalVariable>;
-            temp_variables.forEach(variable => fmxScope.addLocalVariables(variable));
-        });
-    }
-
+    /**
+     * Builds a Famix model for the variables of a source file
+     * @param m A source file
+     * @param fmxScope The Famix model of the source file
+     */
     private processGlobalVariables(m: SourceFile, fmxScope: FamixFile.File) {
-        console.info(`----------Finding VariableStatements`);
+        console.info(`processGlobalVariables: ----------Finding VariableStatements`);
         m.getVariableStatements().forEach(v => {
             const temp_variables = this.processVariableStatement(v, true) as Array<Famix.GlobalVariable>;
             temp_variables.forEach(variable => fmxScope.addGlobalVariables(variable));
         });
     }
 
+    /**
+     * Builds a Famix model for the variables of a container
+     * @param m A container (a module, a function, a method or a constructor)
+     * @param fmxScope The Famix model of the container
+     */
+    private processLocalVariables(m: ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.Namespace | Famix.Function | Famix.Method) {
+        console.info(`processLocalVariables: ----------Finding VariableStatements`);
+        m.getVariableStatements().forEach(v => {
+            const temp_variables = this.processVariableStatement(v, false) as Array<Famix.LocalVariable>;
+            temp_variables.forEach(variable => fmxScope.addLocalVariables(variable));
+        });
+    }
+
+    /**
+     * Builds a Famix model for the functions of a container
+     * @param m A container (a source file, a module, a function, a method or a constructor)
+     * @param fmxScope The Famix model of the container
+     */
+    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: FamixFile.File | Famix.Namespace | Famix.Function | Famix.Method) {
+        console.info(`processFunctions: ----------Finding Functions:`);
+        m.getFunctions().forEach(f => {
+            const fmxFunction = this.processFunction(f);
+            fmxScope.addFunctions(fmxFunction);
+        });
+    }
+
+    /**
+     * Builds a Famix model for the modules of a container
+     * @param m A container (a source file or a module)
+     * @param fmxScope The Famix model of the container
+     */
+    private processModules(m: SourceFile | ModuleDeclaration, fmxScope: FamixFile.File | Famix.Namespace) {
+        console.info(`processModules: ----------Finding Modules:`);
+        m.getModules().forEach(md => {
+            const fmxNsp = this.processModule(md, fmxScope);
+            fmxScope.addNamespaces(fmxNsp);
+        });
+    }
+
+    /**
+     * Builds a Famix model for a class
+     * @param c A class
+     * @returns A Famix.Class or a Famix.ParameterizableClass representing the class
+     */
     private processClass(c: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {
         this.classes.push(c);
 
         const fmxClass = this.famixFunctions.createOrGetFamixClassOrInterface(c, c.isAbstract());
 
-        console.log(`class: ${c.getName()}, (${c.getType().getText()}), fqn = ${fmxClass.getFullyQualifiedName()}`);
+        console.log(`processClass: class: ${c.getName()}, (${c.getType().getText()}), fqn = ${fmxClass.getFullyQualifiedName()}`);
 
         this.processStructuredType(c, fmxClass);
 
@@ -186,18 +235,28 @@ export class Importer {
         return fmxClass;
     }
 
+    /**
+     * Builds a Famix model for an interface
+     * @param i An interface
+     * @returns A Famix.Class or a Famix.ParameterizableClass representing the interface
+     */
     private processInterface(i: InterfaceDeclaration): Famix.Class | Famix.ParameterizableClass {
         this.interfaces.push(i);
 
         const fmxInterface = this.famixFunctions.createOrGetFamixClassOrInterface(i, false);
 
-        console.log(`interface: ${i.getName()}, (${i.getType().getText()}), fqn = ${fmxInterface.getFullyQualifiedName()}`);
+        console.log(`processInterface: interface: ${i.getName()}, (${i.getType().getText()}), fqn = ${fmxInterface.getFullyQualifiedName()}`);
 
         this.processStructuredType(i, fmxInterface);
 
         return fmxInterface;
     }
 
+    /**
+     * Builds a Famix model for the attributes and methods of a structured type
+     * @param c A structured type (a class or an interface)
+     * @param fmxScope The Famix model of the structured type
+     */
     private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass) {
         c.getProperties().forEach(prop => {
             const fmxAttr = this.processAttribute(prop);
@@ -210,6 +269,11 @@ export class Importer {
         });
     }
 
+    /**
+     * Builds a Famix model for a method
+     * @param m A method
+     * @returns A Famix.Method representing the method
+     */
     private processMethod(m: MethodDeclaration | ConstructorDeclaration | MethodSignature): Famix.Method {
         this.methods.push(m);
 
@@ -221,12 +285,13 @@ export class Importer {
             fmxMethod = this.famixFunctions.createFamixMethod(m, this.currentCC, false, false);
         }
 
-        console.log(`method: ${!(m instanceof ConstructorDeclaration) ? m.getName() : "constructor"}, (${m.getType().getText()}), parent: ${(m.getParent() as ClassDeclaration | InterfaceDeclaration).getName()}, fqn = ${fmxMethod.getFullyQualifiedName()}`);
+        console.log(`processMethod: method: ${!(m instanceof ConstructorDeclaration) ? m.getName() : "constructor"}, (${m.getType().getText()}), parent: ${(m.getParent() as ClassDeclaration | InterfaceDeclaration).getName()}, fqn = ${fmxMethod.getFullyQualifiedName()}`);
 
         this.processParameters(m, fmxMethod);
 
         if (!(m instanceof MethodSignature)) {
             this.processLocalVariables(m, fmxMethod);
+
             this.processFunctions(m, fmxMethod);
 
             this.methodsWithId.set(fmxMethod.id, m);
@@ -235,13 +300,11 @@ export class Importer {
         return fmxMethod;
     }
 
-    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration, fmxScope: Famix.Method | Famix.Function) {
-        m.getParameters().forEach(param => {
-            const fmxParam = this.processParameter(param);
-            fmxScope.addParameters(fmxParam);
-        });
-    }
-
+    /**
+     * Builds a Famix model for a function
+     * @param f A function
+     * @returns A Famix.Function representing the function
+     */
     private processFunction(f: FunctionDeclaration): Famix.Function { // -> invocations ???
         this.functions.push(f);
 
@@ -252,9 +315,22 @@ export class Importer {
         this.processParameters(f, fmxFunction);
 
         this.processLocalVariables(f, fmxFunction);
+        
         this.processFunctions(f, fmxFunction);
 
         return fmxFunction;
+    }
+
+    /**
+     * Builds a Famix model for the parameters of a method or a function
+     * @param m A method or a function
+     * @param fmxScope The Famix model of the method or the function
+     */
+    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration, fmxScope: Famix.Method | Famix.Function) {
+        m.getParameters().forEach(param => {
+            const fmxParam = this.processParameter(param);
+            fmxScope.addParameters(fmxParam);
+        });
     }
 
     private processParameter(p: ParameterDeclaration): Famix.Parameter {
