@@ -6,7 +6,7 @@ const filePaths = ["test_src/generics/**/*"];
 //const importer = new TS2Famix();
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPath(filePaths);
+const fmxRep2 = importer.famixRepFromPaths(filePaths);
 
 describe('generics ts2famix', () => {
     it("should parse generics.", () => {

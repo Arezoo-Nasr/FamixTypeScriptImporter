@@ -29,7 +29,7 @@ export class TS2Famix {
     constructor() {
     }
 
-    public famixRepFromPath(paths: Array<string>) {
+    public famixRepFromPaths(paths: Array<string>) {
         try {
             // console.info(`paths = ${paths}`);
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);

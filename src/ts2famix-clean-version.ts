@@ -29,7 +29,7 @@ export class TS2Famix {
     constructor() {
     }
 
-    public famixRepFromPath(paths: Array<string>) {
+    public famixRepFromPaths(paths: Array<string>) {
         try {
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
             this.generateNamespaces(sourceFiles);

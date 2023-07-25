@@ -35,7 +35,7 @@ export class TS2Famix {
 
     }
 
-    famixRepFromPath(paths: Array<string>) { // check
+    famixRepFromPaths(paths: Array<string>) { // check
         try {
             console.info(`paths = ${paths}`);
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);

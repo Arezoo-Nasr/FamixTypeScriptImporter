@@ -12,13 +12,13 @@ import { calculate } from "../lib/ts-complex/cyclomatic-service";
  */
 export class Importer {
 
-    private famixFunctions = new FamixFunctions();
-    private project = new Project();
-    private methodsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration>(); // id of famix object (method) and ts-morph object
-    private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // id of famix object (parameter, variable, attribute) and ts-morph object
-    private classes = new Array<ClassDeclaration>();
-    private interfaces = new Array<InterfaceDeclaration>();
-    private currentCC: any; // stores cyclomatic complexity metrics for current source file
+    private famixFunctions = new FamixFunctions(); // FamixFunctions object, it contains all the functions needed to create Famix entities
+    private project = new Project(); // The project containing the source files to analyze
+    private methodsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration>(); // Maps the Famix methods ids to their ts-morph method object
+    private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // Maps the Famix parameters, variables and attributes ids to their ts-morph parameter, variable or attribute object
+    private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
+    private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
+    private currentCC: any; // Stores the cyclomatic complexity metrics for the current source file
 
     // not used
     private files = new Array<SourceFile>();
@@ -37,9 +37,9 @@ export class Importer {
      * @param paths An array of paths to the source files to analyze
      * @returns The Famix repository containing the Famix model
      */
-    public famixRepFromPath(paths: Array<string>): FamixRepository {
+    public famixRepFromPaths(paths: Array<string>): FamixRepository {
         try {
-            console.info(`famixRepFromPath: paths: ${paths}`);
+            console.info(`famixRepFromPaths: paths: ${paths}`);
 
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
             this.processFiles(sourceFiles);
@@ -69,7 +69,7 @@ export class Importer {
 
         fs.writeFileSync(filePath, source, 'utf-8');
 
-        return this.famixRepFromPath([filePath]);
+        return this.famixRepFromPaths([filePath]);
     }
 
     /**
@@ -80,7 +80,7 @@ export class Importer {
         sourceFiles.forEach(file => {
             console.info(`processFiles: File >>>>>>>>>> ${file.getBaseName()}`);
 
-            // computes cyclomatic complexity metrics for current source file
+            // Computes the cyclomatic complexity metrics for the current source file
             this.currentCC = calculate(file.getFilePath());
 
             this.processFile(file);

@@ -9,9 +9,9 @@ const filePaths = ["new_test_src/testInvoc.ts"];
 //const importer = new TS2Famix();
 const importer = new Importer();
 
-//const fmxRep = importer.famixRepFromPath(filePaths);
-//const fmxRep = parser.famixRepFromPath(filePaths);
-const fmxRep = importer.famixRepFromPath(filePaths);
+//const fmxRep = importer.famixRepFromPaths(filePaths);
+//const fmxRep = parser.famixRepFromPaths(filePaths);
+const fmxRep = importer.famixRepFromPaths(filePaths);
 
 const theMethod = fmxRep._getFamixMethod("x") as Method;
 

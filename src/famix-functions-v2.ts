@@ -11,12 +11,12 @@ import { getFQN } from "./new-parsing-strategy/fqn";
  */
 export class FamixFunctions {
 
-    private fmxRep = new FamixRepository();
-    private fmxTypes = new Map<string, Famix.Type>();
-    private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>();
-    private fmxNamespaces = new Map<string, Famix.Namespace>();
-    private fmxFiles = new Map<string, FamixFile.File>();
-    private UNKNOWN_VALUE = '(unknown due to parsing error)'; // -> utile tant qu'il y a des try catch
+    private fmxRep = new FamixRepository(); // The Famix repository
+    private fmxTypes = new Map<string, Famix.Type>(); // Maps the type names to their Famix model
+    private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the classes and interfaces to their Famix model
+    private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespaces to their Famix model
+    private fmxFiles = new Map<string, FamixFile.File>(); // Maps the source files to their Famix model
+    private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable -> utile tant qu'il y a des try catch
 
     /**
      * Gets the Famix repository

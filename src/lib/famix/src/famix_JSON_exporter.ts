@@ -13,7 +13,7 @@ export interface FamixTypeScriptElementStorage {
 }
 
 /**
- * This class is used to export FamixTypeScriptElements to JSON
+ * This class is used to export Famix elements to JSON
  */
 export class FamixJSONExporter {
 

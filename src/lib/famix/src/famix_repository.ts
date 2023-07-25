@@ -2,16 +2,16 @@ import { FamixBaseElement } from "./famix_base_element";
 import { Class, Entity, Namespace, Function, Method } from "./model/famix";
 
 /**
- * This class is used to store all FamixBaseElements
+ * This class is used to store all Famix elements
  */
 export class FamixRepository {
 
-  private elements = new Set<FamixBaseElement>();
-  private famixClasses = new Set<Class>();
-  private famixNamespaces = new Set<Namespace>();
-  private famixMethods = new Set<Method>();
-  private famixFunctions = new Set<Function>();
-  private idCounter = 1;
+  private elements = new Set<FamixBaseElement>(); // All Famix elements
+  private famixClasses = new Set<Class>(); // All Famix classes
+  private famixNamespaces = new Set<Namespace>(); // All Famix namespaces
+  private famixMethods = new Set<Method>(); // All Famix methods
+  private famixFunctions = new Set<Function>(); // All Famix functions
+  private idCounter = 1; // Id counter
 
   /**
    * Gets a Famix class by fully qualified name

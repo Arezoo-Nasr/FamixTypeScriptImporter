@@ -7,7 +7,7 @@ import { FamixFunctions } from "../famix-functions-v2";
 
 import { calculate } from "../lib/ts-complex/cyclomatic-service";
 
-export function famixRepFromPath(paths: Array<string>): FamixRepository { // -> faire une classe ??? + remplacer les addTypes par le bon add ???
+export function famixRepFromPaths(paths: Array<string>): FamixRepository { // -> faire une classe ??? + remplacer les addTypes par le bon add ???
 
     const famixFunctions = new FamixFunctions();
     const project = new Project();

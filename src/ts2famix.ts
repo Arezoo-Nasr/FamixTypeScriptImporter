@@ -35,7 +35,7 @@ export class TS2Famix {
 
     }
 
-    famixRepFromPath(paths: Array<string>) {
+    famixRepFromPaths(paths: Array<string>) {
         try {
             console.info(`paths = ${paths}`);
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
@@ -128,7 +128,7 @@ export class TS2Famix {
                         //const receiverFullyQualifiedName = savedMethod.getParent().getSymbol().getFullyQualifiedName();
                         const receiverFullyQualifiedName = this.getClassNameOfMethod(savedMethod);
                         console.log(`  Receiver fully qualified name: ${receiverFullyQualifiedName}`)
-                        const receiver = this.fmxRep.getFamixClass(receiverFullyQualifiedName);
+                        const receiver = this.fmxRep._getFamixClass(receiverFullyQualifiedName);
                         console.log(`  Receiver: ${receiver.getName()}`)
 
                         // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind() // TODO

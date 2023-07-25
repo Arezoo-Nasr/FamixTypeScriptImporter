@@ -5,7 +5,7 @@ const filePaths = ["test_src/functions/*.ts"];
 //const importer = new TS2Famix();
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPath(filePaths);
+const fmxRep2 = importer.famixRepFromPaths(filePaths);
 
 describe('Functions', () => {
 

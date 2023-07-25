@@ -6,7 +6,7 @@ const filePaths = ["test_src/Abstracts.ts"];
 //const importer = new TS2Famix();
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPath(filePaths);
+const fmxRep2 = importer.famixRepFromPaths(filePaths);
 const theClass = fmxRep2._getFamixClass("MyAbstractClass");
 const theMethods = theClass?.getMethods();
 
