@@ -10,10 +10,10 @@ const importer = new Importer();
 
 const fmxRep = importer.famixRepFromPaths(filePaths);
 
-const theClass = fmxRep._getFamixClass("AA");
-const theMethod = fmxRep._getFamixMethod("i") as Method;
-
 describe('Tests for generics', () => {
+
+    const theClass = fmxRep._getFamixClass("AA");
+    const theMethod = fmxRep._getFamixMethod("i") as Method;
 
     it("should parse generics", () => {
         expect(fmxRep).toBeTruthy();

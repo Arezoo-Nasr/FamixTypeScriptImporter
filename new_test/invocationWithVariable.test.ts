@@ -5,9 +5,11 @@ import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource('class AAA {\n\
-    public method(): void { }\n\
+const fmxRep = importer.famixRepFromSource(
+    'class AAA {\n\
+    public method(): void {}\n\
 }\n\
+\n\
 const x1 = new AAA();\n\
 x1.method();\n\
 ');

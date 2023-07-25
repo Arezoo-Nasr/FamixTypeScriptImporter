@@ -3,8 +3,9 @@ import { Method } from "../src/lib/famix/src/model/famix/method";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource('class AAA {\n\
-    public method(): void { }\n\
+const fmxRep = importer.famixRepFromSource(
+    'class AAA {\n\
+    public method(): void {}\n\
 }\n\
 ');
 

@@ -8,9 +8,9 @@ const importer = new Importer();
 
 const fmxRep = importer.famixRepFromPaths(filePaths);
 
-const theMethod = fmxRep._getFamixMethod("x") as Method;
-
 describe('Tests for invocation', () => {
+
+    const theMethod = fmxRep._getFamixMethod("x") as Method;
 
     it("should contain two class", () => {
         expect(fmxRep._getAllEntitiesWithType("Class").size).toBe(2);

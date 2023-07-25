@@ -2,13 +2,16 @@ import { Importer } from '../src/new-parsing-strategy/analyze-class';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource('namespace MyNamespace {\n\
-	class EntityClass { }\n\
-	class class2 { }\n\
+const fmxRep = importer.famixRepFromSource(
+    'namespace MyNamespace {\n\
+	class EntityClass {}\n\
+	class class2 {}\n\
 }\n\
-class clsOutNsp { }\n\
+\n\
+class clsOutNsp {}\n\
+\n\
 namespace Nsp3 {\n\
-	class clsInNsp3 { }\n\
+	class clsInNsp3 {}\n\
 }\n\
 ');
 

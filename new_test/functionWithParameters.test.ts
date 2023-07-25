@@ -1,10 +1,10 @@
-
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 import { Function } from "../src/lib/famix/src/model/famix/function";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource('function fct(i : number , x : string) : number {\n\
+const fmxRep = importer.famixRepFromSource(
+    'function fct(i: number, x: string): number {\n\
     return 0;\n\
 }\n\
 ');

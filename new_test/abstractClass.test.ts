@@ -1,10 +1,11 @@
 import { Importer } from '../src/new-parsing-strategy/analyze-class';
 
 const importer = new Importer();
+
 const fmxRep = importer.famixRepFromSource(
     'abstract class MyAbstractClass {\n\
-}\n'
-);
+}\n\
+');
 
 describe('Tests for abstract class', () => {
     
