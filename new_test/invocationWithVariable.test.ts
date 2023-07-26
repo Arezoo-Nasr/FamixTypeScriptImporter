@@ -1,4 +1,4 @@
-import { Importer } from '../src/new-parsing-strategy/analyze-class';
+import { Importer } from '../src/new-parsing-strategy/analyze';
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { GlobalVariable } from "../src/lib/famix/src/model/famix/global_variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";

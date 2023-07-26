@@ -1,4 +1,4 @@
-import { Importer } from '../src/new-parsing-strategy/analyze-class';
+import { Importer } from '../src/new-parsing-strategy/analyze';
 import { Method, Function, GlobalVariable} from '../src/lib/famix/src/model/famix';
 
 const filePaths = ["test_src/Entity.ts"];

@@ -1,4 +1,4 @@
-import { Importer } from '../src/new-parsing-strategy/analyze-class';
+import { Importer } from '../src/new-parsing-strategy/analyze';
 import { Function } from "../src/lib/famix/src/model/famix/function";
 
 const importer = new Importer();

@@ -1,4 +1,4 @@
-import { Importer } from '../src/new-parsing-strategy/analyze-class';
+import { Importer } from '../src/new-parsing-strategy/analyze';
 import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();

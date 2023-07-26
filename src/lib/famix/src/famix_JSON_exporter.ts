@@ -1,20 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
 
-type RefType = { // Reference to another element
-  ref: number // Id of the referenced element
-}
-
-/**
- * This interface is used to store Famix elements in JSON format
- */
-export interface FamixTypeScriptElementStorage {
-    FM3: string // Type of the Famix element
-    name: string // Name of the Famix element
-    id?: string // Id of the Famix element
-    accessor?: RefType // Reference to a Famix entity
-    variable?: RefType // Reference to a Famix parameter, variable or attribute
-}
-
 /**
  * This class is used to export Famix elements to JSON
  */
