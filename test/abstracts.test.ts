@@ -1,14 +1,20 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
 import { Method } from '../src/lib/famix/src/model/famix';
 
-const filePaths = ["test_src/Abstracts.ts"];
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPaths(filePaths);
-const theClass = fmxRep2._getFamixClass("MyAbstractClass");
-const theMethods = theClass?.getMethods();
+const fmxRep = importer.famixRepFromSource(
+    'abstract class MyAbstractClass {\n\
+    public abstract abstractMethod1();\n\
+    public abstract abstractMethod2();\n\
+    public concreteMethod() {}\n\
+}\n\
+');
 
 describe('Abstract classes and methods', () => {
+
+    const theClass = fmxRep._getFamixClass("MyAbstractClass");
+    const theMethods = theClass?.getMethods();
 
     it("should contain an abstract class MyAbstractClass", () => {
         expect(theClass).toBeTruthy();
@@ -21,7 +27,7 @@ describe('Abstract classes and methods', () => {
             expect(theMethods.size).toBe(3);
             if (theMethods) {
                 expect(theMethods.size).toBe(3);
-                const foundMethodName = fmxRep2._getFamixMethod("abstractMethod1") as Method;
+                const foundMethodName = fmxRep._getFamixMethod("abstractMethod1") as Method;
                 expect(foundMethodName.getIsAbstract()).toBe(true);
             }
         }
@@ -31,7 +37,7 @@ describe('Abstract classes and methods', () => {
         expect(theMethods).toBeTruthy();
         if (theMethods) {
             expect(theMethods.size).toBe(3);
-            const foundMethodName = fmxRep2._getFamixMethod("abstractMethod2") as Method;
+            const foundMethodName = fmxRep._getFamixMethod("abstractMethod2") as Method;
             expect(foundMethodName.getIsAbstract()).toBe(true);
         }
     });
@@ -40,7 +46,7 @@ describe('Abstract classes and methods', () => {
         expect(theMethods).toBeTruthy();
         if (theMethods) {
             expect(theMethods.size).toBe(3);
-            const foundMethodName = fmxRep2._getFamixMethod("concreteMethod") as Method;
+            const foundMethodName = fmxRep._getFamixMethod("concreteMethod") as Method;
             expect(foundMethodName.getIsAbstract()).toBe(false);
         }
     });

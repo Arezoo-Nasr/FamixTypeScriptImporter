@@ -1,13 +1,30 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
 
-const filePaths = ["test_src/invocations/*.ts"];
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPaths(filePaths);
-const jsonOutput = fmxRep2.getJSON();
-const parsedModel = JSON.parse(jsonOutput);
+const fmxRep = importer.famixRepFromSource(
+    'class Class1 {\n\
+    public returnHi() {}\n\
+}\n\
+\n\
+class Class2 {\n\
+    public returnName() {}\n\
+}\n\
+\n\
+class Class3 {\n\
+    public getString() {\n\
+        var class1Obj = new Class1();\n\
+        var class2Obj = new Class2();\n\
+        var returnValue1 = class1Obj.returnHi();\n\
+        var returnValue2 = class2Obj.returnName();\n\
+    }\n\
+}\n\
+');
 
 describe('Invocations json', () => {
+
+    const jsonOutput = fmxRep.getJSON();
+    const parsedModel = JSON.parse(jsonOutput);
 
     it("should contain a class Class3 with one method: getString", () => {
         const invocationCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "Class3"))[0];
@@ -20,15 +37,15 @@ describe('Invocations json', () => {
     });
 
     it("should have one invocation for method returnHi in Class1",  () => {
-        verifyInvocation("Class1", "returnHi");
+        verifyInvocation(parsedModel, "Class1", "returnHi");
     });
 
     it("should have one invocation for method returnName in Class2",  () => {
-        verifyInvocation("Class2", "returnName");
+        verifyInvocation(parsedModel, "Class2", "returnName");
     });
 });
 
-function verifyInvocation(theClass: string, theMethod: string) {
+function verifyInvocation(parsedModel: any, theClass: string, theMethod: string) {
     const invocationCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === theClass))[0];
     const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref === e.id));
     const methodNames: string[] = [theMethod];

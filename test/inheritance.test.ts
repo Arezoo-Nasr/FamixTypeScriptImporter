@@ -1,14 +1,19 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
 
-const filePaths = ["test_src/Inheritance.ts"];
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPaths(filePaths);
-const jsonOutput = fmxRep2.getJSON();
-const parsedModel = JSON.parse(jsonOutput);
-const idToElementMap = fmxRep2._initMapFromModel(jsonOutput);
+const fmxRep = importer.famixRepFromSource(
+    'export class Animal {}\n\
+export class Fish extends Animal {}\n\
+export interface Flyable {}\n\
+export class Bird extends Animal implements Flyable {}\n\
+');
 
 describe('Inheritance', () => {
+
+    const jsonOutput = fmxRep.getJSON();
+    const parsedModel = JSON.parse(jsonOutput);
+    const idToElementMap = fmxRep._initMapFromModel(jsonOutput);    
 
     it("should contain a Fish class who has a superclass Animal", () => {
         const fishCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "Fish"))[0];

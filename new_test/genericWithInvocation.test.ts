@@ -5,7 +5,7 @@ import { Parameter } from "../src/lib/famix/src/model/famix/parameter";
 import { GlobalVariable } from "../src/lib/famix/src/model/famix/global_variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
-const filePaths = ["new_test_src/generics.ts"];
+const filePaths = ["new_test_src/genericWithInvocation.ts"];
 const importer = new Importer();
 
 const fmxRep = importer.famixRepFromPaths(filePaths);

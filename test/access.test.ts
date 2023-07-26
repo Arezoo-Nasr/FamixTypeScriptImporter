@@ -1,18 +1,28 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
 import { Attribute, Method } from "../src/lib/famix/src/model/famix";
 
-const filePaths = ["test_src/Access.ts"];
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPaths(filePaths);
-const jsonOutput = fmxRep2.getJSON();
-
-const parsedModel = JSON.parse(jsonOutput);
-let testAccessCls;
-let accessClsMethods;
-let accessClsAttributes;
+const fmxRep = importer.famixRepFromSource(
+    'class AccessClassForTesting {\n\
+    private privateAttribute;\n\
+    public publicAttribute;\n\
+    public returnAccessName() {\n\
+        return this.publicAttribute;\n\
+    }\n\
+    private privateMethod() {\n\
+        return this.privateAttribute;\n\
+    }\n\
+}\n\
+');
 
 describe('Accesses', () => {
+
+    const jsonOutput = fmxRep.getJSON();
+    const parsedModel = JSON.parse(jsonOutput);
+    let testAccessCls;
+    let accessClsMethods;
+    let accessClsAttributes;
 
     it("should have a class with two methods and two attributes", () => {
         const expectedAttributeNames: string[] = ['privateAttribute', 'publicAttribute'];
@@ -33,8 +43,8 @@ describe('Accesses', () => {
     it("should have an access to privateAttribute in privateMethod", () => {
         const famixAccess = parsedModel.filter(el =>
             (el.accessor !== undefined && el.variable !== undefined && el.FM3 === "FamixTypeScript.Access"
-                && ((fmxRep2.getFamixEntityById(el.accessor.ref) as Method).getName() === "privateMethod") 
-                && ((fmxRep2.getFamixEntityById(el.variable.ref) as Attribute).getName() === "privateAttribute")
+                && ((fmxRep.getFamixEntityById(el.accessor.ref) as Method).getName() === "privateMethod") 
+                && ((fmxRep.getFamixEntityById(el.variable.ref) as Attribute).getName() === "privateAttribute")
                 ))[0];
         expect(famixAccess).toBeTruthy();
     });
@@ -42,8 +52,8 @@ describe('Accesses', () => {
     it("should have an access to publicAttribute in returnAccessName", () => {
         const famixAccess = parsedModel.filter(el =>
             (el.accessor !== undefined && el.variable !== undefined && el.FM3 === "FamixTypeScript.Access"
-                && ((fmxRep2.getFamixEntityById(el.accessor.ref) as Method).getName() === "returnAccessName") 
-                && ((fmxRep2.getFamixEntityById(el.variable.ref) as Attribute).getName() === "publicAttribute")
+                && ((fmxRep.getFamixEntityById(el.accessor.ref) as Method).getName() === "returnAccessName") 
+                && ((fmxRep.getFamixEntityById(el.variable.ref) as Attribute).getName() === "publicAttribute")
                 ))[0];
         expect(famixAccess).toBeTruthy();
     });

@@ -1,29 +1,31 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
 import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
 
-const filePaths = ["test_src/generics/**/*"];
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPaths(filePaths);
+const fmxRep = importer.famixRepFromSource(
+    'interface MyDaoInterface<T> {}\n\
+class MyDao<T> implements MyDaoInterface<T> {}\n\
+');
 
 describe('Generics', () => {
 
-    it("should parse generics.", () => {
-        expect(fmxRep2).toBeTruthy();
+    it("should parse generics", () => {
+        expect(fmxRep).toBeTruthy();
     });
     
     it("should contain two generic classes", () => {
-        expect(fmxRep2._getAllEntitiesWithType("ParameterizableClass").size).toBe(2);
+        expect(fmxRep._getAllEntitiesWithType("ParameterizableClass").size).toBe(2);
     });
     
     it("should contain a generic class MyDao and generic interface MyDaoInterface", () => {
-        const listOfNames = Array.from(fmxRep2._getAllEntitiesWithType("ParameterizableClass")).map(e => (e as ParameterizableClass).getName());
+        const listOfNames = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass")).map(e => (e as ParameterizableClass).getName());
         expect(listOfNames).toContain("MyDao");
         expect(listOfNames).toContain("MyDaoInterface");
     });
     
     it("should contain a generic class MyDao with a parameter type T", () => {
-        const pList = Array.from(fmxRep2._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
         const myDao = pList.find(p => p.getName() === "MyDao");
         expect(myDao).toBeTruthy();
@@ -34,7 +36,7 @@ describe('Generics', () => {
     });
     
     it("should contain a generic interface MyDaoInterface with a parameter type T", () => {
-        const pList = Array.from(fmxRep2._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
         const myDaoInterface = pList.find(p => p.getName() === "MyDaoInterface");
         expect(myDaoInterface).toBeTruthy();
@@ -45,7 +47,7 @@ describe('Generics', () => {
     });
     
     it("should contain a generic class MyDao that implements generic interface MyDaoInterface<T>", () => {
-        const pList = Array.from(fmxRep2._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
         const myDao = pList.find(p => p.getName() === "MyDao");
         expect(myDao).toBeTruthy();

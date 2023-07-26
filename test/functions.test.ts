@@ -1,21 +1,23 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
 
-const filePaths = ["test_src/functions/*.ts"];
 const importer = new Importer();
 
-const fmxRep2 = importer.famixRepFromPaths(filePaths);
+const fmxRep = importer.famixRepFromSource(
+    'function a() {}\n\
+function b() {}\n\
+');
 
 describe('Functions', () => {
 
-    it("should contain function 'a' in '__global'", () => {
+    it("should contain function 'a'", () => {
         const functionName = "a";
-        const theFunction = fmxRep2._getFamixFunction(functionName);
+        const theFunction = fmxRep._getFamixFunction(functionName);
         expect(theFunction).toBeTruthy();
     });
 
-    it("should contain function 'b' in '__global'", () => {
+    it("should contain function 'b'", () => {
         const functionName = "b";
-        const theFunction = fmxRep2._getFamixFunction(functionName);
+        const theFunction = fmxRep._getFamixFunction(functionName);
         expect(theFunction).toBeTruthy();
     });
 });
