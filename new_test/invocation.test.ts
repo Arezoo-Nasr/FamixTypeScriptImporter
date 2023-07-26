@@ -3,10 +3,19 @@ import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
-const filePaths = ["new_test_src/invocation.ts"];
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromPaths(filePaths);
+const fmxRep = importer.famixRepFromSource(
+    'class A {\n\
+    public x(): void {}\n\
+}\n\
+\n\
+class B {\n\
+    public y(): void {\n\
+        new A().x();\n\
+    }\n\
+}\n\
+');
 
 describe('Tests for invocation', () => {
 

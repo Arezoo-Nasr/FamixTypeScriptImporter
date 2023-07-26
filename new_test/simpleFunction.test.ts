@@ -12,7 +12,7 @@ const fmxRep = importer.famixRepFromSource(
 describe('Tests for simple function', () => {
     
     const functionList = fmxRep._getAllEntitiesWithType('Function');
-    it("should have 1 function", () => {
+    it("should have one function", () => {
         expect(functionList?.size).toBe(1);
     });
 
