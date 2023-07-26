@@ -14,15 +14,6 @@ export class FamixRepository {
   private idCounter = 1; // Id counter
 
   /**
-   * Gets a Famix class by fully qualified name
-   * @param name A class fully qualified name
-   * @returns The Famix class corresponding to the fully qualified name or undefined if it doesn't exist
-   */
-  public getFamixClassByFullyQualifiedName(name: string): Class | undefined {
-    return Array.from(this.famixClasses.values()).find(ns => ns.getFullyQualifiedName() === name);
-  }
-
-  /**
    * Gets a Famix entity by id
    * @param id An id of a Famix entity
    * @returns The Famix entity corresponding to the id or undefined if it doesn't exist
@@ -38,8 +29,7 @@ export class FamixRepository {
    * @returns The Famix entity corresponding to the fully qualified name or undefined if it doesn't exist
    */
   public getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
-    const allEntity = Array.from(this.elements.values()).filter(e => (e as any).constructor.name === 'Method' || (e as any).constructor.name === 'Function' || (e as any).constructor.name === 'Namespace' || (e as any).constructor.name === 'File') as Entity[];
-
+    const allEntity = Array.from(this.elements.values()) as Array<Entity>;
     const entityElement = allEntity.find(c => c.getFullyQualifiedName() === FullyQualifiedName);
     return entityElement;
   }

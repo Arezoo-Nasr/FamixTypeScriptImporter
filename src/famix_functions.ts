@@ -343,11 +343,11 @@ export class FamixFunctions {
     /**
      * Creates a Famix invocation
      * @param node A node
-     * @param m A method
-     * @param id The method id
+     * @param m A method or a constructor
+     * @param id The id of the method or the constructor
      * @returns The Famix model of the invocation
      */
-    public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration | MethodSignature, id: number): Famix.Invocation {
+    public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration, id: number): Famix.Invocation {
         const fmxMethod = this.getFamixEntityById(id) as Famix.BehaviouralEntity;
         const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile); // for global variable it must work -> a => a.getKind() === any ???
 
@@ -355,9 +355,7 @@ export class FamixFunctions {
         const sender = this.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName);
         
         const receiverFullyQualifiedName = this.getClassNameOfMethod(m);
-        const receiver = this.getFamixClassByFullyQualifiedName(receiverFullyQualifiedName);
-
-        // TODO const receiver = nodeReferenceAncestor.getPreviousSiblingIfKind()
+        const receiver = this.getFamixEntityElementByFullyQualifiedName(receiverFullyQualifiedName) as Famix.Class;
 
         const fmxInvocation = new Famix.Invocation(this.fmxRep);
         fmxInvocation.setSender(sender);
@@ -450,15 +448,6 @@ export class FamixFunctions {
     }
 
     /**
-     * Gets a Famix class by fully qualified name
-     * @param name A class fully qualified name
-     * @returns The Famix class corresponding to the fully qualified name
-     */
-    private getFamixClassByFullyQualifiedName(name: string): Famix.Class {
-        return this.fmxRep.getFamixClassByFullyQualifiedName(name) as Famix.Class;
-    }
-
-    /**
      * Gets the signature of a method or a function
      * @param text A method or a function source code
      * @returns The signature of the method or the function
@@ -469,11 +458,11 @@ export class FamixFunctions {
     }
 
     /**
-     * Gets the class fully qualified name of a method
-     * @param method A method
-     * @returns The class fully qualified name of the method
+     * Gets the class fully qualified name of a method or a constructor
+     * @param method A method or a constructor
+     * @returns The class fully qualified name of the method or the constructor
      */
-    private getClassNameOfMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature): string {
+    private getClassNameOfMethod(method: MethodDeclaration | ConstructorDeclaration): string {
         return this.FQNFunctions.getFQN(method.getFirstAncestorByKind(SyntaxKind.ClassDeclaration) as ClassDeclaration);
     }
 }

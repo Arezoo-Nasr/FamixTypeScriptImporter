@@ -25,8 +25,8 @@ describe('Accesses', () => {
     let accessClsAttributes;
 
     it("should have a class with two methods and two attributes", () => {
-        const expectedAttributeNames: string[] = ['privateAttribute', 'publicAttribute'];
-        const expectedMethodNames: string[] = ['privateMethod', 'returnAccessName'];
+        const expectedAttributeNames: Array<string> = ['privateAttribute', 'publicAttribute'];
+        const expectedMethodNames: Array<string> = ['privateMethod', 'returnAccessName'];
         testAccessCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "AccessClassForTesting"))[0];
         expect(testAccessCls.attributes.length).toBe(expectedAttributeNames.length);
         expect(testAccessCls.methods.length).toBe(expectedMethodNames.length);

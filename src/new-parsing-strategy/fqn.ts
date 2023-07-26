@@ -33,7 +33,7 @@ export class FQNFunctions {
         const sourceFilePath = sourceFile.getFilePath();
         const sourceFileDirectory = sourceFilePath.substring(0, sourceFilePath.lastIndexOf("/"));
 
-        const qualifiedNameParts: string[] = [];
+        const qualifiedNameParts: Array<string> = [];
 
         const nodeName = this.getNameOfNode(node);
         if (nodeName) qualifiedNameParts.push(nodeName);

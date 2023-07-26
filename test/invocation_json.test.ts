@@ -29,7 +29,7 @@ describe('Invocations json', () => {
     it("should contain a class Class3 with one method: getString", () => {
         const invocationCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "Class3"))[0];
         expect(invocationCls.methods.length).toBe(1);
-        const methodNames: string[] = ['getString'];
+        const methodNames: Array<string> = ['getString'];
         const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref === e.id));
         expect(invocationClsMethods.length).toBeGreaterThan(0);
         const checkMethodName = invocationClsMethods.every(m => methodNames.includes(m.name));
@@ -48,7 +48,7 @@ describe('Invocations json', () => {
 function verifyInvocation(parsedModel: any, theClass: string, theMethod: string) {
     const invocationCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === theClass))[0];
     const invocationClsMethods = parsedModel.filter(e => invocationCls.methods.some(m => m.ref === e.id));
-    const methodNames: string[] = [theMethod];
+    const methodNames: Array<string> = [theMethod];
     invocationClsMethods.forEach(m => expect(methodNames).toContain(m.name));
     const foundMethods = invocationClsMethods.filter(m => methodNames.includes(m.name));
     expect(foundMethods.length).toBe(1);

@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, SyntaxKind, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "../lib/famix/src/model/famix";
 import * as FamixFile from "../lib/famix/src/model/file";
@@ -44,7 +44,7 @@ export class Importer {
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
             this.processFiles(sourceFiles);
             this.processAccesses();
-            this.processInvocations(); // todo
+            this.processInvocations();
             this.processInheritances();
         }
         catch (error) {
@@ -69,7 +69,9 @@ export class Importer {
 
         fs.writeFileSync(filePath, source, 'utf-8');
 
-        return this.famixRepFromPaths([filePath]);
+        const fmxRep = this.famixRepFromPaths([filePath]);
+
+        return fmxRep;
     }
 
     /**
@@ -445,6 +447,9 @@ export class Importer {
         }
     }
 
+    /**
+     * Builds a Famix model for the invocations of the methods and constructors of the source files
+     */
     private processInvocations(): void {
         console.log(`Creating invocations:`);
         this.methodsWithId.forEach((m, id) => {
@@ -458,7 +463,13 @@ export class Importer {
         });
     }
 
-    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | MethodSignature, id: number): void {
+    /**
+     * Builds a Famix model for an invocation of a method or a constructor
+     * @param n A node
+     * @param m A method or a constructor
+     * @param id The id of the method or the constructor
+     */
+    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration, id: number): void {
         this.invoc_nodes.push(n);
 
         try {
@@ -470,35 +481,35 @@ export class Importer {
         }
     }
 
-    private processInvocationsByCE(): void {
-        const callExpressions = this.allProjectCallExpressions();
-        callExpressions.forEach(ce => {
-            console.log(`  CallExpression: ${ce.getText()}`);
-            const returnType = this.project.getTypeChecker().getTypeAtLocation(ce);
-            console.log(`  returnType: ${returnType.getText()}`);
-            const theDescendants = ce.getDescendants();
-            const DAncest = theDescendants[3].getAncestors();
-            console.log(DAncest.length);
-            for (let pas = 0; pas < DAncest.length; pas++) {
-                console.log(pas, DAncest[pas].getText(), DAncest[pas].getKindName());
-            }
-            console.log(theDescendants.length);
-            for (let pas = 0; pas < theDescendants.length; pas++) {
-                console.log(pas, theDescendants[pas].getKindName(), theDescendants[pas].getText());
-            }
-            // const receiver = this.typeChecker.getType(ce.compilerNode.expression.getChildren()[0]);
-        });
-    }
+    // private processInvocationsByCE(): void {
+    //     const callExpressions = this.allProjectCallExpressions();
+    //     callExpressions.forEach(ce => {
+    //         console.log(`  CallExpression: ${ce.getText()}`);
+    //         const returnType = this.project.getTypeChecker().getTypeAtLocation(ce);
+    //         console.log(`  returnType: ${returnType.getText()}`);
+    //         const theDescendants = ce.getDescendants();
+    //         const DAncest = theDescendants[3].getAncestors();
+    //         console.log(DAncest.length);
+    //         for (let pas = 0; pas < DAncest.length; pas++) {
+    //             console.log(pas, DAncest[pas].getText(), DAncest[pas].getKindName());
+    //         }
+    //         console.log(theDescendants.length);
+    //         for (let pas = 0; pas < theDescendants.length; pas++) {
+    //             console.log(pas, theDescendants[pas].getKindName(), theDescendants[pas].getText());
+    //         }
+    //         // const receiver = this.typeChecker.getType(ce.compilerNode.expression.getChildren()[0]);
+    //     });
+    // }
 
-    private allProjectCallExpressions(): Array<any> {
-        const callExpressions = new Array<any>;
-        for (const file of this.project.getSourceFiles()) {
-            for (const ce of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
-                callExpressions.push(ce);
-            }
-        }
-        return callExpressions;
-    }
+    // private allProjectCallExpressions(): Array<any> {
+    //     const callExpressions = new Array<any>;
+    //     for (const file of this.project.getSourceFiles()) {
+    //         for (const ce of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
+    //             callExpressions.push(ce);
+    //         }
+    //     }
+    //     return callExpressions;
+    // }
 
     /**
      * Builds a Famix model for the inheritances of the classes and interfaces of the source files
