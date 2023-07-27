@@ -1,0 +1,56 @@
+@startuml diagram name
+skinparam style strictuml
+hide empty methods
+hide empty attributes
+'skinparam Linetype ortho
+'skinparam groupInheritance 2
+class " " as hidden <<hidden>>
+hide stereotype
+skinparam class {
+    FontSize 14
+    FontStyle bold
+    FontName "Arial"
+    BorderColor<<hidden>> transparent
+    BackgroundColor<<hidden>> transparent
+    FontSize<<hidden>> 0
+}
+
+class "\n    Behavioral    \nEntity\n" as BE {
+    fqn()
+}
+hidden -right-o BE
+BE -left- hidden
+'BE o-- BE
+BE -down[#orange,bold]-> BE : <color:orange>invokes
+
+class Function extends BE
+class Script extends BE
+Script "1..*" -[#orange,bold]- Namespace : <color:orange>Is-specified-in <
+class Namespace extends BE
+Namespace o-- Namespace
+class Variable
+BE o-- Variable
+BE -[#orange,bold]-> Variable : <color:orange>accesses
+
+class File
+class Folder
+Folder o-- File
+Folder o-- Folder
+Script -- File
+
+class Module extends Script
+
+class Type
+
+class Field extends Variable
+class Class extends Type
+Class o-- Field
+Class o-- Method
+
+BE o-- Type
+
+class Interface extends Type
+Interface o-- Method
+Interface o-- Field
+
+@enduml
