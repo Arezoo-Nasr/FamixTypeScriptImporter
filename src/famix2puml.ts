@@ -7,7 +7,7 @@ const argv = yargs
     .nargs('i', 1)
     .alias('o', 'output')
     .nargs('o', 1)
-    .demandOption('input').demandOption('output').argv;
+    .demandOption('input').demandOption('output').parseSync();
 
 const INHERITANCE_LINK_COLOR = 'blue';
 
@@ -25,6 +25,7 @@ interface Association {
 }
 
 const jsonFileName = argv.input as string;
+const pumlFileName = (argv.output as string).substring((argv.output as string).indexOf("/")+1, (argv.output as string).lastIndexOf('.'));
 const parsedModel: Array<FamixTypeScriptElement> = JSON.parse(fs.readFileSync(jsonFileName, 'utf-8'));
 const classNameMap = new Map<string, string>();
 const associations = new Array<Association>();
@@ -43,7 +44,7 @@ parsedModel.forEach(element => {
 });
 
 // generates plantuml
-let plantUMLOutString = `@startuml
+let plantUMLOutString = `@startuml ${pumlFileName}
 skinparam style strictuml
 title Object diagram for ${jsonFileName}
 `;

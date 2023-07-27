@@ -7,9 +7,10 @@
     "dev": "ts-node src/ts2famix-cli.ts",
     "debug": "node --inspect-brk node_modules/.bin/ts-node",
     "build": "tsc",
-    "test": "jest --colors --silent",
+    "test": "jest --colors --silent --runInBand",
     "local": "sudo npm i -g && ts2famix",
-    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
+    "doc": "typedoc"
   },
   "bin": {
     "ts2famix": "dist/ts2famix-cli.js"
@@ -32,6 +33,7 @@
     "jest": "^28.1.3",
     "ts-jest": "^28.0.5",
     "ts-morph": "^15.1.0",
+    "typedoc": "^0.24.8",
     "typescript": "^4.6.2"
   },
   "dependencies": {
