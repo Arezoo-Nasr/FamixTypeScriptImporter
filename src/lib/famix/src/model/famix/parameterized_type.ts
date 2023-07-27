@@ -1,10 +1,11 @@
 // automatically generated code, please do not change
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
-import { ParameterizableClass } from "./../famix/parameterizable_class";
+import { Type } from "./type";
+import { ParameterizableClass } from "./parameterizable_class";
+import { Class } from "./class";
 
-export class ParameterizedType extends Type {
+export class ParameterizedType extends Class {
 
   private parameterizedTypeParameterizableClass: ParameterizableClass;
 
@@ -20,19 +21,19 @@ export class ParameterizedType extends Type {
     newParameterizableClass.getParameterizedTypes().add(this);
   }
 
-  private parameterizedTypeArguments: Set<Type> = new Set();
+  private typeArguments: Set<Type> = new Set();
 
   // manyMany.Getter
   // @FameProperty(name = "arguments", opposite = "argumentsInParameterizedTypes")
   public getArguments(): Set<Type> {
-    return this.parameterizedTypeArguments;
+    return this.typeArguments;
   }
 
   // manyMany.Setter
-  public addArguments(newArguments: Type) {
-    if (!this.parameterizedTypeArguments.has(newArguments)) {
-      this.parameterizedTypeArguments.add(newArguments);
-      newArguments.getArgumentsInParameterizedTypes().add(this);
+  public addArgument(newArgument: Type) {
+    if (!this.typeArguments.has(newArgument)) {
+      this.typeArguments.add(newArgument);
+      newArgument.getArgumentsInParameterizedTypes().add(this);
     }
   }
 

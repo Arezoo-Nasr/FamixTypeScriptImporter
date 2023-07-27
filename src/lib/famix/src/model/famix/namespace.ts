@@ -1,24 +1,23 @@
 // NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { ScopingEntity } from "./../famix/scoping_entity";
-import { ContainerEntity } from "./../famix/container_entity";
+import { ScopingEntity } from "./scoping_entity";
+
 
 export class Namespace extends ScopingEntity {
 
-  private namespaceContainer: ContainerEntity;
+  private parentScope: ScopingEntity;
 
-  // oneMany.Getter
-  // @FameProperty(name = "container", opposite = "namespaces")
-  public getContainer(): ContainerEntity {
-    return this.namespaceContainer;
+  public getParentScope(): ScopingEntity {
+    return this.parentScope;
   }
 
-  // oneMany.Setter
-  public setContainer(newContainer: ContainerEntity) {
-    this.namespaceContainer = newContainer;
-    newContainer.getNamespaces().add(this);
+  public setParentScope(newParentScope: ScopingEntity) {
+    this.parentScope = newParentScope;
+    newParentScope.addChildrenNamespaces(this);
   }
+
+
 
   private namespaceNumberOfAttributes: number;
 
@@ -40,7 +39,7 @@ export class Namespace extends ScopingEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("container", this.getContainer());
+    exporter.addProperty("parentScope", this.getParentScope());
     exporter.addProperty("numberOfAttributes", this.getNumberOfAttributes());
 
   }

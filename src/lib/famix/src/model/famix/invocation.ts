@@ -1,29 +1,26 @@
 // NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { NamedEntity } from "./../famix/named_entity";
-import { Association } from "./../famix/association";
-// import { BehaviouralEntity } from "./../famix/behavioural_entity";
-import { Entity } from "./../famix/entity";
+import { NamedEntity } from "./named_entity";
+import { Association } from "./association";
+import { BehavioralEntity } from "./behavioral_entity";
+import { ContainerEntity } from "./container_entity";
 
 export class Invocation extends Association {
 
-  // private invocationCandidates: Set<BehaviouralEntity> = new Set();
-  private invocationCandidates: Set<Entity> = new Set();
+  private invocationCandidates: Set<BehavioralEntity> = new Set();
 
   // manyMany.Getter
   // @FameProperty(name = "candidates", opposite = "incomingInvocations")
-  // public getCandidates(): Set<BehaviouralEntity> {
-  public getCandidates(): Set<Entity> {
+  public getCandidates(): Set<BehavioralEntity> {
     return this.invocationCandidates;
   }
 
   // manyMany.Setter
-  // public addCandidates(newCandidates: BehaviouralEntity) {
-  public addCandidates(newCandidates: Entity) {  
-    if (!this.invocationCandidates.has(newCandidates)) {
-      this.invocationCandidates.add(newCandidates);
-      newCandidates.getIncomingInvocations().add(this);
+  public addCandidate(newCandidate: BehavioralEntity) {  
+    if (!this.invocationCandidates.has(newCandidate)) {
+      this.invocationCandidates.add(newCandidate);
+      newCandidate.getIncomingInvocations().add(this);
     }
   }
 
@@ -38,22 +35,20 @@ export class Invocation extends Association {
   // oneMany.Setter
   public setReceiver(newReceiver: NamedEntity) {
     this.invocationReceiver = newReceiver;
-    newReceiver.getReceivingInvocations().add(this);
+    newReceiver.addReceivedInvocation(this);
   }
 
   // private invocationSender: BehaviouralEntity;
-  private invocationSender: Entity;
+  private invocationSender: ContainerEntity;
 
   // oneMany.Getter
   // @FameProperty(name = "sender", opposite = "outgoingInvocations")
-  // public getSender(): BehaviouralEntity {
-  public getSender(): Entity {
+  public getSender(): ContainerEntity {
     return this.invocationSender;
   }
 
   // oneMany.Setter
-  // public setSender(newSender: BehaviouralEntity) {
-  public setSender(newSender: Entity) {
+  public setSender(newSender: ContainerEntity) {
     this.invocationSender = newSender;
     newSender.getOutgoingInvocations().add(this);
   }
@@ -69,16 +64,6 @@ export class Invocation extends Association {
     this.invocationSignature = invocationSignature;
   }
 
-  private invocationReceiverSourceCode: string;
-
-  // @FameProperty(name = "receiverSourceCode")
-  public getReceiverSourceCode(): string {
-    return this.invocationReceiverSourceCode;
-  }
-
-  public setReceiverSourceCode(invocationReceiverSourceCode: string) {
-    this.invocationReceiverSourceCode = invocationReceiverSourceCode;
-  }
 
 
   public getJSON(): string {
@@ -93,7 +78,7 @@ export class Invocation extends Association {
     exporter.addProperty("receiver", this.getReceiver());
     exporter.addProperty("sender", this.getSender());
     exporter.addProperty("signature", this.getSignature());
-    exporter.addProperty("receiverSourceCode", this.getReceiverSourceCode());
+
 
   }
 

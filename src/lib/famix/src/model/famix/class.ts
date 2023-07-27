@@ -2,11 +2,11 @@
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./../famix/type";
+import { Method } from "./../famix/method";
 
 export class Class extends Type {
 
   private classIsTestCase: boolean;
-  private classIsAbstract: boolean;
 
   // @FameProperty(name = "isTestCase")
   public getIsTestCase(): boolean {
@@ -28,6 +28,8 @@ export class Class extends Type {
     this.classIsInterface = classIsInterface;
   }
 
+  private classIsAbstract: boolean;
+
   // @FameProperty(name = "isAbstract")
   public getIsAbstract(): boolean {
     return this.classIsAbstract;
@@ -35,6 +37,19 @@ export class Class extends Type {
 
   public setIsAbstract(classIsAbstract: boolean) {
     this.classIsAbstract = classIsAbstract;
+  }
+
+  private methods: Set<Method> = new Set();
+
+  public getMethods(): Set<Method> {
+    return this.methods;
+  }
+
+  public addMethods(method: Method) {
+    if (!this.methods.has(method)) {
+      this.methods.add(method);
+      method.setParentType(this);
+    }
   }
 
   public getJSON(): string {
@@ -48,6 +63,7 @@ export class Class extends Type {
     exporter.addProperty("isTestCase", this.getIsTestCase());
     exporter.addProperty("isInterface", this.getIsInterface());
     exporter.addProperty("isAbstract", this.getIsAbstract());
+    exporter.addProperty("methods", this.getMethods());
     
   }
 

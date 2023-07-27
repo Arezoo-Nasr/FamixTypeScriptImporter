@@ -4,35 +4,35 @@ import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./../famix/structural_entity";
 import { Association } from "./../famix/association";
 // import { BehaviouralEntity } from "./../famix/behavioural_entity";
-import { Entity } from "./../famix/entity";
+import { ContainerEntity } from "./../famix/container_entity";
 
 export class Access extends Association {
 
-  private accessAccessor: Entity;
+  private accessor: ContainerEntity;
 
   // oneMany.Getter
   // @FameProperty(name = "accessor", opposite = "accesses")
-  public getAccessor(): Entity {
-    return this.accessAccessor;
+  public getAccessor(): ContainerEntity {
+    return this.accessor;
   }
 
   // oneMany.Setter
-  public setAccessor(newAccessor: Entity) {
-    this.accessAccessor = newAccessor;
+  public setAccessor(newAccessor: ContainerEntity) {
+    this.accessor = newAccessor;
     newAccessor.getAccesses().add(this);
   }
 
-  private accessVariable: StructuralEntity;
+  private variable: StructuralEntity;
 
   // oneMany.Getter
   // @FameProperty(name = "variable", opposite = "incomingAccesses")
   public getVariable(): StructuralEntity {
-    return this.accessVariable;
+    return this.variable;
   }
 
   // oneMany.Setter
   public setVariable(newVariable: StructuralEntity) {
-    this.accessVariable = newVariable;
+    this.variable = newVariable;
     newVariable.getIncomingAccesses().add(this);
   }
 

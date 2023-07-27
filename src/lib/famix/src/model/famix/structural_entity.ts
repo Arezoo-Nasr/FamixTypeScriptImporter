@@ -1,12 +1,13 @@
 // automatically generated code, please do not change
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { DereferencedInvocation } from "./../famix/dereferenced_invocation";
 import { Type } from "./../famix/type";
 import { Access } from "./../famix/access";
-import { LeafEntity } from "./../famix/leaf_entity";
+import { NamedEntity } from "./../famix/named_entity";
+import { ContainerEntity } from "./container_entity";
+import { Class } from "./class";
 
-export class StructuralEntity extends LeafEntity {
+export abstract class StructuralEntity extends NamedEntity {
 
   private structuralEntityIncomingAccesses: Set<Access> = new Set();
 
@@ -38,22 +39,9 @@ export class StructuralEntity extends LeafEntity {
     newDeclaredType.getStructuresWithDeclaredType().add(this);
   }
 
-  private structuralEntityDereferencedInvocations: Set<DereferencedInvocation> = new Set();
+  public abstract getParentEntity(): Class | ContainerEntity;
 
-  // manyOne.Getter
-  // @FameProperty(name = "dereferencedInvocations", opposite = "referencer", derived = true)
-  public getDereferencedInvocations(): Set<DereferencedInvocation> {
-    return this.structuralEntityDereferencedInvocations;
-  }
-
-  // manyOne.Setter
-  public addDereferencedInvocations(structuralEntityDereferencedInvocations: DereferencedInvocation) {
-    if (!this.structuralEntityDereferencedInvocations.has(structuralEntityDereferencedInvocations)) {
-      this.structuralEntityDereferencedInvocations.add(structuralEntityDereferencedInvocations);
-      structuralEntityDereferencedInvocations.setReferencer(this);
-    }
-  }
-
+  public abstract setParentEntity(newParentEntity: Class | ContainerEntity): void;
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("FAMIX.StructuralEntity", this);
@@ -65,7 +53,6 @@ export class StructuralEntity extends LeafEntity {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("incomingAccesses", this.getIncomingAccesses());
     exporter.addProperty("declaredType", this.getDeclaredType());
-    exporter.addProperty("dereferencedInvocations", this.getDereferencedInvocations());
 
   }
 

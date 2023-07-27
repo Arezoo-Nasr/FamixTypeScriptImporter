@@ -1,159 +1,186 @@
 // NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Function } from "./../famix/function";
-import { NamedEntity } from "./../famix/named_entity";
-import { Type } from "./../famix/type";
-import { AnnotationType } from "./../famix/annotation_type";
-import { LocalVariable } from "./../famix/local_variable";
-import { GlobalVariable } from "./../famix/global_variable";
-import { Namespace } from "./../famix/namespace";
-import { Class } from "./../famix/class";
+import { Type } from "./type";
+
+import { Invocation } from "./invocation";
+import { NamedEntity } from "./named_entity";
+import { Reference } from "./reference";
+import { Access } from "./access";
+import { Function } from "./function";
+import { Variable } from "./variable";
+
 
 export class ContainerEntity extends NamedEntity {
 
-  // private fullyQualifiedName: string;
+  private parentContainerEntity: ContainerEntity;
 
-  // // manyOne.Getter
-  // // @FameProperty(name = "fullyQualifiedName")
-  // public getFullyQualifiedName(): string {
-  //   return this.fullyQualifiedName;
-  // }
+  public getParentContainerEntity(): ContainerEntity {
+    return this.parentContainerEntity;
+  }
 
-  // // manyOne.Setter
-  // public setFullyQualifiedName(fullyQualifiedName: string) {
-  //   this.fullyQualifiedName = fullyQualifiedName;
-  // }
+  public setParentContainerEntity(parentContainerEntity: ContainerEntity) {
+    this.parentContainerEntity = parentContainerEntity;
+  }
 
-  private containerEntityTypes: Set<Type> = new Set();
+  public getFullyQualifiedName(): string {
+    return this.parentContainerEntity.getFullyQualifiedName() + "." + this.getName();
+  }
+
+  private behaviouralEntityCyclomaticComplexity: number;
+
+  // @FameProperty(name = "cyclomaticComplexity")
+  public getCyclomaticComplexity(): number {
+    return this.behaviouralEntityCyclomaticComplexity;
+  }
+
+  public setCyclomaticComplexity(behaviouralEntityCyclomaticComplexity: number) {
+    this.behaviouralEntityCyclomaticComplexity = behaviouralEntityCyclomaticComplexity;
+  }
+
+
+
+  private behaviouralEntityNumberOfStatements: number;
+
+  // @FameProperty(name = "numberOfStatements")
+  public getNumberOfStatements(): number {
+    return this.behaviouralEntityNumberOfStatements;
+  }
+
+  public setNumberOfStatements(behaviouralEntityNumberOfStatements: number) {
+    this.behaviouralEntityNumberOfStatements = behaviouralEntityNumberOfStatements;
+  }
+
+  private behaviouralEntityOutgoingReferences: Set<Reference> = new Set();
 
   // manyOne.Getter
-  // @FameProperty(name = "types", opposite = "container", derived = true)
+  // @FameProperty(name = "outgoingReferences", opposite = "source", derived = true)
+  public getOutgoingReferences(): Set<Reference> {
+    return this.behaviouralEntityOutgoingReferences;
+  }
+
+  // manyOne.Setter
+  public addOutgoingReferences(behaviouralEntityOutgoingReferences: Reference) {
+    if (!this.behaviouralEntityOutgoingReferences.has(behaviouralEntityOutgoingReferences)) {
+      this.behaviouralEntityOutgoingReferences.add(behaviouralEntityOutgoingReferences);
+      behaviouralEntityOutgoingReferences.setSource(this);
+    }
+  }
+
+  private behaviouralEntityNumberOfLinesOfCode: number;
+
+  // @FameProperty(name = "numberOfLinesOfCode")
+  public getNumberOfLinesOfCode(): number {
+    return this.behaviouralEntityNumberOfLinesOfCode;
+  }
+
+  public setNumberOfLinesOfCode(behaviouralEntityNumberOfLinesOfCode: number) {
+    this.behaviouralEntityNumberOfLinesOfCode = behaviouralEntityNumberOfLinesOfCode;
+  }
+
+  private behaviouralEntityOutgoingInvocations: Set<Invocation> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "outgoingInvocations", opposite = "sender", derived = true)
+  public getOutgoingInvocations(): Set<Invocation> {
+    return this.behaviouralEntityOutgoingInvocations;
+  }
+
+  // manyOne.Setter
+  public addOutgoingInvocations(behaviouralEntityOutgoingInvocations: Invocation) {
+    if (!this.behaviouralEntityOutgoingInvocations.has(behaviouralEntityOutgoingInvocations)) {
+      this.behaviouralEntityOutgoingInvocations.add(behaviouralEntityOutgoingInvocations);
+      behaviouralEntityOutgoingInvocations.setSender(this);
+    }
+  }
+
+
+
+  private behaviouralEntityAccesses: Set<Access> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "accesses", opposite = "accessor", derived = true)
+  public getAccesses(): Set<Access> {
+    return this.behaviouralEntityAccesses;
+  }
+
+  // manyOne.Setter
+  public addAccesses(behaviouralEntityAccesses: Access) {
+    if (!this.behaviouralEntityAccesses.has(behaviouralEntityAccesses)) {
+      this.behaviouralEntityAccesses.add(behaviouralEntityAccesses);
+      behaviouralEntityAccesses.setAccessor(this);
+    }
+  }
+
+
+
+  private childrenTypes: Set<Type> = new Set();
+
+  // manyOne.Getter
+  // @FameProperty(name = "types", opposite = "behavioural", derived = true)
   public getTypes(): Set<Type> {
-    return this.containerEntityTypes;
+    return this.childrenTypes;
   }
 
   // manyOne.Setter
-  public addTypes(containerEntityTypes: Type) {
-    if (!this.containerEntityTypes.has(containerEntityTypes)) {
-      this.containerEntityTypes.add(containerEntityTypes);
-      containerEntityTypes.setContainer(this);
+  public addType(aType: Type) {
+    if (!this.childrenTypes.has(aType)) {
+      this.childrenTypes.add(aType);
+      aType.setParentContainerEntity(this);
     }
   }
 
-  private containerEntityFunctions: Set<Function> = new Set();
+  private childrenFunctions: Set<Function> = new Set();
 
   // manyOne.Getter
-  // @FameProperty(name = "functions", opposite = "container", derived = true)
+  // @FameProperty(name = "functions", opposite = "behavioural", derived = true)
   public getFunctions(): Set<Function> {
-    return this.containerEntityFunctions;
+    return this.childrenFunctions;
   }
 
   // manyOne.Setter
-  public addFunctions(containerEntityFunctions: Function) {
-    if (!this.containerEntityFunctions.has(containerEntityFunctions)) {
-      this.containerEntityFunctions.add(containerEntityFunctions);
-      containerEntityFunctions.setContainer(this);
+  public addFunction(aFunction: Function) {
+    if (!this.childrenFunctions.has(aFunction)) {
+      this.childrenFunctions.add(aFunction);
+      aFunction.setParentContainerEntity(this);
     }
   }
 
-  private containerEntityClasses: Set<Class> = new Set();
+  private variables: Set<Variable> = new Set();
 
   // manyOne.Getter
-  // @FameProperty(name = "classes", opposite = "container", derived = true)
-  public getClasses(): Set<Class> {
-    return this.containerEntityClasses;
+  // @FameProperty(name = "local StructuralEntitys", opposite = "behavioural", derived = true)
+  public getVariables(): Set<Variable> {
+    return this.variables;
   }
 
   // manyOne.Setter
-  public addClasses(containerEntityClasses: Class) {
-    if (!this.containerEntityClasses.has(containerEntityClasses)) {
-      this.containerEntityClasses.add(containerEntityClasses);
-      containerEntityClasses.setContainer(this);
-    }
-  }
-
-  private containerEntityNamespaces: Set<Namespace> = new Set();
-
-  // manyOne.Getter
-  // @FameProperty(name = "namespaces", opposite = "container", derived = true)
-  public getNamespaces(): Set<Namespace> {
-    return this.containerEntityNamespaces;
-  }
-
-  // manyOne.Setter
-  public addNamespaces(containerEntityNamespaces: Namespace) {
-    if (!this.containerEntityNamespaces.has(containerEntityNamespaces)) {
-      this.containerEntityNamespaces.add(containerEntityNamespaces);
-      containerEntityNamespaces.setContainer(this);
-    }
-  }
-
-  private containerEntityLocalVariables: Set<LocalVariable> = new Set();
-
-  // manyOne.Getter
-  // @FameProperty(name = "local variables", opposite = "container", derived = true)
-  public getLocalVariables(): Set<LocalVariable> {
-    return this.containerEntityLocalVariables;
-  }
-
-  // manyOne.Setter
-  public addLocalVariables(containerEntityLocalVariables: LocalVariable) {
-    if (!this.containerEntityLocalVariables.has(containerEntityLocalVariables)) {
-      this.containerEntityLocalVariables.add(containerEntityLocalVariables);
-      containerEntityLocalVariables.setContainer(this);
-    }
-  }
-
-  private containerEntityGlobalVariables: Set<GlobalVariable> = new Set();
-
-  // manyOne.Getter
-  // @FameProperty(name = "global variables", opposite = "container", derived = true)
-  public getGlobalVariables(): Set<GlobalVariable> {
-    return this.containerEntityGlobalVariables;
-  }
-
-  // manyOne.Setter
-  public addGlobalVariables(containerEntityGlobalVariables: GlobalVariable) {
-    if (!this.containerEntityGlobalVariables.has(containerEntityGlobalVariables)) {
-      this.containerEntityGlobalVariables.add(containerEntityGlobalVariables);
-      containerEntityGlobalVariables.setContainer(this);
-    }
-  }
-
-  private containerEntityDefinedAnnotationTypes: Set<AnnotationType> = new Set();
-
-  // manyOne.Getter
-  // @FameProperty(name = "definedAnnotationTypes", opposite = "container", derived = true)
-  public getDefinedAnnotationTypes(): Set<AnnotationType> {
-    return this.containerEntityDefinedAnnotationTypes;
-  }
-
-  // manyOne.Setter
-  public addDefinedAnnotationTypes(containerEntityDefinedAnnotationTypes: AnnotationType) {
-    if (!this.containerEntityDefinedAnnotationTypes.has(containerEntityDefinedAnnotationTypes)) {
-      this.containerEntityDefinedAnnotationTypes.add(containerEntityDefinedAnnotationTypes);
-      containerEntityDefinedAnnotationTypes.setContainer(this);
+  public addVariable(variable: Variable) {
+    if (!this.variables.has(variable)) {
+      this.variables.add(variable);
+      variable.setParentEntity(this);
     }
   }
 
 
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("ContainerEntity", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("BehaviouralEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
-    // exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
+    exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
+    exporter.addProperty("cyclomaticComplexity", this.getCyclomaticComplexity());
+    exporter.addProperty("numberOfStatements", this.getNumberOfStatements());
+    exporter.addProperty("outgoingReferences", this.getOutgoingReferences());
+    exporter.addProperty("numberOfLinesOfCode", this.getNumberOfLinesOfCode());
+    exporter.addProperty("outgoingInvocations", this.getOutgoingInvocations());
+    exporter.addProperty("accesses", this.getAccesses());
     exporter.addProperty("types", this.getTypes());
     exporter.addProperty("functions", this.getFunctions());
-    exporter.addProperty("classes", this.getClasses());
-    exporter.addProperty("namespaces", this.getNamespaces());
-    exporter.addProperty("localVariables", this.getLocalVariables());
-    exporter.addProperty("globalVariables", this.getGlobalVariables());
-    exporter.addProperty("definedAnnotationTypes", this.getDefinedAnnotationTypes());
+    exporter.addProperty("StructuralEntitys", this.getVariables());
 
   }
 

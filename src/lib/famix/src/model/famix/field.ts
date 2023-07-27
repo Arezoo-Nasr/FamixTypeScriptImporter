@@ -1,20 +1,29 @@
 // automatically generated code, please do not change
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { StructuralEntity } from "./../famix/structural_entity";
-import { Type } from "./../famix/type";
+import { Class } from "./class";
+import { StructuralEntity } from "./structural_entity";
+import { Type } from "./type";
 
-export class Attribute extends StructuralEntity {
+export class Field extends StructuralEntity {
 
-  private attributeHasClassScope: boolean;
+  public getParentEntity() {
+    return this.getParentType();
+  }
+
+  public setParentEntity(newParentEntity: Class) {
+    this.setParentType(newParentEntity);
+  }
+
+  private hasClassScope: boolean;
 
   // @FameProperty(name = "hasClassScope")
   public getHasClassScope(): boolean {
-    return this.attributeHasClassScope;
+    return this.hasClassScope;
   }
 
   public setHasClassScope(attributeHasClassScope: boolean) {
-    this.attributeHasClassScope = attributeHasClassScope;
+    this.hasClassScope = attributeHasClassScope;
   }
 
   private attributeParentType: Type;

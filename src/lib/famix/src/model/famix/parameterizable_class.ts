@@ -7,19 +7,19 @@ import { ParameterType } from "./../famix/parameter_type";
 
 export class ParameterizableClass extends Class {
 
-  private parameterizableClassParameterizedTypes: Set<ParameterizedType> = new Set();
+  private parameterizedTypes: Set<ParameterizedType> = new Set();
 
   // manyOne.Getter
   // @FameProperty(name = "parameterizedTypes", opposite = "parameterizableClass", derived = true)
   public getParameterizedTypes(): Set<ParameterizedType> {
-    return this.parameterizableClassParameterizedTypes;
+    return this.parameterizedTypes;
   }
 
   // manyOne.Setter
-  public addParameterizedTypes(parameterizableClassParameterizedTypes: ParameterizedType) {
-    if (!this.parameterizableClassParameterizedTypes.has(parameterizableClassParameterizedTypes)) {
-      this.parameterizableClassParameterizedTypes.add(parameterizableClassParameterizedTypes);
-      parameterizableClassParameterizedTypes.setParameterizableClass(this);
+  public addParameterizedType(parameterizedType: ParameterizedType) {
+    if (!this.parameterizedTypes.has(parameterizedType)) {
+      this.parameterizedTypes.add(parameterizedType);
+      parameterizedType.setParameterizableClass(this);
     }
   }
 

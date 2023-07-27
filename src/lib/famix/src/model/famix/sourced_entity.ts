@@ -8,6 +8,17 @@ import { SourceAnchor } from "./../famix/source_anchor";
 
 export class SourcedEntity extends Entity {
 
+  private namedEntityIsStub: boolean;
+
+  // @FameProperty(name = "isStub")
+  public getIsStub(): boolean {
+    return this.namedEntityIsStub;
+  }
+
+  public setIsStub(namedEntityIsStub: boolean) {
+    this.namedEntityIsStub = namedEntityIsStub;
+  }
+
   private sourcedEntitySourceAnchor: SourceAnchor;
 
   // @FameProperty(name = "sourceAnchor", opposite = "element")

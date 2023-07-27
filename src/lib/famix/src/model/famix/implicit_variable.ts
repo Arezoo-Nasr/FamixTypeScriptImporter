@@ -1,24 +1,9 @@
 // automatically generated code, please do not change
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { StructuralEntity } from "./../famix/structural_entity";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { Variable } from "./variable";
 
-export class ImplicitVariable extends StructuralEntity {
-
-  private implicitVariableParentBehaviouralEntity: BehaviouralEntity;
-
-  // oneMany.Getter
-  // @FameProperty(name = "parentBehaviouralEntity", opposite = "implicitVariables")
-  public getParentBehaviouralEntity(): BehaviouralEntity {
-    return this.implicitVariableParentBehaviouralEntity;
-  }
-
-  // oneMany.Setter
-  public setParentBehaviouralEntity(newParentBehaviouralEntity: BehaviouralEntity) {
-    this.implicitVariableParentBehaviouralEntity = newParentBehaviouralEntity;
-    newParentBehaviouralEntity.getImplicitVariables().add(this);
-  }
+export class ImplicitVariable extends Variable {
 
 
   public getJSON(): string {
@@ -29,7 +14,7 @@ export class ImplicitVariable extends StructuralEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("parentBehaviouralEntity", this.getParentBehaviouralEntity());
+
 
   }
 

@@ -1,22 +1,22 @@
 // automatically generated code, please do not change
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
+import { NamedEntity } from "./named_entity";
 
-export class TypeAlias extends Type {
+export class Alias extends NamedEntity {
 
-  private typeAliasAliasedType: Type;
+  private aliasedEntity: NamedEntity;
 
   // oneMany.Getter
   // @FameProperty(name = "aliasedType", opposite = "typeAliases")
-  public getAliasedType(): Type {
-    return this.typeAliasAliasedType;
+  public getAliasedEntity(): NamedEntity {
+    return this.aliasedEntity;
   }
 
   // oneMany.Setter
-  public setAliasedType(newAliasedType: Type) {
-    this.typeAliasAliasedType = newAliasedType;
-    newAliasedType.getTypeAliases().add(this);
+  public setAliasedEntity(newAliasedEntity: NamedEntity) {
+    this.aliasedEntity = newAliasedEntity;
+    newAliasedEntity.addAlias(this);
   }
 
 
@@ -28,7 +28,7 @@ export class TypeAlias extends Type {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("aliasedType", this.getAliasedType());
+    exporter.addProperty("aliasedType", this.getAliasedEntity());
 
   }
 

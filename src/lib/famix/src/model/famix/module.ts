@@ -1,41 +1,23 @@
 // NOT any more (automatically generated code, please do not change)
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { CompilationUnit } from "./../famix/compilation_unit";
-import { ScopingEntity } from "./../famix/scoping_entity";
-// import { LocalVariable } from "./local_variable";
+import { ScriptEntity } from "./../famix/script_entity";
+import { ImportClause } from "./import_clause";
 
-export class Module extends ScopingEntity {
+export class Module extends ScriptEntity {
 
-  private moduleCompilationUnit: CompilationUnit;
+  private importClauses: Set<ImportClause> = new Set();
 
-  // @FameProperty(name = "compilationUnit", opposite = "module")
-  public getCompilationUnit(): CompilationUnit {
-    return this.moduleCompilationUnit;
+  public getImportClauses(): Set<ImportClause> {
+    return this.importClauses;
   }
 
-  public setCompilationUnit(newCompilationUnit: CompilationUnit) {
-    if (this.moduleCompilationUnit === undefined) {
-      this.moduleCompilationUnit = newCompilationUnit;
-      newCompilationUnit.setModule(this);
+  public addImportClause(newImportClause: ImportClause) {
+    if (!this.importClauses.has(newImportClause)) {
+      this.importClauses.add(newImportClause);
+      newImportClause.setImporter(this);
     }
   }
-
-  // private scopingEntityLocalVariables: Set<LocalVariable> = new Set();
-
-  // // manyOne.Getter
-  // // @FameProperty(name = "localVariables", opposite = "parentBehaviouralEntity", derived = true)
-  // public getLocalVariables(): Set<LocalVariable> {
-  //   return this.scopingEntityLocalVariables;
-  // }
-
-  // // manyOne.Setter
-  // public addLocalVariables(scopingEntityLocalVariables: LocalVariable) {
-  //   if (!this.scopingEntityLocalVariables.has(scopingEntityLocalVariables)) {
-  //     this.scopingEntityLocalVariables.add(scopingEntityLocalVariables);
-  //     // TODO scopingEntityLocalVariables.setParentBehaviouralEntity(this); -> ???
-  //   }
-  // }
 
 
   public getJSON(): string {
@@ -46,8 +28,8 @@ export class Module extends ScopingEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("compilationUnit", this.getCompilationUnit());
-    // exporter.addProperty("localVariables", this.getLocalVariables());
+
+
 
   }
 

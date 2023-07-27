@@ -1,9 +1,9 @@
 // automatically generated code, please do not change
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { AbstractFileAnchor } from "./../famix/abstract_file_anchor";
+import { SourceAnchor } from "./source_anchor";
 
-export class IndexedFileAnchor extends AbstractFileAnchor {
+export class IndexedFileAnchor extends SourceAnchor {
 
   private indexedFileAnchorStartPos: number;
 
@@ -25,6 +25,16 @@ export class IndexedFileAnchor extends AbstractFileAnchor {
 
   public setEndPos(indexedFileAnchorEndPos: number) {
     this.indexedFileAnchorEndPos = indexedFileAnchorEndPos;
+  }
+
+  private filename: string;
+
+  public getFilename(): string {
+    return this.filename;
+  }
+
+  public setFilename(filename: string) {
+    this.filename = filename;
   }
 
 

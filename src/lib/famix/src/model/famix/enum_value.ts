@@ -4,6 +4,7 @@ import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./../famix/structural_entity";
 import { Enum } from "./../famix/enum";
 
+
 export class EnumValue extends StructuralEntity {
 
   private enumValueParentEnum: Enum;
@@ -18,6 +19,14 @@ export class EnumValue extends StructuralEntity {
   public setParentEnum(newParentEnum: Enum) {
     this.enumValueParentEnum = newParentEnum;
     newParentEnum.getValues().add(this);
+  }
+
+  public getParentEntity() {
+    return this.getParentEnum();
+  }
+
+  public setParentEntity(newParentEntity: Enum) {
+    this.setParentEnum(newParentEntity);
   }
 
 

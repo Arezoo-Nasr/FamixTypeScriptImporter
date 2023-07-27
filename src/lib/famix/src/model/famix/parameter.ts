@@ -2,22 +2,31 @@
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./../famix/structural_entity";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { BehavioralEntity } from "./behavioral_entity";
 
 export class Parameter extends StructuralEntity {
 
-  private parameterParentBehaviouralEntity: BehaviouralEntity;
+  public getParentEntity() {
+    return this.parentBehavioralEntity;
+  }
+
+  public setParentEntity(newParentEntity: BehavioralEntity) {
+    this.setParentBehavioralEntity(newParentEntity);
+  }
+
+
+  private parentBehavioralEntity: BehavioralEntity;
 
   // oneMany.Getter
   // @FameProperty(name = "parentBehaviouralEntity", opposite = "parameters")
-  public getParentBehaviouralEntity(): BehaviouralEntity {
-    return this.parameterParentBehaviouralEntity;
+  public getParentBehavioralEntity(): BehavioralEntity {
+    return this.parentBehavioralEntity;
   }
 
   // oneMany.Setter
-  public setParentBehaviouralEntity(newParentBehaviouralEntity: BehaviouralEntity) {
-    this.parameterParentBehaviouralEntity = newParentBehaviouralEntity;
-    newParentBehaviouralEntity.getParameters().add(this);
+  public setParentBehavioralEntity(newParentBehaviouralEntity: BehavioralEntity) {
+    this.parentBehavioralEntity = newParentBehaviouralEntity;
+    newParentBehaviouralEntity.addParameter(this);
   }
 
 
@@ -29,7 +38,7 @@ export class Parameter extends StructuralEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter) {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("parentBehaviouralEntity", this.getParentBehaviouralEntity());
+    exporter.addProperty("parentBehaviouralEntity", this.getParentBehavioralEntity());
 
   }
 

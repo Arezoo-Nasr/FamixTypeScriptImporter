@@ -3,20 +3,20 @@
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./../famix/type";
 import { Association } from "./../famix/association";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { ContainerEntity } from "./container_entity";
 
 export class Reference extends Association {
 
-  private referenceSource: BehaviouralEntity;
+  private referenceSource: ContainerEntity;
 
   // oneMany.Getter
   // @FameProperty(name = "source", opposite = "outgoingReferences")
-  public getSource(): BehaviouralEntity {
+  public getSource(): ContainerEntity {
     return this.referenceSource;
   }
 
   // oneMany.Setter
-  public setSource(newSource: BehaviouralEntity) {
+  public setSource(newSource: ContainerEntity) {
     this.referenceSource = newSource;
     newSource.getOutgoingReferences().add(this);
   }

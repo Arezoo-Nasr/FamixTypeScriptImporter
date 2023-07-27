@@ -1,21 +1,21 @@
 // automatically generated code, please do not change
 
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
 import { Association } from "./../famix/association";
+import { Class } from "./../famix/class";
 
 export class Inheritance extends Association {
 
-  private inheritanceSuperclass: Type;
+  private inheritanceSuperclass: Class;
 
   // oneMany.Getter
   // @FameProperty(name = "superclass", opposite = "subInheritances")
-  public getSuperclass(): Type {
+  public getSuperclass(): Class {
     return this.inheritanceSuperclass;
   }
 
   // oneMany.Setter
-  public setSuperclass(newSuperclass: Type) {
+  public setSuperclass(newSuperclass: Class) {
     this.inheritanceSuperclass = newSuperclass;
     try {
       newSuperclass.getSubInheritances().add(this);
@@ -27,16 +27,16 @@ export class Inheritance extends Association {
     }
   }
 
-  private inheritanceSubclass: Type;
+  private inheritanceSubclass: Class;
 
   // oneMany.Getter
   // @FameProperty(name = "subclass", opposite = "superInheritances")
-  public getSubclass(): Type {
+  public getSubclass(): Class {
     return this.inheritanceSubclass;
   }
 
   // oneMany.Setter
-  public setSubclass(newSubclass: Type) {
+  public setSubclass(newSubclass: Class) {
     this.inheritanceSubclass = newSubclass;
     newSubclass.getSuperInheritances().add(this);
   }

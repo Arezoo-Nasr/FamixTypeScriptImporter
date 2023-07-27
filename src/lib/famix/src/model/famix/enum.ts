@@ -15,10 +15,10 @@ export class Enum extends Type {
   }
 
   // manyOne.Setter
-  public addValues(enumValues: EnumValue) {
-    if (!this.enumValues.has(enumValues)) {
-      this.enumValues.add(enumValues);
-      enumValues.setParentEnum(this);
+  public addValue(enumValue: EnumValue) {
+    if (!this.enumValues.has(enumValue)) {
+      this.enumValues.add(enumValue);
+      enumValue.setParentEnum(this);
     }
   }
 
