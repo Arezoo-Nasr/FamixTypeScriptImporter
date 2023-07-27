@@ -130,3 +130,6 @@ dist
 *.iml
 .fake
 .ionide
+
+# Documentation
+docs/*
