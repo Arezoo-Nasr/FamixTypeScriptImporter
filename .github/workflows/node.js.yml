@@ -24,12 +24,46 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-#    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+  #    - run: npm run build --if-present
+      - run: npm test
+
+      - name: Build meta-model plantuml image from TypeScript sources
+        run: tplant -i src/lib/famix/**/*.ts -o famix-typescript-model.puml
+          
+      - name: Generate SVG Diagrams
+        uses: cloudbees/plantuml-github-action@master
+        with:
+          args: -v -tsvg famix-typescript-model.puml
+      - name: Move artifact
+        run: |
+          mkdir doc-uml
+          mv *.svg doc-uml
+
+      - name: Init new repo in doc-uml folder and commit generated files
+        run: |
+          cd doc-uml/
+          git init
+          git add -A
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m 'update doc'
+
+      # Careful, this can kill your project, because it force pushes to the destination branch
+      - name: Force push to destination branch
+        uses: ad-m/github-push-action@master
+        with:
+          # Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+          # Destination branch to push changes
+          branch: v1/doc
+          # We have to push from the folder where files were generated.
+          # Same were the new repo was initialized in the previous step
+          directory: ./doc-uml
