@@ -1,5 +1,5 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
-import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
+import { ParameterizableClass, ParameterType } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -31,7 +31,7 @@ describe('Generics', () => {
         expect(myDao).toBeTruthy();
         expect(myDao?.getParameterTypes().size).toBe(1);
         if (myDao) {
-            expect((Array.from(myDao.getParameterTypes())[0] as ParameterizedType).getName()).toBe("T");
+            expect((Array.from(myDao.getParameterTypes())[0] as ParameterType).getName()).toBe("T");
         }
     });
     
@@ -42,7 +42,7 @@ describe('Generics', () => {
         expect(myDaoInterface).toBeTruthy();
         expect(myDaoInterface?.getParameterTypes().size).toBe(1);
         if (myDaoInterface) {
-            expect((Array.from(myDaoInterface.getParameterTypes())[0] as ParameterizedType).getName()).toBe("T");
+            expect((Array.from(myDaoInterface.getParameterTypes())[0] as ParameterType).getName()).toBe("T");
         }
     });
     

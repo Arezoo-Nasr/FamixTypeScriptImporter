@@ -1,44 +1,29 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Association } from "./../famix/association";
-import { Class } from "./../famix/class";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Association } from "./association";
+import { Class } from "./class";
 
 export class Inheritance extends Association {
 
-  private inheritanceSuperclass: Class;
+  private superclass: Class;
 
-  // oneMany.Getter
-  // @FameProperty(name = "superclass", opposite = "subInheritances")
   public getSuperclass(): Class {
-    return this.inheritanceSuperclass;
+    return this.superclass;
   }
 
-  // oneMany.Setter
-  public setSuperclass(newSuperclass: Class) {
-    this.inheritanceSuperclass = newSuperclass;
-    try {
-      newSuperclass.getSubInheritances().add(this);
-    } catch (error) {
-      if (newSuperclass) 
-        console.info(` > ERROR - couldn't get subInheritances() for class ${newSuperclass.getName()}`);
-      else 
-        console.info(` > ERROR - couldn't get subInheritances() for class (UNDEFINED)`);
-    }
+  public setSuperclass(superclass: Class): void {
+    this.superclass = superclass;
+    superclass.addSubInheritance(this);
   }
 
-  private inheritanceSubclass: Class;
+  private subclass: Class;
 
-  // oneMany.Getter
-  // @FameProperty(name = "subclass", opposite = "superInheritances")
   public getSubclass(): Class {
-    return this.inheritanceSubclass;
+    return this.subclass;
   }
 
-  // oneMany.Setter
-  public setSubclass(newSubclass: Class) {
-    this.inheritanceSubclass = newSubclass;
-    newSubclass.getSuperInheritances().add(this);
+  public setSubclass(subclass: Class) {
+    this.subclass = subclass;
+    subclass.addSuperInheritance(this);
   }
 
 
@@ -48,12 +33,9 @@ export class Inheritance extends Association {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("superclass", this.getSuperclass());
     exporter.addProperty("subclass", this.getSubclass());
-
   }
-
 }
-

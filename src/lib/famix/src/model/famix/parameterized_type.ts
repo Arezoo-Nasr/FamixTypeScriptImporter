@@ -1,39 +1,30 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { Type } from "./type";
 import { ParameterizableClass } from "./parameterizable_class";
 import { Class } from "./class";
 
 export class ParameterizedType extends Class {
 
-  private parameterizedTypeParameterizableClass: ParameterizableClass;
+  private parentGeneric: ParameterizableClass;
 
-  // oneMany.Getter
-  // @FameProperty(name = "parameterizableClass", opposite = "parameterizedTypes")
-  public getParameterizableClass(): ParameterizableClass {
-    return this.parameterizedTypeParameterizableClass;
+  public getParentGeneric(): ParameterizableClass {
+    return this.parentGeneric;
   }
 
-  // oneMany.Setter
-  public setParameterizableClass(newParameterizableClass: ParameterizableClass) {
-    this.parameterizedTypeParameterizableClass = newParameterizableClass;
-    newParameterizableClass.getParameterizedTypes().add(this);
+  public setParentGeneric(parentGeneric: ParameterizableClass): void {
+    this.parentGeneric = parentGeneric;
+    parentGeneric.addParameterizedType(this);
   }
 
-  private typeArguments: Set<Type> = new Set();
+  private arguments: Set<Type> = new Set();
 
-  // manyMany.Getter
-  // @FameProperty(name = "arguments", opposite = "argumentsInParameterizedTypes")
   public getArguments(): Set<Type> {
-    return this.typeArguments;
+    return this.arguments;
   }
 
-  // manyMany.Setter
-  public addArgument(newArgument: Type) {
-    if (!this.typeArguments.has(newArgument)) {
-      this.typeArguments.add(newArgument);
-      newArgument.getArgumentsInParameterizedTypes().add(this);
+  public addArgument(argument: Type): void {
+    if (!this.arguments.has(argument)) {
+      this.arguments.add(argument);
     }
   }
 
@@ -44,12 +35,9 @@ export class ParameterizedType extends Class {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("parameterizableClass", this.getParameterizableClass());
+    exporter.addProperty("parentGeneric", this.getParentGeneric());
     exporter.addProperty("arguments", this.getArguments());
-
   }
-
 }
-

@@ -1,7 +1,5 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Type } from "./type";
 import { ParameterizableClass } from "./parameterizable_class";
 
 export class ParameterType extends Type {
@@ -12,10 +10,11 @@ export class ParameterType extends Type {
     return this.parentGeneric;
   }
 
-  public setParentGeneric(newParentGeneric: ParameterizableClass) {
-    this.parentGeneric = newParentGeneric;
-    newParentGeneric.addParameterType(this);
+  public setParentGeneric(parentGeneric: ParameterizableClass): void {
+    this.parentGeneric = parentGeneric;
+    parentGeneric.addParameterType(this);
   }
+
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("ParameterType", this);
@@ -23,10 +22,8 @@ export class ParameterType extends Type {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
+    exporter.addProperty("parentGeneric", this.getParentGeneric());
   }
-
 }
-

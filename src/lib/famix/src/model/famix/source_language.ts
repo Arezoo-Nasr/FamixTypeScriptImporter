@@ -1,39 +1,31 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Entity } from "./../famix/entity";
-import { SourcedEntity } from "./../famix/sourced_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Entity } from "./entity";
+import { SourcedEntity } from "./sourced_entity";
 
 export class SourceLanguage extends Entity {
 
-  private sourceLanguageSourcedEntities: Set<SourcedEntity> = new Set();
+  private sourcedEntities: Set<SourcedEntity> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "sourcedEntities", opposite = "declaredSourceLanguage", derived = true)
   public getSourcedEntities(): Set<SourcedEntity> {
-    return this.sourceLanguageSourcedEntities;
+    return this.sourcedEntities;
   }
 
-  // manyOne.Setter
-  public addSourcedEntities(sourceLanguageSourcedEntities: SourcedEntity) {
-    if (!this.sourceLanguageSourcedEntities.has(sourceLanguageSourcedEntities)) {
-      this.sourceLanguageSourcedEntities.add(sourceLanguageSourcedEntities);
-      sourceLanguageSourcedEntities.setDeclaredSourceLanguage(this);
+  public addSourcedEntity(sourcedEntity: SourcedEntity): void {
+    if (!this.sourcedEntities.has(sourcedEntity)) {
+      this.sourcedEntities.add(sourcedEntity);
+      sourcedEntity.setDeclaredSourceLanguage(this);
     }
   }
 
 
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("FAMIX.SourceLanguage", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("SourceLanguage", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("sourcedEntities", this.getSourcedEntities());
-
   }
-
 }
-

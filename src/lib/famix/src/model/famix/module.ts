@@ -1,7 +1,5 @@
-// NOT any more (automatically generated code, please do not change)
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { ScriptEntity } from "./../famix/script_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { ScriptEntity } from "./script_entity";
 import { ImportClause } from "./import_clause";
 
 export class Module extends ScriptEntity {
@@ -12,10 +10,10 @@ export class Module extends ScriptEntity {
     return this.importClauses;
   }
 
-  public addImportClause(newImportClause: ImportClause) {
-    if (!this.importClauses.has(newImportClause)) {
-      this.importClauses.add(newImportClause);
-      newImportClause.setImporter(this);
+  public addImportClause(importClause: ImportClause): void {
+    if (!this.importClauses.has(importClause)) {
+      this.importClauses.add(importClause);
+      importClause.setImporter(this);
     }
   }
 
@@ -26,12 +24,8 @@ export class Module extends ScriptEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
-
-
+    exporter.addProperty("importClauses", this.getImportClauses());
   }
-
 }
-

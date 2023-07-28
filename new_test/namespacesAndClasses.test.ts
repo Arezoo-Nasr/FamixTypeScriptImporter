@@ -1,4 +1,6 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
+import { Type } from '../src/lib/famix/src/model/famix/type';
+import { Class } from '../src/lib/famix/src/model/famix/class';
 
 const importer = new Importer();
 
@@ -26,17 +28,17 @@ describe('Tests for namespaces and classes', () => {
         expect(theNamespace1).toBeTruthy();
     });
 
-    it("should contain 2 classes", () => {
-        expect(theNamespace1?.getClasses().size).toBe(2);
+    it("should contain two classes", () => {
+        expect(Array.from(theNamespace1?.getTypes() as Set<Type>).filter(t => (t instanceof Class)).length).toBe(2);
     });
 
     const theNamespace2 = fmxRep._getFamixNamespace("Nsp3");
     it("should contain a namespace Nsp3", () => {
-        expect( theNamespace2 ).toBeTruthy();
+        expect(theNamespace2).toBeTruthy();
     });
     
-    it("should contain 2 classes", () => {
-        expect(theNamespace2?.getClasses().size).toBe(1);
+    it("should contain one class", () => {
+        expect(Array.from(theNamespace2?.getTypes() as Set<Type>).filter(t => (t instanceof Class)).length).toBe(1);
     });
 
     it("should contain four classes", () => {
@@ -44,18 +46,18 @@ describe('Tests for namespaces and classes', () => {
     });
 
     it("should contain a class EntityClass", () => {
-        expect( fmxRep._getFamixClass("EntityClass") ).toBeTruthy();
+        expect(fmxRep._getFamixClass("EntityClass")).toBeTruthy();
     });
 
     it("should contain a class class2", () => {
-        expect( fmxRep._getFamixClass("class2") ).toBeTruthy();
+        expect(fmxRep._getFamixClass("class2")).toBeTruthy();
     });
 
     it("should contain a class clsInNsp3", () => {
-        expect( fmxRep._getFamixClass("clsInNsp3") ).toBeTruthy();
+        expect(fmxRep._getFamixClass("clsInNsp3")).toBeTruthy();
     });
 
     it("should contain a class clsOutNsp", () => {
-        expect( fmxRep._getFamixClass("clsOutNsp") ).toBeTruthy();
+        expect(fmxRep._getFamixClass("clsOutNsp")).toBeTruthy();
     });
 });

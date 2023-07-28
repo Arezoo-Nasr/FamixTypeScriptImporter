@@ -1,6 +1,4 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { Type } from "./type";
 import { ContainerEntity } from "./container_entity";
 import { Parameter } from "./parameter";
@@ -8,15 +6,14 @@ import { Invocation } from "./invocation";
 
 export class BehavioralEntity extends ContainerEntity {
 
-  private behaviouralEntitySignature: string;
+  private signature: string;
 
-  // @FameProperty(name = "signature")
   public getSignature(): string {
-    return this.behaviouralEntitySignature;
+    return this.signature;
   }
 
-  public setSignature(behaviouralEntitySignature: string) {
-    this.behaviouralEntitySignature = behaviouralEntitySignature;
+  public setSignature(signature: string): void {
+    this.signature = signature;
   }
 
   private parameters: Set<Parameter> = new Set();
@@ -25,61 +22,60 @@ export class BehavioralEntity extends ContainerEntity {
     return this.parameters;
   }
 
-  public addParameter(parameter: Parameter) {
+  public addParameter(parameter: Parameter): void {
     if (!this.parameters.has(parameter)) {
       this.parameters.add(parameter);
-      parameter.setParentBehavioralEntity(this);
+      parameter.setParentEntity(this);
     }
   }
 
-  private behaviouralEntityIncomingInvocations: Set<Invocation> = new Set();
+  private numberOfParameters: number;
 
-  // manyMany.Getter
-  // @FameProperty(name = "incomingInvocations", opposite = "candidates", derived = true)
+  public getNumberOfParameters(): number {
+    return this.numberOfParameters;
+  }
+
+  public setNumberOfParameters(numberOfParameters: number): void {
+    this.numberOfParameters = numberOfParameters;
+  }
+
+  private incomingInvocations: Set<Invocation> = new Set();
+
   public getIncomingInvocations(): Set<Invocation> {
-    return this.behaviouralEntityIncomingInvocations;
+    return this.incomingInvocations;
   }
 
-  // manyMany.Setter
-  public addIncomingInvocations(newIncomingInvocations: Invocation) {
-    if (!this.behaviouralEntityIncomingInvocations.has(newIncomingInvocations)) {
-      this.behaviouralEntityIncomingInvocations.add(newIncomingInvocations);
-      newIncomingInvocations.getCandidates().add(this);
+  public addIncomingInvocation(incomingInvocation: Invocation): void {
+    if (!this.incomingInvocations.has(incomingInvocation)) {
+      this.incomingInvocations.add(incomingInvocation);
+      incomingInvocation.addCandidate(this);
     }
   }
 
-  private behaviouralEntityDeclaredType: Type;
+  private declaredType: Type;
 
-  // oneMany.Getter
-  // @FameProperty(name = "declaredType", opposite = "behavioursWithDeclaredType")
   public getDeclaredType(): Type {
-    return this.behaviouralEntityDeclaredType;
+    return this.declaredType;
   }
 
-  // oneMany.Setter
-  public setDeclaredType(newDeclaredType: Type) {
-    this.behaviouralEntityDeclaredType = newDeclaredType;
-    newDeclaredType.getBehaviorsWithDeclaredType().add(this);
+  public setDeclaredType(declaredType: Type): void {
+    this.declaredType = declaredType;
+    declaredType.addBehavioralEntityWithDeclaredType(this);
   }
-
-
-
 
 
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("Method", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("BehavioralEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("signature", this.getSignature());
     exporter.addProperty("parameters", this.getParameters());
+    exporter.addProperty("numberOfParameters", this.getNumberOfParameters());
     exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
     exporter.addProperty("declaredType", this.getDeclaredType());
-
   }
-
 }
-

@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, Entity, Namespace, Function, Method, Type } from "./model/famix";
+import { Class, Namespace, Function, Method, Type, NamedEntity } from "./model/famix";
 
 /**
  * This class is used to store all Famix elements
@@ -29,8 +29,8 @@ export class FamixRepository {
    * @returns The Famix entity corresponding to the fully qualified name or undefined if it doesn't exist
    */
   public getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
-    const allEntity = Array.from(this.elements.values()) as Array<Entity>;
-    const entityElement = allEntity.find(c => c.getFullyQualifiedName() === FullyQualifiedName);
+    const allEntity = Array.from(this.elements.values()).filter(e => e instanceof NamedEntity) as Array<NamedEntity>;
+    const entityElement = allEntity.find(e => e.getFullyQualifiedName() === FullyQualifiedName);
     return entityElement;
   }
 
@@ -115,7 +115,7 @@ export class FamixRepository {
    */
   public _methodParentsAsSetFromClass(className: string): Set<Type> {
     const theClass = this._getFamixClass(className) as Class;
-    return new Set(Array.from(theClass.getMethods()).map(m => m.getParentType()));
+    return new Set(Array.from(theClass.getMethods()).map(m => m.getParentEntity()));
   }
 
   /**

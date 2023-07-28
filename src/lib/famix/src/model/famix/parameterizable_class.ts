@@ -1,36 +1,34 @@
-// NOT any more (automatically generated code, please do not change)
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { ParameterizedType } from "./../famix/parameterized_type";
-import { Class } from "./../famix/class";
-import { ParameterType } from "./../famix/parameter_type";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { ParameterizedType } from "./parameterized_type";
+import { Class } from "./class";
+import { ParameterType } from "./parameter_type";
 
 export class ParameterizableClass extends Class {
 
   private parameterizedTypes: Set<ParameterizedType> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "parameterizedTypes", opposite = "parameterizableClass", derived = true)
   public getParameterizedTypes(): Set<ParameterizedType> {
     return this.parameterizedTypes;
   }
 
-  // manyOne.Setter
-  public addParameterizedType(parameterizedType: ParameterizedType) {
+  public addParameterizedType(parameterizedType: ParameterizedType): void {
     if (!this.parameterizedTypes.has(parameterizedType)) {
       this.parameterizedTypes.add(parameterizedType);
-      parameterizedType.setParameterizableClass(this);
+      parameterizedType.setParentGeneric(this);
     }
   }
 
-  private parameters: Set<ParameterType> = new Set();
+  private parameterTypes: Set<ParameterType> = new Set();
 
   public getParameterTypes() {
-    return this.parameters;
+    return this.parameterTypes;
   }
 
-  public addParameterType(p: ParameterType) {
-    this.parameters.add(p);
+  public addParameterType(parameterType: ParameterType): void {
+    if (!this.parameterTypes.has(parameterType)) {
+      this.parameterTypes.add(parameterType);
+      parameterType.setParentGeneric(this);
+    }
   }
 
 
@@ -40,12 +38,9 @@ export class ParameterizableClass extends Class {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("parameterizedTypes", this.getParameterizedTypes());
-    exporter.addProperty("parameters", this.getParameterTypes());
-
+    exporter.addProperty("parameterTypes", this.getParameterTypes());
   }
-
 }
-

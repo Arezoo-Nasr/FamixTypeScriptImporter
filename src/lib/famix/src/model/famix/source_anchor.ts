@@ -1,22 +1,19 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Entity } from "./../famix/entity";
-import { SourcedEntity } from "./../famix/sourced_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Entity } from "./entity";
+import { SourcedEntity } from "./sourced_entity";
 
 export class SourceAnchor extends Entity {
 
-  private sourceAnchorElement: SourcedEntity;
+  private element: SourcedEntity;
 
-  // @FameProperty(name = "element", opposite = "sourceAnchor")
   public getElement(): SourcedEntity {
-    return this.sourceAnchorElement;
+    return this.element;
   }
 
-  public setElement(newElement: SourcedEntity) {
-    if (this.sourceAnchorElement === undefined) {
-      this.sourceAnchorElement = newElement;
-      newElement.setSourceAnchor(this);
+  public setElement(element: SourcedEntity): void {
+    if (this.element === undefined) {
+      this.element = element;
+      element.setSourceAnchor(this);
     }
   }
 
@@ -27,11 +24,8 @@ export class SourceAnchor extends Entity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("element", this.getElement());
-
   }
-
 }
-

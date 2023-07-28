@@ -1,78 +1,60 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { StructuralEntity } from "./../famix/structural_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { StructuralEntity } from "./structural_entity";
 import { ContainerEntity } from "./container_entity";
-import { Reference } from "./../famix/reference";
+import { Reference } from "./reference";
 import { BehavioralEntity } from "./behavioral_entity";
 
 export class Type extends ContainerEntity {
 
-  private typeContainer: ContainerEntity;
+  private container: ContainerEntity;
 
-  // oneMany.Getter
-  // @FameProperty(name = "container", opposite = "types")
   public getContainer(): ContainerEntity {
-    return this.typeContainer;
+    return this.container;
   }
 
-  // oneMany.Setter
-  public setContainer(newContainer: ContainerEntity) {
-    this.typeContainer = newContainer;
-    newContainer.getTypes().add(this);
+  public setContainer(container: ContainerEntity): void {
+    this.container = container;
+    container.addType(this);
   }
 
-  private typeIncomingReferences: Set<Reference> = new Set();
+  private structuresWithDeclaredType: Set<StructuralEntity> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "incomingReferences", opposite = "target", derived = true)
-  public getIncomingReferences(): Set<Reference> {
-    return this.typeIncomingReferences;
-  }
-
-  // manyOne.Setter
-  public addIncomingReferences(typeIncomingReferences: Reference) {
-    if (!this.typeIncomingReferences.has(typeIncomingReferences)) {
-      this.typeIncomingReferences.add(typeIncomingReferences);
-      typeIncomingReferences.setTarget(this);
-    }
-  }
-
-  private typeStructuresWithDeclaredType: Set<StructuralEntity> = new Set();
-
-  // manyOne.Getter
-  // @FameProperty(name = "structuresWithDeclaredType", opposite = "declaredType", derived = true)
   public getStructuresWithDeclaredType(): Set<StructuralEntity> {
-    return this.typeStructuresWithDeclaredType;
+    return this.structuresWithDeclaredType;
   }
 
-  // manyOne.Setter
-  public addStructuresWithDeclaredType(typeStructuresWithDeclaredType: StructuralEntity) {
-    if (!this.typeStructuresWithDeclaredType.has(typeStructuresWithDeclaredType)) {
-      this.typeStructuresWithDeclaredType.add(typeStructuresWithDeclaredType);
-      typeStructuresWithDeclaredType.setDeclaredType(this);
+  public addStructureWithDeclaredType(structureWithDeclaredType: StructuralEntity): void {
+    if (!this.structuresWithDeclaredType.has(structureWithDeclaredType)) {
+      this.structuresWithDeclaredType.add(structureWithDeclaredType);
+      structureWithDeclaredType.setDeclaredType(this);
     }
   }
 
+  private behavioralEntitiesWithDeclaredType: Set<BehavioralEntity> = new Set();
 
-
-  private typeBehavioursWithDeclaredType: Set<BehavioralEntity> = new Set();
-
-  // manyOne.Getter
-  // @FameProperty(name = "behavioursWithDeclaredType", opposite = "declaredType", derived = true)
-  public getBehaviorsWithDeclaredType(): Set<BehavioralEntity> {
-    return this.typeBehavioursWithDeclaredType;
+  public getBehavioralEntitiesWithDeclaredType(): Set<BehavioralEntity> {
+    return this.behavioralEntitiesWithDeclaredType;
   }
 
-  // manyOne.Setter
-  public addBehaviorsWithDeclaredType(typeBehavioursWithDeclaredType: BehavioralEntity) {
-    if (!this.typeBehavioursWithDeclaredType.has(typeBehavioursWithDeclaredType)) {
-      this.typeBehavioursWithDeclaredType.add(typeBehavioursWithDeclaredType);
-      typeBehavioursWithDeclaredType.setDeclaredType(this);
+  public addBehavioralEntityWithDeclaredType(behavioralEntityWithDeclaredType: BehavioralEntity): void {
+    if (!this.behavioralEntitiesWithDeclaredType.has(behavioralEntityWithDeclaredType)) {
+      this.behavioralEntitiesWithDeclaredType.add(behavioralEntityWithDeclaredType);
+      behavioralEntityWithDeclaredType.setDeclaredType(this);
     }
   }
 
+  private incomingReferences: Set<Reference> = new Set();
 
+  public getIncomingReferences(): Set<Reference> {
+    return this.incomingReferences;
+  }
+
+  public addIncomingReference(incomingReference: Reference): void {
+    if (!this.incomingReferences.has(incomingReference)) {
+      this.incomingReferences.add(incomingReference);
+      incomingReference.setTarget(this);
+    }
+  }
 
 
   public getJSON(): string {
@@ -81,14 +63,11 @@ export class Type extends ContainerEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("container", this.getContainer());
-    exporter.addProperty("behavioursWithDeclaredType", this.getBehaviorsWithDeclaredType());
     exporter.addProperty("structuresWithDeclaredType", this.getStructuresWithDeclaredType());
+    exporter.addProperty("behavioralEntitiesWithDeclaredType", this.getBehavioralEntitiesWithDeclaredType());
     exporter.addProperty("incomingReferences", this.getIncomingReferences());
-
   }
-
 }
-

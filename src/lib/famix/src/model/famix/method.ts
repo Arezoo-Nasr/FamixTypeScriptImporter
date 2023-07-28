@@ -1,32 +1,19 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./type";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { BehavioralEntity } from "./behavioral_entity";
+import { Class } from "./class";
 
 export class Method extends BehavioralEntity {
 
+  private parentEntity: Class;
 
-
-
-
-  private methodParentType: Type;
-
-  // oneMany.Getter
-  // @FameProperty(name = "parentType", opposite = "methods")
-  public getParentType(): Type {
-    return this.methodParentType;
+  public getParentEntity(): Class {
+    return this.parentEntity;
   }
 
-  // oneMany.Setter
-  public setParentType(newParentType: Type) {
-    this.methodParentType = newParentType;
-    newParentType.getMethods().add(this);
+  public setParentEntity(parentEntity: Class): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addMethod(this);
   }
-
-
-
-
 
   private isAbstract: boolean;
 
@@ -34,7 +21,7 @@ export class Method extends BehavioralEntity {
     return this.isAbstract;
   }
 
-  public setIsAbstract(isAbstract: boolean) {
+  public setIsAbstract(isAbstract: boolean): void {
     this.isAbstract = isAbstract;
   }
   
@@ -44,7 +31,7 @@ export class Method extends BehavioralEntity {
     return this.isConstructor;
   }
 
-  public setIsConstructor(isConstructor: boolean) {
+  public setIsConstructor(isConstructor: boolean): void {
     this.isConstructor = isConstructor;
   }
 
@@ -54,7 +41,7 @@ export class Method extends BehavioralEntity {
     return this.isClassSide;
   }
 
-  public setIsClassSide(isClassSide: boolean) {
+  public setIsClassSide(isClassSide: boolean): void {
     this.isClassSide = isClassSide;
   }
 
@@ -64,7 +51,7 @@ export class Method extends BehavioralEntity {
     return this.isPrivate;
   }
 
-  public setIsPrivate(isPrivate: boolean) {
+  public setIsPrivate(isPrivate: boolean): void {
     this.isPrivate = isPrivate;
   }
 
@@ -74,7 +61,7 @@ export class Method extends BehavioralEntity {
     return this.isPublic;
   }
 
-  public setIsPublic(isPublic: boolean) {
+  public setIsPublic(isPublic: boolean): void {
     this.isPublic = isPublic;
   }
 
@@ -84,7 +71,7 @@ export class Method extends BehavioralEntity {
     return this.isProtected;
   }
 
-  public setIsProtected(isProtected: boolean) {
+  public setIsProtected(isProtected: boolean): void {
     this.isProtected = isProtected;
   }
 
@@ -94,17 +81,14 @@ export class Method extends BehavioralEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
-    exporter.addProperty("parentType", this.getParentType());
+    exporter.addProperty("parentEntity", this.getParentEntity());
     exporter.addProperty("isAbstract", this.getIsAbstract());
     exporter.addProperty("isConstructor", this.getIsConstructor());
     exporter.addProperty("isClassSide", this.getIsClassSide());
     exporter.addProperty("isPrivate", this.getIsPrivate());
-    exporter.addProperty("isPublic", this.getIsPrivate());
-    exporter.addProperty("isProtected", this.getIsPrivate());
+    exporter.addProperty("isPublic", this.getIsPublic());
+    exporter.addProperty("isProtected", this.getIsProtected());
   }
-
 }
-

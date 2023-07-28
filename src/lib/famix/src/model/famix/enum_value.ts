@@ -1,32 +1,18 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { StructuralEntity } from "./../famix/structural_entity";
-import { Enum } from "./../famix/enum";
-
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { StructuralEntity } from "./structural_entity";
+import { Enum } from "./enum";
 
 export class EnumValue extends StructuralEntity {
 
-  private enumValueParentEnum: Enum;
+  private parentEntity: Enum;
 
-  // oneMany.Getter
-  // @FameProperty(name = "parentEnum", opposite = "values")
-  public getParentEnum(): Enum {
-    return this.enumValueParentEnum;
+  public getParentEntity(): Enum {
+    return this.parentEntity;
   }
 
-  // oneMany.Setter
-  public setParentEnum(newParentEnum: Enum) {
-    this.enumValueParentEnum = newParentEnum;
-    newParentEnum.getValues().add(this);
-  }
-
-  public getParentEntity() {
-    return this.getParentEnum();
-  }
-
-  public setParentEntity(newParentEntity: Enum) {
-    this.setParentEnum(newParentEntity);
+  public setParentEntity(parentEntity: Enum): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addValue(this);
   }
 
 
@@ -36,11 +22,8 @@ export class EnumValue extends StructuralEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("parentEnum", this.getParentEnum());
-
+    exporter.addProperty("parentEntity", this.getParentEntity());
   }
-
 }
-

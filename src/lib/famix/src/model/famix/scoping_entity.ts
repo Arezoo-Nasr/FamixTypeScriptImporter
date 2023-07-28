@@ -1,6 +1,4 @@
-// NOT any more (automatically generated code, please do not change)
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { ContainerEntity } from "./container_entity";
 import { Namespace } from "./namespace";
 
@@ -8,30 +6,26 @@ export class ScopingEntity extends ContainerEntity {
 
   private childrenNamespaces: Set<Namespace> = new Set();
 
-
-  public getChildrenNamespaces(): Set<Namespace> {
+  public getNamespaces(): Set<Namespace> {
     return this.childrenNamespaces;
   }
 
-  public addChildrenNamespaces(childrenNamespaces: Namespace) {
-    if (!this.childrenNamespaces.has(childrenNamespaces)) {
-      this.childrenNamespaces.add(childrenNamespaces);
-      childrenNamespaces.setParentScope(this);
+  public addNamespace(childNamespace: Namespace): void {
+    if (!this.childrenNamespaces.has(childNamespace)) {
+      this.childrenNamespaces.add(childNamespace);
+      childNamespace.setParentScope(this);
     }
   }
 
+  
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("Module", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("ScopingEntity", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
-
-
+    exporter.addProperty("namespaces", this.getNamespaces());
   }
-
 }
-

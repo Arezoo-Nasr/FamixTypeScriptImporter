@@ -1,54 +1,56 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { SourcedEntity } from "./../famix/sourced_entity";
-import { Invocation } from "./../famix/invocation";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { SourcedEntity } from "./sourced_entity";
+import { Invocation } from "./invocation";
 import { ImportClause } from "./import_clause";
 import { Alias } from "./alias";
 
 export class NamedEntity extends SourcedEntity {
 
+  private fullyQualifiedName: string;
+
+  public getFullyQualifiedName(): string {
+    return this.fullyQualifiedName;
+  }
+
+  public setFullyQualifiedName(fullyQualifiedName: string): void {
+    this.fullyQualifiedName = fullyQualifiedName;
+  }
 
   private receivedInvocations: Set<Invocation> = new Set();
-
 
   public getReceivedInvocations(): Set<Invocation> {
     return this.receivedInvocations;
   }
 
-  public addReceivedInvocation(newReceivedInvocation: Invocation) {
-    if (!this.receivedInvocations.has(newReceivedInvocation)) {
-      this.receivedInvocations.add(newReceivedInvocation);
-      newReceivedInvocation.setReceiver(this);
+  public addReceivedInvocation(receivedInvocation: Invocation): void {
+    if (!this.receivedInvocations.has(receivedInvocation)) {
+      this.receivedInvocations.add(receivedInvocation);
+      receivedInvocation.setReceiver(this);
     }
   }
 
   private imports: Set<ImportClause> = new Set();
 
-
   public getImports(): Set<ImportClause> {
     return this.imports;
   }
 
-  public addImport(newImport: ImportClause) {
-    if (!this.imports.has(newImport)) {
-      this.imports.add(newImport);
-      newImport.setImportedEntity(this);
+  public addImport(anImport: ImportClause): void {
+    if (!this.imports.has(anImport)) {
+      this.imports.add(anImport);
+      anImport.setImportedEntity(this);
     }
   }
 
+  private name: string;
 
-  private namedEntityName: string;
-
-  // @FameProperty(name = "name")
   public getName(): string {
-    return this.namedEntityName;
+    return this.name;
   }
 
-  public setName(namedEntityName: string) {
-    this.namedEntityName = namedEntityName;
+  public setName(name: string): void {
+    this.name = name;
   }
-
 
   private aliases: Set<Alias> = new Set();
 
@@ -56,13 +58,12 @@ export class NamedEntity extends SourcedEntity {
     return this.aliases;
   }
 
-  public addAlias(newAlias: Alias) {
-    if (!this.aliases.has(newAlias)) {
-      this.aliases.add(newAlias);
-      newAlias.setAliasedEntity(this);
+  public addAlias(alias: Alias): void {
+    if (!this.aliases.has(alias)) {
+      this.aliases.add(alias);
+      alias.setAliasedEntity(this);
     }
   }
-
 
 
   public getJSON(): string {
@@ -71,13 +72,12 @@ export class NamedEntity extends SourcedEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("name", this.getName());
+    exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
     exporter.addProperty("receivedInvocations", this.getReceivedInvocations());
-
-
+    exporter.addProperty("imports", this.getImports());
+    exporter.addProperty("name", this.getName());
+    exporter.addProperty("aliases", this.getAliases());
   }
-
 }
-

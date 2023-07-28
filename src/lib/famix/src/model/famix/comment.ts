@@ -1,32 +1,26 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { SourcedEntity } from "./../famix/sourced_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { SourcedEntity } from "./sourced_entity";
 
 export class Comment extends SourcedEntity {
 
   private commentContainer: SourcedEntity;
 
-  // oneMany.Getter
-  // @FameProperty(name = "container", opposite = "comments")
   public getContainer(): SourcedEntity {
     return this.commentContainer;
   }
 
-  // oneMany.Setter
-  public setContainer(newContainer: SourcedEntity) {
-    this.commentContainer = newContainer;
-    newContainer.getComments().add(this);
+  public setContainer(commentContainer: SourcedEntity): void {
+    this.commentContainer = commentContainer;
+    commentContainer.addComment(this);
   }
 
   private commentContent: string;
 
-  // @FameProperty(name = "content")
   public getContent(): string {
     return this.commentContent;
   }
 
-  public setContent(commentContent: string) {
+  public setContent(commentContent: string): void {
     this.commentContent = commentContent;
   }
 
@@ -37,12 +31,9 @@ export class Comment extends SourcedEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("container", this.getContainer());
     exporter.addProperty("content", this.getContent());
-
   }
-
 }
-

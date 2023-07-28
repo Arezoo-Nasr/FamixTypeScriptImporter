@@ -1,6 +1,4 @@
-// NOT any more (automatically generated code, please do not change)
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { Association } from "./association";
 import { Module } from "./module";
 import { NamedEntity } from "./named_entity";
@@ -13,9 +11,9 @@ export class ImportClause extends Association {
     return this.importer;
   }
 
-  public setImporter(newImporter: Module) {
-    this.importer = newImporter;
-    newImporter.addImportClause(this);
+  public setImporter(importer: Module): void {
+    this.importer = importer;
+    importer.addImportClause(this);
   }
 
   private importedEntity: NamedEntity;
@@ -24,9 +22,9 @@ export class ImportClause extends Association {
     return this.importedEntity;
   }
 
-  public setImportedEntity(newImportedEntity: NamedEntity) {
-    this.importedEntity = newImportedEntity;
-    newImportedEntity.addImport(this);
+  public setImportedEntity(importedEntity: NamedEntity): void {
+    this.importedEntity = importedEntity;
+    importedEntity.addImport(this);
   }
 
   private moduleSpecifier: string;
@@ -35,22 +33,21 @@ export class ImportClause extends Association {
     return this.moduleSpecifier;
   }
 
-  public setModuleSpecifier(newModuleSpecifier: string) {
-    this.moduleSpecifier = newModuleSpecifier;
+  public setModuleSpecifier(moduleSpecifier: string): void {
+    this.moduleSpecifier = moduleSpecifier;
   }
 
+
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("Module", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("ImportClause", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
-
-
+    exporter.addProperty("importer", this.getImporter());
+    exporter.addProperty("importedEntity", this.getImportedEntity());
+    exporter.addProperty("moduleSpecifier", this.getModuleSpecifier());
   }
-
 }
-

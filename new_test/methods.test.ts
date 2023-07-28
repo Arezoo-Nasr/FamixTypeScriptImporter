@@ -12,7 +12,7 @@ const fmxRep = importer.famixRepFromSource(
 describe('Tests for methods', () => {
     
     const methodList = fmxRep._getAllEntitiesWithType('Method');
-    it("should have  method", () => {
+    it("should have method", () => {
         expect(methodList?.size).toBe(1);
     });
 

@@ -1,42 +1,18 @@
-// NOT any more (automatically generated code, please do not change)
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { StructuralEntity } from "./structural_entity";
 import { ContainerEntity } from "./container_entity";
 
 export class Variable extends StructuralEntity {
 
+  private parentEntity: ContainerEntity;
+
   public getParentEntity() {
-    return this.getParentBehavioralEntity();
+    return this.parentEntity;
   }
 
-  public setParentEntity(newParentEntity: ContainerEntity) {
-      this.setParentBehavioralEntity(newParentEntity);
-  }
-
-  private localVariableContainer: ContainerEntity;
-
-  // oneMany.Getter
-  // @FameProperty(name = "container", opposite = "local variables")
-  public getContainer(): ContainerEntity {
-    return this.localVariableContainer;
-  }
-
-  // oneMany.Setter
-  public setContainer(newContainer: ContainerEntity) {
-    this.localVariableContainer = newContainer;
-    newContainer.getVariables().add(this);
-  }
-
-  private localVariableParentBehaviouralEntity: ContainerEntity;
-
-  public getParentBehavioralEntity(): ContainerEntity {
-    return this.localVariableParentBehaviouralEntity;
-  }
-
-  public setParentBehavioralEntity(newParentBehaviouralEntity: ContainerEntity) {
-    this.localVariableParentBehaviouralEntity = newParentBehaviouralEntity;
-    newParentBehaviouralEntity.getVariables().add(this);
+  public setParentEntity(parentEntity: ContainerEntity): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addVariable(this);
   }
 
 
@@ -46,12 +22,8 @@ export class Variable extends StructuralEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("container", this.getContainer());
-    exporter.addProperty("parentBehaviouralEntity", this.getParentBehavioralEntity());
-
+    exporter.addProperty("parentEntity", this.getParentEntity());
   }
-
 }
-

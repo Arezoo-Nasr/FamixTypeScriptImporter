@@ -1,6 +1,6 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
 import { Method } from "../src/lib/famix/src/model/famix/method";
-import { GlobalVariable } from "../src/lib/famix/src/model/famix/global_variable";
+import { Variable } from "../src/lib/famix/src/model/famix/variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 
 const importer = new Importer();
@@ -23,7 +23,7 @@ describe('Tests for generics', () => {
     });
 
     it("should contain a variable x instance of AA", () => {
-        const pList = Array.from(fmxRep._getAllEntitiesWithType("GlobalVariable") as Set<GlobalVariable>);
+        const pList = Array.from(fmxRep._getAllEntitiesWithType("Variable") as Set<Variable>);
         expect(pList).toBeTruthy();
         const x = pList.find(p => p.getName() === "x");
         expect(x).toBeTruthy();

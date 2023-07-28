@@ -15,6 +15,4 @@ export abstract class FamixBaseElement {
   // tslint:disable-next-line:no-empty
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
   }
-
 }
-

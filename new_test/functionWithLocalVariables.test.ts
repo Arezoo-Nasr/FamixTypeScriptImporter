@@ -14,11 +14,11 @@ const fmxRep = importer.famixRepFromSource(
 describe('Tests for simple function with local variables', () => {
     
     const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as Function;
-    it("should have two local variables", () => {
-        expect(theFunction?.getLocalVariables().size).toBe(3);
+    it("should have three local variables", () => {
+        expect(theFunction?.getVariables().size).toBe(3);
     });
 
-    const firstVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() === "i");
+    const firstVariable = Array.from(theFunction?.getVariables()).find( (p) => p.getName() === "i");
     it("should have a local variable 'i'", () => {
         expect(firstVariable).toBeTruthy();
     });
@@ -27,7 +27,7 @@ describe('Tests for simple function with local variables', () => {
         expect(firstVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const secondVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() === "j");
+    const secondVariable = Array.from(theFunction?.getVariables()).find( (p) => p.getName() === "j");
     it("should have a local variable 'j'", () => {
         expect(secondVariable).toBeTruthy();
     });
@@ -36,7 +36,7 @@ describe('Tests for simple function with local variables', () => {
         expect(secondVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const thirdVariable = Array.from(theFunction?.getLocalVariables()).find( (p) => p.getName() === "x");
+    const thirdVariable = Array.from(theFunction?.getVariables()).find( (p) => p.getName() === "x");
     it("should have a local variable 'x'", () => {
         expect(thirdVariable).toBeTruthy();
     });

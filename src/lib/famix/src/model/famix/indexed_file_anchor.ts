@@ -1,40 +1,36 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { SourceAnchor } from "./source_anchor";
 
 export class IndexedFileAnchor extends SourceAnchor {
 
   private indexedFileAnchorStartPos: number;
 
-  // @FameProperty(name = "startPos")
   public getStartPos(): number {
     return this.indexedFileAnchorStartPos;
   }
 
-  public setStartPos(indexedFileAnchorStartPos: number) {
+  public setStartPos(indexedFileAnchorStartPos: number): void {
     this.indexedFileAnchorStartPos = indexedFileAnchorStartPos;
   }
 
   private indexedFileAnchorEndPos: number;
 
-  // @FameProperty(name = "endPos")
   public getEndPos(): number {
     return this.indexedFileAnchorEndPos;
   }
 
-  public setEndPos(indexedFileAnchorEndPos: number) {
+  public setEndPos(indexedFileAnchorEndPos: number): void {
     this.indexedFileAnchorEndPos = indexedFileAnchorEndPos;
   }
 
-  private filename: string;
+  private fileName: string;
 
-  public getFilename(): string {
-    return this.filename;
+  public getFileName(): string {
+    return this.fileName;
   }
 
-  public setFilename(filename: string) {
-    this.filename = filename;
+  public setFileName(fileName: string): void {
+    this.fileName = fileName;
   }
 
 
@@ -44,12 +40,10 @@ export class IndexedFileAnchor extends SourceAnchor {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("startPos", this.getStartPos());
     exporter.addProperty("endPos", this.getEndPos());
-
+    exporter.addProperty("fileName", this.getFileName());
   }
-
 }
-

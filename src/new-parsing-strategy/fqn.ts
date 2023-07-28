@@ -12,7 +12,7 @@ export class FQNFunctions {
      */
     public getFQN(node: ts.Node): string {
         if (node instanceof ts.SourceFile) {
-            return `"${node.getFilePath()}"`;
+            return `${node.getFilePath().substring(0, node.getFilePath().lastIndexOf("."))}`;
         }
 
         const symbol = node.getSymbol();
@@ -45,7 +45,7 @@ export class FQNFunctions {
         });
 
         if (qualifiedNameParts.length > 0) {
-            return `"${sourceFileDirectory}/${qualifiedNameParts.pop()}".${qualifiedNameParts.reverse().join(".")}`;
+            return `${sourceFileDirectory}/${qualifiedNameParts.pop()}.${qualifiedNameParts.reverse().join(".")}`;
         } else {
             return undefined;
         }
@@ -59,7 +59,8 @@ export class FQNFunctions {
     private getNameOfNode(a: ts.Node<ts.ts.Node>): string {
         switch (a.getKind()) {
             case ts.SyntaxKind.SourceFile:
-                return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
+                const sourceFileName = a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
+                return sourceFileName.substring(0, sourceFileName.lastIndexOf("."));
 
             case ts.SyntaxKind.ModuleDeclaration:
                 return a.asKind(ts.SyntaxKind.ModuleDeclaration)?.getName(); 
@@ -90,6 +91,9 @@ export class FQNFunctions {
 
             case ts.SyntaxKind.PropertySignature:
                 return a.asKind(ts.SyntaxKind.PropertySignature)?.getName();    
+
+            case ts.SyntaxKind.TypeParameter:
+                return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();  
 
             case ts.SyntaxKind.Constructor:
                 return "constructor";    

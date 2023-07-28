@@ -1,5 +1,5 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
-import { Method, Function, GlobalVariable} from '../src/lib/famix/src/model/famix';
+import { Method, Function, Variable} from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -92,12 +92,12 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with eight attributes", () => {
-        expect(theClass?.getAttributes().size).toBe(8);
+        expect(theClass?.getFields().size).toBe(8);
     });
 
     it("should contain an EntityClass with an attribute named 'name' that is public", () => {
         if (theClass) {
-            const nameAttribute = Array.from(theClass.getAttributes())[0];
+            const nameAttribute = Array.from(theClass.getFields())[0];
             expect(nameAttribute.getName()).toBe("name");
             expect(nameAttribute.getModifiers()).toContain("public");
         }
@@ -105,13 +105,13 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'name' of type string", () => {
         if (theClass) {
-            expect(Array.from(theClass.getAttributes())[0].getDeclaredType().getName()).toBe("string");
+            expect(Array.from(theClass.getFields())[0].getDeclaredType().getName()).toBe("string");
         }
     });
 
     it("should contain an EntityClass with an attribute named 'p1' that is private and of type boolean", () => {
         if (theClass) {
-            const p1Attribute = Array.from(theClass.getAttributes())[1];
+            const p1Attribute = Array.from(theClass.getFields())[1];
             expect(p1Attribute.getName()).toBe("p1");
             expect(p1Attribute.getModifiers()).toContain("private");
             expect(p1Attribute.getDeclaredType().getName()).toBe("boolean");
@@ -120,7 +120,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named '#p2' that is run-time private and of type boolean", () => {
         if (theClass) {
-            const p2Attribute = Array.from(theClass.getAttributes())[2];
+            const p2Attribute = Array.from(theClass.getFields())[2];
             expect(p2Attribute.getName()).toBe("#p2");
             expect(p2Attribute.getDeclaredType().getName()).toBe("boolean");
         }
@@ -128,7 +128,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'prot1' that is protected and of type Map<any, any>", () => {
         if (theClass) {
-            const prot1Attribute = Array.from(theClass.getAttributes())[3];
+            const prot1Attribute = Array.from(theClass.getFields())[3];
             expect(prot1Attribute.getName()).toBe("prot1");
             expect(prot1Attribute.getModifiers()).toContain("protected");
             expect(prot1Attribute.getDeclaredType().getName()).toBe("Map<any, any>");
@@ -137,7 +137,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'trustMe' that is guaranteed to be there (!) and of type string", () => {
         if (theClass) {
-            const trustMeAttribute = Array.from(theClass.getAttributes())[4];
+            const trustMeAttribute = Array.from(theClass.getFields())[4];
             expect(trustMeAttribute.getName()).toBe("trustMe");
             expect(trustMeAttribute.getModifiers()).toContain("!");
             expect(trustMeAttribute.getDeclaredType().getName()).toBe("string");
@@ -146,7 +146,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'ro' that is readonly and of type \"yes\"", () => {
         if (theClass) {
-            const roAttribute = Array.from(theClass.getAttributes())[5];
+            const roAttribute = Array.from(theClass.getFields())[5];
             expect(roAttribute.getName()).toBe("ro");
             expect(roAttribute.getModifiers()).toContain("readonly");
             expect(roAttribute.getDeclaredType().getName()).toBe('"yes"');
@@ -155,7 +155,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named '#userCount' that is static and of type number", () => {
         if (theClass) {
-            const userCountAttribute = Array.from(theClass.getAttributes())[6];
+            const userCountAttribute = Array.from(theClass.getFields())[6];
             expect(userCountAttribute.getName()).toBe("#userCount");
             expect(userCountAttribute.getModifiers()).toContain("static");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('number');
@@ -164,7 +164,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'optional' that is optional (?) and of type string", () => {
         if (theClass) {
-            const userCountAttribute = Array.from(theClass.getAttributes())[7];
+            const userCountAttribute = Array.from(theClass.getFields())[7];
             expect(userCountAttribute.getName()).toBe("optional");
             expect(userCountAttribute.getModifiers()).toContain("?");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('string');
@@ -187,7 +187,7 @@ describe('Entities', () => {
         }
     });
 
-    it("should contain an clsInNsp with a class-side method named 'aStaticMethod'", () => {
+    it("should contain a clsInNsp with a class-side method named 'aStaticMethod'", () => {
         const clsInNSP = fmxRep._getFamixClass("clsInNsp");
         expect(clsInNSP).toBeTruthy();
         if (clsInNSP) {
@@ -200,15 +200,15 @@ describe('Entities', () => {
     });
 
     // global scope
-    it("should contain a function 'globalFunc` with global scope", () => {
+    it("should contain a function 'globalFunc' with global scope", () => {
         const globalFunc = fmxRep._getFamixFunction('globalFunc') as Function;
         expect(globalFunc).toBeTruthy();
         expect(globalFunc.getName()).toBe('globalFunc');
-        expect(globalFunc.getContainer().getName()).toBe('famixTypeScriptTest.ts');
+        expect(globalFunc.getParentContainerEntity().getName()).toBe('famixTypeScriptTest.ts');
     });
 
     it("should contain a variable 'globalA' with global scope", () => {
-        const list = Array.from(fmxRep._getAllEntitiesWithType("GlobalVariable") as Set<GlobalVariable>);
+        const list = Array.from(fmxRep._getAllEntitiesWithType("Variable") as Set<Variable>);
         expect(list).toBeTruthy();
         const globalVar = list.find(p => p.getName() === "globalA");
         expect(globalVar).toBeTruthy();

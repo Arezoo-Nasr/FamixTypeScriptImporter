@@ -1,5 +1,5 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
-import { ParameterizableClass, ParameterizedType } from '../src/lib/famix/src/model/famix';
+import { ParameterizableClass, ParameterType } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -14,7 +14,7 @@ describe('Tests for generic class', () => {
         expect(fmxRep).toBeTruthy();
     });
 
-    it("should contain two generic class", () => {
+    it("should contain one generic class", () => {
         expect(fmxRep._getAllEntitiesWithType("ParameterizableClass").size).toBe(1);
     });
 
@@ -30,7 +30,7 @@ describe('Tests for generic class', () => {
         expect(myDao).toBeTruthy();
         expect(myDao?.getParameterTypes().size).toBe(1);
         if (myDao) {
-            expect((Array.from(myDao.getParameterTypes())[0] as ParameterizedType).getName()).toBe("T");
+            expect((Array.from(myDao.getParameterTypes())[0] as ParameterType).getName()).toBe("T");
         }
     });
 
