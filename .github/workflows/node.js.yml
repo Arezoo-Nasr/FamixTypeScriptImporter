@@ -35,7 +35,7 @@ jobs:
       - run: npm test
 
       - name: Build meta-model plantuml image from TypeScript sources
-        run: tplant -i src/lib/famix/**/*.ts -o famix-typescript-model.puml
+        run: npx tplant -i src/lib/famix/**/*.ts -o famix-typescript-model.puml
           
       - name: Generate SVG Diagrams
         uses: cloudbees/plantuml-github-action@master
