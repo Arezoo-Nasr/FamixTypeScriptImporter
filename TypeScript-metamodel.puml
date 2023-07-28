@@ -1,36 +1,52 @@
-@startuml diagram name
+@startuml TypeScript-metamodel
 skinparam style strictuml
 hide empty methods
 hide empty attributes
 'skinparam Linetype ortho
 'skinparam groupInheritance 2
-class " " as hidden <<hidden>>
-hide stereotype
+' class " " as hidden <<hidden>>
+' hide stereotype
 skinparam class {
     FontSize 14
     FontStyle bold
     FontName "Arial"
-    BorderColor<<hidden>> transparent
-    BackgroundColor<<hidden>> transparent
-    FontSize<<hidden>> 0
+    ' BorderColor<<hidden>> transparent
+    ' BackgroundColor<<hidden>> transparent
+    ' FontSize<<hidden>> 0
 }
 
-class "\n    Behavioral    \nEntity\n" as BE {
+class Named  {
     fqn()
 }
-hidden -right-o BE
-BE -left- hidden
-'BE o-- BE
-BE -down[#orange,bold]-> BE : <color:orange>invokes
+class Container extends Named
+class Structural
 
+class Variable extends Structural
+class Field extends Structural
+class Parameter extends Structural
+class Implicit extends Structural
+
+Container -right[#orange,bold]-> Structural : <color:orange>access
+
+class "Behavioral" as BE extends Container
+' hidden -right-o BE
+' BE -left- hidden
+BE o-- BE
+' BE -down[#orange,bold]-> BE : <color:orange>invokes
+
+Parameter --o BE
+Container -[#orange,bold]-> BE : <color:orange>invokes
+
+class Scoping extends Container
 class Function extends BE
-class Script extends BE
+class Script extends Scoping
 Script "1..*" -[#orange,bold]- Namespace : <color:orange>Is-specified-in <
-class Namespace extends BE
-Namespace o-- Namespace
-class Variable
+Script --> Module : imports
+class Namespace extends Scoping
+Scoping o-- Namespace
+
 BE o-- Variable
-BE -[#orange,bold]-> Variable : <color:orange>accesses
+' BE -[#orange,bold]-> Variable : <color:orange>accesses
 
 class File
 class Folder
@@ -42,15 +58,19 @@ class Module extends Script
 
 class Type
 
-class Field extends Variable
+class Method extends BE
+
+' class Field extends Variable
 class Class extends Type
 Class o-- Field
 Class o-- Method
 
-BE o-- Type
+Container o-- Type
 
 class Interface extends Type
 Interface o-- Method
 Interface o-- Field
+
+Module --> Named : exports
 
 @enduml
