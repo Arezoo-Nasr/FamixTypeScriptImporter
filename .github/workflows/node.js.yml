@@ -36,7 +36,11 @@ jobs:
 
       - name: Build meta-model plantuml image from TypeScript sources
         run: npx tplant -i src/lib/famix/**/*.ts -o famix-typescript-model.puml
-          
+
+      - name: Insert Include Line to customize the file
+        run: |
+          sed -i '/@startuml/a !include skins.include.puml' famix-typescript-model.plantuml
+
       - name: Generate SVG Diagrams
         uses: cloudbees/plantuml-github-action@master
         with:
