@@ -39,7 +39,7 @@ jobs:
 
       - name: Insert Include Line to customize the file
         run: |
-          sed -i '/@startuml/a !include skins.include.puml' famix-typescript-model.plantuml
+          sed -i '/@startuml/a !include skins.include.puml' famix-typescript-model.puml
 
       - name: Generate SVG Diagrams
         uses: cloudbees/plantuml-github-action@master
