@@ -604,6 +604,8 @@ export class TS2Famix {
         fmxFunction.setDeclaredType(fmxType);
         fmxFunction.setNumberOfLinesOfCode(func.getEndLineNumber() - func.getStartLineNumber());
 
+        fmxFunction.setCyclomaticComplexity(this.currentCC[fmxFunction.getName()]);
+
         let fullyQualifiedName = UNKNOWN_VALUE;
         try {
             fullyQualifiedName = func.getSymbol().getFullyQualifiedName();
