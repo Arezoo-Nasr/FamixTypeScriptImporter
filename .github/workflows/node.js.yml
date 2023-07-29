@@ -35,21 +35,19 @@ jobs:
   #    - run: npm run build --if-present
       - run: npm test
 
-      - name: Build meta-model plantuml image from TypeScript sources
+      - name: Build meta-model plantuml from TypeScript sources
         run: npx tplant -i src/lib/famix/**/*.ts -o famix-typescript-model.puml
 
       - name: Insert Include Line to customize the file
         run: |
           sed -i '/@startuml/a !include skins.include.puml' famix-typescript-model.puml
 
-      # manually load plantuml (cloudbees one is not the latest jar)
-      - run: wget --no-verbose https://downloads.sourceforge.net/project/plantuml/plantuml.jar
-      - run: java -jar plantuml.jar -v -tsvg famix-typescript-model.puml
+      - name: Get latest plantuml
+        run: wget --no-verbose https://downloads.sourceforge.net/project/plantuml/plantuml.jar
+
+      - name: Convert plantuml source to SVG image
+        run: java -jar plantuml.jar -v -tsvg famix-typescript-model.puml
     
-      # - name: Generate SVG Diagrams
-      #   uses: cloudbees/plantuml-github-action@master
-      #   with:
-      #     args: -v -tsvg famix-typescript-model.puml
       - name: Move artifact
         run: |
           mkdir doc-uml
