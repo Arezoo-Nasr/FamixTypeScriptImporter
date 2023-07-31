@@ -3,9 +3,11 @@ import { Invocation, Method } from "../src/lib/famix/src/model/famix";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("invocations", 
     'class Class1 {\n\
-    public returnHi(): string {}\n\
+    public returnHi(): string {\n\
+        return "Hi";\n\
+    }\n\
 }\n\
 \n\
 class Class2 {\n\
@@ -82,7 +84,6 @@ describe('Invocations', () => {
             expect(invocations.length).toBeTruthy();
             const candidates = invocations.filter(i => {
                 const invocation = i as Invocation;
-                console.log(`candidates for ${theMethod} invocation ${invocation}: ${invocation.getCandidates()}`);
                 return invocation.getCandidates().has(theMethod);
             });
             expect(candidates).toHaveLength(1);

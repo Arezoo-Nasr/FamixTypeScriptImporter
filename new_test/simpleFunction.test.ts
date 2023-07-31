@@ -3,7 +3,7 @@ import { Function } from "../src/lib/famix/src/model/famix/function";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("simpleFunction", 
     'function fct(): number {\n\
     return 0;\n\
 }\n\

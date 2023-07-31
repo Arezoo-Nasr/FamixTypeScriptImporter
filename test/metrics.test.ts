@@ -2,7 +2,7 @@ import { Importer } from '../src/new-parsing-strategy/analyze';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("metrics", 
     'export class ForMetrics {\n\
     public methodCyclomaticOne() {}\n\
     \n\

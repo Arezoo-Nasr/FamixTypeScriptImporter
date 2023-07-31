@@ -3,7 +3,7 @@ import { Method } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("entities_json", 
     'class EntityClass {\n\
     constructor() {}\n\
     public move() {}\n\

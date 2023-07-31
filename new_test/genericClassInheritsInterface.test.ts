@@ -3,12 +3,10 @@ import { ParameterizableClass } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
-    'interface MyDaoInterface<T> {\n\
-}\n\
+const fmxRep = importer.famixRepFromSource("genericClassInheritsInterface", 
+    'interface MyDaoInterface<T> {}\n\
 \n\
-class MyDao<T> implements MyDaoInterface<T> {\n\
-}\n\
+class MyDao<T> implements MyDaoInterface<T> {}\n\
 ');
 
 describe('Tests for generic class inherits interface', () => {

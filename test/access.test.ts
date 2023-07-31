@@ -3,13 +3,15 @@ import { Field, Method } from "../src/lib/famix/src/model/famix";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("access", 
     'class AccessClassForTesting {\n\
     private privateAttribute;\n\
     public publicAttribute;\n\
+    \n\
     public returnAccessName() {\n\
         return this.publicAttribute;\n\
     }\n\
+    \n\
     private privateMethod() {\n\
         return this.privateAttribute;\n\
     }\n\

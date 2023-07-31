@@ -3,8 +3,9 @@ import { ParameterizableClass, ParameterType } from '../src/lib/famix/src/model/
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("generics", 
     'interface MyDaoInterface<T> {}\n\
+\n\
 class MyDao<T> implements MyDaoInterface<T> {}\n\
 ');
 

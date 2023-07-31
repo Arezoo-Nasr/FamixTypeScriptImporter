@@ -3,10 +3,10 @@ import { Function } from "../src/lib/famix/src/model/famix/function";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("functionWithLocalVariables", 
     'function fct(): number {\n\
     let i: number, j: number;\n\
-    const x: string; \n\
+    const x: string = ""; \n\
     return 0;\n\
 }\n\
 ');

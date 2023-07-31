@@ -3,7 +3,7 @@ import { Method } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("abstracts", 
     'abstract class MyAbstractClass {\n\
     public abstract abstractMethod1();\n\
     public abstract abstractMethod2();\n\

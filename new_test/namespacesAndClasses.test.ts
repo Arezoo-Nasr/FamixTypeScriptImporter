@@ -4,7 +4,7 @@ import { Class } from '../src/lib/famix/src/model/famix/class';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("namespacesAndClasses", 
     'namespace MyNamespace {\n\
 	class EntityClass {}\n\
 	class class2 {}\n\

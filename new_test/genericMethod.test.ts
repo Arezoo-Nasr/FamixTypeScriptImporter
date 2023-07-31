@@ -5,7 +5,7 @@ import { Parameter } from "../src/lib/famix/src/model/famix/parameter";
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("genericMethod", 
     'class AA {\n\
     public i<T> (j: T): void {}\n\
 }\n\

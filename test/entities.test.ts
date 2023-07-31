@@ -3,7 +3,7 @@ import { Method, Function, Variable} from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
+const fmxRep = importer.famixRepFromSource("entities", 
     'namespace MyNamespace {\n\
     \n\
     class EntityClass {\n\
@@ -204,7 +204,7 @@ describe('Entities', () => {
         const globalFunc = fmxRep._getFamixFunction('globalFunc') as Function;
         expect(globalFunc).toBeTruthy();
         expect(globalFunc.getName()).toBe('globalFunc');
-        expect(globalFunc.getParentContainerEntity().getName()).toBe('famixTypeScriptTest.ts');
+        expect(globalFunc.getParentContainerEntity().getName()).toBe('entities.ts');
     });
 
     it("should contain a variable 'globalA' with global scope", () => {

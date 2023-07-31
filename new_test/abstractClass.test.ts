@@ -2,9 +2,8 @@ import { Importer } from '../src/new-parsing-strategy/analyze';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
-    'abstract class MyAbstractClass {\n\
-}\n\
+const fmxRep = importer.famixRepFromSource("abstractClass", 
+    'abstract class MyAbstractClass {}\n\
 ');
 
 describe('Tests for abstract class', () => {

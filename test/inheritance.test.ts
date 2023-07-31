@@ -2,11 +2,11 @@ import { Importer } from '../src/new-parsing-strategy/analyze';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource(
-    'export class Animal {}\n\
-export class Fish extends Animal {}\n\
-export interface Flyable {}\n\
-export class Bird extends Animal implements Flyable {}\n\
+const fmxRep = importer.famixRepFromSource("inheritance", 
+    'class Animal {}\n\
+class Fish extends Animal {}\n\
+interface Flyable {}\n\
+class Bird extends Animal implements Flyable {}\n\
 ');
 
 describe('Inheritance', () => {
