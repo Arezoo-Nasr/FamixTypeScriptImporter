@@ -36,22 +36,22 @@ jobs:
       - run: npm test
 
       - name: Build meta-model plantuml from TypeScript sources
-        run: npx tplant -i src/lib/famix/**/*.ts -o famix-typescript-model.puml
+        run: npx tplant -i src/lib/famix/**/*.ts -o doc-uml/famix-typescript-model.puml
 
       - name: Insert Include Line to customize the file
         run: |
-          sed -i '/@startuml/a !include skins.include.puml' famix-typescript-model.puml
+          sed -i '/@startuml/a !include skins.include.puml' doc-uml/famix-typescript-model.puml
 
       - name: Get latest plantuml
         run: wget --no-verbose https://downloads.sourceforge.net/project/plantuml/plantuml.jar
 
       - name: Convert plantuml source to SVG image
-        run: java -jar plantuml.jar -v -tsvg famix-typescript-model.puml
+        run: java -jar plantuml.jar -v -tsvg doc-uml/famix-typescript-model.puml
     
-      - name: Move artifact
-        run: |
-          mkdir doc-uml
-          mv *.svg doc-uml
+  #    - name: Move artifact
+  #      run: |
+  #        mkdir doc-uml
+  #        mv *.svg doc-uml
 
       - name: Init new repo in doc-uml folder and commit generated files
         run: |
