@@ -37,7 +37,7 @@ describe('Invocations', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn.substring(methodFqn.length-clsName.length-1-mName.length)).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep.getFamixEntityElementByFullyQualifiedName(
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
@@ -51,7 +51,7 @@ describe('Invocations', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn.substring(methodFqn.length-clsName.length-1-mName.length)).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep.getFamixEntityElementByFullyQualifiedName(
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
@@ -65,7 +65,7 @@ describe('Invocations', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn.substring(methodFqn.length-clsName.length-1-mName.length)).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep.getFamixEntityElementByFullyQualifiedName(
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(
                 methodFqn);
             expect(theMethod).toBeTruthy();    
         }
@@ -77,7 +77,7 @@ describe('Invocations', () => {
         expect(theClass).toBeTruthy();
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
-            const theMethod = fmxRep.getFamixEntityElementByFullyQualifiedName(methodFqn) as Method;
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(methodFqn) as Method;
             expect(theMethod).toBeTruthy();
             const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
             expect(invocations).toBeTruthy();
@@ -96,7 +96,7 @@ describe('Invocations', () => {
         expect(theClass).toBeTruthy();
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
-            const theMethod = fmxRep.getFamixEntityElementByFullyQualifiedName(methodFqn) as Method;
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(methodFqn) as Method;
             expect(theMethod).toBeTruthy();
             const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
             expect(invocations).toBeTruthy();
@@ -112,7 +112,7 @@ describe('Invocations', () => {
         expect(theClass).toBeTruthy();
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
-            const theMethod = fmxRep.getFamixEntityElementByFullyQualifiedName(methodFqn) as Method;
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(methodFqn) as Method;
             expect(theMethod).toBeTruthy();
             const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
             expect(invocations).toBeTruthy();

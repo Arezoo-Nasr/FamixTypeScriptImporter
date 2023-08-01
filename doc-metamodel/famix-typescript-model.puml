@@ -427,7 +427,7 @@ class FamixRepository {
     -famixFunctions: Set<Function>
     -idCounter: number
     +getFamixEntityById(id: number): FamixBaseElement
-    +getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement
+    +getFamixEntityByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement
     +_getAllEntities(): Set<FamixBaseElement>
     +_getAllEntitiesWithType(theType: string): Set<FamixBaseElement>
     +_getFamixClass(name: string): Class

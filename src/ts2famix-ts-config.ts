@@ -24,12 +24,12 @@ const project = new Project({
     // compilerOptions: tsConfig.compilerOptions,
   });  
 
-const fmxRep2 = importer.famixRepFromProject(project);
-const jsonOutput = fmxRep2.getJSON();
+//const fmxRep2 = importer.famixRepFromProject(project);
+//const jsonOutput = fmxRep2.getJSON();
 // const jsonFilePath = argv.output as string;
 
 // fs.writeFile(jsonFilePath, jsonOutput, (err) => {
 //     if (err) { throw err; }
 // });
 // console.info(`created ${jsonFilePath}`); 
-console.log(jsonOutput);
+//console.log(jsonOutput);

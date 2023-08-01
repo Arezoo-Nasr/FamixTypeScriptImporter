@@ -315,7 +315,7 @@ export class FamixFunctions {
         const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile); // for global variable it must work -> a => a.getKind() === any ???
 
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(nodeReferenceAncestor);
-        const accessor = this.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
+        const accessor = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
 
         const fmxAccess = new Famix.Access(this.fmxRep);
         fmxAccess.setAccessor(accessor);
@@ -335,9 +335,9 @@ export class FamixFunctions {
         const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile); // for global variable it must work -> a => a.getKind() === any ???
 
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(nodeReferenceAncestor);
-        const sender = this.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
+        const sender = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
         const receiverFullyQualifiedName = this.getClassNameOfMethod(m);
-        const receiver = this.getFamixEntityElementByFullyQualifiedName(receiverFullyQualifiedName) as Famix.Class;
+        const receiver = this.getFamixEntityByFullyQualifiedName(receiverFullyQualifiedName) as Famix.Class;
 
         const fmxInvocation = new Famix.Invocation(this.fmxRep);
         fmxInvocation.setSender(sender);
@@ -422,8 +422,8 @@ export class FamixFunctions {
      * @param ancestorFQN A fully qualified name
      * @returns The Famix entity corresponding to the fully qualified name
      */
-    private getFamixEntityElementByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
-        return this.fmxRep.getFamixEntityElementByFullyQualifiedName(ancestorFQN) as Famix.Entity;
+    private getFamixEntityByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
+        return this.fmxRep.getFamixEntityByFullyQualifiedName(ancestorFQN) as Famix.Entity;
     }
 
     /**

@@ -19,8 +19,8 @@ export class FamixRepository {
    * @returns The Famix entity corresponding to the id or undefined if it doesn't exist
    */
   public getFamixEntityById(id: number): FamixBaseElement | undefined {
-    const element = Array.from(this.elements.values()).find(e => e.id === id);
-    return element;
+    const entity = Array.from(this.elements.values()).find(e => e.id === id);
+    return entity;
   }
 
   /**
@@ -28,10 +28,10 @@ export class FamixRepository {
    * @param FullyQualifiedName A fully qualified name
    * @returns The Famix entity corresponding to the fully qualified name or undefined if it doesn't exist
    */
-  public getFamixEntityElementByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
-    const allEntity = Array.from(this.elements.values()).filter(e => e instanceof NamedEntity) as Array<NamedEntity>;
-    const entityElement = allEntity.find(e => e.getFullyQualifiedName() === FullyQualifiedName);
-    return entityElement;
+  public getFamixEntityByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
+    const allEntities = Array.from(this.elements.values()).filter(e => e instanceof NamedEntity) as Array<NamedEntity>;
+    const entity = allEntities.find(e => e.getFullyQualifiedName() === FullyQualifiedName);
+    return entity;
   }
 
   

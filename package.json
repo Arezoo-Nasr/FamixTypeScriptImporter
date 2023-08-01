@@ -7,10 +7,11 @@
     "dev": "ts-node src/ts2famix-cli.ts",
     "debug": "node --inspect-brk node_modules/.bin/ts-node",
     "build": "tsc",
-    "test": "jest --colors --silent --coverage --coverageDirectory=coverage",
+    "test": "jest --colors --silent",
     "local": "sudo npm i -g && ts2famix",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
-    "doc": "typedoc"
+    "doc": "typedoc && touch docs/.gitkeep",
+    "coverage": "jest --colors --silent --coverage --coverageDirectory=coverage"
   },
   "bin": {
     "ts2famix": "dist/ts2famix-cli.js"

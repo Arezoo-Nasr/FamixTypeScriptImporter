@@ -124,7 +124,7 @@ export class TS2Famix {
                         ); //////////for global variable it must work
                     if (nodeReferenceAncestor) {
                         const ancestorFullyQualifiedName = nodeReferenceAncestor.getSymbol().getFullyQualifiedName();
-                        const sender = this.fmxRep.getFamixEntityElementByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehavioralEntity;
+                        const sender = this.fmxRep.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.BehavioralEntity;
                         //const receiverFullyQualifiedName = savedMethod.getParent().getSymbol().getFullyQualifiedName();
                         const receiverFullyQualifiedName = this.getClassNameOfMethod(savedMethod);
                         console.log(`  Receiver fully qualified name: ${receiverFullyQualifiedName}`)
@@ -199,7 +199,7 @@ export class TS2Famix {
                     // fmxAccess.setVariable(famixStructuralElement);
                     if (scopeDeclaration) {
                         let fullyQualifiedName = scopeDeclaration.getSymbol().getFullyQualifiedName();
-                        let accessor = this.fmxRep.getFamixEntityElementByFullyQualifiedName(fullyQualifiedName) as Famix.BehavioralEntity;
+                        let accessor = this.fmxRep.getFamixEntityByFullyQualifiedName(fullyQualifiedName) as Famix.BehavioralEntity;
                         console.log(`        Creating Famix.Access with accessor: ${accessor.getName()} and variable: ${famixStructuralElement.getName()}`);
                         let fmxAccess = new Famix.Access(this.fmxRep);
                         fmxAccess.setAccessor(accessor);
