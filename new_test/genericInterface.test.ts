@@ -4,7 +4,9 @@ import { ParameterizableClass, ParameterType } from '../src/lib/famix/src/model/
 const importer = new Importer();
 
 const fmxRep = importer.famixRepFromSource("genericInterface", 
-    'interface MyInterface<T> {}\n\
+    'interface MyInterface<T> {\n\
+    myMethod();\n\
+}\n\
 ');
 
 describe('Tests for generic interface', () => {

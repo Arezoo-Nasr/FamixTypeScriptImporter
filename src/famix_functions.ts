@@ -100,7 +100,7 @@ export class FamixFunctions {
      * @param isAbstract A boolean indicating if the class is abstract
      * @returns The Famix model of the class
      */
-    public createOrGetFamixClassOrInterface(cls: ClassDeclaration | InterfaceDeclaration, isAbstract = false): Famix.Class | Famix.ParameterizableClass {
+    public createOrGetFamixClassOrInterface(cls: ClassDeclaration | InterfaceDeclaration, isAbstract: boolean): Famix.Class | Famix.ParameterizableClass {
         let fmxClass: Famix.Class | Famix.ParameterizableClass;
         const isInterface = cls instanceof InterfaceDeclaration;
         const clsName = cls.getName();
@@ -139,7 +139,7 @@ export class FamixFunctions {
      * @param isStatic A boolean indicating if the method is static
      * @returns The Famix model of the method
      */
-    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, currentCC: any, isAbstract = false, isStatic = false): Famix.Method {
+    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, currentCC: any, isAbstract: boolean, isStatic: boolean): Famix.Method {
         const fmxMethod = new Famix.Method(this.fmxRep);
         const isConstructor = method instanceof ConstructorDeclaration;
         const isSignature = method instanceof MethodSignature;

@@ -170,7 +170,7 @@ export class Importer {
     private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Namespace | Famix.Function | Famix.Method) {
         console.info(`processVariables: ---------- Finding VariableStatements`);
         m.getVariableStatements().forEach(v => {
-            const temp_variables = this.processVariableStatement(v) as Array<Famix.Variable>;
+            const temp_variables = this.processVariableStatement(v);
             temp_variables.forEach(variable => fmxScope.addVariable(variable));
         });
     }
