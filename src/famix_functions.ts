@@ -13,7 +13,8 @@ export class FamixFunctions {
     private fmxRep = new FamixRepository(); // The Famix repository
     private FQNFunctions = new FQNFunctions(); // The fully qualified name functions
     private fmxTypes = new Map<string, Famix.Type>(); // Maps the type names to their Famix model
-    private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the classes and interfaces names to their Famix model
+    private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the classes names to their Famix model
+    private fmxInterfaces = new Map<string, Famix.Interface | Famix.ParameterizableInterface>(); // Maps the interfaces names to their Famix model
     private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespaces names to their Famix model
     private fmxScriptEntities = new Map<string, Famix.ScriptEntity>(); // Maps the source files names to their Famix model
     private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable -> utile tant qu'il y a des try catch
@@ -96,13 +97,12 @@ export class FamixFunctions {
 
     /**
      * Creates or gets a Famix class or parameterizable class
-     * @param cls A class or an interface
+     * @param cls A class
      * @param isAbstract A boolean indicating if the class is abstract
      * @returns The Famix model of the class
      */
-    public createOrGetFamixClassOrInterface(cls: ClassDeclaration | InterfaceDeclaration, isAbstract: boolean): Famix.Class | Famix.ParameterizableClass {
+    public createOrGetFamixClass(cls: ClassDeclaration, isAbstract: boolean): Famix.Class | Famix.ParameterizableClass {
         let fmxClass: Famix.Class | Famix.ParameterizableClass;
-        const isInterface = cls instanceof InterfaceDeclaration;
         const clsName = cls.getName();
         if (!this.fmxClasses.has(clsName)) {
             const isGenerics = cls.getTypeParameters().length;
@@ -118,7 +118,6 @@ export class FamixFunctions {
             }
 
             fmxClass.setName(clsName);
-            fmxClass.setIsInterface(isInterface);
             fmxClass.setIsAbstract(isAbstract);
 
             this.makeFamixIndexFileAnchor(cls, fmxClass);
@@ -129,6 +128,39 @@ export class FamixFunctions {
             fmxClass = this.fmxClasses.get(clsName) as (Famix.Class | Famix.ParameterizableClass);
         }
         return fmxClass;
+    }
+
+    /**
+     * Creates or gets a Famix interface or parameterizable interface
+     * @param inter An interface
+     * @returns The Famix model of the interface
+     */
+    public createOrGetFamixInterface(inter: InterfaceDeclaration): Famix.Interface | Famix.ParameterizableInterface {
+        let fmxInterface: Famix.Interface | Famix.ParameterizableInterface;
+        const interName = inter.getName();
+        if (!this.fmxInterfaces.has(interName)) {
+            const isGenerics = inter.getTypeParameters().length;
+            if (isGenerics) {
+                fmxInterface = new Famix.ParameterizableInterface(this.fmxRep);
+                inter.getTypeParameters().forEach(tp => {
+                    const fmxParameterType = this.createFamixParameterType(tp);
+                    (fmxInterface as Famix.ParameterizableInterface).addParameterType(fmxParameterType);
+                });
+            }
+            else {
+                fmxInterface = new Famix.Interface(this.fmxRep);
+            }
+
+            fmxInterface.setName(interName);
+
+            this.makeFamixIndexFileAnchor(inter, fmxInterface);
+
+            this.fmxInterfaces.set(interName, fmxInterface);
+        }
+        else {
+            fmxInterface = this.fmxInterfaces.get(interName) as (Famix.Interface | Famix.ParameterizableInterface);
+        }
+        return fmxInterface;
     }
 
     /**
@@ -290,7 +322,7 @@ export class FamixFunctions {
 
         const fmxType = this.createOrGetFamixType(propTypeName);
         fmxField.setDeclaredType(fmxType);
-        fmxField.setHasClassScope(true);
+        //fmxField.setHasClassScope(true);
 
         property.getModifiers().forEach(m => fmxField.addModifier(m.getText()));
         if (!isSignature && property.getExclamationTokenNode()) {

@@ -1,7 +1,7 @@
 import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { SourceAnchor } from "./source_anchor";
 
-export class IndexedFileAnchor extends SourceAnchor {
+export class TextAnchor extends SourceAnchor {
 
   private startPos: number;
 
@@ -35,7 +35,7 @@ export class IndexedFileAnchor extends SourceAnchor {
 
 
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("IndexedFileAnchor", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("TextAnchor", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }

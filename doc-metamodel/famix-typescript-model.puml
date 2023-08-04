@@ -1,12 +1,5 @@
 @startuml
 !include skins.include.puml
-class FamixJSONExporter {
-    -element: FamixBaseElement
-    -bufferArray: any
-    -FamixPrefix: string
-    +addProperty(name: string, prop: unknown): void
-    +getJSON(): string
-}
 class Entity extends FamixBaseElement {
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
@@ -115,6 +108,13 @@ class Alias extends NamedEntity {
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
+class Decorator extends NamedEntity {
+    -decoratedEntity: NamedEntity
+    +getDecoratedEntity(): NamedEntity
+    +setDecoratedEntity(decoratedEntity: NamedEntity): void
+    +getJSON(): string
+    +addPropertiesToExporter(exporter: FamixJSONExporter): void
+}
 class NamedEntity extends SourcedEntity {
     -fullyQualifiedName: string
     +getFullyQualifiedName(): string
@@ -131,6 +131,9 @@ class NamedEntity extends SourcedEntity {
     -aliases: Set<Alias>
     +getAliases(): Set<Alias>
     +addAlias(alias: Alias): void
+    -decorators: Set<Decorator>
+    +getDecorators(): Set<Decorator>
+    +addDecorator(decorator: Decorator): void
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
@@ -277,10 +280,52 @@ class CSourceLanguage extends SourceLanguage {
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
+class Field extends StructuralEntity {
+    -isClassSide: boolean
+    +getIsClassSide(): boolean
+    +setIsClassSide(isClassSide: boolean): void
+    -parentType: Class | Interface
+    +getParentEntity(): Class | Interface
+    +setParentEntity(parentType: Class | Interface): void
+    -modifiers: Set<string>
+    +getModifiers(): Set<string>
+    +addModifier(modifier: string): void
+    +getJSON(): string
+    +addPropertiesToExporter(exporter: FamixJSONExporter): void
+}
+class Inheritance extends Association {
+    -superclass: Class | Interface
+    +getSuperclass(): Class | Interface
+    +setSuperclass(superclass: Class | Interface): void
+    -subclass: Class | Interface
+    +getSubclass(): Class | Interface
+    +setSubclass(subclass: Class | Interface): void
+    +getJSON(): string
+    +addPropertiesToExporter(exporter: FamixJSONExporter): void
+}
+class Interface extends Type {
+    -isTestCase: boolean
+    +getIsTestCase(): boolean
+    +setIsTestCase(isTestCase: boolean): void
+    -fields: Set<Field>
+    +getFields(): Set<Field>
+    +addField(field: Field): void
+    -methods: Set<Method>
+    +getMethods(): Set<Method>
+    +addMethod(method: Method): void
+    -superInheritances: Set<Inheritance>
+    +getSuperInheritances(): Set<Inheritance>
+    +addSuperInheritance(superInheritance: Inheritance): void
+    -subInheritances: Set<Inheritance>
+    +getSubInheritances(): Set<Inheritance>
+    +addSubInheritance(subInheritance: Inheritance): void
+    +getJSON(): string
+    +addPropertiesToExporter(exporter: FamixJSONExporter): void
+}
 class Method extends BehavioralEntity {
-    -parentEntity: Class
-    +getParentEntity(): Class
-    +setParentEntity(parentEntity: Class): void
+    -parentEntity: Class | Interface
+    +getParentEntity(): Class | Interface
+    +setParentEntity(parentEntity: Class | Interface): void
     -isAbstract: boolean
     +getIsAbstract(): boolean
     +setIsAbstract(isAbstract: boolean): void
@@ -302,39 +347,13 @@ class Method extends BehavioralEntity {
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
-class Field extends StructuralEntity {
-    -hasClassScope: boolean
-    +getHasClassScope(): boolean
-    +setHasClassScope(hasClassScope: boolean): void
-    -parentType: Class
-    +getParentEntity(): Class
-    +setParentEntity(parentType: Class): void
-    -modifiers: Set<string>
-    +getModifiers(): Set<string>
-    +addModifier(modifier: string): void
-    +getJSON(): string
-    +addPropertiesToExporter(exporter: FamixJSONExporter): void
-}
-class Inheritance extends Association {
-    -superclass: Class
-    +getSuperclass(): Class
-    +setSuperclass(superclass: Class): void
-    -subclass: Class
-    +getSubclass(): Class
-    +setSubclass(subclass: Class): void
-    +getJSON(): string
-    +addPropertiesToExporter(exporter: FamixJSONExporter): void
-}
 class Class extends Type {
-    -classIsTestCase: boolean
+    -isTestCase: boolean
     +getIsTestCase(): boolean
-    +setIsTestCase(classIsTestCase: boolean): void
-    -classIsInterface: boolean
-    +getIsInterface(): boolean
-    +setIsInterface(classIsInterface: boolean): void
-    -classIsAbstract: boolean
+    +setIsTestCase(isTestCase: boolean): void
+    -isAbstract: boolean
     +getIsAbstract(): boolean
-    +setIsAbstract(classIsAbstract: boolean): void
+    +setIsAbstract(isAbstract: boolean): void
     -fields: Set<Field>
     +getFields(): Set<Field>
     +addField(field: Field): void
@@ -376,22 +395,32 @@ class ImplicitVariable extends Variable {
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
 class IndexedFileAnchor extends SourceAnchor {
-    -indexedFileAnchorStartPos: number
+    -startPos: number
     +getStartPos(): number
-    +setStartPos(indexedFileAnchorStartPos: number): void
-    -indexedFileAnchorEndPos: number
+    +setStartPos(startPos: number): void
+    -endPos: number
     +getEndPos(): number
-    +setEndPos(indexedFileAnchorEndPos: number): void
+    +setEndPos(endPos: number): void
     -fileName: string
     +getFileName(): string
     +setFileName(fileName: string): void
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
-class ParameterizedType extends Class {
-    -parentGeneric: ParameterizableClass
-    +getParentGeneric(): ParameterizableClass
-    +setParentGeneric(parentGeneric: ParameterizableClass): void
+class ParameterizableInterface extends Interface {
+    -parameterizedTypes: Set<ParameterizedType>
+    +getParameterizedTypes(): Set<ParameterizedType>
+    +addParameterizedType(parameterizedType: ParameterizedType): void
+    -parameterTypes: Set<ParameterType>
+    +getParameterTypes(): Set<ParameterType>
+    +addParameterType(parameterType: ParameterType): void
+    +getJSON(): string
+    +addPropertiesToExporter(exporter: FamixJSONExporter): void
+}
+class ParameterizedType extends Type {
+    -parentGeneric: ParameterizableInterface | ParameterizableClass
+    +getParentGeneric(): ParameterizableInterface | ParameterizableClass
+    +setParentGeneric(parentGeneric: ParameterizableInterface | ParameterizableClass): void
     -arguments: Set<Type>
     +getArguments(): Set<Type>
     +addArgument(argument: Type): void
@@ -409,13 +438,26 @@ class ParameterizableClass extends Class {
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
 class ParameterType extends Type {
-    -parentGeneric: ParameterizableClass
-    +getParentGeneric(): ParameterizableClass
-    +setParentGeneric(parentGeneric: ParameterizableClass): void
+    -parentGeneric: ParameterizableInterface | ParameterizableClass
+    +getParentGeneric(): ParameterizableInterface | ParameterizableClass
+    +setParentGeneric(parentGeneric: ParameterizableInterface | ParameterizableClass): void
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
 class PrimitiveType extends Type {
+    +getJSON(): string
+    +addPropertiesToExporter(exporter: FamixJSONExporter): void
+}
+class TextAnchor extends SourceAnchor {
+    -startPos: number
+    +getStartPos(): number
+    +setStartPos(startPos: number): void
+    -endPos: number
+    +getEndPos(): number
+    +setEndPos(endPos: number): void
+    -fileName: string
+    +getFileName(): string
+    +setFileName(fileName: string): void
     +getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
 }
@@ -445,5 +487,12 @@ abstract class FamixBaseElement {
     +id: number
     +{abstract} getJSON(): string
     +addPropertiesToExporter(exporter: FamixJSONExporter): void
+}
+class FamixJSONExporter {
+    -element: FamixBaseElement
+    -bufferArray: any
+    -FamixPrefix: string
+    +addProperty(name: string, prop: unknown): void
+    +getJSON(): string
 }
 @enduml

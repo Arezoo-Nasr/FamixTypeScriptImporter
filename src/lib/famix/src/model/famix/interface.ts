@@ -4,7 +4,7 @@ import { Method } from "./method";
 import { Field } from "./field";
 import { Inheritance } from "./inheritance";
 
-export class Class extends Type {
+export class Interface extends Type {
 
   private isTestCase: boolean;
 
@@ -14,16 +14,6 @@ export class Class extends Type {
 
   public setIsTestCase(isTestCase: boolean): void {
     this.isTestCase = isTestCase;
-  }
-
-  private isAbstract: boolean;
-
-  public getIsAbstract(): boolean {
-    return this.isAbstract;
-  }
-
-  public setIsAbstract(isAbstract: boolean): void {
-    this.isAbstract = isAbstract;
   }
 
   private fields: Set<Field> = new Set();
@@ -80,7 +70,7 @@ export class Class extends Type {
 
 
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("Class", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Interface", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
@@ -88,7 +78,6 @@ export class Class extends Type {
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("isTestCase", this.getIsTestCase());
-    exporter.addProperty("isAbstract", this.getIsAbstract());
     exporter.addProperty("fields", this.getFields());
     exporter.addProperty("methods", this.getMethods());
     exporter.addProperty("superInheritances", this.getSuperInheritances());

@@ -3,6 +3,8 @@
 
 name: Node.js CI
 
+permissions: write-all
+
 on:
   push:
     branches: [ master ]

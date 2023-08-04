@@ -136,3 +136,6 @@ docs/*
 
 # Tests source files
 test_src/*
+
+# Plantuml
+plantuml.jar

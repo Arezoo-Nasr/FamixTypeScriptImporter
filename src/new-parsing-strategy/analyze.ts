@@ -209,7 +209,7 @@ export class Importer {
     private processClass(c: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {
         this.classes.push(c);
 
-        const fmxClass = this.famixFunctions.createOrGetFamixClassOrInterface(c, c.isAbstract());
+        const fmxClass = this.famixFunctions.createOrGetFamixClass(c, c.isAbstract());
 
         console.info(`processClass: class: ${c.getName()}, (${c.getType().getText()}), fqn = ${fmxClass.getFullyQualifiedName()}`);
 
@@ -226,12 +226,12 @@ export class Importer {
     /**
      * Builds a Famix model for an interface
      * @param i An interface
-     * @returns A Famix.Class or a Famix.ParameterizableClass representing the interface
+     * @returns A Famix.Interface or a Famix.ParameterizableInterface representing the interface
      */
-    private processInterface(i: InterfaceDeclaration): Famix.Class | Famix.ParameterizableClass {
+    private processInterface(i: InterfaceDeclaration): Famix.Interface | Famix.ParameterizableInterface {
         this.interfaces.push(i);
 
-        const fmxInterface = this.famixFunctions.createOrGetFamixClassOrInterface(i, false);
+        const fmxInterface = this.famixFunctions.createOrGetFamixInterface(i);
 
         console.info(`processInterface: interface: ${i.getName()}, (${i.getType().getText()}), fqn = ${fmxInterface.getFullyQualifiedName()}`);
 
@@ -245,7 +245,7 @@ export class Importer {
      * @param c A structured type (a class or an interface)
      * @param fmxScope The Famix model of the structured type
      */
-    private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass) {
+    private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass | Famix.Interface | Famix.ParameterizableInterface) {
         c.getProperties().forEach(prop => {
             const fmxAttr = this.processField(prop);
             fmxScope.addField(fmxAttr);

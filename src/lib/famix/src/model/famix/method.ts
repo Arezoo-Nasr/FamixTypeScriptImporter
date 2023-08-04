@@ -1,16 +1,17 @@
 import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { BehavioralEntity } from "./behavioral_entity";
 import { Class } from "./class";
+import { Interface } from "./interface";
 
 export class Method extends BehavioralEntity {
 
-  private parentEntity: Class;
+  private parentEntity: Class | Interface;
 
-  public getParentEntity(): Class {
+  public getParentEntity(): Class | Interface {
     return this.parentEntity;
   }
 
-  public setParentEntity(parentEntity: Class): void {
+  public setParentEntity(parentEntity: Class | Interface): void {
     this.parentEntity = parentEntity;
     parentEntity.addMethod(this);
   }

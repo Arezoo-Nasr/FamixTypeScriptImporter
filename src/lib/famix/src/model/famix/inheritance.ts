@@ -1,27 +1,28 @@
 import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { Association } from "./association";
 import { Class } from "./class";
+import { Interface } from "./interface";
 
 export class Inheritance extends Association {
 
-  private superclass: Class;
+  private superclass: Class | Interface;
 
-  public getSuperclass(): Class {
+  public getSuperclass(): Class  | Interface {
     return this.superclass;
   }
 
-  public setSuperclass(superclass: Class): void {
+  public setSuperclass(superclass: Class | Interface): void {
     this.superclass = superclass;
     superclass.addSubInheritance(this);
   }
 
-  private subclass: Class;
+  private subclass: Class | Interface;
 
-  public getSubclass(): Class {
+  public getSubclass(): Class | Interface {
     return this.subclass;
   }
 
-  public setSubclass(subclass: Class) {
+  public setSubclass(subclass: Class | Interface) {
     this.subclass = subclass;
     subclass.addSuperInheritance(this);
   }

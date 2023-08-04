@@ -3,6 +3,7 @@ import { SourcedEntity } from "./sourced_entity";
 import { Invocation } from "./invocation";
 import { ImportClause } from "./import_clause";
 import { Alias } from "./alias";
+import { Decorator } from "./decorator";
 
 export class NamedEntity extends SourcedEntity {
 
@@ -65,6 +66,19 @@ export class NamedEntity extends SourcedEntity {
     }
   }
 
+  private decorators: Set<Decorator> = new Set();
+
+  public getDecorators(): Set<Decorator> {
+    return this.decorators;
+  }
+
+  public addDecorator(decorator: Decorator): void {
+    if (!this.decorators.has(decorator)) {
+      this.decorators.add(decorator);
+      decorator.setDecoratedEntity(this);
+    }
+  }
+
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("NamedEntity", this);
@@ -79,5 +93,6 @@ export class NamedEntity extends SourcedEntity {
     exporter.addProperty("imports", this.getImports());
     exporter.addProperty("name", this.getName());
     exporter.addProperty("aliases", this.getAliases());
+    exporter.addProperty("decorators", this.getDecorators());
   }
 }
