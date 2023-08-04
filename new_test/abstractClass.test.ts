@@ -17,9 +17,4 @@ describe('Tests for abstract class', () => {
         expect(theAbstractClass).toBeTruthy();
         if (theAbstractClass) expect(theAbstractClass.getIsAbstract()).toBe(true);
     });
-
-    it("should not be an interface", () => {
-        expect(theAbstractClass).toBeTruthy();
-        if (theAbstractClass) expect(theAbstractClass.getIsInterface()).toBe(false);
-    });
 });

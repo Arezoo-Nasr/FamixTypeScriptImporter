@@ -389,16 +389,25 @@ export class FamixFunctions {
         const fmxInheritance = new Famix.Inheritance(this.fmxRep);
         const clsName = cls.getName();
         
+        let subClass: Famix.Class | Famix.Interface;
+        if (cls instanceof ClassDeclaration) {
+            subClass = this.fmxClasses.get(clsName);
+        }
+        else {
+            subClass = this.fmxInterfaces.get(clsName);
+        }
+        
         let inhClassName: string;
+        let superClass: Famix.Class | Famix.Interface;
         if (inhClass instanceof ClassDeclaration) {
             inhClassName = inhClass.getName();
+            superClass = this.fmxClasses.get(inhClassName);
         }
         else {
             inhClassName = inhClass.getExpression().getText();
+            superClass = this.fmxInterfaces.get(inhClassName);
         }
 
-        const subClass = this.fmxClasses.get(clsName);
-        const superClass = this.fmxClasses.get(inhClassName);
         fmxInheritance.setSubclass(subClass);
         fmxInheritance.setSuperclass(superClass);
 
