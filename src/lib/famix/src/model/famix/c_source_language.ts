@@ -1,10 +1,7 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { SourceLanguage } from "./../famix/source_language";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { SourceLanguage } from "./source_language";
 
 export class CSourceLanguage extends SourceLanguage {
-
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("CSourceLanguage", this);
@@ -12,10 +9,7 @@ export class CSourceLanguage extends SourceLanguage {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
   }
-
 }
-

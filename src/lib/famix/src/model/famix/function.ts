@@ -1,37 +1,7 @@
-// automatically generated code, please do not change
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { BehavioralEntity } from "./behavioral_entity";
 
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
-import { ContainerEntity } from "./../famix/container_entity";
-import { Module } from "./../famix/module";
-
-export class Function extends BehaviouralEntity {
-
-  private functionContainer: ContainerEntity;
-
-  // oneMany.Getter
-  // @FameProperty(name = "container", opposite = "functions")
-  public getContainer(): ContainerEntity {
-    return this.functionContainer;
-  }
-
-  // oneMany.Setter
-  public setContainer(newContainer: ContainerEntity) {
-    this.functionContainer = newContainer;
-    newContainer.getFunctions().add(this);
-  }
-
-  private functionParentModule: Module;
-
-  // @FameProperty(name = "parentModule")
-  public getParentModule(): Module {
-    return this.functionParentModule;
-  }
-
-  public setParentModule(functionParentModule: Module) {
-    this.functionParentModule = functionParentModule;
-  }
-
+export class Function extends BehavioralEntity {
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Function", this);
@@ -39,12 +9,7 @@ export class Function extends BehaviouralEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("container", this.getContainer());
-    exporter.addProperty("parentModule", this.getParentModule());
-
   }
-
 }
-

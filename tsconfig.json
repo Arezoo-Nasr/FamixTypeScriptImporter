@@ -60,5 +60,11 @@
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
   "include": ["src"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules", "**/*.spec.ts"],
+  "typedocOptions": {
+    "entryPoints": ["src/*"],
+    "entryPointStrategy": "expand",
+    "out": "docs",
+    "githubPages": false
+  }
 }

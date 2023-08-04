@@ -25,25 +25,26 @@ interface Association {
 }
 
 const jsonFileName = argv.input as string;
+const pumlFileName = (argv.output as string).substring((argv.output as string).indexOf("/")+1, (argv.output as string).lastIndexOf('.'));
 const parsedModel: Array<FamixTypeScriptElement> = JSON.parse(fs.readFileSync(jsonFileName, 'utf-8'));
 const classNameMap = new Map<string, string>();
 const associations = new Array<Association>();
 
-// map all the classnames to their ids
+// maps all the classnames to their ids
 parsedModel.forEach(element => {
-    // Map has id as key and unique (plantuml) class name
+    // map has id as key and unique (plantuml) class name
     classNameMap.set(element.id, uniqueElementName(element));
     const nameWithoutPrefix = element.FM3.split('.')[1];
     // special case association
     if (nameWithoutPrefix.endsWith('Inheritance')) {
         const subclass = element['subclass'].ref;
         const superclass = element['superclass'].ref;
-        associations.push({ from: subclass, to: superclass, name: nameWithoutPrefix })
+        associations.push({ from: subclass, to: superclass, name: nameWithoutPrefix });
     }
 });
 
-// generate plantuml
-let plantUMLOutString = `@startuml
+// generates plantuml
+let plantUMLOutString = `@startuml ${pumlFileName}
 skinparam style strictuml
 title Object diagram for ${jsonFileName}
 `;
@@ -51,9 +52,9 @@ parsedModel.forEach(element => {
     plantUMLOutString += `${toPlantUML(element)}\n`;
 });
 
-// create associations
+// creates associations
 associations.forEach(association => {
-    // Inheritance is a special case - show it in UML even though it doesn't make 100% sense in object diagrams
+    // inheritance is a special case - show it in UML even though it doesn't make 100% sense in object diagrams
     const isInheritance = association.name.startsWith('Inheritance');
     if (isInheritance) {
         plantUMLOutString += `${classNameMap.get(association.from)} --|> ${classNameMap.get(association.to)} #line:${INHERITANCE_LINK_COLOR}\n`;
@@ -64,22 +65,19 @@ associations.forEach(association => {
 
 plantUMLOutString += '@enduml';
 
-// write to output file
+// writes to output file
 fs.writeFile(argv.output as string, plantUMLOutString, (err) => {
     if (err) { throw err; }
 });
 
 function uniqueElementName(element: FamixTypeScriptElement): string {
-    // console.error(`uniqueElementName for ${JSON.stringify(element)}`);
-    return `${element.FM3}${element.id}`
+    return `${element.FM3}${element.id}`;
 }
 
 function toPlantUML(element: FamixTypeScriptElement) {
-    let plantUMLString: string = '';
-    let optionalName = element.name || '';
-    let nameWithoutPrefix = element.FM3.split('.')[1];
-    // remove convert " to ' in optional name
-    optionalName = optionalName.replace(/"/g, "'");
+    let plantUMLString = '';
+    const optionalName = element.name || '';
+    const nameWithoutPrefix = element.FM3.split('.')[1];
     plantUMLString += `object "${optionalName}:${nameWithoutPrefix}" as ${uniqueElementName(element)} {\n`;
     plantUMLString += `id = ${element.id}\n`;
     plantUMLString += propertiesToPlantUML(element);
@@ -88,11 +86,13 @@ function toPlantUML(element: FamixTypeScriptElement) {
 }
 
 function propertiesToPlantUML(element: FamixTypeScriptElement) {
-    var plantUMLString: string = '';
-    // element.attrs.forEach(attr => {
+    let plantUMLString = '';
     for (const property in element) {
+        const attribute = element[property];
+        const isOneToManyReference = typeof attribute !== 'string' && attribute.length; // array but not a string
+
         switch (property) {
-            // ignore these properties
+            // ignores these properties
             case 'subclass':
             case 'superclass':
             case 'FM3':
@@ -101,17 +101,15 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
                 break;
 
             default:
-                const attribute = element[property];
-                const isOneToManyReference = typeof attribute != 'string' && attribute.length; // Array but not a string
                 if (isOneToManyReference) {
                     attribute.forEach((composite, index) => {
-                        associations.push({ from: element.id, to: composite.ref, name: `${property}[${index}]` })
+                        associations.push({ from: element.id, to: composite.ref, name: `${property}[${index}]` });
                     });
-                } else if (typeof attribute == 'object') {
+                } else if (typeof attribute === 'object') {
                     associations.push({ from: element.id, to: attribute.ref, name: property });
                 } else {  // typeof string, boolean, number, etc.
-                    // treat it as a simple attribute
-                    plantUMLString += `${property} = ${element[property]}\n`
+                    // treats it as a simple attribute
+                    plantUMLString += `${property} = ${element[property]}\n`;
                 }
 
                 break;

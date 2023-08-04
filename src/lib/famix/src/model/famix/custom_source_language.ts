@@ -1,18 +1,15 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { SourceLanguage } from "./../famix/source_language";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { SourceLanguage } from "./source_language";
 
 export class CustomSourceLanguage extends SourceLanguage {
 
   private customSourceLanguageName: string;
 
-  // @FameProperty(name = "name")
   public getName(): string {
     return this.customSourceLanguageName;
   }
 
-  public setName(customSourceLanguageName: string) {
+  public setName(customSourceLanguageName: string): void {
     this.customSourceLanguageName = customSourceLanguageName;
   }
 
@@ -23,11 +20,8 @@ export class CustomSourceLanguage extends SourceLanguage {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("name", this.getName());
-
   }
-
 }
-

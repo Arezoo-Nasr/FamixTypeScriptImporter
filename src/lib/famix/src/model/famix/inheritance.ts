@@ -1,44 +1,30 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
-import { Association } from "./../famix/association";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Association } from "./association";
+import { Class } from "./class";
+import { Interface } from "./interface";
 
 export class Inheritance extends Association {
 
-  private inheritanceSuperclass: Type;
+  private superclass: Class | Interface;
 
-  // oneMany.Getter
-  // @FameProperty(name = "superclass", opposite = "subInheritances")
-  public getSuperclass(): Type {
-    return this.inheritanceSuperclass;
+  public getSuperclass(): Class  | Interface {
+    return this.superclass;
   }
 
-  // oneMany.Setter
-  public setSuperclass(newSuperclass: Type) {
-    this.inheritanceSuperclass = newSuperclass;
-    try {
-      newSuperclass.getSubInheritances().add(this);
-    } catch (error) {
-      if (newSuperclass) 
-        console.info(` > ERROR - couldn't get subInheritances() for class ${newSuperclass.getName()}`)
-      else 
-        console.info(` > ERROR - couldn't get subInheritances() for class (UNDEFINED)`)
-    }
+  public setSuperclass(superclass: Class | Interface): void {
+    this.superclass = superclass;
+    superclass.addSubInheritance(this);
   }
 
-  private inheritanceSubclass: Type;
+  private subclass: Class | Interface;
 
-  // oneMany.Getter
-  // @FameProperty(name = "subclass", opposite = "superInheritances")
-  public getSubclass(): Type {
-    return this.inheritanceSubclass;
+  public getSubclass(): Class | Interface {
+    return this.subclass;
   }
 
-  // oneMany.Setter
-  public setSubclass(newSubclass: Type) {
-    this.inheritanceSubclass = newSubclass;
-    newSubclass.getSuperInheritances().add(this);
+  public setSubclass(subclass: Class | Interface) {
+    this.subclass = subclass;
+    subclass.addSuperInheritance(this);
   }
 
 
@@ -48,12 +34,9 @@ export class Inheritance extends Association {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("superclass", this.getSuperclass());
     exporter.addProperty("subclass", this.getSubclass());
-
   }
-
 }
-

@@ -1,24 +1,19 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
-import { EnumValue } from "./../famix/enum_value";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Type } from "./type";
+import { EnumValue } from "./enum_value";
 
 export class Enum extends Type {
 
   private enumValues: Set<EnumValue> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "values", opposite = "parentEnum", derived = true)
   public getValues(): Set<EnumValue> {
     return this.enumValues;
   }
 
-  // manyOne.Setter
-  public addValues(enumValues: EnumValue) {
-    if (!this.enumValues.has(enumValues)) {
-      this.enumValues.add(enumValues);
-      enumValues.setParentEnum(this);
+  public addValue(enumValue: EnumValue): void {
+    if (!this.enumValues.has(enumValue)) {
+      this.enumValues.add(enumValue);
+      enumValue.setParentEntity(this);
     }
   }
 
@@ -29,11 +24,8 @@ export class Enum extends Type {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("values", this.getValues());
-
   }
-
 }
-

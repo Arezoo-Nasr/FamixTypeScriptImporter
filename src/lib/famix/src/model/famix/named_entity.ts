@@ -1,94 +1,82 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Invocation } from "./../famix/invocation";
-import { SourcedEntity } from "./../famix/sourced_entity";
-import { Package } from "./../famix/package";
-import { AnnotationInstance } from "./../famix/annotation_instance";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { SourcedEntity } from "./sourced_entity";
+import { Invocation } from "./invocation";
+import { ImportClause } from "./import_clause";
+import { Alias } from "./alias";
+import { Decorator } from "./decorator";
 
 export class NamedEntity extends SourcedEntity {
 
-  private namedEntityReceivingInvocations: Set<Invocation> = new Set();
+  private fullyQualifiedName: string;
 
-  // manyOne.Getter
-  // @FameProperty(name = "receivingInvocations", opposite = "receiver", derived = true)
-  public getReceivingInvocations(): Set<Invocation> {
-    return this.namedEntityReceivingInvocations;
+  public getFullyQualifiedName(): string {
+    return this.fullyQualifiedName;
   }
 
-  // manyOne.Setter
-  public addReceivingInvocations(namedEntityReceivingInvocations: Invocation) {
-    if (!this.namedEntityReceivingInvocations.has(namedEntityReceivingInvocations)) {
-      this.namedEntityReceivingInvocations.add(namedEntityReceivingInvocations);
-      namedEntityReceivingInvocations.setReceiver(this);
+  public setFullyQualifiedName(fullyQualifiedName: string): void {
+    this.fullyQualifiedName = fullyQualifiedName;
+  }
+
+  private receivedInvocations: Set<Invocation> = new Set();
+
+  public getReceivedInvocations(): Set<Invocation> {
+    return this.receivedInvocations;
+  }
+
+  public addReceivedInvocation(receivedInvocation: Invocation): void {
+    if (!this.receivedInvocations.has(receivedInvocation)) {
+      this.receivedInvocations.add(receivedInvocation);
+      receivedInvocation.setReceiver(this);
     }
   }
 
-  private namedEntityModifiers: Set<string> = new Set();
+  private imports: Set<ImportClause> = new Set();
 
-  // @FameProperty(name = "modifiers")
-  // many.getter
-  public getModifiers(): Set<string> {
-    return this.namedEntityModifiers;
+  public getImports(): Set<ImportClause> {
+    return this.imports;
   }
 
-  // many.Setter
-  public addModifiers(newModifiers: string) {
-    if (!this.namedEntityModifiers.has(newModifiers)) {
-      this.namedEntityModifiers.add(newModifiers);
+  public addImport(anImport: ImportClause): void {
+    if (!this.imports.has(anImport)) {
+      this.imports.add(anImport);
+      anImport.setImportedEntity(this);
     }
   }
 
-  private namedEntityIsStub: boolean;
+  private name: string;
 
-  // @FameProperty(name = "isStub")
-  public getIsStub(): boolean {
-    return this.namedEntityIsStub;
-  }
-
-  public setIsStub(namedEntityIsStub: boolean) {
-    this.namedEntityIsStub = namedEntityIsStub;
-  }
-
-  private namedEntityName: string;
-
-  // @FameProperty(name = "name")
   public getName(): string {
-    return this.namedEntityName;
+    return this.name;
   }
 
-  public setName(namedEntityName: string) {
-    this.namedEntityName = namedEntityName;
+  public setName(name: string): void {
+    this.name = name;
   }
 
-  private namedEntityAnnotationInstances: Set<AnnotationInstance> = new Set();
+  private aliases: Set<Alias> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "annotationInstances", opposite = "annotatedEntity", derived = true)
-  public getAnnotationInstances(): Set<AnnotationInstance> {
-    return this.namedEntityAnnotationInstances;
+  public getAliases(): Set<Alias> {
+    return this.aliases;
   }
 
-  // manyOne.Setter
-  public addAnnotationInstances(namedEntityAnnotationInstances: AnnotationInstance) {
-    if (!this.namedEntityAnnotationInstances.has(namedEntityAnnotationInstances)) {
-      this.namedEntityAnnotationInstances.add(namedEntityAnnotationInstances);
-      namedEntityAnnotationInstances.setAnnotatedEntity(this);
+  public addAlias(alias: Alias): void {
+    if (!this.aliases.has(alias)) {
+      this.aliases.add(alias);
+      alias.setAliasedEntity(this);
     }
   }
 
-  private namedEntityParentPackage: Package;
+  private decorators: Set<Decorator> = new Set();
 
-  // oneMany.Getter
-  // @FameProperty(name = "parentPackage", opposite = "childNamedEntities")
-  public getParentPackage(): Package {
-    return this.namedEntityParentPackage;
+  public getDecorators(): Set<Decorator> {
+    return this.decorators;
   }
 
-  // oneMany.Setter
-  public setParentPackage(newParentPackage: Package) {
-    this.namedEntityParentPackage = newParentPackage;
-    newParentPackage.getChildNamedEntities().add(this);
+  public addDecorator(decorator: Decorator): void {
+    if (!this.decorators.has(decorator)) {
+      this.decorators.add(decorator);
+      decorator.setDecoratedEntity(this);
+    }
   }
 
 
@@ -98,16 +86,13 @@ export class NamedEntity extends SourcedEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("isStub", this.getIsStub());
-    exporter.addProperty("receivingInvocations", this.getReceivingInvocations());
+    exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
+    exporter.addProperty("receivedInvocations", this.getReceivedInvocations());
+    exporter.addProperty("imports", this.getImports());
     exporter.addProperty("name", this.getName());
-    exporter.addProperty("modifiers", this.getModifiers());
-    exporter.addProperty("annotationInstances", this.getAnnotationInstances());
-    exporter.addProperty("parentPackage", this.getParentPackage());
-
+    exporter.addProperty("aliases", this.getAliases());
+    exporter.addProperty("decorators", this.getDecorators());
   }
-
 }
-

@@ -1,76 +1,56 @@
 import { FamixBaseElement } from "./famix_base_element";
 
-type RefType = {
-  ref: number
-}
-// approximation for code completion
-export interface FamixTypeScriptElementStorage {
-    FM3: string
-    name: string
-    id?: string
-    accessor?: RefType
-    variable?: RefType
-}
-
+/**
+ * This class is used to export Famix elements to JSON
+ */
 export class FamixJSONExporter {
-  private element: FamixBaseElement;
-  private bufferArray: any = {}
-  //Arezoo
-  private FamixPrefix: string = "FamixTypeScript";
-  //End
+
+  private element: FamixBaseElement; // A Famix element to export
+  private bufferArray: any = {}; // A buffer to store the properties of the Famix element
+  private FamixPrefix = "FamixTypeScript"; // Prefix of the Famix element
+
+  /**
+   * Constructor of the FamixJSONExporter class
+   * @param packageClass Name of a Famix class
+   * @param element A Famix element to export, this element is an instance of the class named "packageClass"
+   */
   constructor(packageClass: string, element: FamixBaseElement) {
     this.element = element;
-    //this.buffer = `(${packageClass}  (id: ${this.element.id})`;
-    //this.buffer = `{ FM3 : ${packageClass} , id : ${this.element.id} `;
     this.bufferArray["FM3"] = this.FamixPrefix + "." + packageClass;
     this.bufferArray["id"] = this.element.id;
   }
 
-  public addProperty(name: string, prop: unknown) {
-    if (prop === undefined) { return; }
-    if ((prop instanceof Set) && (prop.size === 0)) { return; }
-
+  /**
+   * Adds a property to the Famix element
+   * @param name Name of the property
+   * @param prop A property
+   */
+  public addProperty(name: string, prop: unknown): void {
     if (prop instanceof Set) {
-      let valueBuffer: string = "";
-      let valueArray = [];
+      const valueArray: Array<any> = [];
       for (const value of Array.from(prop.values())) {
-        if (valueBuffer.length > 0) {
-          //valueBuffer = valueBuffer + " ";
-        }
-        if (typeof (value) === "string") {
-          //valueBuffer = valueBuffer + `'${value}'`;
-          valueArray.push(value);
-
-        } else if (value instanceof FamixBaseElement) {
-          //valueBuffer = valueBuffer + `(ref: ${value.id})`;
+        if (value instanceof FamixBaseElement) {
           valueArray.push({ "ref": value.id });
-
-        } else {
-          //valueBuffer = valueBuffer + `${value}`;
+        }
+        else {
           valueArray.push(value);
         }
       }
-      //this.buffer = this.buffer + `\n    (${name} ${valueBuffer})`;
       this.bufferArray[name] = valueArray;
     }
     else if (prop instanceof FamixBaseElement) {
       this.bufferArray[name] = { "ref": prop.id };
-    } else if (typeof (prop) === "string") {
-      this.bufferArray[name] = prop;
-    } else {
+    }
+    else if (prop !== undefined && (!(prop instanceof Set) || (prop.size !== 0))) {
       this.bufferArray[name] = prop;
     }
-    // else if (prop instanceof FamixBaseElement) {
-    //   this.buffer = this.buffer + `\n    (${name} (ref: ${prop.id}))`;
-    // } else if (typeof (prop) === "string") {
-    //   this.buffer = this.buffer + `\n    (${name} '${prop}')`;
-    // } else {
-    //   this.buffer = this.buffer + `\n    (${name} ${prop})`;
-    // }
   }
 
+  /**
+   * Gets a JSON representation of the Famix element
+   * @returns A JSON representation of the Famix element
+   */
   public getJSON(): string {
-    //return this.buffer + ")\n";
     return JSON.stringify(this.bufferArray);
   }
 }
