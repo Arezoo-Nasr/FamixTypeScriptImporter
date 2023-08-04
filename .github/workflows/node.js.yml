@@ -38,7 +38,9 @@ jobs:
       - run: npm test
 
       - name: Get latest plantuml
-        run: wget --no-verbose https://downloads.sourceforge.net/project/plantuml/plantuml.jar
+        run: |
+          rm -f plantuml.jar
+          wget --no-verbose https://downloads.sourceforge.net/project/plantuml/plantuml.jar
 
       - name: Build meta-model plantuml from TypeScript sources
         run: npx tplant -i src/lib/famix/**/*.ts -o doc-metamodel/famix-typescript-model.puml
@@ -57,6 +59,7 @@ jobs:
     
       - name: Move artifact
         run: |
+          rm -rf doc-uml
           mkdir doc-uml
           cp doc-metamodel/*.svg doc-uml
 
