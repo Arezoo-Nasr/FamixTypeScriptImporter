@@ -440,7 +440,6 @@ export class TS2Famix {
         let fmxClass = new Famix.Class(this.fmxRep);
         let clsName = cls.getName();
         fmxClass.setName(clsName);
-        fmxClass.setIsInterface(isInterface);
         fmxClass.setIsAbstract(isAbstract);
 
         this.makeFamixIndexFileAnchor(cls, fmxClass);
@@ -453,7 +452,6 @@ export class TS2Famix {
         let fmxClass = new Famix.ParameterizableClass(this.fmxRep);
         let clsName = cls.getName();
         fmxClass.setName(clsName);
-        fmxClass.setIsInterface(isInterface);
 
         this.makeFamixIndexFileAnchor(cls, fmxClass);
 
@@ -692,7 +690,6 @@ export class TS2Famix {
         }
         let fmxType = this.getFamixType(propTypeName);
         fmxAttribute.setDeclaredType(fmxType);
-        fmxAttribute.setHasClassScope(true);
         // fmxAttribute.addModifiers(this.getAccessor(property));
         this.makeFamixIndexFileAnchor(property, fmxAttribute);
 

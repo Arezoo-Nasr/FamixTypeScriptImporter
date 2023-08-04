@@ -34,9 +34,8 @@ describe('Tests for generic class', () => {
     });
 
     const theClass = fmxRep._getFamixClass("MyClass");
-    it ("should not be an abstract class nor an interface", () => {
+    it ("should not be an abstract class", () => {
         expect(theClass).toBeTruthy();
         if (theClass) expect(theClass.getIsAbstract()).toBe(false);
-        if (theClass) expect(theClass.getIsInterface()).toBe(false);
     });
 });

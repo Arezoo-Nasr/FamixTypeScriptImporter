@@ -33,11 +33,6 @@ describe('Tests for generics', () => {
         if (theClass) expect(theClass.getIsAbstract()).toBe(false);
     });
 
-    it("should not be an interface", () => {
-        expect(theClass).toBeTruthy();
-        if (theClass) expect(theClass.getIsInterface()).toBe(false);
-    });
-
     it("should contain a generic method i for class AA with parameter type T", () => {
         const cList = Array.from(fmxRep._getAllEntitiesWithType("Class") as Set<Class>);
         expect(cList).toBeTruthy();

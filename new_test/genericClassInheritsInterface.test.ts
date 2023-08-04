@@ -1,5 +1,5 @@
 import { Importer } from '../src/new-parsing-strategy/analyze';
-import { ParameterizableClass } from '../src/lib/famix/src/model/famix';
+import { ParameterizableClass, ParameterizableInterface } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -15,16 +15,19 @@ describe('Tests for generic class inherits interface', () => {
         expect(fmxRep).toBeTruthy();
     });
 
-    it("should contain two generic class", () => {
-        expect(fmxRep._getAllEntitiesWithType("ParameterizableClass").size).toBe(2);
+    it("should contain one generic class and one generic interface", () => {
+        expect(fmxRep._getAllEntitiesWithType("ParameterizableClass").size).toBe(1);
+        expect(fmxRep._getAllEntitiesWithType("ParameterizableInterface").size).toBe(1);
     });
 
     it("should contain a generic class MyDao that implements a generic interface MyDaoInterface", () => {
-        const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
-        expect(pList).toBeTruthy();
-        const myDao = pList.find(p => p.getName() === "MyDao");
+        const cList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
+        expect(cList).toBeTruthy();
+        const myDao = cList.find(p => p.getName() === "MyDao");
         expect(myDao).toBeTruthy();
-        const myDaoInterface = pList.find(p => p.getName() === "MyDaoInterface");
+        const iList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableInterface") as Set<ParameterizableInterface>);
+        expect(iList).toBeTruthy();
+        const myDaoInterface = iList.find(p => p.getName() === "MyDaoInterface");
         expect(myDaoInterface).toBeTruthy();
         if (myDao) {
             expect(myDao.getSubInheritances().size).toBe(0);
