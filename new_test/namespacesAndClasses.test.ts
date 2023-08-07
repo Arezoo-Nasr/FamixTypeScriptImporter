@@ -1,4 +1,4 @@
-import { Importer } from '../src/new-parsing-strategy/analyze';
+import { Importer } from '../src/analyze';
 import { Type } from '../src/lib/famix/src/model/famix/type';
 import { Class } from '../src/lib/famix/src/model/famix/class';
 

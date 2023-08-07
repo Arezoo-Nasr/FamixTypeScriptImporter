@@ -1,4 +1,4 @@
-import { Importer } from '../src/new-parsing-strategy/analyze';
+import { Importer } from '../src/analyze';
 
 const importer = new Importer();
 
