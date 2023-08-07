@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, ExpressionWithTypeArguments } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { SyntaxKind } from "@ts-morph/common";
@@ -242,12 +242,14 @@ export class FamixFunctions {
     /**
      * Creates a Famix function
      * @param func A function
+     * @param currentCC The cyclomatic complexity metrics of the current source file
      * @returns The Famix model of the function
      */
-    public createFamixFunction(func: FunctionDeclaration): Famix.Function {
+    public createFamixFunction(func: FunctionDeclaration, currentCC: any): Famix.Function {
         const fmxFunction = new Famix.Function(this.fmxRep);
         fmxFunction.setName(func.getName());
         fmxFunction.setSignature(this.computeSignature(func.getText()));
+        fmxFunction.setCyclomaticComplexity(currentCC[fmxFunction.getName()]);
 
         let functionTypeName = this.UNKNOWN_VALUE;
         try {
@@ -398,7 +400,7 @@ export class FamixFunctions {
      * @param cls A class or an interface
      * @param inhClass The inherited class or interface
      */
-    public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | ExpressionWithTypeArguments): void {
+    public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | InterfaceDeclaration): void {
         const fmxInheritance = new Famix.Inheritance(this.fmxRep);
         const clsName = cls.getName();
         
@@ -410,15 +412,29 @@ export class FamixFunctions {
             subClass = this.fmxInterfaces.get(clsName);
         }
         
-        let inhClassName: string;
+        const inhClassName = inhClass.getName();
         let superClass: Famix.Class | Famix.Interface;
         if (inhClass instanceof ClassDeclaration) {
-            inhClassName = inhClass.getName();
             superClass = this.fmxClasses.get(inhClassName);
         }
         else {
-            inhClassName = inhClass.getExpression().getText();
             superClass = this.fmxInterfaces.get(inhClassName);
+        }
+
+        if (superClass === undefined) {
+            if (inhClass instanceof ClassDeclaration) {
+                superClass = new Famix.Class(this.fmxRep);
+                this.fmxClasses.set(inhClassName, superClass);
+            }
+            else {
+                superClass = new Famix.Interface(this.fmxRep);
+                this.fmxInterfaces.set(inhClassName, superClass);
+            }
+
+            superClass.setName(inhClassName);
+            superClass.setIsStub(true);
+
+            this.makeFamixIndexFileAnchor(inhClass, superClass);
         }
 
         fmxInheritance.setSubclass(subClass);

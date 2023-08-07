@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, ExpressionWithTypeArguments } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -69,6 +69,19 @@ export class Importer {
         fs.writeFileSync(filePath, source, 'utf-8');
 
         const fmxRep = this.famixRepFromPaths([filePath]);
+
+        return fmxRep;
+    }
+
+    /**
+     * Main method for a ts-morph project
+     * @param project A ts-morph project
+     * @returns The Famix repository containing the Famix model
+     */
+    public famixRepFromProject(project: Project): FamixRepository {
+        const sourceFilesNames = project.getSourceFiles().map(f => f.getFilePath()) as Array<string>;
+
+        const fmxRep = this.famixRepFromPaths(sourceFilesNames);
 
         return fmxRep;
     }
@@ -290,7 +303,7 @@ export class Importer {
     private processFunction(f: FunctionDeclaration): Famix.Function { // -> invocations ???
         this.functions.push(f);
 
-        const fmxFunction = this.famixFunctions.createFamixFunction(f);
+        const fmxFunction = this.famixFunctions.createFamixFunction(f, this.currentCC);
 
         console.info(`processFunction: function: ${f.getName()}, (${f.getType().getText()}), fqn = ${fmxFunction.getFullyQualifiedName()}`);
 
@@ -504,21 +517,48 @@ export class Importer {
             }
 
             console.info(`processInheritances: Checking interface inheritance for ${cls.getName()}`);
-            const implementsInter = cls.getImplements();
-            implementsInter.forEach(impInter => {
+            const implementedInterfaces = this.getImplementedOrExtendedInterfaces(cls);
+            implementedInterfaces.forEach(impInter => {
                 this.famixFunctions.createFamixInheritance(cls, impInter);
 
-                console.info(`processInheritances: class: ${cls.getName()}, (${cls.getType().getText()}), impInter: ${impInter.getExpression().getText()}, (${impInter.getType().getText()})`);
+                console.info(`processInheritances: class: ${cls.getName()}, (${cls.getType().getText()}), impInter: ${impInter.getName()}, (${impInter.getType().getText()})`);
             });
         });
 
         this.interfaces.forEach(inter => {
             console.info(`processInheritances: Checking interface inheritance for ${inter.getName()}`);
-            inter.getExtends().forEach(extInter => {
+            const extendedInterfaces = this.getImplementedOrExtendedInterfaces(inter);
+            extendedInterfaces.forEach(extInter => {
                 this.famixFunctions.createFamixInheritance(inter, extInter);
 
-                console.info(`processInheritances: inter: ${inter.getName()}, (${inter.getType().getText()}), extInter: ${extInter.getExpression().getText()}, (${extInter.getType().getText()})`);
+                console.info(`processInheritances: inter: ${inter.getName()}, (${inter.getType().getText()}), extInter: ${extInter.getName()}, (${extInter.getType().getText()})`);
             });
         });
+    }
+
+    /**
+     * Gets the interfaces implemented or extended by a class or an interface
+     * @param subClass A class or an interface
+     * @returns An array of InterfaceDeclaration containing the interfaces implemented or extended by the subClass
+     */
+    private getImplementedOrExtendedInterfaces(subClass: ClassDeclaration | InterfaceDeclaration): Array<InterfaceDeclaration> {
+        let impOrExtInterfaces: Array<ExpressionWithTypeArguments>;
+        if (subClass instanceof ClassDeclaration) {
+            impOrExtInterfaces = subClass.getImplements();
+        }
+        else {
+            impOrExtInterfaces = subClass.getExtends();
+        }
+
+        const interfacesNames = this.interfaces.map(i => i.getName());
+        const implementedOrExtendedInterfaces = new Array<InterfaceDeclaration>();
+
+        impOrExtInterfaces.forEach(i => {
+            if (interfacesNames.includes(i.getExpression().getText())) {
+                implementedOrExtendedInterfaces.push(this.interfaces[interfacesNames.indexOf(i.getExpression().getText())]);
+            }
+        });
+
+        return implementedOrExtendedInterfaces;
     }
 }
