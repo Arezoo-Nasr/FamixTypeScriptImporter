@@ -516,14 +516,14 @@ export class FamixFunctions {
     }
 
     /**
-     * Checks if the file has any imports, exports or namespaces to be considered a module
+     * Checks if the file has any imports or exports to be considered a module
      * @param sourceFile A source file
      * @returns A boolean indicating if the file is a module
      */
-        private isModule(sourceFile: SourceFile): boolean { // -> also namespaces (getModules) ???
-            if (sourceFile.getImportDeclarations().length > 0 || sourceFile.getExportDeclarations().length > 0 || sourceFile.getModules().length > 0) {
-                return true;
-            }
-            return false;
+    private isModule(sourceFile: SourceFile): boolean {
+        if (sourceFile.getImportDeclarations().length > 0 || sourceFile.getExportDeclarations().length > 0) {
+            return true;
         }
+        return false;
+    }
 }
