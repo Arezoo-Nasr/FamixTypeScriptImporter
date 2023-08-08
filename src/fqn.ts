@@ -97,6 +97,12 @@ export class FQNFunctions {
             case ts.SyntaxKind.Decorator:
                 return a.asKind(ts.SyntaxKind.Decorator)?.getName();
 
+            case ts.SyntaxKind.GetAccessor:
+                return a.asKind(ts.SyntaxKind.GetAccessor)?.getName();
+
+            case ts.SyntaxKind.SetAccessor:
+                return a.asKind(ts.SyntaxKind.SetAccessor)?.getName();
+
             case ts.SyntaxKind.Constructor:
                 return "constructor";    
             

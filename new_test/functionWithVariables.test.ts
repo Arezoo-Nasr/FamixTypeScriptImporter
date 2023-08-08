@@ -18,7 +18,7 @@ describe('Tests for simple function with variables', () => {
         expect(theFunction?.getVariables().size).toBe(3);
     });
 
-    const firstVariable = Array.from(theFunction?.getVariables()).find( (p) => p.getName() === "i");
+    const firstVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "i");
     it("should have a variable 'i'", () => {
         expect(firstVariable).toBeTruthy();
     });
@@ -27,7 +27,7 @@ describe('Tests for simple function with variables', () => {
         expect(firstVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const secondVariable = Array.from(theFunction?.getVariables()).find( (p) => p.getName() === "j");
+    const secondVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "j");
     it("should have a variable 'j'", () => {
         expect(secondVariable).toBeTruthy();
     });
@@ -36,7 +36,7 @@ describe('Tests for simple function with variables', () => {
         expect(secondVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const thirdVariable = Array.from(theFunction?.getVariables()).find( (p) => p.getName() === "x");
+    const thirdVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "x");
     it("should have a variable 'x'", () => {
         expect(thirdVariable).toBeTruthy();
     });

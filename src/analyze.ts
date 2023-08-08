@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -13,7 +13,7 @@ export class Importer {
 
     private famixFunctions = new FamixFunctions(); // FamixFunctions object, it contains all the functions needed to create Famix entities
     private project = new Project(); // The project containing the source files to analyze
-    private methodsAndFunctionsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration | FunctionDeclaration>(); // Maps the Famix methods, constructors and functions ids to their ts-morph method, constructor or function object
+    private methodsAndFunctionsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration>(); // Maps the Famix methods, constructors, getters, setters and functions ids to their ts-morph method, constructor, getter, setter or function object
     private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // Maps the Famix parameters, variables and fields ids to their ts-morph parameter, variable or field object
     private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
     private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
@@ -22,7 +22,7 @@ export class Importer {
     // not used
     private files = new Array<SourceFile>();
     private namespaces = new Array<ModuleDeclaration>;
-    private methods = new Array<MethodDeclaration | ConstructorDeclaration | MethodSignature>();
+    private methods = new Array<MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration>();
     private functions = new Array<FunctionDeclaration>();
     private parameters = new Array<ParameterDeclaration>;
     private variableStatements = new Array<VariableStatement>();
@@ -177,10 +177,10 @@ export class Importer {
 
     /**
      * Builds a Famix model for the variables of a container
-     * @param m A container (a namespace, a function, a method or a constructor)
+     * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
+    private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
         console.info(`processVariables: ---------- Finding VariableStatements`);
         m.getVariableStatements().forEach(v => {
             const temp_variables = this.processVariableStatement(v);
@@ -190,10 +190,10 @@ export class Importer {
 
     /**
      * Builds a Famix model for the functions of a container
-     * @param m A container (a source file, a namespace, a function, a method or a constructor)
+     * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
+    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
         console.info(`processFunctions: ---------- Finding Functions:`);
         m.getFunctions().forEach(f => {
             const fmxFunction = this.processFunction(f);
@@ -226,6 +226,11 @@ export class Importer {
 
         console.info(`processClass: class: ${c.getName()}, (${c.getType().getText()}), fqn = ${fmxClass.getFullyQualifiedName()}`);
 
+        c.getDecorators().forEach(dec => {
+            const fmxDec = this.processDecorator(dec, c);
+            fmxClass.addDecorator(fmxDec);
+        });
+
         this.processStructuredType(c, fmxClass);
 
         c.getConstructors().forEach(con => {
@@ -233,9 +238,14 @@ export class Importer {
             fmxClass.addMethod(fmxCon);
         });
 
-        c.getDecorators().forEach(dec => {
-            const fmxDec = this.processDecorator(dec, c);
-            fmxClass.addDecorator(fmxDec);
+        c.getGetAccessors().forEach(acc => {
+            const fmxAcc = this.processMethod(acc);
+            fmxClass.addMethod(fmxAcc);
+        });
+        
+        c.getSetAccessors().forEach(acc => {
+            const fmxAcc = this.processMethod(acc);
+            fmxClass.addMethod(fmxAcc);
         });
 
         return fmxClass;
@@ -265,8 +275,8 @@ export class Importer {
      */
     private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass | Famix.Interface | Famix.ParameterizableInterface) {
         c.getProperties().forEach(prop => {
-            const fmxAttr = this.processField(prop);
-            fmxScope.addField(fmxAttr);
+            const fmxField = this.processField(prop);
+            fmxScope.addField(fmxField);
         });
 
         c.getMethods().forEach(m => {
@@ -280,12 +290,19 @@ export class Importer {
      * @param m A method
      * @returns A Famix.Method representing the method
      */
-    private processMethod(m: MethodDeclaration | ConstructorDeclaration | MethodSignature): Famix.Method {
+    private processMethod(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration): Famix.Method {
         this.methods.push(m);
 
         const fmxMethod = this.famixFunctions.createFamixMethod(m, this.currentCC);
 
         console.info(`processMethod: method: ${!(m instanceof ConstructorDeclaration) ? m.getName() : "constructor"}, (${m.getType().getText()}), parent: ${(m.getParent() as ClassDeclaration | InterfaceDeclaration).getName()}, fqn = ${fmxMethod.getFullyQualifiedName()}`);
+
+        if (m instanceof MethodDeclaration || m instanceof GetAccessorDeclaration || m instanceof SetAccessorDeclaration) {
+            m.getDecorators().forEach(dec => {
+                const fmxDec = this.processDecorator(dec, m);
+                fmxMethod.addDecorator(fmxDec);
+            });
+        }
 
         this.processParameters(m, fmxMethod);
 
@@ -328,7 +345,7 @@ export class Importer {
      * @param m A method or a function
      * @param fmxScope The Famix model of the method or the function
      */
-    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration, fmxScope: Famix.Method | Famix.Function) {
+    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, fmxScope: Famix.Method | Famix.Function) {
         m.getParameters().forEach(param => {
             const fmxParam = this.processParameter(param);
             fmxScope.addParameter(fmxParam);
@@ -348,6 +365,11 @@ export class Importer {
         console.info(`processParameter: parameter: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxParam.getFullyQualifiedName()}`);
 
         const parent = p.getParent();
+
+        p.getDecorators().forEach(dec => {
+            const fmxDec = this.processDecorator(dec, p);
+            fmxParam.addDecorator(fmxDec);
+        });
 
         if (!(parent instanceof MethodSignature)) {
             this.arrayOfAccess.set(fmxParam.id, p);
@@ -401,25 +423,30 @@ export class Importer {
     private processField(p: PropertyDeclaration | PropertySignature): Famix.Field {
         this.fields.push(p);
                         
-        const fmxAttr = this.famixFunctions.createFamixField(p);
+        const fmxField = this.famixFunctions.createFamixField(p);
 
-        console.info(`processField: field: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxAttr.getFullyQualifiedName()}`);
+        console.info(`processField: field: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxField.getFullyQualifiedName()}`);
 
         if (!(p instanceof PropertySignature)) {
-            this.arrayOfAccess.set(fmxAttr.id, p);
+            p.getDecorators().forEach(dec => {
+                const fmxDec = this.processDecorator(dec, p);
+                fmxField.addDecorator(fmxDec);
+            });
+
+            this.arrayOfAccess.set(fmxField.id, p);
         }
 
-        return fmxAttr;
+        return fmxField;
     }
 
     /**
      * Builds a Famix model for a decorator
      * @param d A decorator
-     * @param c A class
+     * @param e A class, a method, a parameter or a property
      * @returns A Famix.Decorator representing the decorator
      */
-    private processDecorator(d: Decorator, c: ClassDeclaration): Famix.Decorator {
-        const fmxDec = this.famixFunctions.createOrGetFamixDecorator(d, c);
+    private processDecorator(d: Decorator, e: ClassDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ParameterDeclaration | PropertyDeclaration): Famix.Decorator {
+        const fmxDec = this.famixFunctions.createOrGetFamixDecorator(d, e);
 
         console.info(`processDecorator: decorator: ${d.getName()}, (${d.getType().getText()}), fqn = ${fmxDec.getFullyQualifiedName()}`);
 
@@ -476,12 +503,12 @@ export class Importer {
     }
 
     /**
-     * Builds a Famix model for an invocation of a method, a constructor or a function
+     * Builds a Famix model for an invocation of a method or a function
      * @param n A node
-     * @param m A method, a constructor or a function
-     * @param id The id of the method, the constructor or the function
+     * @param m A method or a function
+     * @param id The id of the method or the function
      */
-    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | FunctionDeclaration, id: number): void {
+    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, id: number): void {
         this.invoc_nodes.push(n);
 
         try {

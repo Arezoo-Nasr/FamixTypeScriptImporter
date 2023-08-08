@@ -141,4 +141,5 @@ test_src/*
 # Plantuml
 plantuml.jar
 doc-metamodel/*
+!doc-metamodel/skins.include.puml
 doc-uml/*

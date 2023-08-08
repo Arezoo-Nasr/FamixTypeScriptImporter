@@ -15,6 +15,8 @@ describe('Tests for abstract class', () => {
     const theAbstractClass = fmxRep._getFamixClass("MyAbstractClass");
     it("should contain an abstract class MyAbstractClass", () => {
         expect(theAbstractClass).toBeTruthy();
-        if (theAbstractClass) expect(theAbstractClass.getIsAbstract()).toBe(true);
+        if (theAbstractClass) {
+            expect(theAbstractClass.getIsAbstract()).toBe(true);
+        }
     });
 });
