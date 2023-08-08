@@ -5,7 +5,7 @@ export class ClassA {
     aFred: number;
     aWilma: "green" | "blue" | 12;
     aMethod1(aMethodArg1: string) {
-        return aMethodArg1 + "!"
+        return aMethodArg1 + "!";
         function fInAMethod() {
             function fInfInAMethod() {
                 var w = 0;
@@ -52,7 +52,7 @@ function f() {
     }
     let cond = true;
     do {
-        var doBlockL = 8
+        var doBlockL = 8;
         cond = false;
     } while (cond);
     try {
@@ -67,20 +67,20 @@ function f() {
     for (let forIndex = 0; forIndex < array.length; forIndex++) {
         const elementInFor = array[forIndex];
     }
-    let object = {}
+    let object = {};
     for (const key in object) {
         if (Object.prototype.hasOwnProperty.call(object, key)) {
             const elementInForIn = object[key];
         }
     }
     for (const iterator of array) {
-        let elementInForOf = "blah"
+        let elementInForOf = "blah";
     }
     g();
 
     function g() {
         var a_G: string;
-        h()
+        h();
 
         function h() {
             var a_H: string;
@@ -89,7 +89,7 @@ function f() {
             function i() {
                 var a_I: string;
 
-                console.info("Hello")
+                console.info("Hello");
 
                 try {
                     let tryX = 0;

@@ -13,7 +13,7 @@ export class Importer {
 
     private famixFunctions = new FamixFunctions(); // FamixFunctions object, it contains all the functions needed to create Famix entities
     private project = new Project(); // The project containing the source files to analyze
-    private methodsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration>(); // Maps the Famix methods ids to their ts-morph method object
+    private methodsAndFunctionsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration | FunctionDeclaration>(); // Maps the Famix methods, constructors and functions ids to their ts-morph method, constructor or function object
     private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // Maps the Famix parameters, variables and fields ids to their ts-morph parameter, variable or field object
     private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
     private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
@@ -294,7 +294,7 @@ export class Importer {
 
             this.processFunctions(m, fmxMethod);
 
-            this.methodsWithId.set(fmxMethod.id, m);
+            this.methodsAndFunctionsWithId.set(fmxMethod.id, m);
         }
 
         return fmxMethod;
@@ -305,7 +305,7 @@ export class Importer {
      * @param f A function
      * @returns A Famix.Function representing the function
      */
-    private processFunction(f: FunctionDeclaration): Famix.Function { // -> invocations ???
+    private processFunction(f: FunctionDeclaration): Famix.Function {
         this.functions.push(f);
 
         const fmxFunction = this.famixFunctions.createFamixFunction(f, this.currentCC);
@@ -317,6 +317,8 @@ export class Importer {
         this.processVariables(f, fmxFunction);
 
         this.processFunctions(f, fmxFunction);
+
+        this.methodsAndFunctionsWithId.set(fmxFunction.id, f);
 
         return fmxFunction;
     }
@@ -458,11 +460,11 @@ export class Importer {
     }
 
     /**
-     * Builds a Famix model for the invocations of the methods and constructors of the source files
+     * Builds a Famix model for the invocations of the methods, constructors and functions of the source files
      */
     private processInvocations(): void {
         console.info(`Creating invocations:`);
-        this.methodsWithId.forEach((m, id) => {
+        this.methodsAndFunctionsWithId.forEach((m, id) => {
             console.info(`Invocations to ${m instanceof MethodDeclaration ? m.getName() : "constructor"}`);
             try {
                 const temp_nodes = m.findReferencesAsNodes() as Array<Identifier>;
@@ -474,12 +476,12 @@ export class Importer {
     }
 
     /**
-     * Builds a Famix model for an invocation of a method or a constructor
+     * Builds a Famix model for an invocation of a method, a constructor or a function
      * @param n A node
-     * @param m A method or a constructor
-     * @param id The id of the method or the constructor
+     * @param m A method, a constructor or a function
+     * @param id The id of the method, the constructor or the function
      */
-    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration, id: number): void {
+    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | FunctionDeclaration, id: number): void {
         this.invoc_nodes.push(n);
 
         try {

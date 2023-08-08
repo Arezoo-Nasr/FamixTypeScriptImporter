@@ -65,6 +65,15 @@ describe('Tests for invocation', () => {
         expect(candidates).toHaveLength(1);
     });
 
+    it("should contain an invocation for x with a sender 'y'", () => {
+        expect(theMethod).toBeTruthy();
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
+        expect(invocations).toBeTruthy();
+        expect(invocations.length).toBe(1);
+        expect((invocations[0] as Invocation).getSender()).toBeTruthy();
+        expect((invocations[0] as Invocation).getSender()).toBe(fmxRep._getFamixMethod("y"));
+    });
+
     it("should contain an invocation for x with a receiver 'A'", () => {
         expect(theMethod).toBeTruthy();
         const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
