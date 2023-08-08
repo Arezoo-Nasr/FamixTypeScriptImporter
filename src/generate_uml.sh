@@ -11,6 +11,5 @@ sed -i '/@startuml/a !include skins.include.puml' doc-metamodel/famix-typescript
 # Converts plantuml source to SVG image
 java -jar plantuml.jar -v -tsvg doc-metamodel/famix-typescript-model.puml
 # Moves artifacts
-rm -rf doc-uml
-mkdir doc-uml
-cp doc-metamodel/*.svg doc-uml
+rm -f doc-uml/*
+mv doc-metamodel/*.svg doc-uml
