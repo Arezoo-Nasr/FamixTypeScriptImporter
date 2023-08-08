@@ -16,7 +16,7 @@ describe('Tests for simple function with parameters', () => {
         expect(theFunction?.getParameters().size).toBe(2);
     });
 
-    const firstParam = Array.from(theFunction?.getParameters()).find( (p) => p.getName() === "i");
+    const firstParam = Array.from(theFunction?.getParameters()).find((p) => p.getName() === "i");
     it("should have a parameter 'i'", () => {
         expect(firstParam).toBeTruthy();
     });
@@ -25,7 +25,7 @@ describe('Tests for simple function with parameters', () => {
         expect(firstParam?.getDeclaredType().getName()).toBe("number");
     });
 
-    const secondParam = Array.from(theFunction?.getParameters()).find( (p) => p.getName() === "x");
+    const secondParam = Array.from(theFunction?.getParameters()).find((p) => p.getName() === "x");
     it("should have a parameter 'x'", () => {
         expect(secondParam).toBeTruthy();
     });

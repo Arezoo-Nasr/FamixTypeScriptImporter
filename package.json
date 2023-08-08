@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "mkdirp": "^3.0.1",
+    "reflect-metadata": "^0.1.13",
     "ts-node": "^10.9.1",
     "tsutils": "^3.21.0",
     "yargs": "^17.5.1"
