@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { SyntaxKind } from "@ts-morph/common";
@@ -17,6 +17,7 @@ export class FamixFunctions {
     private fmxInterfaces = new Map<string, Famix.Interface | Famix.ParameterizableInterface>(); // Maps the interfaces names to their Famix model
     private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespaces names to their Famix model
     private fmxFiles = new Map<string, Famix.ScriptEntity | Famix.Module>(); // Maps the source files names to their Famix model
+    private fmxDecorators = new Map<string, Famix.Decorator>(); // Maps the decorators names to their Famix model
     private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable -> utile tant qu'il y a des try catch
 
     /**
@@ -32,7 +33,7 @@ export class FamixFunctions {
      * @param sourceElement A source element
      * @param famixElement The Famix model of the source element
      */
-    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier, famixElement: Famix.SourcedEntity): void {
+    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator, famixElement: Famix.SourcedEntity): void {
         const fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.fmxRep);
         fmxIndexFileAnchor.setElement(famixElement);
 
@@ -350,6 +351,33 @@ export class FamixFunctions {
         this.makeFamixIndexFileAnchor(property, fmxField);
 
         return fmxField;
+    }
+
+    /**
+     * Creates or gets a Famix decorator
+     * @param decorator A decorator
+     * @param decoratedEntity A class
+     * @returns The Famix model of the decorator
+     */
+    public createOrGetFamixDecorator(decorator: Decorator, decoratedEntity: ClassDeclaration): Famix.Decorator {
+        let fmxDecorator: Famix.Decorator;
+        const decoratorName = decorator.getName();
+        if (!this.fmxDecorators.has(decoratorName)) {
+            fmxDecorator = new Famix.Decorator(this.fmxRep);
+            fmxDecorator.setName(decorator.getName());
+
+            const decoratedEntityName = decoratedEntity.getName();
+            const fmxDecoratedEntity = this.fmxClasses.get(decoratedEntityName);
+            fmxDecorator.setDecoratedEntity(fmxDecoratedEntity);
+
+            this.makeFamixIndexFileAnchor(decorator, fmxDecorator);
+
+            this.fmxDecorators.set(decoratorName, fmxDecorator);
+        }
+        else {
+            fmxDecorator = this.fmxDecorators.get(decoratorName);
+        }
+        return fmxDecorator;
     }
 
     /**

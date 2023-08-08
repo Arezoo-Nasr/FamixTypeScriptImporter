@@ -92,7 +92,10 @@ export class FQNFunctions {
                 return a.asKind(ts.SyntaxKind.PropertySignature)?.getName();    
 
             case ts.SyntaxKind.TypeParameter:
-                return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();  
+                return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();
+                
+            case ts.SyntaxKind.Decorator:
+                return a.asKind(ts.SyntaxKind.Decorator)?.getName();
 
             case ts.SyntaxKind.Constructor:
                 return "constructor";    

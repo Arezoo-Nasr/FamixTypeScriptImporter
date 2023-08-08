@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, ExpressionWithTypeArguments } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -233,6 +233,11 @@ export class Importer {
             fmxClass.addMethod(fmxCon);
         });
 
+        c.getDecorators().forEach(dec => {
+            const fmxDec = this.processDecorator(dec, c);
+            fmxClass.addDecorator(fmxDec);
+        });
+
         return fmxClass;
     }
 
@@ -403,6 +408,20 @@ export class Importer {
         }
 
         return fmxAttr;
+    }
+
+    /**
+     * Builds a Famix model for a decorator
+     * @param d A decorator
+     * @param c A class
+     * @returns A Famix.Decorator representing the decorator
+     */
+    private processDecorator(d: Decorator, c: ClassDeclaration): Famix.Decorator {
+        const fmxDec = this.famixFunctions.createOrGetFamixDecorator(d, c);
+
+        console.info(`processDecorator: decorator: ${d.getName()}, (${d.getType().getText()}), fqn = ${fmxDec.getFullyQualifiedName()}`);
+
+        return fmxDec;
     }
 
     /**
