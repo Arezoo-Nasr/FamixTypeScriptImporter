@@ -59,8 +59,7 @@ export class FQNFunctions {
     private getNameOfNode(a: ts.Node<ts.ts.Node>): string {
         switch (a.getKind()) {
             case ts.SyntaxKind.SourceFile:
-                const sourceFileName = a.asKind(ts.SyntaxKind.SourceFile)?.getBaseName();
-                return sourceFileName.substring(0, sourceFileName.lastIndexOf("."));
+                return a.asKind(ts.SyntaxKind.SourceFile)?.getBaseNameWithoutExtension();
 
             case ts.SyntaxKind.ModuleDeclaration:
                 return a.asKind(ts.SyntaxKind.ModuleDeclaration)?.getName(); 
@@ -93,7 +92,10 @@ export class FQNFunctions {
                 return a.asKind(ts.SyntaxKind.PropertySignature)?.getName();    
 
             case ts.SyntaxKind.TypeParameter:
-                return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();  
+                return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();
+                
+            case ts.SyntaxKind.Decorator:
+                return a.asKind(ts.SyntaxKind.Decorator)?.getName();
 
             case ts.SyntaxKind.Constructor:
                 return "constructor";    

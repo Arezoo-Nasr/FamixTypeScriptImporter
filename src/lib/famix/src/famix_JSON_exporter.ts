@@ -41,7 +41,7 @@ export class FamixJSONExporter {
     else if (prop instanceof FamixBaseElement) {
       this.bufferArray[name] = { "ref": prop.id };
     }
-    else if (prop !== undefined && (!(prop instanceof Set) || (prop.size !== 0))) {
+    else if (prop !== undefined && !(prop instanceof Set)) {
       this.bufferArray[name] = prop;
     }
   }

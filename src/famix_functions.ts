@@ -1,8 +1,8 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, ExpressionWithTypeArguments } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { SyntaxKind } from "@ts-morph/common";
-import { FQNFunctions } from "./new-parsing-strategy/fqn";
+import { FQNFunctions } from "./fqn";
 // -> enlever les try catch ???
 
 /**
@@ -16,7 +16,8 @@ export class FamixFunctions {
     private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the classes names to their Famix model
     private fmxInterfaces = new Map<string, Famix.Interface | Famix.ParameterizableInterface>(); // Maps the interfaces names to their Famix model
     private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespaces names to their Famix model
-    private fmxScriptEntities = new Map<string, Famix.ScriptEntity>(); // Maps the source files names to their Famix model
+    private fmxFiles = new Map<string, Famix.ScriptEntity | Famix.Module>(); // Maps the source files names to their Famix model
+    private fmxDecorators = new Map<string, Famix.Decorator>(); // Maps the decorators names to their Famix model
     private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable -> utile tant qu'il y a des try catch
 
     /**
@@ -32,7 +33,7 @@ export class FamixFunctions {
      * @param sourceElement A source element
      * @param famixElement The Famix model of the source element
      */
-    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier, famixElement: Famix.SourcedEntity): void {
+    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator, famixElement: Famix.SourcedEntity): void {
         const fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.fmxRep);
         fmxIndexFileAnchor.setElement(famixElement);
 
@@ -48,27 +49,34 @@ export class FamixFunctions {
     }
 
     /**
-     * Creates or gets a Famix script entity
+     * Creates or gets a Famix script entity or module
      * @param f A source file
      * @returns The Famix model of the source file
      */
-    public createOrGetFamixScriptEntity(f: SourceFile): Famix.ScriptEntity {
-        let fmxScriptEntity: Famix.ScriptEntity;
+    public createOrGetFamixFile(f: SourceFile): Famix.ScriptEntity | Famix.Module {
+        let fmxFile: Famix.ScriptEntity | Famix.Module;
         const fileName = f.getBaseName();
-        if (!this.fmxScriptEntities.has(fileName)) {
-            fmxScriptEntity = new Famix.ScriptEntity(this.fmxRep);
-            fmxScriptEntity.setName(fileName);
-            fmxScriptEntity.setNumberOfLinesOfText(f.getEndLineNumber() - f.getStartLineNumber());
-            fmxScriptEntity.setNumberOfCharacters(f.getFullText().length);
+        if (!this.fmxFiles.has(fileName)) {
+            if (this.isModule(f)) {
+                fmxFile = new Famix.Module(this.fmxRep);
+                //const fmxImportClause = new Famix.createImportClause();
+                //(fmxFile as Famix.Module).addImportClause(importClause);
+            }
+            else {
+                fmxFile = new Famix.ScriptEntity(this.fmxRep);
+            }
+            fmxFile.setName(fileName);
+            fmxFile.setNumberOfLinesOfText(f.getEndLineNumber() - f.getStartLineNumber());
+            fmxFile.setNumberOfCharacters(f.getFullText().length);
 
-            this.makeFamixIndexFileAnchor(f, fmxScriptEntity);
+            this.makeFamixIndexFileAnchor(f, fmxFile);
 
-            this.fmxScriptEntities.set(fileName, fmxScriptEntity);
+            this.fmxFiles.set(fileName, fmxFile);
         }
         else {
-            fmxScriptEntity = this.fmxScriptEntities.get(fileName);
+            fmxFile = this.fmxFiles.get(fileName);
         }
-        return fmxScriptEntity;
+        return fmxFile;
     }
 
     /**
@@ -98,11 +106,11 @@ export class FamixFunctions {
     /**
      * Creates or gets a Famix class or parameterizable class
      * @param cls A class
-     * @param isAbstract A boolean indicating if the class is abstract
      * @returns The Famix model of the class
      */
-    public createOrGetFamixClass(cls: ClassDeclaration, isAbstract: boolean): Famix.Class | Famix.ParameterizableClass {
+    public createOrGetFamixClass(cls: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {
         let fmxClass: Famix.Class | Famix.ParameterizableClass;
+        const isAbstract = cls.isAbstract();
         const clsName = cls.getName();
         if (!this.fmxClasses.has(clsName)) {
             const isGenerics = cls.getTypeParameters().length;
@@ -167,14 +175,20 @@ export class FamixFunctions {
      * Creates a Famix method
      * @param method A method
      * @param currentCC The cyclomatic complexity metrics of the current source file
-     * @param isAbstract A boolean indicating if the method is abstract
-     * @param isStatic A boolean indicating if the method is static
      * @returns The Famix model of the method
      */
-    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, currentCC: any, isAbstract: boolean, isStatic: boolean): Famix.Method {
+    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature, currentCC: any): Famix.Method {
         const fmxMethod = new Famix.Method(this.fmxRep);
         const isConstructor = method instanceof ConstructorDeclaration;
         const isSignature = method instanceof MethodSignature;
+
+        let isAbstract = false;
+        let isStatic = false;
+        if (method instanceof MethodDeclaration) {
+            isAbstract = method.isAbstract();
+            isStatic = method.isStatic();
+        }
+
         fmxMethod.setIsAbstract(isAbstract);
         fmxMethod.setIsConstructor(isConstructor);
         fmxMethod.setIsClassSide(isStatic);
@@ -229,12 +243,14 @@ export class FamixFunctions {
     /**
      * Creates a Famix function
      * @param func A function
+     * @param currentCC The cyclomatic complexity metrics of the current source file
      * @returns The Famix model of the function
      */
-    public createFamixFunction(func: FunctionDeclaration): Famix.Function {
+    public createFamixFunction(func: FunctionDeclaration, currentCC: any): Famix.Function {
         const fmxFunction = new Famix.Function(this.fmxRep);
         fmxFunction.setName(func.getName());
         fmxFunction.setSignature(this.computeSignature(func.getText()));
+        fmxFunction.setCyclomaticComplexity(currentCC[fmxFunction.getName()]);
 
         let functionTypeName = this.UNKNOWN_VALUE;
         try {
@@ -338,6 +354,33 @@ export class FamixFunctions {
     }
 
     /**
+     * Creates or gets a Famix decorator
+     * @param decorator A decorator
+     * @param decoratedEntity A class
+     * @returns The Famix model of the decorator
+     */
+    public createOrGetFamixDecorator(decorator: Decorator, decoratedEntity: ClassDeclaration): Famix.Decorator {
+        let fmxDecorator: Famix.Decorator;
+        const decoratorName = decorator.getName();
+        if (!this.fmxDecorators.has(decoratorName)) {
+            fmxDecorator = new Famix.Decorator(this.fmxRep);
+            fmxDecorator.setName(decorator.getName());
+
+            const decoratedEntityName = decoratedEntity.getName();
+            const fmxDecoratedEntity = this.fmxClasses.get(decoratedEntityName);
+            fmxDecorator.setDecoratedEntity(fmxDecoratedEntity);
+
+            this.makeFamixIndexFileAnchor(decorator, fmxDecorator);
+
+            this.fmxDecorators.set(decoratorName, fmxDecorator);
+        }
+        else {
+            fmxDecorator = this.fmxDecorators.get(decoratorName);
+        }
+        return fmxDecorator;
+    }
+
+    /**
      * Creates a Famix access
      * @param node A node
      * @param id An id of a parameter, a variable or an field
@@ -385,7 +428,7 @@ export class FamixFunctions {
      * @param cls A class or an interface
      * @param inhClass The inherited class or interface
      */
-    public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | ExpressionWithTypeArguments): void {
+    public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | InterfaceDeclaration): void {
         const fmxInheritance = new Famix.Inheritance(this.fmxRep);
         const clsName = cls.getName();
         
@@ -397,15 +440,29 @@ export class FamixFunctions {
             subClass = this.fmxInterfaces.get(clsName);
         }
         
-        let inhClassName: string;
+        const inhClassName = inhClass.getName();
         let superClass: Famix.Class | Famix.Interface;
         if (inhClass instanceof ClassDeclaration) {
-            inhClassName = inhClass.getName();
             superClass = this.fmxClasses.get(inhClassName);
         }
         else {
-            inhClassName = inhClass.getExpression().getText();
             superClass = this.fmxInterfaces.get(inhClassName);
+        }
+
+        if (superClass === undefined) {
+            if (inhClass instanceof ClassDeclaration) {
+                superClass = new Famix.Class(this.fmxRep);
+                this.fmxClasses.set(inhClassName, superClass);
+            }
+            else {
+                superClass = new Famix.Interface(this.fmxRep);
+                this.fmxInterfaces.set(inhClassName, superClass);
+            }
+
+            superClass.setName(inhClassName);
+            superClass.setIsStub(true);
+
+            this.makeFamixIndexFileAnchor(inhClass, superClass);
         }
 
         fmxInheritance.setSubclass(subClass);
@@ -484,5 +541,17 @@ export class FamixFunctions {
      */
     private getClassNameOfMethod(method: MethodDeclaration | ConstructorDeclaration): string {
         return this.FQNFunctions.getFQN(method.getFirstAncestorByKind(SyntaxKind.ClassDeclaration) as ClassDeclaration);
+    }
+
+    /**
+     * Checks if the file has any imports or exports to be considered a module
+     * @param sourceFile A source file
+     * @returns A boolean indicating if the file is a module
+     */
+    private isModule(sourceFile: SourceFile): boolean {
+        if (sourceFile.getImportDeclarations().length > 0 || sourceFile.getExportDeclarations().length > 0) {
+            return true;
+        }
+        return false;
     }
 }

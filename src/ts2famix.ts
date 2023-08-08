@@ -35,7 +35,7 @@ export class TS2Famix {
 
     }
 
-    famixRepFromPath(paths: Array<string>) {
+    famixRepFromPaths(paths: Array<string>) {
         try {
             console.info(`paths = ${paths}`);
             const sourceFiles = this.project.addSourceFilesAtPaths(paths);
@@ -193,7 +193,7 @@ export class TS2Famix {
 
 
                     // let accessor = this.fmxRep.getFamixElementby(scopeDeclaration.getSourceFile().getFilePath()
-                    //     , scopeDeclaration.getStart()) as Famix.BehaviouralEntity;
+                    //     , scopeDeclaration.getStart()) as Famix.BehavioralEntity;
                     // let fmxAccess = new Famix.Access(this.fmxRep);
                     // fmxAccess.setAccessor(accessor);
                     // fmxAccess.setVariable(famixStructuralElement);
@@ -269,6 +269,7 @@ export class TS2Famix {
                 console.info(` moduleDeclarationKind: ${moduleDeclaration.getDeclarationKind()}`)
                 namespaceName = moduleDeclaration.getName();
                 console.info(` found namespace: ${namespaceName}`);
+                console.info(` fully qualified name: ${moduleDeclaration.getSymbol().getFullyQualifiedName()}`);
                 fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
                 classesInFile = moduleDeclaration.getClasses();
                 //get functions //get global var
@@ -281,10 +282,10 @@ export class TS2Famix {
                 this.makeFamixIndexFileAnchor(moduleDeclaration, fmxNamespace);
 
                 if (classesInFile.length > 0) {
-                    this.setClassElements(classesInFile, file, fmxNamespace);
+                    this.addClassElements(classesInFile, file, fmxNamespace);
                 }
                 if (interfacesInFile.length > 0) {
-                    this.setInterfaceElements(interfacesInFile, fmxNamespace);
+                    this.addInterfaceElements(interfacesInFile, fmxNamespace);
                 }
                 moduleDeclaration.getFunctions().forEach(func => {
                     console.info(` Function> ${func.getName()}`);
@@ -305,8 +306,9 @@ export class TS2Famix {
             classesInFile = (currentModules as SourceFile).getClasses();
             interfacesInFile = (currentModules as SourceFile).getInterfaces();
             functionsInFile = (currentModules as SourceFile).getFunctions();
+            const variablesInFile = (currentModules as SourceFile).getVariableDeclarations();
 
-            if (classesInFile.length || interfacesInFile.length || functionsInFile.length) {
+            if (classesInFile.length || interfacesInFile.length || functionsInFile.length || variablesInFile) {
                 namespaceName = "__global";
                 fmxNamespace = this.checkFamixNamespace(namespaceName, parentScope);
             }
@@ -314,27 +316,46 @@ export class TS2Famix {
 //            console.info(`  classes: ${classesInFile.map(c => c.getName())}`);
             //Arezoo  if there is not any classes but also it must be executed for global variables,functions,etc.
 
-            if (classesInFile.length > 0) {
-                this.setClassElements(classesInFile, file, fmxNamespace);
+            if (classesInFile.length) {
+                this.addClassElements(classesInFile, file, fmxNamespace);
             }
-            if (interfacesInFile.length > 0) {
-                this.setInterfaceElements(interfacesInFile, fmxNamespace);
+            if (interfacesInFile.length) {
+                this.addInterfaceElements(interfacesInFile, fmxNamespace);
             }
-            (currentModules as SourceFile).getFunctions().forEach(func => {
-                console.info(` Function> ${func.getName()}`);
-                let fmxFunction = this.createFamixFunction(func);
-                fmxNamespace.addFunction(fmxFunction);
-                console.info(`   Famix namespace: ${fmxNamespace.getName()}`);
-            });
+            if (functionsInFile.length) {
+                this.addFunctionElement(functionsInFile, fmxNamespace);
+            }
+            if (variablesInFile.length) {
+                this.addVariableElements(variablesInFile, fmxNamespace);
+            }
         }
     }
-    //Arezoo
-    private setClassElements(classesInFile: ClassDeclaration[], file: SourceFile, fmxNamespace: Famix.Namespace) {
+
+    private addVariableElements(variablesInFile: VariableDeclaration[], fmxScope: Famix.Function | Famix.Namespace | Famix.Module) {
+        variablesInFile.forEach(variable => {
+            console.info(` Variable> ${variable.getName()}`);
+            let fmxVariable = this.makeFamixLocalVariable(variable);
+            // TODO fmxScope.addVariables(fmxVariable);
+            console.info(`   Famix scope: ${fmxScope.getName()} (${fmxScope instanceof Famix.Function ? "function" : fmxScope instanceof Famix.Namespace ? "namespace" : "Module"})`);
+        });
+    }
+
+    private addFunctionElement(functionsInFile: FunctionDeclaration[], fmxNamespace: Famix.Namespace) {
+        functionsInFile.forEach(func => {
+            console.info(` Function> ${func.getName()}`);
+            let fmxFunction = this.createFamixFunction(func);
+            fmxNamespace.addFunction(fmxFunction);
+            console.info(`   Famix namespace: ${fmxNamespace.getName()}`);
+        });
+    }
+
+    private addClassElements(classesInFile: ClassDeclaration[], file: SourceFile, fmxNamespace: Famix.Namespace) {
 
         this.allClasses.push(...classesInFile);   //????????????????????
         console.info("Analyzing classes:");
         classesInFile.forEach(cls => {
-            console.info(`> ${cls.getName()}`);
+            console.info(`Class> ${cls.getName()}`);
+            console.info(`Fully qualified name: ${cls.getSymbol().getFullyQualifiedName()}`);
             let fmxClass;
             const isGenerics = cls.getTypeParameters().length;
             if (isGenerics) {
@@ -380,7 +401,7 @@ export class TS2Famix {
         });
     }
 
-    private setInterfaceElements(interfacesInFile: InterfaceDeclaration[], fmxNamespace: Famix.Namespace) {
+    private addInterfaceElements(interfacesInFile: InterfaceDeclaration[], fmxNamespace: Famix.Namespace) {
 
         this.allInterfaces.push(...interfacesInFile);
         console.info("Analyzing interfaces:");
@@ -557,21 +578,13 @@ export class TS2Famix {
 
                 variables.forEach(variable => {
                     try {
-                        let fullyQualifiedLocalVarName = `${variable.getSymbol().getFullyQualifiedName()}().${variable.getSymbol().getFullyQualifiedName()}`;
-                        console.info(`  > ${fullyQualifiedLocalVarName}`);                        
+                        let fullyQualifiedLocalVarName = `${variable.getSymbol().getFullyQualifiedName()}()`;
+                        console.info(`  FQN> ${fullyQualifiedLocalVarName}`);
                     } catch (error) {
                         console.info(`  > WARNING -- failed to get fullyQualifiedName for ${variable.getName()}`);
                     }
 
-                    let fmxLocalVariable = new Famix.Variable(this.fmxRep);
-                    let localVariableTypeName:string = UNKNOWN_VALUE;
-                    try {
-                        localVariableTypeName = this.getUsableName(variable.getType().getText());
-                    } catch (error) {
-                        console.info(`  > WARNING -- failed to get text of type for ${variable.getName()}`);
-                    }
-                    fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
-                    fmxLocalVariable.setName(variable.getName());
+                    let fmxLocalVariable = this.makeFamixLocalVariable(variable);
                     fmxMethod.addVariable(fmxLocalVariable);
                     this.makeFamixIndexFileAnchor(variable, fmxLocalVariable);
                     //var cf = variable.getSourceFile().getSymbol().getFullyQualifiedName();
@@ -584,6 +597,19 @@ export class TS2Famix {
         }
         
         return fmxMethod;
+    }
+
+    private makeFamixLocalVariable(variable: VariableDeclaration) {
+        const fmxLocalVariable = new Famix.Variable(this.fmxRep);
+        let localVariableTypeName = UNKNOWN_VALUE;
+        try {
+            localVariableTypeName = this.getUsableName(variable.getType().getText());
+        } catch (error) {
+            console.info(`  > WARNING -- failed to get text of type for ${variable.getName()}`);
+        }
+        fmxLocalVariable.setDeclaredType(this.getFamixType(localVariableTypeName));
+        fmxLocalVariable.setName(variable.getName());
+        return fmxLocalVariable;
     }
 
     private createFamixFunction(func: FunctionDeclaration): Famix.Function {

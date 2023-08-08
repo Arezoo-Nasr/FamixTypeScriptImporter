@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import yargs from "yargs";
-import { Importer } from './new-parsing-strategy/analyze';
+import { Importer } from './analyze';
 
 const importer = new Importer();
 

@@ -1,9 +1,9 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments } from "ts-morph";
 import * as fs from 'fs';
-import * as Famix from "../lib/famix/src/model/famix";
-import { FamixRepository } from "../lib/famix/src/famix_repository";
-import { FamixFunctions } from "../famix_functions";
-import { calculate } from "../lib/ts-complex/cyclomatic-service";
+import * as Famix from "./lib/famix/src/model/famix";
+import { FamixRepository } from "./lib/famix/src/famix_repository";
+import { FamixFunctions } from "./famix_functions";
+import { calculate } from "./lib/ts-complex/cyclomatic-service";
 // -> enlever les try catch ???
 
 /**
@@ -74,6 +74,19 @@ export class Importer {
     }
 
     /**
+     * Main method for a ts-morph project
+     * @param project A ts-morph project
+     * @returns The Famix repository containing the Famix model
+     */
+    public famixRepFromProject(project: Project): FamixRepository {
+        const sourceFilesNames = project.getSourceFiles().map(f => f.getFilePath()) as Array<string>;
+
+        const fmxRep = this.famixRepFromPaths(sourceFilesNames);
+
+        return fmxRep;
+    }
+
+    /**
      * Builds a Famix model for an array of source files
      * @param sourceFiles An array of source files
      */
@@ -95,19 +108,19 @@ export class Importer {
     private processFile(f: SourceFile): void {
         this.files.push(f);
 
-        const fmxScriptEntity = this.famixFunctions.createOrGetFamixScriptEntity(f);
+        const fmxFileEntity = this.famixFunctions.createOrGetFamixFile(f);
 
-        console.info(`processFile: file: ${f.getBaseName()}, fqn = ${fmxScriptEntity.getFullyQualifiedName()}`);
+        console.info(`processFile: file: ${f.getBaseName()}, fqn = ${fmxFileEntity.getFullyQualifiedName()}`);
 
-        this.processClasses(f, fmxScriptEntity);
+        this.processClasses(f, fmxFileEntity);
 
-        this.processInterfaces(f, fmxScriptEntity);
+        this.processInterfaces(f, fmxFileEntity);
 
-        this.processVariables(f, fmxScriptEntity);
+        this.processVariables(f, fmxFileEntity);
 
-        this.processFunctions(f, fmxScriptEntity);
+        this.processFunctions(f, fmxFileEntity);
 
-        this.processNamespaces(f, fmxScriptEntity);
+        this.processNamespaces(f, fmxFileEntity);
     }
 
     /**
@@ -116,7 +129,7 @@ export class Importer {
      * @param parentScope The Famix model of the namespace's parent (the parent can be a source file or a namespace)
      * @returns A Famix.Namespace representing the namespace
      */
-    private processNamespace(m: ModuleDeclaration, parentScope: Famix.ScriptEntity | Famix.Namespace): Famix.Namespace {
+    private processNamespace(m: ModuleDeclaration, parentScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): Famix.Namespace {
         this.namespaces.push(m);
 
         const fmxNamespace = this.famixFunctions.createOrGetFamixNamespace(m, parentScope);
@@ -141,7 +154,7 @@ export class Importer {
      * @param m A container (a source file or a namespace)
      * @param fmxScope The Famix model of the container
      */
-    private processClasses(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Namespace) {
+    private processClasses(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace) {
         console.info(`processClasses: ---------- Finding Classes:`);
         m.getClasses().forEach(c => {
             const fmxClass = this.processClass(c);
@@ -154,7 +167,7 @@ export class Importer {
      * @param m A container (a source file or a namespace)
      * @param fmxScope The Famix model of the container
      */
-    private processInterfaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Namespace) {
+    private processInterfaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace) {
         console.info(`processInterfaces: ---------- Finding Interfaces:`);
         m.getInterfaces().forEach(i => {
             const fmxInterface = this.processInterface(i);
@@ -167,7 +180,7 @@ export class Importer {
      * @param m A container (a namespace, a function, a method or a constructor)
      * @param fmxScope The Famix model of the container
      */
-    private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Namespace | Famix.Function | Famix.Method) {
+    private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
         console.info(`processVariables: ---------- Finding VariableStatements`);
         m.getVariableStatements().forEach(v => {
             const temp_variables = this.processVariableStatement(v);
@@ -180,7 +193,7 @@ export class Importer {
      * @param m A container (a source file, a namespace, a function, a method or a constructor)
      * @param fmxScope The Famix model of the container
      */
-    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Namespace | Famix.Function | Famix.Method) {
+    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
         console.info(`processFunctions: ---------- Finding Functions:`);
         m.getFunctions().forEach(f => {
             const fmxFunction = this.processFunction(f);
@@ -193,7 +206,7 @@ export class Importer {
      * @param m A container (a source file or a namespace)
      * @param fmxScope The Famix model of the container
      */
-    private processNamespaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Namespace) {
+    private processNamespaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace) {
         console.info(`processNamespaces: ---------- Finding Namespaces:`);
         m.getModules().forEach(md => {
             const fmxNsp = this.processNamespace(md, fmxScope);
@@ -209,7 +222,7 @@ export class Importer {
     private processClass(c: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {
         this.classes.push(c);
 
-        const fmxClass = this.famixFunctions.createOrGetFamixClass(c, c.isAbstract());
+        const fmxClass = this.famixFunctions.createOrGetFamixClass(c);
 
         console.info(`processClass: class: ${c.getName()}, (${c.getType().getText()}), fqn = ${fmxClass.getFullyQualifiedName()}`);
 
@@ -218,6 +231,11 @@ export class Importer {
         c.getConstructors().forEach(con => {
             const fmxCon = this.processMethod(con);
             fmxClass.addMethod(fmxCon);
+        });
+
+        c.getDecorators().forEach(dec => {
+            const fmxDec = this.processDecorator(dec, c);
+            fmxClass.addDecorator(fmxDec);
         });
 
         return fmxClass;
@@ -265,13 +283,7 @@ export class Importer {
     private processMethod(m: MethodDeclaration | ConstructorDeclaration | MethodSignature): Famix.Method {
         this.methods.push(m);
 
-        let fmxMethod: Famix.Method;
-        if (m instanceof MethodDeclaration) {
-            fmxMethod = this.famixFunctions.createFamixMethod(m, this.currentCC, m.isAbstract(), m.isStatic());
-        }
-        else {
-            fmxMethod = this.famixFunctions.createFamixMethod(m, this.currentCC, false, false);
-        }
+        const fmxMethod = this.famixFunctions.createFamixMethod(m, this.currentCC);
 
         console.info(`processMethod: method: ${!(m instanceof ConstructorDeclaration) ? m.getName() : "constructor"}, (${m.getType().getText()}), parent: ${(m.getParent() as ClassDeclaration | InterfaceDeclaration).getName()}, fqn = ${fmxMethod.getFullyQualifiedName()}`);
 
@@ -296,7 +308,7 @@ export class Importer {
     private processFunction(f: FunctionDeclaration): Famix.Function { // -> invocations ???
         this.functions.push(f);
 
-        const fmxFunction = this.famixFunctions.createFamixFunction(f);
+        const fmxFunction = this.famixFunctions.createFamixFunction(f, this.currentCC);
 
         console.info(`processFunction: function: ${f.getName()}, (${f.getType().getText()}), fqn = ${fmxFunction.getFullyQualifiedName()}`);
 
@@ -396,6 +408,20 @@ export class Importer {
         }
 
         return fmxAttr;
+    }
+
+    /**
+     * Builds a Famix model for a decorator
+     * @param d A decorator
+     * @param c A class
+     * @returns A Famix.Decorator representing the decorator
+     */
+    private processDecorator(d: Decorator, c: ClassDeclaration): Famix.Decorator {
+        const fmxDec = this.famixFunctions.createOrGetFamixDecorator(d, c);
+
+        console.info(`processDecorator: decorator: ${d.getName()}, (${d.getType().getText()}), fqn = ${fmxDec.getFullyQualifiedName()}`);
+
+        return fmxDec;
     }
 
     /**
@@ -510,21 +536,48 @@ export class Importer {
             }
 
             console.info(`processInheritances: Checking interface inheritance for ${cls.getName()}`);
-            const implementsInter = cls.getImplements();
-            implementsInter.forEach(impInter => {
+            const implementedInterfaces = this.getImplementedOrExtendedInterfaces(cls);
+            implementedInterfaces.forEach(impInter => {
                 this.famixFunctions.createFamixInheritance(cls, impInter);
 
-                console.info(`processInheritances: class: ${cls.getName()}, (${cls.getType().getText()}), impInter: ${impInter.getExpression().getText()}, (${impInter.getType().getText()})`);
+                console.info(`processInheritances: class: ${cls.getName()}, (${cls.getType().getText()}), impInter: ${impInter.getName()}, (${impInter.getType().getText()})`);
             });
         });
 
         this.interfaces.forEach(inter => {
             console.info(`processInheritances: Checking interface inheritance for ${inter.getName()}`);
-            inter.getExtends().forEach(extInter => {
+            const extendedInterfaces = this.getImplementedOrExtendedInterfaces(inter);
+            extendedInterfaces.forEach(extInter => {
                 this.famixFunctions.createFamixInheritance(inter, extInter);
 
-                console.info(`processInheritances: inter: ${inter.getName()}, (${inter.getType().getText()}), extInter: ${extInter.getExpression().getText()}, (${extInter.getType().getText()})`);
+                console.info(`processInheritances: inter: ${inter.getName()}, (${inter.getType().getText()}), extInter: ${extInter.getName()}, (${extInter.getType().getText()})`);
             });
         });
+    }
+
+    /**
+     * Gets the interfaces implemented or extended by a class or an interface
+     * @param subClass A class or an interface
+     * @returns An array of InterfaceDeclaration containing the interfaces implemented or extended by the subClass
+     */
+    private getImplementedOrExtendedInterfaces(subClass: ClassDeclaration | InterfaceDeclaration): Array<InterfaceDeclaration> {
+        let impOrExtInterfaces: Array<ExpressionWithTypeArguments>;
+        if (subClass instanceof ClassDeclaration) {
+            impOrExtInterfaces = subClass.getImplements();
+        }
+        else {
+            impOrExtInterfaces = subClass.getExtends();
+        }
+
+        const interfacesNames = this.interfaces.map(i => i.getName());
+        const implementedOrExtendedInterfaces = new Array<InterfaceDeclaration>();
+
+        impOrExtInterfaces.forEach(i => {
+            if (interfacesNames.includes(i.getExpression().getText())) {
+                implementedOrExtendedInterfaces.push(this.interfaces[interfacesNames.indexOf(i.getExpression().getText())]);
+            }
+        });
+
+        return implementedOrExtendedInterfaces;
     }
 }

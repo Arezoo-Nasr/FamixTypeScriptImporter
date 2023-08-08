@@ -34,34 +34,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm ci
-  #    - run: npm run build --if-present
+      # - run: npm run build --if-present
       - run: npm test
-
-      - name: Get latest plantuml
-        run: |
-          rm -f plantuml.jar
-          wget --no-verbose https://downloads.sourceforge.net/project/plantuml/plantuml.jar
-
-      - name: Build meta-model plantuml from TypeScript sources
-        run: npx tplant -i src/lib/famix/**/*.ts -o doc-metamodel/famix-typescript-model.puml
-
-      - name: Convert plantuml source to SVG image
-        run: |
-          java -jar plantuml.jar -v -tsvg doc-metamodel/famix-typescript-model.puml
-          mv doc-metamodel/famix-typescript-model.svg doc-metamodel/famix-typescript-model-full.svg  
-
-      - name: Insert Include Line to customize the file
-        run: |
-          sed -i '/@startuml/a !include skins.include.puml' doc-metamodel/famix-typescript-model.puml
-
-      - name: Convert plantuml source to SVG image
-        run: java -jar plantuml.jar -v -tsvg doc-metamodel/famix-typescript-model.puml
-    
-      - name: Move artifact
-        run: |
-          rm -rf doc-uml
-          mkdir doc-uml
-          cp doc-metamodel/*.svg doc-uml
+      - run: npm run uml
 
       - name: Init new repo in doc-uml folder and commit generated files
         run: |
