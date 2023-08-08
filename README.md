@@ -16,7 +16,7 @@ npm install -g ts-node
 
 ## Usage
 
-Instructions for using the command-line importer:
+Instructions for using the command-line importer :
 
 ```sh
 ts-node src/ts2famix-cli.ts --help

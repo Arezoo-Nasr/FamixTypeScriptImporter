@@ -42,6 +42,15 @@ describe('Tests for generics', () => {
         expect(candidates).toHaveLength(1);
     });
 
+    it("should contain an invocation for i with a sender 'genericWithInvocation.ts'", () => {
+        expect(theMethod).toBeTruthy();
+        const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
+        expect(invocations).toBeTruthy();
+        expect(invocations.length).toBe(1);
+        expect((invocations[0] as Invocation).getSender()).toBeTruthy();
+        expect((invocations[0] as Invocation).getSender()).toBe(fmxRep._getFamixFile("genericWithInvocation.ts"));
+    });
+
     it("should contain an invocation for i with a receiver 'AA'", () => {
         expect(theMethod).toBeTruthy();
         const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));

@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, Interface, Namespace, Method, Function, Type, NamedEntity } from "./model/famix";
+import { Class, Interface, Namespace, Method, Function, Type, NamedEntity, ScriptEntity, Module } from "./model/famix";
 
 /**
  * This class is used to store all Famix elements
@@ -12,6 +12,7 @@ export class FamixRepository {
   private famixNamespaces = new Set<Namespace>(); // All Famix namespaces
   private famixMethods = new Set<Method>(); // All Famix methods
   private famixFunctions = new Set<Function>(); // All Famix functions
+  private famixFiles = new Set<ScriptEntity | Module>(); // All Famix files
   private idCounter = 1; // Id counter
 
   /**
@@ -109,6 +110,23 @@ export class FamixRepository {
   }
 
   /**
+   * Gets a Famix file by name
+   * @param name A file name
+   * @returns The Famix file corresponding to the name or undefined if it doesn't exist
+   */
+  public _getFamixFile(name: string): ScriptEntity | Module | undefined {
+    return Array.from(this.famixFiles.values()).find(ns => ns.getName() === name);
+  }
+
+  /**
+   * Gets all Famix files
+   * @returns All Famix files
+   */
+  public _getFamixFiles(): Set<ScriptEntity | Module> {
+    return new Set(Array.from(this.famixFiles.values()));
+  }
+
+  /**
    * Gets all method names as a set from a class
    * @param className A class name
    * @returns The set of class "className" method names
@@ -158,6 +176,8 @@ export class FamixRepository {
       this.famixMethods.add(element);
     } else if (element instanceof Function) {
       this.famixFunctions.add(element);
+    } else if (element instanceof ScriptEntity || element instanceof Module) {
+      this.famixFiles.add(element);
     }
     this.elements.add(element);
     element.id = this.idCounter;

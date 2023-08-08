@@ -387,7 +387,7 @@ export class FamixFunctions {
      */
     public createFamixAccess(node: Identifier, id: number): void {
         const fmxVar = this.fmxRep.getFamixEntityById(id) as Famix.StructuralEntity;
-        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile); // for global variable it must work -> a => a.getKind() === any ???
+        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKind() === SyntaxKind.ClassDeclaration);
 
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(nodeReferenceAncestor);
         const accessor = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
@@ -402,23 +402,23 @@ export class FamixFunctions {
     /**
      * Creates a Famix invocation
      * @param node A node
-     * @param m A method or a constructor
-     * @param id The id of the method or the constructor
+     * @param m A method, a constructor or a function
+     * @param id The id of the method, the constructor or the function
      */
-    public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration, id: number): void {
-        const fmxMethod = this.getFamixEntityById(id) as Famix.BehavioralEntity;
-        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile); // for global variable it must work -> a => a.getKind() === any ???
+    public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration | FunctionDeclaration, id: number): void {
+        const fmxMethodOrFunction = this.getFamixEntityById(id) as Famix.BehavioralEntity;
+        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKind() === SyntaxKind.ClassDeclaration);
 
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(nodeReferenceAncestor);
         const sender = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
-        const receiverFullyQualifiedName = this.getClassNameOfMethod(m);
-        const receiver = this.getFamixEntityByFullyQualifiedName(receiverFullyQualifiedName) as Famix.Class;
+        const receiverFullyQualifiedName = this.getParentFullyQualifiedName(m);
+        const receiver = this.getFamixEntityByFullyQualifiedName(receiverFullyQualifiedName) as Famix.NamedEntity;
 
         const fmxInvocation = new Famix.Invocation(this.fmxRep);
         fmxInvocation.setSender(sender);
         fmxInvocation.setReceiver(receiver);
-        fmxInvocation.addCandidate(fmxMethod);
-        fmxInvocation.setSignature(fmxMethod.getSignature());
+        fmxInvocation.addCandidate(fmxMethodOrFunction);
+        fmxInvocation.setSignature(fmxMethodOrFunction.getSignature());
 
         this.makeFamixIndexFileAnchor(node, fmxInvocation);
     }
@@ -535,12 +535,12 @@ export class FamixFunctions {
     }
 
     /**
-     * Gets the class fully qualified name of a method or a constructor
-     * @param method A method or a constructor
-     * @returns The class fully qualified name of the method or the constructor
+     * Gets the fully qualified name of the parent of a method, a constructor or a function
+     * @param m A method, a constructor or a function
+     * @returns The fully qualified name of the parent of the method, the constructor or the function
      */
-    private getClassNameOfMethod(method: MethodDeclaration | ConstructorDeclaration): string {
-        return this.FQNFunctions.getFQN(method.getFirstAncestorByKind(SyntaxKind.ClassDeclaration) as ClassDeclaration);
+    private getParentFullyQualifiedName(m: MethodDeclaration | ConstructorDeclaration | FunctionDeclaration): string {
+        return this.FQNFunctions.getFQN(m.getParent());
     }
 
     /**
