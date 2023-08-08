@@ -22,27 +22,26 @@ Instructions for using the command-line importer:
 ts-node src/ts2famix-cli.ts --help
 ```
 
-### Parsing a full project
-
-On Windows:
+## Parse a full project
 
 ```sh
-ts-node .\src\ts2famix-cli.ts -i ..\path\to\project\**\*.ts -o output.json
+ts-node src/ts2famix-cli.ts -i "../path/to/project/**/*.ts" -o JSONModels/myTypeScriptProject.json
 ```
 
-> this command allows to parse all TS files and ignore the HTML or CSS one (which is particulary interesting to avoid HTML files in Angular-like projects)
+This command allows to parse all TypeScript files and ignores the HTML or CSS ones (which is particularly interesting to avoid HTML files in Angular-like projects).
 
 ## Generate an object diagram of the JSON model
 
 ```sh
-ts-node src/famix2puml.ts -i JSONModels/ModelName.json -o ModelName.puml
+ts-node src/famix2puml.ts -i JSONModels/ModelName.json -o PUMLModels/ModelName.puml
 ```
 
-## Import the JSON into Moose 🫎
+## Import the JSON model into Moose 🫎
 
 ```st
-'.\JSONModels\TypeScriptModel.json' asFileReference readStreamDo:
-[ :stream | model := FamixTypeScriptModel new importFromJSONStream: stream. model install ].
+'JSONModels/TypeScriptModel.json' asFileReference readStreamDo:
+  [ :stream | model := FamixTypeScriptModel new 
+    importFromJSONStream: stream. model install ].
 ```
 
 ## TypeScript Metamodel API documentation (visualization)
