@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, Namespace, Function, Method, Type, NamedEntity } from "./model/famix";
+import { Class, Interface, Namespace, Method, Function, Type, NamedEntity } from "./model/famix";
 
 /**
  * This class is used to store all Famix elements
@@ -8,6 +8,7 @@ export class FamixRepository {
 
   private elements = new Set<FamixBaseElement>(); // All Famix elements
   private famixClasses = new Set<Class>(); // All Famix classes
+  private famixInterfaces = new Set<Interface>(); // All Famix interfaces
   private famixNamespaces = new Set<Namespace>(); // All Famix namespaces
   private famixMethods = new Set<Method>(); // All Famix methods
   private famixFunctions = new Set<Function>(); // All Famix functions
@@ -61,6 +62,15 @@ export class FamixRepository {
    */
   public _getFamixClass(name: string): Class | undefined {
     return Array.from(this.famixClasses.values()).find(ns => ns.getName() === name);
+  }
+
+  /**
+   * Gets a Famix interface by name
+   * @param name An interface name
+   * @returns The Famix interface corresponding to the name or undefined if it doesn't exist
+   */
+  public _getFamixInterface(name: string): Interface | undefined {
+    return Array.from(this.famixInterfaces.values()).find(ns => ns.getName() === name);
   }
 
   /**
@@ -140,6 +150,8 @@ export class FamixRepository {
   public addElement(element: FamixBaseElement): void {
     if (element instanceof Class) {
       this.famixClasses.add(element);
+    } else if (element instanceof Interface) {
+      this.famixInterfaces.add(element);
     } else if (element instanceof Namespace) {
       this.famixNamespaces.add(element);
     } else if (element instanceof Method) {
@@ -158,9 +170,6 @@ export class FamixRepository {
    */
   public getJSON(): string {
     let ret = "[";
-    for (const element of Array.from(this.famixClasses.values())) {
-      ret = ret + element.getJSON() + ",";
-    }
     for (const element of Array.from(this.elements.values())) {
       ret = ret + element.getJSON() + ",";
     }

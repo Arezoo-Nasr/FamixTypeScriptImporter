@@ -5,7 +5,7 @@ import { Importer } from './analyze';
 const importer = new Importer();
 
 const argv = yargs
-    .example('$0 -i ../myTypescriptProject -o myTypeScriptProject.json', 'creates JSON-format model of typescript project')
+    .example(`ts-node src/ts2famix-cli.ts -i "../path/to/project/**/*.ts" -o JSONModels/myTypeScriptProject.json`, 'creates a JSON-format model of a typescript project')
     .alias('i', 'input')
     .nargs('i', 1)
     .alias('o', 'output')
