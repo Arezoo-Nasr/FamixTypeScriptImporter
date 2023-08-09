@@ -10,10 +10,6 @@ Create a [FamixTypeScript](https://github.com/fuhrmanator/FamixTypeScript) model
 npm install
 ```
 
-```sh
-npm install -g ts-node
-```
-
 ## Usage
 
 Instructions for using the command-line importer :
@@ -22,10 +18,44 @@ Instructions for using the command-line importer :
 ts-node src/ts2famix-cli.ts --help
 ```
 
+Run tests :
+```sh
+npm test
+```
+
+Generate coverage :
+```sh
+npm run coverage
+```
+
+Then open "```coverage/lcov-report/index.html```" with your favorite browser : 
+```sh
+firefox coverage/lcov-report/index.html &
+```
+
+Generate documentation :
+```sh
+npm run doc
+```
+
+Then open "```docs/index.html```" with your favorite browser : 
+```sh
+firefox docs/index.html &
+```
+
+Generate plantuml and svg of the metamodel :
+```sh
+npm run uml
+```
+Then open "```doc-uml/metamodel.svg```" with your favorite image viewer :
+```sh
+eog doc-uml/metamodel.svg &
+```
+
 ## Parse a full project
 
 ```sh
-ts-node src/ts2famix-cli.ts -i "../path/to/project/**/*.ts" -o JSONModels/myTypeScriptProject.json
+ts-node src/ts2famix-cli.ts -i "../path/to/project/**/*.ts" -o JSONModels/projectName.json
 ```
 
 This command allows to parse all TypeScript files and ignores the HTML or CSS ones (which is particularly interesting to avoid HTML files in Angular-like projects).
@@ -33,13 +63,19 @@ This command allows to parse all TypeScript files and ignores the HTML or CSS on
 ## Generate an object diagram of the JSON model
 
 ```sh
-ts-node src/famix2puml.ts -i JSONModels/ModelName.json -o PUMLModels/ModelName.puml
+ts-node src/famix2puml.ts -i JSONModels/projectName.json -o PUMLModels/projectName.puml
 ```
 
 ## Import the JSON model into Moose 🫎
 
+You need to copy the "```JSONModels/projectName.json```" into your "```Pharo/images/[imageName]```" directory.
+For a Moose Suite 10 (stable) user with Pharo directory in root directory, do : 
+```sh
+cp JSONModels/projectName.json ~/Pharo/images/Moose\ Suite\ 10\ \(stable\)/.
+```
+Then in a playground, do :
 ```st
-'JSONModels/TypeScriptModel.json' asFileReference readStreamDo:
+'projectName.json' asFileReference readStreamDo:
   [ :stream | model := FamixTypeScriptModel new 
     importFromJSONStream: stream. model install ].
 ```
