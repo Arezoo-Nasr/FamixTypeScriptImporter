@@ -28,6 +28,7 @@ export class Importer {
     private variableStatements = new Array<VariableStatement>();
     private variables = new Array<VariableDeclaration>();
     private fields = new Array <PropertyDeclaration | PropertySignature>;
+    private decorators = new Array<Decorator>();
     private access_nodes = new Array<Identifier>;
     private invoc_nodes = new Array<Identifier>;
 
@@ -446,6 +447,8 @@ export class Importer {
      * @returns A Famix.Decorator representing the decorator
      */
     private processDecorator(d: Decorator, e: ClassDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ParameterDeclaration | PropertyDeclaration): Famix.Decorator {
+        this.decorators.push(d);
+
         const fmxDec = this.famixFunctions.createOrGetFamixDecorator(d, e);
 
         console.info(`processDecorator: decorator: ${d.getName()}, (${d.getType().getText()}), fqn = ${fmxDec.getFullyQualifiedName()}`);
@@ -472,7 +475,7 @@ export class Importer {
     /**
      * Builds a Famix model for an access on a parameter, variable or field
      * @param n A node
-     * @param id An id of a parameter, a variable or an field
+     * @param id An id of a parameter, a variable or a field
      */
     private processNodeForAccesses(n: Identifier, id: number): void {
         this.access_nodes.push(n);
@@ -492,7 +495,7 @@ export class Importer {
     private processInvocations(): void {
         console.info(`Creating invocations:`);
         this.methodsAndFunctionsWithId.forEach((m, id) => {
-            console.info(`Invocations to ${m instanceof MethodDeclaration ? m.getName() : "constructor"}`);
+            console.info(`Invocations to ${(m instanceof MethodDeclaration || m instanceof GetAccessorDeclaration || m instanceof SetAccessorDeclaration || m instanceof FunctionDeclaration) ? m.getName() : "constructor"}`);
             try {
                 const temp_nodes = m.findReferencesAsNodes() as Array<Identifier>;
                 temp_nodes.forEach(node => this.processNodeForInvocations(node, m, id));

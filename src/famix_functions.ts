@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { SyntaxKind } from "@ts-morph/common";
@@ -374,12 +374,11 @@ export class FamixFunctions {
     /**
      * Creates a Famix access
      * @param node A node
-     * @param id An id of a parameter, a variable or an field
+     * @param id An id of a parameter, a variable or a field
      */
     public createFamixAccess(node: Identifier, id: number): void {
         const fmxVar = this.fmxRep.getFamixEntityById(id) as Famix.StructuralEntity;
-        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKind() === SyntaxKind.ClassDeclaration);
-
+        const nodeReferenceAncestor = this.findAncestor(node);
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(nodeReferenceAncestor);
         const accessor = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
 
@@ -398,8 +397,7 @@ export class FamixFunctions {
      */
     public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, id: number): void {
         const fmxMethodOrFunction = this.getFamixEntityById(id) as Famix.BehavioralEntity;
-        const nodeReferenceAncestor = node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKind() === SyntaxKind.ClassDeclaration);
-
+        const nodeReferenceAncestor = this.findAncestor(node);
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(nodeReferenceAncestor);
         const sender = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
         const receiverFullyQualifiedName = this.getParentFullyQualifiedName(m);
@@ -544,5 +542,14 @@ export class FamixFunctions {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Finds the ancestor of a node
+     * @param node A node
+     * @returns The ancestor of the node
+     */
+    private findAncestor(node: Identifier): Node {
+        return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ClassDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor");
     }
 }
