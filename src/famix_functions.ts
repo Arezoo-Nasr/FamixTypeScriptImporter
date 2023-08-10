@@ -41,7 +41,7 @@ export class FamixFunctions {
             fmxIndexFileAnchor.setStartPos(sourceElement.getStart());
             fmxIndexFileAnchor.setEndPos(sourceElement.getEnd());
 
-            if (!(famixElement instanceof Famix.Association)) {
+            if (!(famixElement instanceof Famix.Association) && !(famixElement instanceof Famix.Decorator)) {
                 (famixElement as Famix.NamedEntity).setFullyQualifiedName(this.FQNFunctions.getFQN(sourceElement));
             }
         }
@@ -202,9 +202,6 @@ export class FamixFunctions {
         fmxMethod.setIsClassSide(isStatic);
         fmxMethod.setIsPrivate((method instanceof MethodDeclaration || method instanceof GetAccessorDeclaration || method instanceof SetAccessorDeclaration) ? (method.getModifiers().find(x => x.getText() === 'private')) !== undefined : false);
         fmxMethod.setIsProtected((method instanceof MethodDeclaration || method instanceof GetAccessorDeclaration || method instanceof SetAccessorDeclaration) ? (method.getModifiers().find(x => x.getText() === 'protected')) !== undefined : false);
-        if (!fmxMethod.getIsPrivate() && !fmxMethod.getIsProtected()) {
-            fmxMethod.setIsPublic(true);    
-        }
         fmxMethod.setSignature(this.computeSignature(method.getText()));
 
         let methodName: string;
@@ -212,9 +209,23 @@ export class FamixFunctions {
             methodName = "constructor";
         }
         else {
-            methodName = (method as MethodDeclaration | MethodSignature ).getName();
+            methodName = (method as MethodDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration).getName();
         }
         fmxMethod.setName(methodName);
+
+        if (!isConstructor) {
+            if (method.getName().substring(0, 1) === "#") {
+                fmxMethod.setName(method.getName().substring(1));
+                fmxMethod.setIsPrivate(true);
+            }
+        }
+
+        if (!fmxMethod.getIsPrivate() && !fmxMethod.getIsProtected()) {
+            fmxMethod.setIsPublic(true);    
+        }
+        else {
+            fmxMethod.setIsPublic(false);
+        }
 
         if (!isSignature) {
             fmxMethod.setCyclomaticComplexity(currentCC[fmxMethod.getName()]);
@@ -236,6 +247,10 @@ export class FamixFunctions {
         const parameters = method.getParameters();
         fmxMethod.setNumberOfParameters(parameters.length);
         
+        const parentEntityFullyQualifiedName = this.FQNFunctions.getFQN(method.getParent());
+        const parentEntity = this.getFamixEntityByFullyQualifiedName(parentEntityFullyQualifiedName) as Famix.Class | Famix.Interface;
+        fmxMethod.setParentEntity(parentEntity);
+
         if (!isSignature) {
             fmxMethod.setNumberOfStatements(method.getStatements().length);
         }
@@ -254,7 +269,7 @@ export class FamixFunctions {
      * @param currentCC The cyclomatic complexity metrics of the current source file
      * @returns The Famix model of the function
      */
-    public createFamixFunction(func: FunctionDeclaration, currentCC: any): Famix.Function { // -> unique ???
+    public createFamixFunction(func: FunctionDeclaration, currentCC: any): Famix.Function {
         const fmxFunction = new Famix.Function(this.fmxRep);
         fmxFunction.setName(func.getName());
         fmxFunction.setSignature(this.computeSignature(func.getText()));
@@ -346,7 +361,10 @@ export class FamixFunctions {
 
         const fmxType = this.createOrGetFamixType(propTypeName);
         fmxField.setDeclaredType(fmxType);
-        //fmxField.setHasClassScope(true);
+
+        const parentEntityFullyQualifiedName = this.FQNFunctions.getFQN(property.getParent());
+        const parentEntity = this.getFamixEntityByFullyQualifiedName(parentEntityFullyQualifiedName) as Famix.Class | Famix.Interface;
+        fmxField.setParentEntity(parentEntity);
 
         property.getModifiers().forEach(m => fmxField.addModifier(m.getText()));
         if (!isSignature && property.getExclamationTokenNode()) {
@@ -354,6 +372,17 @@ export class FamixFunctions {
         }
         if (property.getQuestionTokenNode()) {
             fmxField.addModifier("?");
+        }
+        if (property.getName().substring(0, 1) === "#") {
+            fmxField.setName(property.getName().substring(1));
+            fmxField.addModifier("#");
+        }
+
+        if (fmxField.getModifiers().has("static")) {
+            fmxField.setIsClassSide(true);
+        }
+        else {
+            fmxField.setIsClassSide(false);
         }
 
         this.makeFamixIndexFileAnchor(property, fmxField);
@@ -369,15 +398,10 @@ export class FamixFunctions {
      */
     public createOrGetFamixDecorator(decorator: Decorator, decoratedEntity: ClassDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ParameterDeclaration | PropertyDeclaration): Famix.Decorator {
         const fmxDecorator = new Famix.Decorator(this.fmxRep);
-        const decoratorName = decorator.getName();
+        fmxDecorator.setName(decorator.getName());
+        const decoratorExpression = decorator.getText().substring(1);
 
-        const decoratorEntity = this.getFamixEntityByName(decoratorName) as Famix.NamedEntity;
-        if (decoratorEntity === undefined || !(decoratorEntity instanceof Famix.Function)) { // -> create stub function ???
-            fmxDecorator.setIsStub(true);
-        }
-
-        fmxDecorator.setName(decoratorName);
-
+        fmxDecorator.setDecoratorExpression(decoratorExpression);
         const decoratedEntityFullyQualifiedName = this.FQNFunctions.getFQN(decoratedEntity);
         const fmxDecoratedEntity = this.getFamixEntityByFullyQualifiedName(decoratedEntityFullyQualifiedName) as Famix.NamedEntity;
         fmxDecorator.setDecoratedEntity(fmxDecoratedEntity);
@@ -588,18 +612,6 @@ export class FamixFunctions {
      */
     private getParentFullyQualifiedName(m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration): string {
         return this.FQNFunctions.getFQN(m.getParent());
-    }
-
-    /**
-     * Checks if the file has any imports or exports to be considered a module
-     * @param sourceFile A source file
-     * @returns A boolean indicating if the file is a module
-     */
-    private isModule(sourceFile: SourceFile): boolean {
-        if (sourceFile.getImportDeclarations().length > 0 || sourceFile.getExportDeclarations().length > 0) {
-            return true;
-        }
-        return false;
     }
 
     /**

@@ -19,6 +19,7 @@ const fmxRep = importer.famixRepFromSource("entities",
         constructor() {}\n\
         public move() {}\n\
         private move2(family: string): void {}\n\
+        #move3() {}\n\
     }\n\
     \n\
     class class2 extends EntityClass {}\n\
@@ -43,9 +44,9 @@ describe('Entities', () => {
         expect(theClass).toBeTruthy();
     });
 
-    it("should contain an EntityClass with three methods", () => {
+    it("should contain an EntityClass with four methods", () => {
         const theClass = fmxRep._getFamixClass("EntityClass");
-        if (theClass) expect(theClass.getMethods().size).toBe(3);
+        if (theClass) expect(theClass.getMethods().size).toBe(4);
     });
 
     it("should contain methods with correct names", () => {
@@ -118,10 +119,10 @@ describe('Entities', () => {
         }
     });
 
-    it("should contain an EntityClass with an attribute named '#p2' that is run-time private and of type boolean", () => {
+    it("should contain an EntityClass with an attribute named 'p2' that is run-time private and of type boolean", () => {
         if (theClass) {
             const p2Attribute = Array.from(theClass.getFields())[2];
-            expect(p2Attribute.getName()).toBe("#p2");
+            expect(p2Attribute.getName()).toBe("p2");
             expect(p2Attribute.getDeclaredType().getName()).toBe("boolean");
         }
     });
@@ -153,10 +154,10 @@ describe('Entities', () => {
         }
     });
 
-    it("should contain an EntityClass with an attribute named '#userCount' that is static and of type number", () => {
+    it("should contain an EntityClass with an attribute named 'userCount' that is static and of type number", () => {
         if (theClass) {
             const userCountAttribute = Array.from(theClass.getFields())[6];
-            expect(userCountAttribute.getName()).toBe("#userCount");
+            expect(userCountAttribute.getName()).toBe("userCount");
             expect(userCountAttribute.getModifiers()).toContain("static");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('number');
         }
@@ -195,6 +196,21 @@ describe('Entities', () => {
             expect(aStaticMethod).toBeTruthy();
             if (aStaticMethod) {
                 expect(aStaticMethod.getIsClassSide()).toBe(true);
+            }
+        }
+    });
+
+    it("should contain a private method named 'move3'", () => {
+        const cls = fmxRep._getFamixClass("EntityClass");
+        expect(cls).toBeTruthy();
+        if (cls) {
+            const aMethod = Array.from(cls.getMethods()).find(m => m.getName() === 'move3');
+            expect(aMethod).toBeTruthy();
+            if (aMethod) {
+                expect(aMethod.getIsPrivate()).toBe(true);
+                expect(aMethod.getIsProtected()).toBe(false);
+                expect(aMethod.getIsPublic()).toBe(false);
+                expect(aMethod.getIsClassSide()).toBe(false);
             }
         }
     });

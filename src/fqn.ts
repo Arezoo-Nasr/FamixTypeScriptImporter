@@ -93,9 +93,6 @@ export class FQNFunctions {
 
             case ts.SyntaxKind.TypeParameter:
                 return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();
-                
-            case ts.SyntaxKind.Decorator:
-                return a.asKind(ts.SyntaxKind.Decorator)?.getName();
 
             case ts.SyntaxKind.GetAccessor:
                 return a.asKind(ts.SyntaxKind.GetAccessor)?.getName();
