@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration, ExportedDeclarations } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -17,20 +17,22 @@ export class Importer {
     private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // Maps the Famix parameters, variables and fields ids to their ts-morph parameter, variable or field object
     private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
     private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
+    private modules = new Array<SourceFile>(); // Array of all the source files which are modules
+    private exports = new Array<ReadonlyMap<string, ExportedDeclarations[]>>(); // Array of all the exports
     private currentCC: any; // Stores the cyclomatic complexity metrics for the current source file
 
     // not used
     private files = new Array<SourceFile>();
-    private namespaces = new Array<ModuleDeclaration>;
+    private namespaces = new Array<ModuleDeclaration>();
     private methods = new Array<MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration>();
     private functions = new Array<FunctionDeclaration>();
-    private parameters = new Array<ParameterDeclaration>;
+    private parameters = new Array<ParameterDeclaration>();
     private variableStatements = new Array<VariableStatement>();
     private variables = new Array<VariableDeclaration>();
-    private fields = new Array <PropertyDeclaration | PropertySignature>;
+    private fields = new Array <PropertyDeclaration | PropertySignature>();
     private decorators = new Array<Decorator>();
-    private access_nodes = new Array<Identifier>;
-    private invoc_nodes = new Array<Identifier>;
+    private access_nodes = new Array<Identifier>();
+    private invoc_nodes = new Array<Identifier>();
 
     /**
      * Main method
@@ -46,6 +48,7 @@ export class Importer {
             this.processAccesses();
             this.processInvocations();
             this.processInheritances();
+            this.processImportClauses();
         }
         catch (error) {
             console.error(`> ERROR: got exception ${error}. Exiting...`);
@@ -109,7 +112,13 @@ export class Importer {
     private processFile(f: SourceFile): void {
         this.files.push(f);
 
-        const fmxFileEntity = this.famixFunctions.createOrGetFamixFile(f);
+        const isModule = this.isModule(f);
+
+        const fmxFileEntity = this.famixFunctions.createOrGetFamixFile(f, isModule);
+
+        if (isModule) {
+            this.modules.push(f);
+        }
 
         console.info(`processFile: file: ${f.getBaseName()}, fqn = ${fmxFileEntity.getFullyQualifiedName()}`);
 
@@ -287,11 +296,11 @@ export class Importer {
     }
 
     /**
-     * Builds a Famix model for a method
-     * @param m A method
-     * @returns A Famix.Method representing the method
+     * Builds a Famix model for a method or an accessor
+     * @param m A method or an accessor
+     * @returns A Famix.Method or a Famix.Accessor representing the method or the accessor
      */
-    private processMethod(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration): Famix.Method {
+    private processMethod(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration): Famix.Method | Famix.Accessor {
         this.methods.push(m);
 
         const fmxMethod = this.famixFunctions.createFamixMethod(m, this.currentCC);
@@ -588,6 +597,26 @@ export class Importer {
     }
 
     /**
+     * Builds a Famix model for the import clauses of the source files which are modules
+     */
+    private processImportClauses(): void {
+        this.modules.forEach(f => {
+            f.getImportDeclarations().forEach(i => {
+                i.getNamedImports().forEach(ni => {
+                    const importedEntityName = ni.getName();
+                    let bool = false;
+                    this.exports.forEach(e => {
+                        if (e.has(importedEntityName)) {
+                            bool = true;
+                        }
+                    });
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), ni, bool);
+                });                        
+            }); 
+        });
+    }
+
+    /**
      * Gets the interfaces implemented or extended by a class or an interface
      * @param subClass A class or an interface
      * @returns An array of InterfaceDeclaration containing the interfaces implemented or extended by the subClass
@@ -611,5 +640,18 @@ export class Importer {
         });
 
         return implementedOrExtendedInterfaces;
+    }
+
+    /**
+     * Checks if the file has any imports or exports to be considered a module
+     * @param sourceFile A source file
+     * @returns A boolean indicating if the file is a module
+     */
+    private isModule(sourceFile: SourceFile): boolean {
+        if (sourceFile.getImportDeclarations().length > 0 || sourceFile.getExportedDeclarations().size > 0) {
+            this.exports.push(sourceFile.getExportedDeclarations());
+            return true;
+        }
+        return false;
     }
 }

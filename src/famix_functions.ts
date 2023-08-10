@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { SyntaxKind } from "@ts-morph/common";
@@ -32,7 +32,7 @@ export class FamixFunctions {
      * @param sourceElement A source element
      * @param famixElement The Famix model of the source element
      */
-    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator | GetAccessorDeclaration | SetAccessorDeclaration, famixElement: Famix.SourcedEntity): void {
+    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator | GetAccessorDeclaration | SetAccessorDeclaration | ImportSpecifier, famixElement: Famix.SourcedEntity): void {
         const fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.fmxRep);
         fmxIndexFileAnchor.setElement(famixElement);
 
@@ -50,16 +50,15 @@ export class FamixFunctions {
     /**
      * Creates or gets a Famix script entity or module
      * @param f A source file
+     * @param isModule A boolean indicating if the source file is a module
      * @returns The Famix model of the source file
      */
-    public createOrGetFamixFile(f: SourceFile): Famix.ScriptEntity | Famix.Module {
+    public createOrGetFamixFile(f: SourceFile, isModule: boolean): Famix.ScriptEntity | Famix.Module {
         let fmxFile: Famix.ScriptEntity | Famix.Module;
         const fileName = f.getBaseName();
         if (!this.fmxFiles.has(fileName)) {
-            if (this.isModule(f)) {
-                fmxFile = new Famix.Module(this.fmxRep);
-                //const fmxImportClause = new Famix.createImportClause();
-                //(fmxFile as Famix.Module).addImportClause(importClause);
+            if (isModule) {
+                fmxFile = new Famix.Module(this.fmxRep); 
             }
             else {
                 fmxFile = new Famix.ScriptEntity(this.fmxRep);
@@ -171,13 +170,23 @@ export class FamixFunctions {
     }
 
     /**
-     * Creates a Famix method
-     * @param method A method
+     * Creates a Famix method or accessor
+     * @param method A method or an accessor
      * @param currentCC The cyclomatic complexity metrics of the current source file
-     * @returns The Famix model of the method
+     * @returns The Famix model of the method or the accessor
      */
-    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration, currentCC: any): Famix.Method {
-        const fmxMethod = new Famix.Method(this.fmxRep);
+    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration, currentCC: any): Famix.Method | Famix.Accessor {
+        let fmxMethod: Famix.Method | Famix.Accessor;
+        if (method instanceof GetAccessorDeclaration || method instanceof SetAccessorDeclaration) {
+            fmxMethod = new Famix.Accessor(this.fmxRep);
+            const isGetter = method instanceof GetAccessorDeclaration;
+            const isSetter = method instanceof SetAccessorDeclaration;
+            (fmxMethod as Famix.Accessor).setIsGetter(isGetter);
+            (fmxMethod as Famix.Accessor).setIsSetter(isSetter);
+        }
+        else {
+            fmxMethod = new Famix.Method(this.fmxRep);
+        }
         const isConstructor = method instanceof ConstructorDeclaration;
         const isSignature = method instanceof MethodSignature;
 
@@ -245,7 +254,7 @@ export class FamixFunctions {
      * @param currentCC The cyclomatic complexity metrics of the current source file
      * @returns The Famix model of the function
      */
-    public createFamixFunction(func: FunctionDeclaration, currentCC: any): Famix.Function {
+    public createFamixFunction(func: FunctionDeclaration, currentCC: any): Famix.Function { // -> unique ???
         const fmxFunction = new Famix.Function(this.fmxRep);
         fmxFunction.setName(func.getName());
         fmxFunction.setSignature(this.computeSignature(func.getText()));
@@ -360,7 +369,14 @@ export class FamixFunctions {
      */
     public createOrGetFamixDecorator(decorator: Decorator, decoratedEntity: ClassDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ParameterDeclaration | PropertyDeclaration): Famix.Decorator {
         const fmxDecorator = new Famix.Decorator(this.fmxRep);
-        fmxDecorator.setName(decorator.getName());
+        const decoratorName = decorator.getName();
+
+        const decoratorEntity = this.getFamixEntityByName(decoratorName) as Famix.NamedEntity;
+        if (decoratorEntity === undefined || !(decoratorEntity instanceof Famix.Function)) { // -> create stub function ???
+            fmxDecorator.setIsStub(true);
+        }
+
+        fmxDecorator.setName(decoratorName);
 
         const decoratedEntityFullyQualifiedName = this.FQNFunctions.getFQN(decoratedEntity);
         const fmxDecoratedEntity = this.getFamixEntityByFullyQualifiedName(decoratedEntityFullyQualifiedName) as Famix.NamedEntity;
@@ -461,6 +477,39 @@ export class FamixFunctions {
     }
 
     /**
+     * Creates a Famix import clause
+     * @param importer A source file which is a module
+     * @param moduleSpecifier The name of the module where the export declaration is
+     * @param namedImport The imported entity
+     * @param isInExports A boolean indicating if the imported entity is in the exports
+     */
+    public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, namedImport: ImportSpecifier, isInExports: boolean): void {
+        const fmxImportClause = new Famix.ImportClause(this.fmxRep);
+        const importedEntityName = namedImport.getName();
+
+        let importedEntity: Famix.NamedEntity;
+        if (isInExports) {
+            importedEntity = this.getFamixEntityByName(importedEntityName) as Famix.NamedEntity;
+        }
+        if (importedEntity === undefined) {
+            importedEntity = new Famix.NamedEntity(this.fmxRep);
+            importedEntity.setName(importedEntityName);
+            importedEntity.setIsStub(true);
+            this.makeFamixIndexFileAnchor(namedImport, importedEntity);
+        }
+
+        const importerFullyQualifiedName = this.FQNFunctions.getFQN(importer);
+        const fmxImporter = this.getFamixEntityByFullyQualifiedName(importerFullyQualifiedName) as Famix.Module;
+        fmxImportClause.setImporter(fmxImporter);
+        fmxImportClause.setImportedEntity(importedEntity);
+        fmxImportClause.setModuleSpecifier(moduleSpecifier);
+
+        this.makeFamixIndexFileAnchor(null, fmxImportClause);
+
+        fmxImporter.addImportClause(fmxImportClause);
+    }
+
+    /**
      * Creates a Famix parameter type
      * @param tp A type parameter
      * @returns The Famix model of the parameter type
@@ -513,6 +562,15 @@ export class FamixFunctions {
         return this.fmxRep.getFamixEntityByFullyQualifiedName(ancestorFQN) as Famix.Entity;
     }
 
+    /**
+     * Gets a Famix entity by name
+     * @param name A name
+     * @returns The Famix entity corresponding to the name
+     */
+    private getFamixEntityByName(name: string): Famix.Entity {
+        return this.fmxRep.getFamixEntityByName(name) as Famix.Entity;
+    }
+    
     /**
      * Gets the signature of a method or a function
      * @param text A method or a function source code

@@ -60,6 +60,9 @@ describe('Tests for accessors with decorators', () => {
     const d3 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).filter((d) => d.getName() === "configurable");
 
     it("should contain two accessors with three decorators for each one", () => {
+        expect(fmxRep._getAllEntitiesWithType("Accessor").size).toBe(2);
+        expect(fmxRep._getAllEntitiesWithType("Decorator").size).toBe(6);
+
         expect(theMethod1?.getDecorators().size).toBe(3);
         expect(d1[0]?.getDecoratedEntity()).toBe(theMethod1);
         expect(d2[0]?.getDecoratedEntity()).toBe(theMethod1);
