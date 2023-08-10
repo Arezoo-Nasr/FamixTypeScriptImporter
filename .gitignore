@@ -136,7 +136,7 @@ docs/*
 
 # Tests source files
 test_src/*
-!test_src/sample.ts
+!test_src/sample*
 
 # Plantuml
 plantuml.jar

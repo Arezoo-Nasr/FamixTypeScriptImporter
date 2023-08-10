@@ -1,4 +1,5 @@
 export {Access} from "./access";
+export {Accessor} from "./accessor";
 export {Alias} from "./alias";
 export {Association} from "./association";
 export {BehavioralEntity} from "./behavioral_entity";

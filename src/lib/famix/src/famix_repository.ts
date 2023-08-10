@@ -27,12 +27,23 @@ export class FamixRepository {
 
   /**
    * Gets a Famix entity by fully qualified name
-   * @param FullyQualifiedName A fully qualified name
+   * @param fullyQualifiedName A fully qualified name
    * @returns The Famix entity corresponding to the fully qualified name or undefined if it doesn't exist
    */
-  public getFamixEntityByFullyQualifiedName(FullyQualifiedName: string): FamixBaseElement | undefined {
+  public getFamixEntityByFullyQualifiedName(fullyQualifiedName: string): FamixBaseElement | undefined {
     const allEntities = Array.from(this.elements.values()).filter(e => e instanceof NamedEntity) as Array<NamedEntity>;
-    const entity = allEntities.find(e => e.getFullyQualifiedName() === FullyQualifiedName);
+    const entity = allEntities.find(e => e.getFullyQualifiedName() === fullyQualifiedName);
+    return entity;
+  }
+
+  /**
+   * Gets a Famix entity by name
+   * @param name A name
+   * @returns The Famix entity corresponding to the name or undefined if it doesn't exist
+   */
+  public getFamixEntityByName(name: string): FamixBaseElement | undefined {
+    const allEntities = Array.from(this.elements.values()).filter(e => e instanceof NamedEntity) as Array<NamedEntity>;
+    const entity = allEntities.find(e => e.getName() === name);
     return entity;
   }
 

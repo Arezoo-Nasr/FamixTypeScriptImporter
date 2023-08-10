@@ -373,14 +373,14 @@ export class TS2Famix {
             cls.getMethods().forEach(method => {
                 console.info(` Method> ${method.getName()}`);
                 const fmxMethod = this.createFamixMethod(method, method.isAbstract(), method.isStatic());
-                fmxClass.addMethods(fmxMethod);
+                fmxClass.addMethod(fmxMethod);
             });
 
             console.info("Properties:");
             cls.getProperties().forEach(prop => {
                 console.info(` Property> ${prop.getName()}`);
                 let fmxAttr = this.createFamixAttribute(prop);
-                fmxClass.addAttributes(fmxAttr);
+                fmxClass.addField(fmxAttr);
                 if (prop.isReadonly()) fmxAttr.addModifier("readonly");
                 console.info(`  modifiers: ${prop.getModifiers()}`);
                 prop.getModifiers().forEach(m => {fmxAttr.addModifier(m.getText())});
@@ -396,7 +396,7 @@ export class TS2Famix {
                     console.info(` > WARNING: can't get signature for constructor!`);
                 }
                 let fmxMethod = this.createFamixMethod(cstr);
-                fmxClass.addMethods(fmxMethod);
+                fmxClass.addMethod(fmxMethod);
             });
         });
     }
@@ -426,14 +426,14 @@ export class TS2Famix {
             inter.getMethods().forEach(method => {
                 console.info(` Method> ${method.getName()}`);
                 let fmxMethod = this.createFamixMethod(method);
-                fmxInterface.addMethods(fmxMethod);
+                fmxInterface.addMethod(fmxMethod);
             });
 
             console.info("Properties:");
             inter.getProperties().forEach(prop => {
                 console.info(` Property> ${prop.getName()}`);
                 let fmxAttr = this.createFamixAttribute(prop, true);
-                fmxInterface.addAttributes(fmxAttr);
+                fmxInterface.addField(fmxAttr);
             });
         });
     }

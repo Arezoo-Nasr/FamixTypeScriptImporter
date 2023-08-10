@@ -28,7 +28,7 @@ Generate coverage :
 npm run coverage
 ```
 
-Then open "```coverage/lcov-report/index.html```" with your favorite browser : 
+Then, open "```coverage/lcov-report/index.html```" with your favorite browser : 
 ```sh
 firefox coverage/lcov-report/index.html &
 ```
@@ -38,7 +38,7 @@ Generate documentation :
 npm run doc
 ```
 
-Then open "```docs/index.html```" with your favorite browser : 
+Then, open "```docs/index.html```" with your favorite browser : 
 ```sh
 firefox docs/index.html &
 ```
@@ -47,7 +47,8 @@ Generate plantuml and svg of the metamodel :
 ```sh
 npm run uml
 ```
-Then open "```doc-uml/metamodel.svg```" with your favorite image viewer :
+
+Then, open "```doc-uml/metamodel.svg```" with your favorite image viewer :
 ```sh
 eog doc-uml/metamodel.svg &
 ```
@@ -69,16 +70,33 @@ ts-node src/famix2puml.ts -i JSONModels/projectName.json -o PUMLModels/projectNa
 ## Import the JSON model into Moose 🫎
 
 You need to copy the "```JSONModels/projectName.json```" into your "```Pharo/images/[imageName]```" directory.
-For a Moose Suite 10 (stable) user with Pharo directory in root directory, do : 
+
+For a Moose Suite 10 (stable) user with the Pharo directory in the root directory, do : 
 ```sh
 cp JSONModels/projectName.json ~/Pharo/images/Moose\ Suite\ 10\ \(stable\)/.
 ```
-Then in a playground, do :
+
+Then, in a Moose Playground, do :
+```st
+Metacello new 
+  githubUser: 'fuhrmanator' project: 'FamixTypeScript' commitish: 'master' path: 'src';
+  baseline: 'FamixTypeScript';
+  load
+```
+
+This command installs the TypeScript metamodel into Moose.
+
+Then, generate the metamodel with :  
+```Library > Famix > Manage metamodels > Regenerate all metamodels```
+
+Then, in a Moose Playground, do :
 ```st
 'projectName.json' asFileReference readStreamDo:
   [ :stream | model := FamixTypeScriptModel new 
     importFromJSONStream: stream. model install ].
 ```
+
+This command imports the JSON model into Moose.
 
 ## TypeScript Metamodel API documentation (visualization)
 

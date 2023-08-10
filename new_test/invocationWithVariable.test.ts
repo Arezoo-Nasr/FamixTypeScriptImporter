@@ -24,14 +24,14 @@ describe('Tests for invocation with variable', () => {
         expect(x1?.getDeclaredType().getName()).toBe("AAA");
     });
     
-    let theMethod = fmxRep._getFamixMethod("method") as Method;
+    const theMethod = fmxRep._getFamixMethod("method") as Method;
     const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
+    
     it("should contain one invocation", () => {
         expect(invocations).toBeTruthy();
         expect(invocations.length).toBe(1);
     });
 
-    theMethod = fmxRep._getFamixMethod("method") as Method;
     it("should contain an invocation for 'method'", () => {
         expect((invocations[0] as Invocation).getCandidates().has(theMethod));
     });
