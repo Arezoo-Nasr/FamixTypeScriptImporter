@@ -3,6 +3,16 @@ import { NamedEntity } from "./named_entity";
 
 export class Decorator extends NamedEntity {
 
+  private decoratorExpression: string;
+
+  public getDecoratorExpression(): string {
+    return this.decoratorExpression;
+  }
+
+  public setDecoratorExpression(decoratorExpression: string) {
+    this.decoratorExpression = decoratorExpression;
+  }
+
   private decoratedEntity: NamedEntity;
   
   public getDecoratedEntity(): NamedEntity {
@@ -23,6 +33,7 @@ export class Decorator extends NamedEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("decoratorExpression", this.getDecoratorExpression());
     exporter.addProperty("decoratedEntity", this.getDecoratedEntity());
   }
 }

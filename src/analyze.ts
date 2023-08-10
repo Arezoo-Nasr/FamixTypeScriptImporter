@@ -499,7 +499,7 @@ export class Importer {
     }
 
     /**
-     * Builds a Famix model for the invocations of the methods, constructors and functions of the source files
+     * Builds a Famix model for the invocations of the methods and functions of the source files
      */
     private processInvocations(): void {
         console.info(`Creating invocations:`);
