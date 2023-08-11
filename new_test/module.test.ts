@@ -4,7 +4,7 @@ import { Module } from '../src/lib/famix/src/model/famix/module';
 
 const importer = new Importer();
 
-let filePaths = new Array<string>();
+const filePaths = new Array<string>();
 filePaths.push("test_src/sampleForModule.ts");
 filePaths.push("test_src/sampleForModule2.ts");
 

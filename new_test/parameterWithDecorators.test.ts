@@ -43,8 +43,8 @@ describe('Tests for parameter with decorators', () => {
     });
 
     const theParam = (Array.from(fmxRep._getFamixMethod("print")?.getParameters() as Set<Parameter>) as Array<Parameter>).find((f) => f.getName() === "verbose");
-    const d1 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "tes");
-    const d2 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "deco2");
+    const d1 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "@tes");
+    const d2 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "@deco2");
 
     it("should contain a parameter with two decorators", () => {
         expect(theParam?.getDecorators().size).toBe(2);

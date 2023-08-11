@@ -119,10 +119,10 @@ describe('Entities', () => {
         }
     });
 
-    it("should contain an EntityClass with an attribute named 'p2' that is run-time private and of type boolean", () => {
+    it("should contain an EntityClass with an attribute named '#p2' that is run-time private and of type boolean", () => {
         if (theClass) {
             const p2Attribute = Array.from(theClass.getFields())[2];
-            expect(p2Attribute.getName()).toBe("p2");
+            expect(p2Attribute.getName()).toBe("#p2");
             expect(p2Attribute.getDeclaredType().getName()).toBe("boolean");
         }
     });
@@ -154,10 +154,10 @@ describe('Entities', () => {
         }
     });
 
-    it("should contain an EntityClass with an attribute named 'userCount' that is static and of type number", () => {
+    it("should contain an EntityClass with an attribute named '#userCount' that is static and of type number", () => {
         if (theClass) {
             const userCountAttribute = Array.from(theClass.getFields())[6];
-            expect(userCountAttribute.getName()).toBe("userCount");
+            expect(userCountAttribute.getName()).toBe("#userCount");
             expect(userCountAttribute.getModifiers()).toContain("static");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('number');
         }
@@ -200,11 +200,11 @@ describe('Entities', () => {
         }
     });
 
-    it("should contain a private method named 'move3'", () => {
+    it("should contain a private method named '#move3'", () => {
         const cls = fmxRep._getFamixClass("EntityClass");
         expect(cls).toBeTruthy();
         if (cls) {
-            const aMethod = Array.from(cls.getMethods()).find(m => m.getName() === 'move3');
+            const aMethod = Array.from(cls.getMethods()).find(m => m.getName() === '#move3');
             expect(aMethod).toBeTruthy();
             if (aMethod) {
                 expect(aMethod.getIsPrivate()).toBe(true);
