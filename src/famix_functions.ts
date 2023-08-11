@@ -86,7 +86,7 @@ export class FamixFunctions {
      * @param parentScope The Famix model of the namespace's parent (the parent can be a source file or a namespace)
      * @returns The Famix model of the namespace
      */
-    public createOrGetFamixNamespace(m: ModuleDeclaration, parentScope: Famix.ScriptEntity | Famix.Namespace): Famix.Namespace {
+    public createOrGetFamixNamespace(m: ModuleDeclaration, parentScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): Famix.Namespace {
         let fmxNamespace: Famix.Namespace;
         const namespaceName = m.getName();
         if (!this.fmxNamespaces.has(namespaceName)) {

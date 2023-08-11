@@ -195,7 +195,7 @@ export class Importer {
      * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
+    private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
         console.info(`processVariables: ---------- Finding Variables:`);
         m.getVariableStatements().forEach(v => {
             const temp_variables = this.processVariableStatement(v);
@@ -208,7 +208,7 @@ export class Importer {
      * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method) {
+    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
         console.info(`processFunctions: ---------- Finding Functions:`);
         m.getFunctions().forEach(f => {
             const fmxFunction = this.processFunction(f);
@@ -386,7 +386,7 @@ export class Importer {
      * @param m A method or a function
      * @param fmxScope The Famix model of the method or the function
      */
-    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, fmxScope: Famix.Method | Famix.Function) {
+    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, fmxScope: Famix.Method | Famix.Accessor | Famix.Function) {
         console.info(`processParameters: ---------- Finding Parameters:`);
         m.getParameters().forEach(param => {
             const fmxParam = this.processParameter(param);
