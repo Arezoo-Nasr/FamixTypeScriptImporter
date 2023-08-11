@@ -55,9 +55,9 @@ describe('Tests for accessors with decorators', () => {
 
     const theMethod1 = fmxRep._getFamixMethod("x");
     const theMethod2 = fmxRep._getFamixMethod("y");
-    const d1 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).filter((d) => d.getName() === "x");
-    const d2 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).filter((d) => d.getName() === "b");
-    const d3 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).filter((d) => d.getName() === "configurable");
+    const d1 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).filter((d) => d.getName() === "@x");
+    const d2 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).filter((d) => d.getName() === "@b");
+    const d3 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).filter((d) => d.getName() === "@configurable");
 
     it("should contain two accessors with three decorators for each one", () => {
         expect(fmxRep._getAllEntitiesWithType("Accessor").size).toBe(2);
