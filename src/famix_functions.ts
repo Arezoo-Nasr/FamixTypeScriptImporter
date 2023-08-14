@@ -44,7 +44,7 @@ export class FamixFunctions {
                 fmxIndexFileAnchor.setEndPos(sourceElement.getEnd());
             }
 
-            if (!(famixElement instanceof Famix.Association) && !(famixElement instanceof Famix.Comment) && !(sourceElement instanceof CommentRange)) {
+            if (!(famixElement instanceof Famix.Association) && !(famixElement instanceof Famix.Comment) && !(sourceElement instanceof CommentRange) && !(sourceElement instanceof Identifier)) {
                 (famixElement as Famix.NamedEntity).setFullyQualifiedName(this.FQNFunctions.getFQN(sourceElement));
             }
         }
@@ -557,22 +557,32 @@ export class FamixFunctions {
      * Creates a Famix import clause
      * @param importer A source file which is a module
      * @param moduleSpecifier The name of the module where the export declaration is
-     * @param namedImport The imported entity
+     * @param importElement The imported entity
      * @param isInExports A boolean indicating if the imported entity is in the exports
      */
-    public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, namedImport: ImportSpecifier, isInExports: boolean): void {
+    public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, importElement: ImportSpecifier | Identifier, isInExports: boolean): void {
         const fmxImportClause = new Famix.ImportClause(this.fmxRep);
-        const importedEntityName = namedImport.getName();
 
         let importedEntity: Famix.NamedEntity;
-        if (isInExports) {
-            importedEntity = this.getFamixEntityByName(importedEntityName) as Famix.NamedEntity;
+        let importedEntityName: string;
+        if (importElement instanceof ImportSpecifier) {
+            importedEntityName = importElement.getName();
+            if (isInExports) {
+                importedEntity = this.getFamixEntityByName(importedEntityName) as Famix.NamedEntity;
+            }
+            if (importedEntity === undefined) {
+                importedEntity = new Famix.NamedEntity(this.fmxRep);
+                importedEntity.setName(importedEntityName);
+                importedEntity.setIsStub(true);
+                this.makeFamixIndexFileAnchor(importElement, importedEntity);
+            }
         }
-        if (importedEntity === undefined) {
+        else {
+            importedEntityName = importElement.getText() + "(default)";
             importedEntity = new Famix.NamedEntity(this.fmxRep);
             importedEntity.setName(importedEntityName);
-            importedEntity.setIsStub(true);
-            this.makeFamixIndexFileAnchor(namedImport, importedEntity);
+            this.makeFamixIndexFileAnchor(importElement, importedEntity);
+            importedEntity.setFullyQualifiedName("\"" + importElement.getSourceFile().getFilePath() + "\"." + importedEntityName);
         }
 
         const importerFullyQualifiedName = this.FQNFunctions.getFQN(importer);
