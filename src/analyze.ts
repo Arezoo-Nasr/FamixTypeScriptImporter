@@ -670,7 +670,12 @@ export class Importer {
                         }
                     });
                     this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), ni, bool);
-                });                        
+                });
+
+                const defaultImport = i.getDefaultImport();
+                if (defaultImport !== undefined) {
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), defaultImport, false);
+                }
             }); 
         });
     }
