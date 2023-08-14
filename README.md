@@ -56,10 +56,8 @@ eog doc-uml/metamodel.svg &
 ## Parse a full project
 
 ```sh
-ts-node src/ts2famix-cli.ts -i "../path/to/project/**/*.ts" -o JSONModels/projectName.json
+ts-node src/ts2famix-tsconfig.ts -i ../path/to/project/tsconfig.json -o JSONModels/projectName.json
 ```
-
-This command allows to parse all TypeScript files and ignores the HTML or CSS ones (which is particularly interesting to avoid HTML files in Angular-like projects).
 
 ## Generate an object diagram of the JSON model
 
