@@ -6,7 +6,7 @@ export class Variable extends StructuralEntity {
 
   private parentEntity: ContainerEntity;
 
-  public getParentEntity() {
+  public getParentEntity(): ContainerEntity {
     return this.parentEntity;
   }
 

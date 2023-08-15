@@ -15,7 +15,7 @@ npm install
 Instructions for using the command-line importer :
 
 ```sh
-ts-node src/ts2famix-cli.ts --help
+ts-node src/ts2famix-tsconfig.ts --help
 ```
 
 Run tests :

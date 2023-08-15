@@ -107,6 +107,12 @@ export class FQNFunctions {
             case ts.SyntaxKind.ImportSpecifier:
                 return a.asKind(ts.SyntaxKind.ImportSpecifier)?.getName();
 
+            case ts.SyntaxKind.EnumDeclaration:
+                return a.asKind(ts.SyntaxKind.EnumDeclaration)?.getName();
+
+            case ts.SyntaxKind.EnumMember:
+                return a.asKind(ts.SyntaxKind.EnumMember)?.getName();
+
             case ts.SyntaxKind.Constructor:
                 return "constructor";    
             

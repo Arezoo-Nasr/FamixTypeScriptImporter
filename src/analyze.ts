@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration, ExportedDeclarations, CommentRange } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration, ExportedDeclarations, CommentRange, EnumDeclaration, EnumMember, TypeParameterDeclaration } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -14,7 +14,7 @@ export class Importer {
     private famixFunctions = new FamixFunctions(); // FamixFunctions object, it contains all the functions needed to create Famix entities
     private project = new Project(); // The project containing the source files to analyze
     private methodsAndFunctionsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration>(); // Maps the Famix methods, constructors, getters, setters and functions ids to their ts-morph method, constructor, getter, setter or function object
-    private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration>(); // Maps the Famix parameters, variables and fields ids to their ts-morph parameter, variable or field object
+    private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>(); // Maps the Famix parameters, variables, fields and enum values ids to their ts-morph parameter, variable, field or enum value object
     private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
     private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
     private modules = new Array<SourceFile>(); // Array of all the source files which are modules
@@ -30,7 +30,10 @@ export class Importer {
     private parameters = new Array<ParameterDeclaration>();
     private variableStatements = new Array<VariableStatement>();
     private variables = new Array<VariableDeclaration>();
+    private parameterTypes = new Array<TypeParameterDeclaration>();
     private fields = new Array <PropertyDeclaration | PropertySignature>();
+    private enums = new Array<EnumDeclaration>();
+    private enumValues = new Array<EnumMember>();
     private decorators = new Array<Decorator>();
     private access_nodes = new Array<Identifier>();
     private invoc_nodes = new Array<Identifier>();
@@ -131,6 +134,8 @@ export class Importer {
 
         this.processVariables(f, fmxFile);
 
+        this.processEnums(f, fmxFile);
+
         this.processFunctions(f, fmxFile);
 
         this.processNamespaces(f, fmxFile);
@@ -157,6 +162,8 @@ export class Importer {
 
         this.processVariables(m, fmxNamespace);
 
+        this.processEnums(m, fmxNamespace);
+        
         this.processFunctions(m, fmxNamespace);
 
         this.processNamespaces(m, fmxNamespace);
@@ -200,6 +207,19 @@ export class Importer {
         m.getVariableStatements().forEach(v => {
             const temp_variables = this.processVariableStatement(v);
             temp_variables.forEach(variable => fmxScope.addVariable(variable));
+        });
+    }
+
+    /**
+     * Builds a Famix model for the enums of a container
+     * @param m A container (a source file, a namespace, a function or a method)
+     * @param fmxScope The Famix model of the container
+     */
+    private processEnums(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
+        console.info(`processEnums: ---------- Finding Enums:`);
+        m.getEnums().forEach(e => {
+            const fmxEnum = this.processEnum(e);
+            fmxScope.addEnum(fmxEnum);
         });
     }
 
@@ -285,12 +305,17 @@ export class Importer {
     }
 
     /**
-     * Builds a Famix model for the fields and methods of a structured type
+     * Builds a Famix model for the parameter types, fields and methods of a structured type
      * @param c A structured type (a class or an interface)
      * @param fmxScope The Famix model of the structured type
      */
     private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass | Famix.Interface | Famix.ParameterizableInterface) {
         console.info(`processStructuredType: ---------- Finding Fields and Methods:`);
+        c.getTypeParameters().forEach(tp => {
+            const fmxParameterType = this.processParameterType(tp);
+            (fmxScope as Famix.ParameterizableClass | Famix.ParameterizableInterface).addParameterType(fmxParameterType);
+        });
+
         c.getProperties().forEach(prop => {
             const fmxField = this.processField(prop);
             fmxScope.addField(fmxField);
@@ -300,6 +325,23 @@ export class Importer {
             const fmxMethod = this.processMethod(m);
             fmxScope.addMethod(fmxMethod);
         });
+    }
+
+    /**
+     * Builds a Famix model for a parameter type
+     * @param p A parameter type
+     * @returns A Famix.ParameterType representing the parameter type
+     */
+    private processParameterType(p: TypeParameterDeclaration): Famix.ParameterType {
+        this.parameterTypes.push(p);
+
+        const fmxParameterType = this.famixFunctions.createFamixParameterType(p);
+
+        console.info(`processParameterType: parameter type: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxParameterType.getFullyQualifiedName()}`);
+
+        this.processComments(p, fmxParameterType);
+
+        return fmxParameterType;
     }
 
     /**
@@ -344,6 +386,8 @@ export class Importer {
         if (!(m instanceof MethodSignature)) {
             this.processVariables(m, fmxMethod);
 
+            this.processEnums(m, fmxMethod);
+
             this.processFunctions(m, fmxMethod);
 
             this.methodsAndFunctionsWithId.set(fmxMethod.id, m);
@@ -373,6 +417,8 @@ export class Importer {
         this.processParameters(f, fmxFunction);
 
         this.processVariables(f, fmxFunction);
+
+        this.processEnums(f, fmxFunction);
 
         this.processFunctions(f, fmxFunction);
 
@@ -459,6 +505,47 @@ export class Importer {
     }
 
     /**
+     * Builds a Famix model for an enum
+     * @param e An enum
+     * @returns A Famix.Enum representing the enum
+     */
+    private processEnum(e: EnumDeclaration): Famix.Enum {
+        this.enums.push(e);
+
+        const fmxEnum = this.famixFunctions.createFamixEnum(e);
+
+        console.info(`processEnum: enum: ${e.getName()}, (${e.getType().getText()}), fqn = ${fmxEnum.getFullyQualifiedName()}`);
+
+        e.getMembers().forEach(m => {
+            const fmxEnumValue = this.processEnumValue(m);
+            fmxEnum.addValue(fmxEnumValue);
+        });
+
+        this.processComments(e, fmxEnum);
+
+        return fmxEnum;
+    }
+
+    /**
+     * Builds a Famix model for an enum value
+     * @param v An enum value
+     * @returns A Famix.EnumValue representing the enum value
+     */
+    private processEnumValue(v: EnumMember): Famix.EnumValue {
+        this.enumValues.push(v);
+
+        const fmxEnumValue = this.famixFunctions.createFamixEnumValue(v);
+
+        console.info(`processEnumValue: enum value: ${v.getName()}, (${v.getType().getText()}), fqn = ${fmxEnumValue.getFullyQualifiedName()}`);
+
+        this.processComments(v, fmxEnumValue);
+
+        this.arrayOfAccess.set(fmxEnumValue.id, v);
+
+        return fmxEnumValue;
+    }
+
+    /**
      * Builds a Famix model for the decorators of a class, a method, a parameter or a field
      * @param e A class, a method, a parameter or a field
      * @param fmxScope The Famix model of the class, the method, the parameter or the field
@@ -494,7 +581,7 @@ export class Importer {
      * @param e A source file, a module, a class, an interface, a method, a function, a parameter, a variable, a field or a decorator
      * @param fmxScope The Famix model of the named entity
      */
-    private processComments(e: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | Decorator, fmxScope: Famix.NamedEntity): void {
+    private processComments(e: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | Decorator | EnumDeclaration | EnumMember | TypeParameterDeclaration, fmxScope: Famix.NamedEntity): void {
         console.info(`processComments: ---------- Finding Comments:`);
         e.getLeadingCommentRanges().forEach(c => {
             const fmxComment = this.processComment(c, fmxScope);
@@ -588,36 +675,6 @@ export class Importer {
             console.error(`> WARNING: got exception ${error}. ScopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing...`);
         }
     }
-
-    // private processInvocationsByCE(): void {
-    //     const callExpressions = this.allProjectCallExpressions();
-    //     callExpressions.forEach(ce => {
-    //         console.log(`  CallExpression: ${ce.getText()}`);
-    //         const returnType = this.project.getTypeChecker().getTypeAtLocation(ce);
-    //         console.log(`  returnType: ${returnType.getText()}`);
-    //         const theDescendants = ce.getDescendants();
-    //         const DAncest = theDescendants[3].getAncestors();
-    //         console.log(DAncest.length);
-    //         for (let pas = 0; pas < DAncest.length; pas++) {
-    //             console.log(pas, DAncest[pas].getText(), DAncest[pas].getKindName());
-    //         }
-    //         console.log(theDescendants.length);
-    //         for (let pas = 0; pas < theDescendants.length; pas++) {
-    //             console.log(pas, theDescendants[pas].getKindName(), theDescendants[pas].getText());
-    //         }
-    //         // const receiver = this.typeChecker.getType(ce.compilerNode.expression.getChildren()[0]);
-    //     });
-    // }
-
-    // private allProjectCallExpressions(): Array<any> {
-    //     const callExpressions = new Array<any>;
-    //     for (const file of this.project.getSourceFiles()) {
-    //         for (const ce of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
-    //             callExpressions.push(ce);
-    //         }
-    //     }
-    //     return callExpressions;
-    // }
 
     /**
      * Builds a Famix model for the inheritances of the classes and interfaces of the source files
