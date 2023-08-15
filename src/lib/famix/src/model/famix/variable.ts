@@ -1,16 +1,16 @@
 import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { StructuralEntity } from "./structural_entity";
-import { ContainerEntity } from "./container_entity";
+import { VariableStatement } from "./variable_statement";
 
 export class Variable extends StructuralEntity {
 
-  private parentEntity: ContainerEntity;
+  private parentEntity: VariableStatement;
 
-  public getParentEntity(): ContainerEntity {
+  public getParentEntity(): VariableStatement {
     return this.parentEntity;
   }
 
-  public setParentEntity(parentEntity: ContainerEntity): void {
+  public setParentEntity(parentEntity: VariableStatement): void {
     this.parentEntity = parentEntity;
     parentEntity.addVariable(this);
   }

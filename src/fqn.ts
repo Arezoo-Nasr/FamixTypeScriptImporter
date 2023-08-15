@@ -114,7 +114,10 @@ export class FQNFunctions {
                 return a.asKind(ts.SyntaxKind.EnumMember)?.getName();
 
             case ts.SyntaxKind.Constructor:
-                return "constructor";    
+                return "constructor";   
+            
+            case ts.SyntaxKind.VariableStatement:
+                return "";
             
             default:
                 // ancestor hasn't got a useful name

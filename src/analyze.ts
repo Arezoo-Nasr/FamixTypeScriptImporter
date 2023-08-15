@@ -11,15 +11,14 @@ import { calculate } from "./lib/ts-complex/cyclomatic-service";
  */
 export class Importer {
 
-    private famixFunctions = new FamixFunctions(); // FamixFunctions object, it contains all the functions needed to create Famix entities
     private project = new Project(); // The project containing the source files to analyze
+    private famixFunctions = new FamixFunctions(); // FamixFunctions object, it contains all the functions needed to create Famix entities
     private methodsAndFunctionsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration>(); // Maps the Famix methods, constructors, getters, setters and functions ids to their ts-morph method, constructor, getter, setter or function object
     private arrayOfAccess = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>(); // Maps the Famix parameters, variables, fields and enum values ids to their ts-morph parameter, variable, field or enum value object
     private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
     private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
     private modules = new Array<SourceFile>(); // Array of all the source files which are modules
     private exports = new Array<ReadonlyMap<string, ExportedDeclarations[]>>(); // Array of all the exports
-    private comments = new Array<CommentRange>(); // Array of all the comments of the source files
     private currentCC: any; // Stores the cyclomatic complexity metrics for the current source file
 
     // not used
@@ -37,6 +36,7 @@ export class Importer {
     private decorators = new Array<Decorator>();
     private access_nodes = new Array<Identifier>();
     private invoc_nodes = new Array<Identifier>();
+    private comments = new Array<CommentRange>();
 
     /**
      * Main method
@@ -132,7 +132,7 @@ export class Importer {
 
         this.processInterfaces(f, fmxFile);
 
-        this.processVariables(f, fmxFile);
+        this.processVariableStatements(f, fmxFile);
 
         this.processEnums(f, fmxFile);
 
@@ -160,7 +160,7 @@ export class Importer {
 
         this.processInterfaces(m, fmxNamespace);
 
-        this.processVariables(m, fmxNamespace);
+        this.processVariableStatements(m, fmxNamespace);
 
         this.processEnums(m, fmxNamespace);
         
@@ -198,15 +198,15 @@ export class Importer {
     }
 
     /**
-     * Builds a Famix model for the variables of a container
+     * Builds a Famix model for the variable statements of a container
      * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processVariables(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
-        console.info(`processVariables: ---------- Finding Variables:`);
+    private processVariableStatements(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
+        console.info(`processVariableStatements: ---------- Finding Variable Statements:`);
         m.getVariableStatements().forEach(v => {
-            const temp_variables = this.processVariableStatement(v);
-            temp_variables.forEach(variable => fmxScope.addVariable(variable));
+            const fmxVariableStatement = this.processVariableStatement(v);
+            fmxScope.addType(fmxVariableStatement);
         });
     }
 
@@ -219,7 +219,7 @@ export class Importer {
         console.info(`processEnums: ---------- Finding Enums:`);
         m.getEnums().forEach(e => {
             const fmxEnum = this.processEnum(e);
-            fmxScope.addEnum(fmxEnum);
+            fmxScope.addType(fmxEnum);
         });
     }
 
@@ -311,10 +311,12 @@ export class Importer {
      */
     private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass | Famix.Interface | Famix.ParameterizableInterface) {
         console.info(`processStructuredType: ---------- Finding Fields and Methods:`);
-        c.getTypeParameters().forEach(tp => {
-            const fmxParameterType = this.processParameterType(tp);
-            (fmxScope as Famix.ParameterizableClass | Famix.ParameterizableInterface).addParameterType(fmxParameterType);
-        });
+        if (fmxScope instanceof Famix.ParameterizableClass || fmxScope instanceof Famix.ParameterizableInterface) {
+            c.getTypeParameters().forEach(tp => {
+                const fmxParameterType = this.processParameterType(tp);
+                fmxScope.addParameterType(fmxParameterType);
+            });
+        }
 
         c.getProperties().forEach(prop => {
             const fmxField = this.processField(prop);
@@ -384,7 +386,7 @@ export class Importer {
         this.processParameters(m, fmxMethod);
 
         if (!(m instanceof MethodSignature)) {
-            this.processVariables(m, fmxMethod);
+            this.processVariableStatements(m, fmxMethod);
 
             this.processEnums(m, fmxMethod);
 
@@ -416,7 +418,7 @@ export class Importer {
 
         this.processParameters(f, fmxFunction);
 
-        this.processVariables(f, fmxFunction);
+        this.processVariableStatements(f, fmxFunction);
 
         this.processEnums(f, fmxFunction);
 
@@ -470,19 +472,21 @@ export class Importer {
      * @param v A variable statement
      * @returns An array of Famix.Variable containing the variables
      */
-    private processVariableStatement(v: VariableStatement): Array<Famix.Variable> {
+    private processVariableStatement(v: VariableStatement): Famix.VariableStatement {
         this.variableStatements.push(v);
 
-        const temp_variables = new Array<Famix.Variable>();
+        const fmxVariableStatement = this.famixFunctions.createFamixVariableStatement(v);
 
-        console.info(`processVariableStatement: variable statement: variable statement, (${v.getType().getText()}), ${v.getDeclarationKindKeyword().getText()}`);
+        console.info(`processVariableStatement: variable statement: variable statement, (${v.getType().getText()}), ${v.getDeclarationKindKeyword().getText()}, fqn = ${fmxVariableStatement.getFullyQualifiedName()}`);
+
+        this.processComments(v, fmxVariableStatement);
 
         v.getDeclarations().forEach(variable => {
             const fmxVar = this.processVariable(variable);
-            temp_variables.push(fmxVar);
+            fmxVariableStatement.addVariable(fmxVar);
         }); 
 
-        return temp_variables;
+        return fmxVariableStatement;
     }
 
     /**
@@ -495,7 +499,7 @@ export class Importer {
 
         const fmxVar = this.famixFunctions.createFamixVariable(v);
 
-        console.info(`processVariable: variable: ${v.getName()}, (${v.getType().getText()}), ${v.getInitializer() ? "initializer: " + v.getInitializer().getText() : ""}, fqn = ${fmxVar.getFullyQualifiedName()}`);
+        console.info(`processVariable: variable: ${v.getName()}, (${v.getType().getText()}), ${v.getInitializer() ? "initializer: " + v.getInitializer().getText() : "initializer: "}, fqn = ${fmxVar.getFullyQualifiedName()}`);
 
         this.processComments(v, fmxVar);
 
@@ -516,12 +520,12 @@ export class Importer {
 
         console.info(`processEnum: enum: ${e.getName()}, (${e.getType().getText()}), fqn = ${fmxEnum.getFullyQualifiedName()}`);
 
+        this.processComments(e, fmxEnum);
+
         e.getMembers().forEach(m => {
             const fmxEnumValue = this.processEnumValue(m);
             fmxEnum.addValue(fmxEnumValue);
         });
-
-        this.processComments(e, fmxEnum);
 
         return fmxEnum;
     }
@@ -581,7 +585,7 @@ export class Importer {
      * @param e A source file, a module, a class, an interface, a method, a function, a parameter, a variable, a field or a decorator
      * @param fmxScope The Famix model of the named entity
      */
-    private processComments(e: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | Decorator | EnumDeclaration | EnumMember | TypeParameterDeclaration, fmxScope: Famix.NamedEntity): void {
+    private processComments(e: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | Decorator | EnumDeclaration | EnumMember | TypeParameterDeclaration | VariableStatement, fmxScope: Famix.NamedEntity): void {
         console.info(`processComments: ---------- Finding Comments:`);
         e.getLeadingCommentRanges().forEach(c => {
             const fmxComment = this.processComment(c, fmxScope);
