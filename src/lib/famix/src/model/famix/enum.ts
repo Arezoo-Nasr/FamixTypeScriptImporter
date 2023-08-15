@@ -16,7 +16,7 @@ export class Enum extends Type {
       enumValue.setParentEntity(this);
     }
   }
-
+  
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Enum", this);

@@ -1,5 +1,6 @@
 import { Importer } from '../src/analyze';
 import { Function } from "../src/lib/famix/src/model/famix/function";
+import { VariableStatement } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -14,11 +15,21 @@ const fmxRep = importer.famixRepFromSource("functionWithVariables",
 describe('Tests for simple function with variables', () => {
     
     const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as Function;
-    it("should have three variables", () => {
-        expect(theFunction?.getVariables().size).toBe(3);
+    it("should have two variable statements", () => {
+        expect(Array.from(theFunction?.getTypes()).filter(t => t instanceof VariableStatement).length).toBe(2);
     });
 
-    const firstVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "i");
+    const theVarS1 = Array.from(theFunction?.getTypes()).filter(t => t instanceof VariableStatement)[0] as VariableStatement;
+    it("should have two variables in the first variable statement", () => {
+        expect(theVarS1?.getVariables().size).toBe(2);
+    });
+
+    const theVarS2 = Array.from(theFunction?.getTypes()).filter(t => t instanceof VariableStatement)[1] as VariableStatement;
+    it("should have one variable in the second variable statement", () => {
+        expect(theVarS2?.getVariables().size).toBe(1);
+    });
+
+    const firstVariable = Array.from(theVarS1?.getVariables()).find((p) => p.getName() === "i");
     it("should have a variable 'i'", () => {
         expect(firstVariable).toBeTruthy();
     });
@@ -27,7 +38,7 @@ describe('Tests for simple function with variables', () => {
         expect(firstVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const secondVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "j");
+    const secondVariable = Array.from(theVarS1?.getVariables()).find((p) => p.getName() === "j");
     it("should have a variable 'j'", () => {
         expect(secondVariable).toBeTruthy();
     });
@@ -36,7 +47,7 @@ describe('Tests for simple function with variables', () => {
         expect(secondVariable?.getDeclaredType().getName()).toBe("number");
     });
 
-    const thirdVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "x");
+    const thirdVariable = Array.from(theVarS2?.getVariables()).find((p) => p.getName() === "x");
     it("should have a variable 'x'", () => {
         expect(thirdVariable).toBeTruthy();
     });

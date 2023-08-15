@@ -39,4 +39,5 @@ export {SourcedEntity} from "./sourced_entity";
 export {StructuralEntity} from "./structural_entity";
 export {TextAnchor} from "./text_anchor";
 export {Type} from "./type";
+export {VariableStatement} from "./variable_statement";
 export {Variable} from "./variable";

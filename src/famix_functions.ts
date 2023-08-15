@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, CommentRange } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, VariableStatement } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { SyntaxKind } from "@ts-morph/common";
@@ -32,7 +32,7 @@ export class FamixFunctions {
      * @param sourceElement A source element
      * @param famixElement The Famix model of the source element
      */
-    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator | GetAccessorDeclaration | SetAccessorDeclaration | ImportSpecifier | CommentRange, famixElement: Famix.SourcedEntity): void {
+    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator | GetAccessorDeclaration | SetAccessorDeclaration | ImportSpecifier | CommentRange | EnumDeclaration | EnumMember | VariableStatement, famixElement: Famix.SourcedEntity): void {
         const fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.fmxRep);
         fmxIndexFileAnchor.setElement(famixElement);
 
@@ -117,10 +117,6 @@ export class FamixFunctions {
             const isGenerics = cls.getTypeParameters().length;
             if (isGenerics) {
                 fmxClass = new Famix.ParameterizableClass(this.fmxRep);
-                cls.getTypeParameters().forEach(tp => {
-                    const fmxParameterType = this.createFamixParameterType(tp);
-                    (fmxClass as Famix.ParameterizableClass).addParameterType(fmxParameterType);
-                });
             }
             else {
                 fmxClass = new Famix.Class(this.fmxRep);
@@ -151,10 +147,6 @@ export class FamixFunctions {
             const isGenerics = inter.getTypeParameters().length;
             if (isGenerics) {
                 fmxInterface = new Famix.ParameterizableInterface(this.fmxRep);
-                inter.getTypeParameters().forEach(tp => {
-                    const fmxParameterType = this.createFamixParameterType(tp);
-                    (fmxInterface as Famix.ParameterizableInterface).addParameterType(fmxParameterType);
-                });
             }
             else {
                 fmxInterface = new Famix.Interface(this.fmxRep);
@@ -170,6 +162,20 @@ export class FamixFunctions {
             fmxInterface = this.fmxInterfaces.get(interName) as (Famix.Interface | Famix.ParameterizableInterface);
         }
         return fmxInterface;
+    }
+
+    /**
+     * Creates a Famix parameter type
+     * @param tp A type parameter
+     * @returns The Famix model of the parameter type
+     */
+    public createFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType {
+        const fmxParameterType = new Famix.ParameterType(this.fmxRep);
+        fmxParameterType.setName(tp.getName());
+
+        this.makeFamixIndexFileAnchor(tp, fmxParameterType);
+
+        return fmxParameterType;
     }
 
     /**
@@ -191,10 +197,6 @@ export class FamixFunctions {
 
         const fmxType = this.createOrGetFamixType(propTypeName);
         fmxField.setDeclaredType(fmxType);
-
-        const parentEntityFullyQualifiedName = this.FQNFunctions.getFQN(property.getParent());
-        const parentEntity = this.getFamixEntityByFullyQualifiedName(parentEntityFullyQualifiedName) as Famix.Class | Famix.Interface;
-        fmxField.setParentEntity(parentEntity);
 
         property.getModifiers().forEach(m => fmxField.addModifier(m.getText()));
         if (!isSignature && property.getExclamationTokenNode()) {
@@ -295,10 +297,6 @@ export class FamixFunctions {
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
         const parameters = method.getParameters();
         fmxMethod.setNumberOfParameters(parameters.length);
-        
-        const parentEntityFullyQualifiedName = this.FQNFunctions.getFQN(method.getParent());
-        const parentEntity = this.getFamixEntityByFullyQualifiedName(parentEntityFullyQualifiedName) as Famix.Class | Famix.Interface;
-        fmxMethod.setParentEntity(parentEntity);
 
         if (!isSignature) {
             fmxMethod.setNumberOfStatements(method.getStatements().length);
@@ -368,6 +366,20 @@ export class FamixFunctions {
     }
 
     /**
+     * Creates a Famix variable statement
+     * @param variableStatement A variable statement
+     * @returns The Famix model of the variable statement
+     */
+    public createFamixVariableStatement(variableStatement: VariableStatement): Famix.VariableStatement {
+        const fmxVariableStatement = new Famix.VariableStatement(this.fmxRep);
+        fmxVariableStatement.setName("");
+
+        this.makeFamixIndexFileAnchor(variableStatement, fmxVariableStatement);
+
+        return fmxVariableStatement;
+    }
+
+    /**
      * Creates a Famix variable
      * @param variable A variable
      * @returns The Famix model of the variable
@@ -389,6 +401,34 @@ export class FamixFunctions {
         this.makeFamixIndexFileAnchor(variable, fmxVariable);
 
         return fmxVariable;
+    }
+
+    /**
+     * Creates a Famix enum
+     * @param enumEntity An enum
+     * @returns The Famix model of the enum
+     */
+    public createFamixEnum(enumEntity: EnumDeclaration): Famix.Enum {
+        const fmxEnum = new Famix.Enum(this.fmxRep);
+        fmxEnum.setName(enumEntity.getName());
+
+        this.makeFamixIndexFileAnchor(enumEntity, fmxEnum);
+
+        return fmxEnum;
+    }
+
+    /**
+     * Creates a Famix enum value
+     * @param enumValue An enum value
+     * @returns The Famix model of the enum value
+     */
+    public createFamixEnumValue(enumValue: EnumMember): Famix.EnumValue {
+        const fmxEnumValue = new Famix.EnumValue(this.fmxRep);
+        fmxEnumValue.setName(enumValue.getName());
+
+        this.makeFamixIndexFileAnchor(enumValue, fmxEnumValue);
+
+        return fmxEnumValue;
     }
 
     /**
@@ -448,20 +488,6 @@ export class FamixFunctions {
         this.makeFamixIndexFileAnchor(null, fmxType);
 
         return fmxType;
-    }
-
-    /**
-     * Creates a Famix parameter type
-     * @param tp A type parameter
-     * @returns The Famix model of the parameter type
-     */
-    private createFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType {
-        const fmxParameterType = new Famix.ParameterType(this.fmxRep);
-        fmxParameterType.setName(tp.getName());
-
-        this.makeFamixIndexFileAnchor(tp, fmxParameterType);
-
-        return fmxParameterType;
     }
 
     /**
@@ -639,6 +665,6 @@ export class FamixFunctions {
      * @returns The ancestor of the node
      */
     private findAncestor(node: Identifier): Node {
-        return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ClassDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor");
+        return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor");
     }
 }

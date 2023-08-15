@@ -5,7 +5,6 @@ import { NamedEntity } from "./named_entity";
 import { Reference } from "./reference";
 import { Access } from "./access";
 import { Function } from "./function";
-import { Variable } from "./variable";
 
 export class ContainerEntity extends NamedEntity {
 
@@ -128,19 +127,6 @@ export class ContainerEntity extends NamedEntity {
     }
   }
 
-  private variables: Set<Variable> = new Set();
-
-  public getVariables(): Set<Variable> {
-    return this.variables;
-  }
-
-  public addVariable(variable: Variable): void {
-    if (!this.variables.has(variable)) {
-      this.variables.add(variable);
-      variable.setParentEntity(this);
-    }
-  }
-
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("ContainerEntity", this);
@@ -160,6 +146,5 @@ export class ContainerEntity extends NamedEntity {
     exporter.addProperty("accesses", this.getAccesses());
     exporter.addProperty("types", this.getTypes());
     exporter.addProperty("functions", this.getFunctions());
-    exporter.addProperty("variables", this.getVariables());
   }
 }

@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import yargs from 'yargs';
 
 const argv = yargs
-    .example('ts-node src/famix2puml.ts -i JSONModels/ModelName.json -o PUMLModels/ModelName.puml', 'creates a PlantUML class diagram from a JSON-format model of a typescript project')
+    .example('ts-node src/famix2puml.ts -i JSONModels/projectName.json -o PUMLModels/projectName.puml', 'creates a PlantUML class diagram from a JSON-format model of a typescript project')
     .alias('i', 'input')
     .nargs('i', 1)
     .alias('o', 'output')
