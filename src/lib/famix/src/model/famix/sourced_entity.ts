@@ -1,55 +1,56 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { SourceLanguage } from "./../famix/source_language";
-import { Entity } from "./../famix/entity";
-import { Comment } from "./../famix/comment";
-import { SourceAnchor } from "./../famix/source_anchor";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { SourceLanguage } from "./source_language";
+import { Entity } from "./entity";
+import { Comment } from "./comment";
+import { SourceAnchor } from "./source_anchor";
 
 export class SourcedEntity extends Entity {
 
-  private sourcedEntitySourceAnchor: SourceAnchor;
+  private isStub: boolean;
 
-  // @FameProperty(name = "sourceAnchor", opposite = "element")
+  public getIsStub(): boolean {
+    return this.isStub;
+  }
+
+  public setIsStub(isStub: boolean): void {
+    this.isStub = isStub;
+  }
+
+  private sourceAnchor: SourceAnchor;
+
   public getSourceAnchor(): SourceAnchor {
-    return this.sourcedEntitySourceAnchor;
+    return this.sourceAnchor;
   }
 
-  public setSourceAnchor(newSourceAnchor: SourceAnchor) {
-    if (this.sourcedEntitySourceAnchor === undefined) {
-      this.sourcedEntitySourceAnchor = newSourceAnchor;
-      newSourceAnchor.setElement(this);
+  public setSourceAnchor(sourceAnchor: SourceAnchor): void {
+    if (this.sourceAnchor === undefined) {
+      this.sourceAnchor = sourceAnchor;
+      sourceAnchor.setElement(this);
     }
   }
 
-  private sourcedEntityComments: Set<Comment> = new Set();
+  private comments: Set<Comment> = new Set();
 
-  // manyOne.Getter
-  // @FameProperty(name = "comments", opposite = "container", derived = true)
   public getComments(): Set<Comment> {
-    return this.sourcedEntityComments;
+    return this.comments;
   }
 
-  // manyOne.Setter
-  public addComments(sourcedEntityComments: Comment) {
-    if (!this.sourcedEntityComments.has(sourcedEntityComments)) {
-      this.sourcedEntityComments.add(sourcedEntityComments);
-      sourcedEntityComments.setContainer(this);
+  public addComment(comments: Comment): void {
+    if (!this.comments.has(comments)) {
+      this.comments.add(comments);
+      comments.setContainer(this);
     }
   }
 
-  private sourcedEntityDeclaredSourceLanguage: SourceLanguage;
+  private declaredSourceLanguage: SourceLanguage;
 
-  // oneMany.Getter
-  // @FameProperty(name = "declaredSourceLanguage", opposite = "sourcedEntities")
   public getDeclaredSourceLanguage(): SourceLanguage {
-    return this.sourcedEntityDeclaredSourceLanguage;
+    return this.declaredSourceLanguage;
   }
 
-  // oneMany.Setter
-  public setDeclaredSourceLanguage(newDeclaredSourceLanguage: SourceLanguage) {
-    this.sourcedEntityDeclaredSourceLanguage = newDeclaredSourceLanguage;
-    newDeclaredSourceLanguage.getSourcedEntities().add(this);
+  public setDeclaredSourceLanguage(declaredSourceLanguage: SourceLanguage): void {
+    this.declaredSourceLanguage = declaredSourceLanguage;
+    declaredSourceLanguage.addSourcedEntity(this);
   }
 
 
@@ -59,13 +60,11 @@ export class SourcedEntity extends Entity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("isStub", this.getIsStub());
     exporter.addProperty("sourceAnchor", this.getSourceAnchor());
     exporter.addProperty("comments", this.getComments());
     exporter.addProperty("declaredSourceLanguage", this.getDeclaredSourceLanguage());
-
   }
-
 }
-

@@ -1,38 +1,30 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
-import { Association } from "./../famix/association";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Type } from "./type";
+import { Association } from "./association";
+import { ContainerEntity } from "./container_entity";
 
 export class Reference extends Association {
 
-  private referenceSource: BehaviouralEntity;
+  private source: ContainerEntity;
 
-  // oneMany.Getter
-  // @FameProperty(name = "source", opposite = "outgoingReferences")
-  public getSource(): BehaviouralEntity {
-    return this.referenceSource;
+  public getSource(): ContainerEntity {
+    return this.source;
   }
 
-  // oneMany.Setter
-  public setSource(newSource: BehaviouralEntity) {
-    this.referenceSource = newSource;
-    newSource.getOutgoingReferences().add(this);
+  public setSource(source: ContainerEntity): void {
+    this.source = source;
+    source.addOutgoingReference(this);
   }
 
-  private referenceTarget: Type;
+  private target: Type;
 
-  // oneMany.Getter
-  // @FameProperty(name = "target", opposite = "incomingReferences")
   public getTarget(): Type {
-    return this.referenceTarget;
+    return this.target;
   }
 
-  // oneMany.Setter
-  public setTarget(newTarget: Type) {
-    this.referenceTarget = newTarget;
-    newTarget.getIncomingReferences().add(this);
+  public setTarget(target: Type): void {
+    this.target = target;
+    target.addIncomingReference(this);
   }
 
 
@@ -42,12 +34,9 @@ export class Reference extends Association {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("source", this.getSource());
     exporter.addProperty("target", this.getTarget());
-
   }
-
 }
-

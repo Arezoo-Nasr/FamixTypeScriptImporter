@@ -11,7 +11,7 @@ export default {
   // bail: 0,
 
   // The directory where Jest should store its cached dependency information
-  // cacheDirectory: "C:\\Users\\fuhrm\\AppData\\Local\\Temp\\jest",
+  // cacheDirectory: "",
 
   // Automatically clear mock calls and instances between every test
   // clearMocks: false,
@@ -62,7 +62,7 @@ export default {
   // A set of global variables that need to be available in all test environments
   // globals: {},
   globals: {
-    'ts-jest': {
+    "ts-jest": {
       isolatedModules: true
     }
   },
@@ -179,7 +179,9 @@ export default {
   // A map from regular expressions to paths to transformers
   // transform: undefined,
   transform: {
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.tsx?$": ["ts-jest", {
+      isolatedModules: true
+    }]
   },
   
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation

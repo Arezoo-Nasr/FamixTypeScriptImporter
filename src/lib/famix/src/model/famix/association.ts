@@ -1,35 +1,31 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { SourcedEntity } from "./../famix/sourced_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { SourcedEntity } from "./sourced_entity";
 
 export class Association extends SourcedEntity {
 
   private associationNext: Association;
 
-  // @FameProperty(name = "next", opposite = "previous", derived = true)
   public getNext(): Association {
     return this.associationNext;
   }
 
-  public setNext(newNext: Association) {
+  public setNext(associationNext: Association): void {
     if (this.associationNext === undefined) {
-      this.associationNext = newNext;
-      newNext.setPrevious(this);
+      this.associationNext = associationNext;
+      associationNext.setPrevious(this);
     }
   }
 
   private associationPrevious: Association;
 
-  // @FameProperty(name = "previous", opposite = "next")
   public getPrevious(): Association {
     return this.associationPrevious;
   }
 
-  public setPrevious(newPrevious: Association) {
+  public setPrevious(associationPrevious: Association): void {
     if (this.associationPrevious === undefined) {
-      this.associationPrevious = newPrevious;
-      newPrevious.setNext(this);
+      this.associationPrevious = associationPrevious;
+      associationPrevious.setNext(this);
     }
   }
 
@@ -40,12 +36,9 @@ export class Association extends SourcedEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("next", this.getNext());
     exporter.addProperty("previous", this.getPrevious());
-
   }
-
 }
-

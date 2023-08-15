@@ -1,19 +1,27 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { ScopingEntity } from "./../famix/scoping_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { ScopingEntity } from "./scoping_entity";
 
 export class Namespace extends ScopingEntity {
 
-  private namespaceNumberOfAttributes: number;
+  private parentScope: ScopingEntity;
 
-  // @FameProperty(name = "numberOfAttributes")
-  public getNumberOfAttributes(): number {
-    return this.namespaceNumberOfAttributes;
+  public getParentScope(): ScopingEntity {
+    return this.parentScope;
   }
 
-  public setNumberOfAttributes(namespaceNumberOfAttributes: number) {
-    this.namespaceNumberOfAttributes = namespaceNumberOfAttributes;
+  public setParentScope(parentScope: ScopingEntity): void {
+    this.parentScope = parentScope;
+    parentScope.addNamespace(this);
+  }
+
+  private numberOfAttributes: number;
+
+  public getNumberOfAttributes(): number {
+    return this.numberOfAttributes;
+  }
+
+  public setNumberOfAttributes(numberOfAttributes: number): void {
+    this.numberOfAttributes = numberOfAttributes;
   }
 
 
@@ -23,11 +31,9 @@ export class Namespace extends ScopingEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("parentScope", this.getParentScope());
     exporter.addProperty("numberOfAttributes", this.getNumberOfAttributes());
-
   }
-
 }
-

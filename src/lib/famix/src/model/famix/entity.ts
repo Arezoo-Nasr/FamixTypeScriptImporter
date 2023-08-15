@@ -1,10 +1,7 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { FamixBaseElement } from "./../../famix_base_element";
 
 export class Entity extends FamixBaseElement {
-
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Entity", this);
@@ -12,10 +9,7 @@ export class Entity extends FamixBaseElement {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
   }
-
 }
-

@@ -1,48 +1,39 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { StructuralEntity } from "./../famix/structural_entity";
-import { Association } from "./../famix/association";
-import { BehaviouralEntity } from "./../famix/behavioural_entity";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { StructuralEntity } from "./structural_entity";
+import { Association } from "./association";
+import { ContainerEntity } from "./container_entity";
 
 export class Access extends Association {
 
-  private accessAccessor: BehaviouralEntity;
+  private accessor: ContainerEntity;
 
-  // oneMany.Getter
-  // @FameProperty(name = "accessor", opposite = "accesses")
-  public getAccessor(): BehaviouralEntity {
-    return this.accessAccessor;
+  public getAccessor(): ContainerEntity {
+    return this.accessor;
   }
 
-  // oneMany.Setter
-  public setAccessor(newAccessor: BehaviouralEntity) {
-    this.accessAccessor = newAccessor;
-    newAccessor.getAccesses().add(this);
+  public setAccessor(accessor: ContainerEntity): void {
+    this.accessor = accessor;
+    accessor.addAccess(this);
   }
 
-  private accessVariable: StructuralEntity;
+  private variable: StructuralEntity;
 
-  // oneMany.Getter
-  // @FameProperty(name = "variable", opposite = "incomingAccesses")
   public getVariable(): StructuralEntity {
-    return this.accessVariable;
+    return this.variable;
   }
 
-  // oneMany.Setter
-  public setVariable(newVariable: StructuralEntity) {
-    this.accessVariable = newVariable;
-    newVariable.getIncomingAccesses().add(this);
+  public setVariable(variable: StructuralEntity): void {
+    this.variable = variable;
+    variable.addIncomingAccess(this);
   }
 
   private accessIsWrite: boolean;
 
-  // @FameProperty(name = "isWrite")
   public getIsWrite(): boolean {
     return this.accessIsWrite;
   }
 
-  public setIsWrite(accessIsWrite: boolean) {
+  public setIsWrite(accessIsWrite: boolean): void {
     this.accessIsWrite = accessIsWrite;
   }
 
@@ -53,13 +44,10 @@ export class Access extends Association {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("accessor", this.getAccessor());
     exporter.addProperty("variable", this.getVariable());
     exporter.addProperty("isWrite", this.getIsWrite());
-
   }
-
 }
-

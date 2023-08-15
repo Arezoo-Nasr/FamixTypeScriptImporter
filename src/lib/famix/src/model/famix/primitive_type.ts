@@ -1,10 +1,7 @@
-// automatically generated code, please do not change
-
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { Type } from "./../famix/type";
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { Type } from "./type";
 
 export class PrimitiveType extends Type {
-
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("PrimitiveType", this);
@@ -12,10 +9,7 @@ export class PrimitiveType extends Type {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-
   }
-
 }
-

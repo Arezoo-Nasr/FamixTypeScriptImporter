@@ -1,22 +1,19 @@
-// automatically generated code, please do not change
+import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { ScriptEntity } from "./script_entity";
+import { ImportClause } from "./import_clause";
 
-import { FamixJSONExporter } from "../../famix_JSON_exporter";
-import { CompilationUnit } from "./../famix/compilation_unit";
-import { ScopingEntity } from "./../famix/scoping_entity";
+export class Module extends ScriptEntity {
 
-export class Module extends ScopingEntity {
+  private importClauses: Set<ImportClause> = new Set();
 
-  private moduleCompilationUnit: CompilationUnit;
-
-  // @FameProperty(name = "compilationUnit", opposite = "module")
-  public getCompilationUnit(): CompilationUnit {
-    return this.moduleCompilationUnit;
+  public getImportClauses(): Set<ImportClause> {
+    return this.importClauses;
   }
 
-  public setCompilationUnit(newCompilationUnit: CompilationUnit) {
-    if (this.moduleCompilationUnit === undefined) {
-      this.moduleCompilationUnit = newCompilationUnit;
-      newCompilationUnit.setModule(this);
+  public addImportClause(importClause: ImportClause): void {
+    if (!this.importClauses.has(importClause)) {
+      this.importClauses.add(importClause);
+      importClause.setImporter(this);
     }
   }
 
@@ -27,11 +24,8 @@ export class Module extends ScopingEntity {
     return mse.getJSON();
   }
 
-  public addPropertiesToExporter(exporter: FamixJSONExporter) {
+  public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("compilationUnit", this.getCompilationUnit());
-
+    exporter.addProperty("importClauses", this.getImportClauses());
   }
-
 }
-
