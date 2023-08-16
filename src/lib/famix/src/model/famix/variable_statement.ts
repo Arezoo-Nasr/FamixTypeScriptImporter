@@ -4,16 +4,16 @@ import { Variable } from "./variable";
 
 export class VariableStatement extends Type {
 
-  private variables: Set<Variable> = new Set();
+  private variablesInStatement: Set<Variable> = new Set();
 
-  public getVariables(): Set<Variable> {
-    return this.variables;
+  public getVariablesInStatement(): Set<Variable> {
+    return this.variablesInStatement;
   }
 
-  public addVariable(variable: Variable): void {
-    if (!this.variables.has(variable)) {
-      this.variables.add(variable);
-      variable.setParentEntity(this);
+  public addVariableInStatement(variableInStatement: Variable): void {
+    if (!this.variablesInStatement.has(variableInStatement)) {
+      this.variablesInStatement.add(variableInStatement);
+      variableInStatement.setParentEntity(this);
     }
   }
   
@@ -26,6 +26,6 @@ export class VariableStatement extends Type {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("variables", this.getVariables());
+    exporter.addProperty("variablesInStatement", this.getVariablesInStatement());
   }
 }

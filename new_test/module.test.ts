@@ -23,8 +23,8 @@ describe('Tests for module', () => {
 
     const theClass = fmxRep._getFamixClass('ClassZ');
     const importClauseList = Array.from(fmxRep._getAllEntitiesWithType('ImportClause')) as Array<ImportClause>;
-    it("should have five import clauses", () => {
-        expect(importClauseList?.length).toBe(5);
+    it("should have seven import clauses", () => {
+        expect(importClauseList?.length).toBe(7);
 
         const theImportClause = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'ClassDeclaration' && e.getModuleSpecifier() === 'ts-morph');
         expect(theImportClause).toBeTruthy();
@@ -32,14 +32,20 @@ describe('Tests for module', () => {
         const theImportClause2 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'ConstructorDeclaration' && e.getModuleSpecifier() === 'ts-morph');
         expect(theImportClause2).toBeTruthy();
 
-        const theImportClause3 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Importer' && e.getModuleSpecifier() === '../src/analyze');
+        const theImportClause3 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Importer' && e.getModuleSpecifier() === '../test_src/sampleForModule');
         expect(theImportClause3).toBeTruthy();
 
         const theImportClause4 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'ClassZ' && e.getModuleSpecifier() === '../test_src/sampleForModule');
         expect(theImportClause4).toBeTruthy();
         expect(theImportClause4?.getImportedEntity()).toBe(theClass);
 
-        const theImportClause5 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Cls(default)' && e.getModuleSpecifier() === '../test_src/sampleForModule');
+        const theImportClause5 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Cls' && e.getModuleSpecifier() === '../test_src/sampleForModule');
         expect(theImportClause5).toBeTruthy();
+
+        const theImportClause6 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Nsp' && e.getModuleSpecifier() === '../test_src/sampleForModule');
+        expect(theImportClause6).toBeTruthy();
+
+        const theImportClause7 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Famix' && e.getModuleSpecifier() === '../src/lib/famix/src/model/famix');
+        expect(theImportClause7).toBeTruthy();
     });
 });

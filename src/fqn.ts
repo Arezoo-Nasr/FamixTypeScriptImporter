@@ -99,19 +99,19 @@ export class FQNFunctions {
                 return a.asKind(ts.SyntaxKind.VariableDeclaration)?.getName();
 
             case ts.SyntaxKind.Decorator:
-                return a.asKind(ts.SyntaxKind.Decorator)?.getName();    
+                return "@" + a.asKind(ts.SyntaxKind.Decorator)?.getName();    
 
             case ts.SyntaxKind.TypeParameter:
                 return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();
-
-            case ts.SyntaxKind.ImportSpecifier:
-                return a.asKind(ts.SyntaxKind.ImportSpecifier)?.getName();
 
             case ts.SyntaxKind.EnumDeclaration:
                 return a.asKind(ts.SyntaxKind.EnumDeclaration)?.getName();
 
             case ts.SyntaxKind.EnumMember:
                 return a.asKind(ts.SyntaxKind.EnumMember)?.getName();
+
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return a.asKind(ts.SyntaxKind.TypeAliasDeclaration)?.getName();
 
             case ts.SyntaxKind.Constructor:
                 return "constructor";   

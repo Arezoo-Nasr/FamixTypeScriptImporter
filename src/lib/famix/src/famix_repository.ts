@@ -36,17 +36,6 @@ export class FamixRepository {
     return entity;
   }
 
-  /**
-   * Gets a Famix entity by name
-   * @param name A name
-   * @returns The Famix entity corresponding to the name or undefined if it doesn't exist
-   */
-  public getFamixEntityByName(name: string): FamixBaseElement | undefined {
-    const allEntities = Array.from(this.elements.values()).filter(e => e instanceof NamedEntity) as Array<NamedEntity>;
-    const entity = allEntities.find(e => e.getName() === name);
-    return entity;
-  }
-
   
   // Only for tests
 
