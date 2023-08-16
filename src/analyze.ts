@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration, ExportedDeclarations, CommentRange, EnumDeclaration, EnumMember, TypeParameterDeclaration } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration, ExportedDeclarations, CommentRange, EnumDeclaration, EnumMember, TypeParameterDeclaration, TypeAliasDeclaration } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -128,6 +128,8 @@ export class Importer {
 
         this.processComments(f, fmxFile);
 
+        this.processAliases(f);
+
         this.processClasses(f, fmxFile);
 
         this.processInterfaces(f, fmxFile);
@@ -156,6 +158,8 @@ export class Importer {
 
         this.processComments(m, fmxNamespace);
 
+        this.processAliases(m);
+
         this.processClasses(m, fmxNamespace);
 
         this.processInterfaces(m, fmxNamespace);
@@ -172,11 +176,23 @@ export class Importer {
     }
 
     /**
+     * Builds a Famix model for the aliases of a container
+     * @param m A container (a source file, a namespace, a function or a method)
+     * @param fmxScope The Famix model of the container
+     */
+    private processAliases(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration): void {
+        console.info(`processAliases: ---------- Finding Aliases:`);
+        m.getTypeAliases().forEach(a => {
+            this.processAlias(a);
+        });
+    }
+
+    /**
      * Builds a Famix model for the classes of a container
      * @param m A container (a source file or a namespace)
      * @param fmxScope The Famix model of the container
      */
-    private processClasses(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace) {
+    private processClasses(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): void {
         console.info(`processClasses: ---------- Finding Classes:`);
         m.getClasses().forEach(c => {
             const fmxClass = this.processClass(c);
@@ -189,7 +205,7 @@ export class Importer {
      * @param m A container (a source file or a namespace)
      * @param fmxScope The Famix model of the container
      */
-    private processInterfaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace) {
+    private processInterfaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): void {
         console.info(`processInterfaces: ---------- Finding Interfaces:`);
         m.getInterfaces().forEach(i => {
             const fmxInterface = this.processInterface(i);
@@ -202,7 +218,7 @@ export class Importer {
      * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processVariableStatements(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
+    private processVariableStatements(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor): void {
         console.info(`processVariableStatements: ---------- Finding Variable Statements:`);
         m.getVariableStatements().forEach(v => {
             const fmxVariableStatement = this.processVariableStatement(v);
@@ -216,7 +232,7 @@ export class Importer {
      * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processEnums(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
+    private processEnums(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor): void {
         console.info(`processEnums: ---------- Finding Enums:`);
         m.getEnums().forEach(e => {
             const fmxEnum = this.processEnum(e);
@@ -229,7 +245,7 @@ export class Importer {
      * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor) {
+    private processFunctions(m: SourceFile | ModuleDeclaration | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor): void {
         console.info(`processFunctions: ---------- Finding Functions:`);
         m.getFunctions().forEach(f => {
             const fmxFunction = this.processFunction(f);
@@ -242,12 +258,25 @@ export class Importer {
      * @param m A container (a source file or a namespace)
      * @param fmxScope The Famix model of the container
      */
-    private processNamespaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace) {
+    private processNamespaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): void {
         console.info(`processNamespaces: ---------- Finding Namespaces:`);
         m.getModules().forEach(md => {
             const fmxNsp = this.processNamespace(md, fmxScope);
             fmxScope.addNamespace(fmxNsp);
         });
+    }
+
+    /**
+     * Builds a Famix model for an alias
+     * @param a An alias
+     * @returns A Famix.Alias representing the alias
+     */
+    private processAlias(a: TypeAliasDeclaration): void {
+        const fmxAlias = this.famixFunctions.createFamixAlias(a);
+
+        console.info(`processAlias: alias: ${a.getName()}, (${a.getType().getText()}), fqn = ${fmxAlias.getFullyQualifiedName()}`);
+
+        this.processComments(a, fmxAlias);
     }
 
     /**
@@ -310,7 +339,7 @@ export class Importer {
      * @param c A structured type (a class or an interface)
      * @param fmxScope The Famix model of the structured type
      */
-    private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass | Famix.Interface | Famix.ParameterizableInterface) {
+    private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass | Famix.Interface | Famix.ParameterizableInterface): void {
         console.info(`processStructuredType: ---------- Finding Fields and Methods:`);
         if (fmxScope instanceof Famix.ParameterizableClass || fmxScope instanceof Famix.ParameterizableInterface) {
             c.getTypeParameters().forEach(tp => {
@@ -387,6 +416,8 @@ export class Importer {
         this.processParameters(m, fmxMethod);
 
         if (!(m instanceof MethodSignature)) {
+            this.processAliases(m);
+
             this.processVariableStatements(m, fmxMethod);
 
             this.processEnums(m, fmxMethod);
@@ -417,6 +448,8 @@ export class Importer {
 
         this.processComments(f, fmxFunction);
 
+        this.processAliases(f);
+
         this.processParameters(f, fmxFunction);
 
         this.processVariableStatements(f, fmxFunction);
@@ -435,7 +468,7 @@ export class Importer {
      * @param m A method or a function
      * @param fmxScope The Famix model of the method or the function
      */
-    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, fmxScope: Famix.Method | Famix.Accessor | Famix.Function) {
+    private processParameters(m: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, fmxScope: Famix.Method | Famix.Accessor | Famix.Function): void {
         console.info(`processParameters: ---------- Finding Parameters:`);
         m.getParameters().forEach(param => {
             const fmxParam = this.processParameter(param);
@@ -478,7 +511,7 @@ export class Importer {
 
         const fmxVariableStatement = this.famixFunctions.createFamixVariableStatement(v);
 
-        console.info(`processVariableStatement: variable statement: variable statement, (${v.getType().getText()}), ${v.getDeclarationKindKeyword().getText()}, fqn = ${fmxVariableStatement.getFullyQualifiedName()}`);
+        console.info(`processVariableStatement: variable statement: variableStatement, (${v.getType().getText()}), ${v.getDeclarationKindKeyword().getText()}, fqn = ${fmxVariableStatement.getFullyQualifiedName()}`);
 
         this.processComments(v, fmxVariableStatement);
 
@@ -586,7 +619,7 @@ export class Importer {
      * @param e A source file, a module, a class, an interface, a method, a function, a parameter, a variable, a field or a decorator
      * @param fmxScope The Famix model of the named entity
      */
-    private processComments(e: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | Decorator | EnumDeclaration | EnumMember | TypeParameterDeclaration | VariableStatement, fmxScope: Famix.NamedEntity): void {
+    private processComments(e: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | Decorator | EnumDeclaration | EnumMember | TypeParameterDeclaration | VariableStatement | TypeAliasDeclaration, fmxScope: Famix.NamedEntity): void {
         console.info(`processComments: ---------- Finding Comments:`);
         e.getLeadingCommentRanges().forEach(c => {
             const fmxComment = this.processComment(c, fmxScope);
@@ -731,12 +764,17 @@ export class Importer {
                             bool = true;
                         }
                     });
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), ni, bool);
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), i.getModuleSpecifierSourceFile().getFilePath(), ni, bool, false);
                 });
 
                 const defaultImport = i.getDefaultImport();
                 if (defaultImport !== undefined) {
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), defaultImport, false);
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), i.getModuleSpecifierSourceFile().getFilePath(), defaultImport, false, true);
+                }
+
+                const namespaceImport = i.getNamespaceImport();
+                if (namespaceImport !== undefined) {
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), i.getModuleSpecifierSourceFile().getFilePath(), namespaceImport, false, false);
                 }
             }); 
         });

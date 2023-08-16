@@ -12,7 +12,7 @@ const fmxRep = importer.famixRepFromSource("functionWithVariables",
 }\n\
 ');
 
-describe('Tests for simple function with variables', () => {
+describe('Tests for function with variables', () => {
     
     const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as Function;
     it("should have two variable statements and three variables", () => {
@@ -24,12 +24,14 @@ describe('Tests for simple function with variables', () => {
     it("should have two variables in the first variable statement", () => {
         expect(theVarS1?.getVariablesInStatement().size).toBe(2);
         expect(theVarS1?.getParentContainerEntity()).toBe(theFunction);
+        expect(theVarS1?.getVariables().size).toBe(0);
     });
 
     const theVarS2 = Array.from(theFunction?.getTypes()).filter(t => t instanceof VariableStatement)[1] as VariableStatement;
     it("should have one variable in the second variable statement", () => {
         expect(theVarS2?.getVariablesInStatement().size).toBe(1);
         expect(theVarS2?.getParentContainerEntity()).toBe(theFunction);
+        expect(theVarS2?.getVariables().size).toBe(0);
     });
 
     const firstVariable = Array.from(theVarS1?.getVariablesInStatement()).find((p) => p.getName() === "i");

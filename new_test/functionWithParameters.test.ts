@@ -9,7 +9,7 @@ const fmxRep = importer.famixRepFromSource("functionWithParameters",
 }\n\
 ');
 
-describe('Tests for simple function with parameters', () => {
+describe('Tests for function with parameters', () => {
     
     const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as Function;
     it("should have two parameters", () => {
