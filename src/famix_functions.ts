@@ -114,8 +114,8 @@ export class FamixFunctions {
         const isAbstract = cls.isAbstract();
         const clsName = cls.getName();
         if (!this.fmxClasses.has(clsName)) {
-            const isGenerics = cls.getTypeParameters().length;
-            if (isGenerics) {
+            const isGeneric = cls.getTypeParameters().length;
+            if (isGeneric) {
                 fmxClass = new Famix.ParameterizableClass(this.fmxRep);
             }
             else {
@@ -144,8 +144,8 @@ export class FamixFunctions {
         let fmxInterface: Famix.Interface | Famix.ParameterizableInterface;
         const interName = inter.getName();
         if (!this.fmxInterfaces.has(interName)) {
-            const isGenerics = inter.getTypeParameters().length;
-            if (isGenerics) {
+            const isGeneric = inter.getTypeParameters().length;
+            if (isGeneric) {
                 fmxInterface = new Famix.ParameterizableInterface(this.fmxRep);
             }
             else {
@@ -372,7 +372,7 @@ export class FamixFunctions {
      */
     public createFamixVariableStatement(variableStatement: VariableStatement): Famix.VariableStatement {
         const fmxVariableStatement = new Famix.VariableStatement(this.fmxRep);
-        fmxVariableStatement.setName("");
+        fmxVariableStatement.setName("variableStatement");
 
         this.makeFamixIndexFileAnchor(variableStatement, fmxVariableStatement);
 

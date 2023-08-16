@@ -207,6 +207,7 @@ export class Importer {
         m.getVariableStatements().forEach(v => {
             const fmxVariableStatement = this.processVariableStatement(v);
             fmxScope.addType(fmxVariableStatement);
+            fmxScope.addVariables(fmxVariableStatement);
         });
     }
 
@@ -483,7 +484,7 @@ export class Importer {
 
         v.getDeclarations().forEach(variable => {
             const fmxVar = this.processVariable(variable);
-            fmxVariableStatement.addVariable(fmxVar);
+            fmxVariableStatement.addVariableInStatement(fmxVar);
         }); 
 
         return fmxVariableStatement;
@@ -608,7 +609,7 @@ export class Importer {
 
         const fmxComment = this.famixFunctions.createFamixComment(c, fmxScope);
 
-        console.info(`processComment: comment: ${c.getText()}}`);
+        console.info(`processComment: comment: ${c.getText()}`);
 
         return fmxComment;
     }
