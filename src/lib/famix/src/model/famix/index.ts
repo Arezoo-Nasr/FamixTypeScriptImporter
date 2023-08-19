@@ -12,7 +12,7 @@ export {Decorator} from "./decorator";
 export {Entity} from "./entity";
 export {EnumValue} from "./enum_value";
 export {Enum} from "./enum";
-export {Field} from "./field";
+export {Property as Property} from "./property";
 export {Function} from "./function";
 export {ImplicitVariable} from "./implicit_variable";
 export {ImportClause} from "./import_clause";
