@@ -10,9 +10,9 @@ export class Parameter extends StructuralEntity {
     return this.parentEntity;
   }
 
-  public setParentEntity(newParentBehavioralEntity: BehavioralEntity): void {
-    this.parentEntity = newParentBehavioralEntity;
-    newParentBehavioralEntity.addParameter(this);
+  public setParentEntity(parentEntity: BehavioralEntity): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addParameter(this);
   }
 
 

@@ -1,7 +1,7 @@
 import { FamixJSONExporter } from "./../../famix_JSON_exporter";
 import { SourcedEntity } from "./sourced_entity";
 
-export class Comment extends SourcedEntity {
+export class JSDoc extends SourcedEntity {
 
   private container: SourcedEntity;
 
@@ -11,7 +11,7 @@ export class Comment extends SourcedEntity {
 
   public setContainer(container: SourcedEntity): void {
     this.container = container;
-    container.addComment(this);
+    container.addJSDoc(this);
   }
 
   private content: string;
@@ -24,9 +24,19 @@ export class Comment extends SourcedEntity {
     this.content = content;
   }
 
+  private description: string;
+
+  public getDescription(): string {
+    return this.description;
+  }
+
+  public setDescription(description: string): void {
+    this.description = description;
+  }
+
 
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("Comment", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("JSDoc", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }
@@ -35,5 +45,6 @@ export class Comment extends SourcedEntity {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("container", this.getContainer());
     exporter.addProperty("content", this.getContent());
+    exporter.addProperty("description", this.getDescription());
   }
 }

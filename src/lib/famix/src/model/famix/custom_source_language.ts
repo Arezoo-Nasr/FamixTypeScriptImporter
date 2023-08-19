@@ -3,14 +3,14 @@ import { SourceLanguage } from "./source_language";
 
 export class CustomSourceLanguage extends SourceLanguage {
 
-  private customSourceLanguageName: string;
+  private languageName: string;
 
-  public getName(): string {
-    return this.customSourceLanguageName;
+  public getLanguageName(): string {
+    return this.languageName;
   }
 
-  public setName(customSourceLanguageName: string): void {
-    this.customSourceLanguageName = customSourceLanguageName;
+  public setLanguageName(languageName: string): void {
+    this.languageName = languageName;
   }
 
 
@@ -22,6 +22,6 @@ export class CustomSourceLanguage extends SourceLanguage {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("name", this.getName());
+    exporter.addProperty("languageName", this.getLanguageName());
   }
 }
