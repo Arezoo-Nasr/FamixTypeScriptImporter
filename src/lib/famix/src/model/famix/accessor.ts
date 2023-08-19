@@ -23,6 +23,7 @@ export class Accessor extends Method {
     this.isSetter = isSetter;
   }
 
+  
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Accessor", this);
     this.addPropertiesToExporter(mse);

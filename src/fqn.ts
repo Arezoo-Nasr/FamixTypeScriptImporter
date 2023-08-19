@@ -6,7 +6,7 @@ import * as ts from "ts-morph";
 export class FQNFunctions {
 
     /**
-     * Gets the fully qualified name of a node
+     * Gets the fully qualified name of a node, if it has one
      * @param node A node
      * @returns The fully qualified name of the node, or undefined if it doesn't have one
      */

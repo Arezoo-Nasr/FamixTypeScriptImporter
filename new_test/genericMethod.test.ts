@@ -33,7 +33,7 @@ describe('Tests for generics', () => {
         if (theClass) expect(theClass.getIsAbstract()).toBe(false);
     });
 
-    it("should contain a generic method i for class AA with parameter type T", () => {
+    it("should contain a generic method i for class AA with type parameter T", () => {
         const cList = Array.from(fmxRep._getAllEntitiesWithType("Class") as Set<Class>);
         expect(cList).toBeTruthy();
         const AA = cList.find(c => c.getName() === "AA");

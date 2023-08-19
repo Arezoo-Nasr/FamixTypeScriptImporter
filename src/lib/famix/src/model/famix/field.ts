@@ -15,15 +15,15 @@ export class Field extends StructuralEntity {
     this.isClassSide = isClassSide;
   }
 
-  private parentType: Class | Interface;
+  private parentEntity: Class | Interface;
 
   public getParentEntity(): Class | Interface {
-    return this.parentType;
+    return this.parentEntity;
   }
 
-  public setParentEntity(parentType: Class | Interface): void {
-    this.parentType = parentType;
-    parentType.addField(this);
+  public setParentEntity(parentEntity: Class | Interface): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addField(this);
   }
 
   private modifiers: Set<string> = new Set();
@@ -38,6 +38,7 @@ export class Field extends StructuralEntity {
     }
   }
 
+  
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Field", this);
     this.addPropertiesToExporter(mse);

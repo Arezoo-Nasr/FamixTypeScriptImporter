@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, VariableStatement, TypeAliasDeclaration } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, VariableStatement, TypeAliasDeclaration, JSDoc } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { SyntaxKind } from "@ts-morph/common";
@@ -12,13 +12,13 @@ export class FamixFunctions {
 
     private fmxRep = new FamixRepository(); // The Famix repository
     private FQNFunctions = new FQNFunctions(); // The fully qualified name functions
-    private fmxAliases = new Map<string, Famix.Alias>(); // Maps the aliases names to their Famix model
-    private fmxTypes = new Map<string, Famix.Type>(); // Maps the types names to their Famix model
-    private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the classes names to their Famix model
-    private fmxInterfaces = new Map<string, Famix.Interface | Famix.ParameterizableInterface>(); // Maps the interfaces names to their Famix model
-    private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespaces names to their Famix model
-    private fmxFiles = new Map<string, Famix.ScriptEntity | Famix.Module>(); // Maps the source files names to their Famix model
-    private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable -> utile tant qu'il y a des try catch
+    private fmxAliases = new Map<string, Famix.Alias>(); // Maps the alias names to their Famix model
+    private fmxTypes = new Map<string, Famix.Type>(); // Maps the type names to their Famix model
+    private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the class names to their Famix model
+    private fmxInterfaces = new Map<string, Famix.Interface | Famix.ParameterizableInterface>(); // Maps the interface names to their Famix model
+    private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespace names to their Famix model
+    private fmxFiles = new Map<string, Famix.ScriptEntity | Famix.Module>(); // Maps the source file names to their Famix model
+    private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable
 
     /**
      * Gets the Famix repository
@@ -33,7 +33,7 @@ export class FamixFunctions {
      * @param sourceElement A source element
      * @param famixElement The Famix model of the source element
      */
-    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator | GetAccessorDeclaration | SetAccessorDeclaration | ImportSpecifier | CommentRange | EnumDeclaration | EnumMember | VariableStatement | TypeAliasDeclaration, famixElement: Famix.SourcedEntity): void {
+    private makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator | GetAccessorDeclaration | SetAccessorDeclaration | ImportSpecifier | CommentRange | EnumDeclaration | EnumMember | VariableStatement | TypeAliasDeclaration | JSDoc, famixElement: Famix.SourcedEntity): void {
         const fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.fmxRep);
         fmxIndexFileAnchor.setElement(famixElement);
 
@@ -45,7 +45,7 @@ export class FamixFunctions {
                 fmxIndexFileAnchor.setEndPos(sourceElement.getEnd());
             }
 
-            if (!(famixElement instanceof Famix.Association) && !(famixElement instanceof Famix.Comment) && !(sourceElement instanceof CommentRange) && !(sourceElement instanceof Identifier) && !(sourceElement instanceof ImportSpecifier)) {
+            if (!(famixElement instanceof Famix.Association) && !(famixElement instanceof Famix.Comment) && !(sourceElement instanceof CommentRange) && !(sourceElement instanceof Identifier) && !(sourceElement instanceof ImportSpecifier) && !(sourceElement instanceof JSDoc)) {
                 (famixElement as Famix.NamedEntity).setFullyQualifiedName(this.FQNFunctions.getFQN(sourceElement));
             }
         }
@@ -192,17 +192,17 @@ export class FamixFunctions {
     }
 
     /**
-     * Creates a Famix parameter type
+     * Creates a Famix type parameter
      * @param tp A type parameter
-     * @returns The Famix model of the parameter type
+     * @returns The Famix model of the type parameter
      */
-    public createFamixParameterType(tp: TypeParameterDeclaration): Famix.ParameterType {
-        const fmxParameterType = new Famix.ParameterType(this.fmxRep);
-        fmxParameterType.setName(tp.getName());
+    public createFamixTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
+        const fmxTypeParameter = new Famix.TypeParameter(this.fmxRep);
+        fmxTypeParameter.setName(tp.getName());
 
-        this.makeFamixIndexFileAnchor(tp, fmxParameterType);
+        this.makeFamixIndexFileAnchor(tp, fmxTypeParameter);
 
-        return fmxParameterType;
+        return fmxTypeParameter;
     }
 
     /**
@@ -478,6 +478,23 @@ export class FamixFunctions {
         this.makeFamixIndexFileAnchor(decorator, fmxDecorator);
 
         return fmxDecorator;
+    }
+
+    /**
+     * Creates a Famix JS doc
+     * @param jsDoc A JS doc
+     * @param fmxScope The Famix model of the JS doc's container
+     * @returns The Famix model of the JS doc
+     */
+    public createFamixJSDoc(jsDoc: JSDoc, fmxScope: Famix.NamedEntity): Famix.JSDoc {
+        const fmxJSDoc = new Famix.JSDoc(this.fmxRep);
+        fmxJSDoc.setContent(jsDoc.getText());
+        fmxJSDoc.setContainer(fmxScope);
+        fmxJSDoc.setDescription(jsDoc.getDescription().trim());
+
+        this.makeFamixIndexFileAnchor(jsDoc, fmxJSDoc);
+
+        return fmxJSDoc;
     }
 
     /**

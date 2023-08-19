@@ -76,6 +76,7 @@ export class Method extends BehavioralEntity {
     this.isProtected = isProtected;
   }
 
+  
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Method", this);
     this.addPropertiesToExporter(mse);

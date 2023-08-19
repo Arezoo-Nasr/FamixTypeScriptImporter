@@ -94,11 +94,11 @@ export class FamixRepository {
 
   /**
    * Gets a Famix namespace by name
-   * @param moduleName A namespace name
+   * @param name A namespace name
    * @returns The Famix namespace corresponding to the name or undefined if it doesn't exist
    */
-  public _getFamixNamespace(moduleName: string): Namespace | undefined {
-    return Array.from(this.famixNamespaces.values()).find(ns => ns.getName() === moduleName);
+  public _getFamixNamespace(name: string): Namespace | undefined {
+    return Array.from(this.famixNamespaces.values()).find(ns => ns.getName() === name);
   }
 
   /**
@@ -147,9 +147,9 @@ export class FamixRepository {
   }
 
   /**
-   * Gets the map of Famix elements ids and their Famix element from a JSON model
+   * Gets the map of Famix element ids and their Famix element from a JSON model
    * @param model A JSON model
-   * @returns The map of Famix elements ids and their Famix element from the JSON model
+   * @returns The map of Famix element ids and their Famix element from the JSON model
    */
   public _initMapFromModel(model: string): Map<number, any> {
     const parsedModel: Array<any> = JSON.parse(model);
