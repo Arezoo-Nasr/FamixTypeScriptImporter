@@ -1,5 +1,5 @@
 import { Importer } from '../src/analyze';
-import { Field, Method } from "../src/lib/famix/src/model/famix";
+import { Property, Method } from "../src/lib/famix/src/model/famix";
 
 const importer = new Importer();
 
@@ -30,13 +30,13 @@ describe('Accesses', () => {
         const expectedAttributeNames: Array<string> = ['privateAttribute', 'publicAttribute'];
         const expectedMethodNames: Array<string> = ['privateMethod', 'returnAccessName'];
         testAccessCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "AccessClassForTesting"))[0];
-        expect(testAccessCls.fields.length).toBe(expectedAttributeNames.length);
+        expect(testAccessCls.properties.length).toBe(expectedAttributeNames.length);
         expect(testAccessCls.methods.length).toBe(expectedMethodNames.length);
         accessClsMethods = parsedModel.filter(e => testAccessCls.methods.some(m => m.ref === e.id));
         expect(accessClsMethods.length).toBeGreaterThan(0);
         const checkMethodName = accessClsMethods.every(m => expectedMethodNames.includes(m.name));
         expect(checkMethodName).toBe(true);
-        accessClsAttributes = parsedModel.filter(e => testAccessCls.fields.some(a => a.ref === e.id));
+        accessClsAttributes = parsedModel.filter(e => testAccessCls.properties.some(a => a.ref === e.id));
         expect(accessClsAttributes.length).toBeGreaterThan(0);
         const checkAttributeName = accessClsAttributes.every(a => expectedAttributeNames.includes(a.name));
         expect(checkAttributeName).toBe(true);
@@ -46,7 +46,7 @@ describe('Accesses', () => {
         const famixAccess = parsedModel.filter(el =>
             (el.accessor !== undefined && el.variable !== undefined && el.FM3 === "FamixTypeScript.Access"
                 && ((fmxRep.getFamixEntityById(el.accessor.ref) as Method).getName() === "privateMethod") 
-                && ((fmxRep.getFamixEntityById(el.variable.ref) as Field).getName() === "privateAttribute")
+                && ((fmxRep.getFamixEntityById(el.variable.ref) as Property).getName() === "privateAttribute")
                 ))[0];
         expect(famixAccess).toBeTruthy();
     });
@@ -55,7 +55,7 @@ describe('Accesses', () => {
         const famixAccess = parsedModel.filter(el =>
             (el.accessor !== undefined && el.variable !== undefined && el.FM3 === "FamixTypeScript.Access"
                 && ((fmxRep.getFamixEntityById(el.accessor.ref) as Method).getName() === "returnAccessName") 
-                && ((fmxRep.getFamixEntityById(el.variable.ref) as Field).getName() === "publicAttribute")
+                && ((fmxRep.getFamixEntityById(el.variable.ref) as Property).getName() === "publicAttribute")
                 ))[0];
         expect(famixAccess).toBeTruthy();
     });
