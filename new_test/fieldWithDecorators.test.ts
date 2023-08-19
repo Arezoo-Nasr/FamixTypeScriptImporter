@@ -1,10 +1,10 @@
 import { Importer } from '../src/analyze';
 import { Decorator } from '../src/lib/famix/src/model/famix/decorator';
-import { Field } from '../src/lib/famix/src/model/famix/field';
+import { Property } from '../src/lib/famix/src/model/famix/property';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource("fieldWithDecorators",
+const fmxRep = importer.famixRepFromSource("propertyWithDecorators",
     'import "reflect-metadata";\n\
 \n\
 const formatMetadataKey = Symbol("format");\n\
@@ -46,35 +46,35 @@ class Greeter {\n\
 }\n\
 ');
 
-describe('Tests for field with decorators', () => {
+describe('Tests for property with decorators', () => {
     
     it("should contain one class", () => {
         expect(fmxRep._getAllEntitiesWithType("Class").size).toBe(1);
     });
 
-    it("should contain a field 'greeting'", () => {
-        expect(fmxRep._getAllEntitiesWithType("Field").size).toBe(1);
-        const theField = (Array.from(fmxRep._getFamixClass("Greeter")?.getFields() as Set<Field>) as Array<Field>).find((f) => f.getName() === "greeting");
-        expect(theField).toBeTruthy();
+    it("should contain a property 'greeting'", () => {
+        expect(fmxRep._getAllEntitiesWithType("Property").size).toBe(1);
+        const theProperty = (Array.from(fmxRep._getFamixClass("Greeter")?.getProperties() as Set<Property>) as Array<Property>).find((f) => f.getName() === "greeting");
+        expect(theProperty).toBeTruthy();
     });
 
     it("should contain five decorators", () => {
         expect(fmxRep._getAllEntitiesWithType("Decorator").size).toBe(5);
     });
 
-    const theField = (Array.from(fmxRep._getFamixClass("Greeter")?.getFields() as Set<Field>) as Array<Field>).find((f) => f.getName() === "greeting");
+    const theProperty = (Array.from(fmxRep._getFamixClass("Greeter")?.getProperties() as Set<Property>) as Array<Property>).find((f) => f.getName() === "greeting");
     const d1 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "@deco");
     const d2 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "@h");
     const d3 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "@o");
     const d4 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "@t");
     const d5 = (Array.from(fmxRep._getAllEntitiesWithType("Decorator")) as Array<Decorator>).find((d) => d.getName() === "@format");
 
-    it("should contain a field with five decorators", () => {
-        expect(theField?.getDecorators().size).toBe(5);
-        expect(d1?.getDecoratedEntity()).toBe(theField);
-        expect(d2?.getDecoratedEntity()).toBe(theField);
-        expect(d3?.getDecoratedEntity()).toBe(theField);
-        expect(d4?.getDecoratedEntity()).toBe(theField);
-        expect(d5?.getDecoratedEntity()).toBe(theField);
+    it("should contain a property with five decorators", () => {
+        expect(theProperty?.getDecorators().size).toBe(5);
+        expect(d1?.getDecoratedEntity()).toBe(theProperty);
+        expect(d2?.getDecoratedEntity()).toBe(theProperty);
+        expect(d3?.getDecoratedEntity()).toBe(theProperty);
+        expect(d4?.getDecoratedEntity()).toBe(theProperty);
+        expect(d5?.getDecoratedEntity()).toBe(theProperty);
     });
 });

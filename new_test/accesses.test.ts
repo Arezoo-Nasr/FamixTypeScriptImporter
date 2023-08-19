@@ -33,8 +33,8 @@ describe('Tests for accesses', () => {
     });
 
     it("should contain one access to 'param'", () => {
-        const theField = Array.from(fmxRep._getAllEntitiesWithType("Parameter") as Set<Parameter>).find(v => v.getName() === "param");
-        const theAccess = Array.from(fmxRep._getAllEntitiesWithType("Access") as Set<Access>).find(a => a.getVariable() === theField && a.getAccessor() === theMethod);
+        const theProperty = Array.from(fmxRep._getAllEntitiesWithType("Parameter") as Set<Parameter>).find(v => v.getName() === "param");
+        const theAccess = Array.from(fmxRep._getAllEntitiesWithType("Access") as Set<Access>).find(a => a.getVariable() === theProperty && a.getAccessor() === theMethod);
         expect(theAccess).toBeTruthy();
     });
 });

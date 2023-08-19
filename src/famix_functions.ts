@@ -206,46 +206,46 @@ export class FamixFunctions {
     }
 
     /**
-     * Creates a Famix field
-     * @param property A field
-     * @returns The Famix model of the field
+     * Creates a Famix property
+     * @param property A property
+     * @returns The Famix model of the property
      */
-    public createFamixField(property: PropertyDeclaration | PropertySignature): Famix.Field {
-        const fmxField = new Famix.Field(this.fmxRep);
+    public createFamixProperty(property: PropertyDeclaration | PropertySignature): Famix.Property {
+        const fmxProperty = new Famix.Property(this.fmxRep);
         const isSignature = property instanceof PropertySignature;
-        fmxField.setName(property.getName());
+        fmxProperty.setName(property.getName());
 
         let propTypeName = this.UNKNOWN_VALUE;
         try {
             propTypeName = property.getType().getText().trim();
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for field: ${property.getName()}. Continuing...`);
+            console.error(`> WARNING: got exception ${error}. Failed to get usable name for property: ${property.getName()}. Continuing...`);
         }
 
         const fmxType = this.createOrGetFamixType(propTypeName);
-        fmxField.setDeclaredType(fmxType);
+        fmxProperty.setDeclaredType(fmxType);
 
-        property.getModifiers().forEach(m => fmxField.addModifier(m.getText()));
+        property.getModifiers().forEach(m => fmxProperty.addModifier(m.getText()));
         if (!isSignature && property.getExclamationTokenNode()) {
-            fmxField.addModifier("!");
+            fmxProperty.addModifier("!");
         }
         if (property.getQuestionTokenNode()) {
-            fmxField.addModifier("?");
+            fmxProperty.addModifier("?");
         }
         if (property.getName().substring(0, 1) === "#") {
-            fmxField.addModifier("#");
+            fmxProperty.addModifier("#");
         }
 
-        if (fmxField.getModifiers().has("static")) {
-            fmxField.setIsClassSide(true);
+        if (fmxProperty.getModifiers().has("static")) {
+            fmxProperty.setIsClassSide(true);
         }
         else {
-            fmxField.setIsClassSide(false);
+            fmxProperty.setIsClassSide(false);
         }
 
-        this.makeFamixIndexFileAnchor(property, fmxField);
+        this.makeFamixIndexFileAnchor(property, fmxProperty);
 
-        return fmxField;
+        return fmxProperty;
     }
 
     /**
@@ -461,7 +461,7 @@ export class FamixFunctions {
     /**
      * Creates or gets a Famix decorator
      * @param decorator A decorator
-     * @param decoratedEntity A class, a method, a parameter or a field
+     * @param decoratedEntity A class, a method, a parameter or a property
      * @returns The Famix model of the decorator
      */
     public createOrGetFamixDecorator(decorator: Decorator, decoratedEntity: ClassDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ParameterDeclaration | PropertyDeclaration): Famix.Decorator {
@@ -537,7 +537,7 @@ export class FamixFunctions {
     /**
      * Creates a Famix access
      * @param node A node
-     * @param id An id of a parameter, a variable or a field
+     * @param id An id of a parameter, a variable or a property
      */
     public createFamixAccess(node: Identifier, id: number): void {
         const fmxVar = this.fmxRep.getFamixEntityById(id) as Famix.StructuralEntity;
