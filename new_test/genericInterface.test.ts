@@ -1,5 +1,5 @@
 import { Importer } from '../src/analyze';
-import { ParameterizableInterface, ParameterType } from '../src/lib/famix/src/model/famix';
+import { ParameterizableInterface, TypeParameter } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -25,14 +25,14 @@ describe('Tests for generic interface', () => {
         expect(listOfNames).toContain("MyInterface");
     });
 
-    it("should contain a generic interface MyInterface with a parameter type T", () => {
+    it("should contain a generic interface MyInterface with a type parameter T", () => {
         const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableInterface") as Set<ParameterizableInterface>);
         expect(pList).toBeTruthy();
         const MyInterface = pList.find(p => p.getName() === "MyInterface");
         expect(MyInterface).toBeTruthy();
-        expect(MyInterface?.getParameterTypes().size).toBe(1);
+        expect(MyInterface?.getTypeParameters().size).toBe(1);
         if (MyInterface) {
-            expect((Array.from(MyInterface.getParameterTypes())[0] as ParameterType).getName()).toBe("T");
+            expect((Array.from(MyInterface.getTypeParameters())[0] as TypeParameter).getName()).toBe("T");
         }
     });
 });

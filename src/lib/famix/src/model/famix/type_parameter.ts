@@ -1,9 +1,9 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./type";
 import { ParameterizableClass } from "./parameterizable_class";
 import { ParameterizableInterface } from "./parameterizable_interface";
 
-export class ParameterType extends Type {
+export class TypeParameter extends Type {
 
   private parentGeneric: ParameterizableClass | ParameterizableInterface;
 
@@ -13,12 +13,12 @@ export class ParameterType extends Type {
 
   public setParentGeneric(parentGeneric: ParameterizableClass | ParameterizableInterface): void {
     this.parentGeneric = parentGeneric;
-    parentGeneric.addParameterType(this);
+    parentGeneric.addTypeParameter(this);
   }
 
 
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("ParameterType", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("TypeParameter", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }

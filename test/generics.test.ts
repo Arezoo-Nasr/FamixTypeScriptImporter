@@ -1,5 +1,5 @@
 import { Importer } from '../src/analyze';
-import { ParameterizableClass, ParameterizableInterface, ParameterType } from '../src/lib/famix/src/model/famix';
+import { ParameterizableClass, ParameterizableInterface, TypeParameter } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 
@@ -27,25 +27,25 @@ describe('Generics', () => {
         expect(listOfNames2).toContain("MyDaoInterface");
     });
     
-    it("should contain a generic class MyDao with a parameter type T", () => {
+    it("should contain a generic class MyDao with a type parameter T", () => {
         const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableClass") as Set<ParameterizableClass>);
         expect(pList).toBeTruthy();
         const myDao = pList.find(p => p.getName() === "MyDao");
         expect(myDao).toBeTruthy();
-        expect(myDao?.getParameterTypes().size).toBe(1);
+        expect(myDao?.getTypeParameters().size).toBe(1);
         if (myDao) {
-            expect((Array.from(myDao.getParameterTypes())[0] as ParameterType).getName()).toBe("T");
+            expect((Array.from(myDao.getTypeParameters())[0] as TypeParameter).getName()).toBe("T");
         }
     });
     
-    it("should contain a generic interface MyDaoInterface with a parameter type T", () => {
+    it("should contain a generic interface MyDaoInterface with a type parameter T", () => {
         const pList = Array.from(fmxRep._getAllEntitiesWithType("ParameterizableInterface") as Set<ParameterizableInterface>);
         expect(pList).toBeTruthy();
         const myDaoInterface = pList.find(p => p.getName() === "MyDaoInterface");
         expect(myDaoInterface).toBeTruthy();
-        expect(myDaoInterface?.getParameterTypes().size).toBe(1);
+        expect(myDaoInterface?.getTypeParameters().size).toBe(1);
         if (myDaoInterface) {
-            expect((Array.from(myDaoInterface.getParameterTypes())[0] as ParameterType).getName()).toBe("T");
+            expect((Array.from(myDaoInterface.getTypeParameters())[0] as TypeParameter).getName()).toBe("T");
         }
     });
     

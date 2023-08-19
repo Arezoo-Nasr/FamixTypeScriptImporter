@@ -27,14 +27,14 @@ export class Access extends Association {
     variable.addIncomingAccess(this);
   }
 
-  private accessIsWrite: boolean;
+  private isWrite: boolean;
 
   public getIsWrite(): boolean {
-    return this.accessIsWrite;
+    return this.isWrite;
   }
 
-  public setIsWrite(accessIsWrite: boolean): void {
-    this.accessIsWrite = accessIsWrite;
+  public setIsWrite(isWrite: boolean): void {
+    this.isWrite = isWrite;
   }
 
 

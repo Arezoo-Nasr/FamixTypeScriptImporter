@@ -3,6 +3,7 @@ import { SourceLanguage } from "./source_language";
 import { Entity } from "./entity";
 import { Comment } from "./comment";
 import { SourceAnchor } from "./source_anchor";
+import { JSDoc } from "./js_doc";
 
 export class SourcedEntity extends Entity {
 
@@ -35,10 +36,23 @@ export class SourcedEntity extends Entity {
     return this.comments;
   }
 
-  public addComment(comments: Comment): void {
-    if (!this.comments.has(comments)) {
-      this.comments.add(comments);
-      comments.setContainer(this);
+  public addComment(comment: Comment): void {
+    if (!this.comments.has(comment)) {
+      this.comments.add(comment);
+      comment.setContainer(this);
+    }
+  }
+
+  private jsDocs: Set<JSDoc> = new Set();
+
+  public getJSDocs(): Set<JSDoc> {
+    return this.jsDocs;
+  }
+
+  public addJSDoc(jsDoc: JSDoc): void {
+    if (!this.jsDocs.has(jsDoc)) {
+      this.jsDocs.add(jsDoc);
+      jsDoc.setContainer(this);
     }
   }
 
@@ -65,6 +79,7 @@ export class SourcedEntity extends Entity {
     exporter.addProperty("isStub", this.getIsStub());
     exporter.addProperty("sourceAnchor", this.getSourceAnchor());
     exporter.addProperty("comments", this.getComments());
+    exporter.addProperty("jsDocs", this.getJSDocs());
     exporter.addProperty("declaredSourceLanguage", this.getDeclaredSourceLanguage());
   }
 }
