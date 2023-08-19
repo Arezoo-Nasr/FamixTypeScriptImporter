@@ -5,7 +5,7 @@ const importer = new Importer();
 
 const fmxRep = importer.famixRepFromSource("genericInterface", 
     'interface MyInterface<T> {\n\
-    myField;\n\
+    myProperty;\n\
     myMethod();\n\
 }\n\
 ');
