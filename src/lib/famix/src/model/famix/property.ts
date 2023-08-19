@@ -15,6 +15,7 @@ export class Property extends StructuralEntity {
     this.isClassSide = isClassSide;
   }
 
+<<<<<<< HEAD
   private parentEntity: Class | Interface;
 
   public getParentEntity(): Class | Interface {
@@ -24,6 +25,17 @@ export class Property extends StructuralEntity {
   public setParentEntity(parentEntity: Class | Interface): void {
     this.parentEntity = parentEntity;
     parentEntity.addProperty(this);
+=======
+  private parentType: Class | Interface;
+
+  public getParentEntity(): Class | Interface {
+    return this.parentType;
+  }
+
+  public setParentEntity(parentType: Class | Interface): void {
+    this.parentType = parentType;
+    parentType.addProperty(this);
+>>>>>>> 2de13fcc05736aa830039e014097af2f3425bdff
   }
 
   private modifiers: Set<string> = new Set();
@@ -38,7 +50,10 @@ export class Property extends StructuralEntity {
     }
   }
 
+<<<<<<< HEAD
   
+=======
+>>>>>>> 2de13fcc05736aa830039e014097af2f3425bdff
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Property", this);
     this.addPropertiesToExporter(mse);

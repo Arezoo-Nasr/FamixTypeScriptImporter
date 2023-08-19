@@ -12,7 +12,11 @@ export {Decorator} from "./decorator";
 export {Entity} from "./entity";
 export {EnumValue} from "./enum_value";
 export {Enum} from "./enum";
+<<<<<<< HEAD
 export {Property} from "./property";
+=======
+export {Property as Property} from "./property";
+>>>>>>> 2de13fcc05736aa830039e014097af2f3425bdff
 export {Function} from "./function";
 export {ImplicitVariable} from "./implicit_variable";
 export {ImportClause} from "./import_clause";
