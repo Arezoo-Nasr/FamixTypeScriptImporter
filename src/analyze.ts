@@ -349,10 +349,7 @@ export class Importer {
     private processStructuredType(c: ClassDeclaration | InterfaceDeclaration, fmxScope: Famix.Class | Famix.ParameterizableClass | Famix.Interface | Famix.ParameterizableInterface): void {
         console.info(`processStructuredType: ---------- Finding Properties and Methods:`);
         if (fmxScope instanceof Famix.ParameterizableClass || fmxScope instanceof Famix.ParameterizableInterface) {
-            c.getTypeParameters().forEach(tp => {
-                const fmxTypeParameter = this.processTypeParameter(tp);
-                fmxScope.addTypeParameter(fmxTypeParameter);
-            });
+            this.processTypeParameters(c, fmxScope);
         }
 
         c.getProperties().forEach(prop => {
@@ -364,23 +361,6 @@ export class Importer {
             const fmxMethod = this.processMethod(m);
             fmxScope.addMethod(fmxMethod);
         });
-    }
-
-    /**
-     * Builds a Famix model for a type parameter
-     * @param tp A type
-     * @returns A Famix.TypeParameter representing the type parameter
-     */
-    private processTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
-        this.typeParameters.push(tp);
-
-        const fmxTypeParameter = this.famixFunctions.createFamixTypeParameter(tp);
-
-        console.info(`processTypeParameter: type parameter: ${tp.getName()}, (${tp.getType().getText()}), fqn = ${fmxTypeParameter.getFullyQualifiedName()}`);
-
-        this.processComments(tp, fmxTypeParameter);
-
-        return fmxTypeParameter;
     }
 
     /**
@@ -424,6 +404,8 @@ export class Importer {
 
         this.processComments(m, fmxMethod);
 
+        this.processTypeParameters(m, fmxMethod);
+
         this.processParameters(m, fmxMethod);
 
         if (!(m instanceof MethodSignature)) {
@@ -462,6 +444,8 @@ export class Importer {
         this.processComments(f, fmxFunction);
 
         this.processAliases(f);
+
+        this.processTypeParameters(f, fmxFunction);
 
         this.processParameters(f, fmxFunction);
 
@@ -512,6 +496,36 @@ export class Importer {
         }
 
         return fmxParam;
+    }
+
+    /**
+     * Builds a Famix model for the type parameters of a class, an interface, a method or a function
+     * @param e A class, an interface, a method or a function
+     * @param fmxScope The Famix model of the class, the interface, the method or the function
+     */
+    private processTypeParameters(e: ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, fmxScope: Famix.ParameterizableClass | Famix.ParameterizableInterface | Famix.Method | Famix.Accessor | Famix.Function): void {
+        console.info(`processTypeParameters: ---------- Finding Type Parameters:`);
+        e.getTypeParameters().forEach(tp => {
+            const fmxParam = this.processTypeParameter(tp);
+            fmxScope.addTypeParameter(fmxParam);
+        });
+    }
+
+    /**
+     * Builds a Famix model for a type parameter
+     * @param tp A type
+     * @returns A Famix.TypeParameter representing the type parameter
+     */
+    private processTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
+        this.typeParameters.push(tp);
+
+        const fmxTypeParameter = this.famixFunctions.createFamixTypeParameter(tp);
+
+        console.info(`processTypeParameter: type parameter: ${tp.getName()}, (${tp.getType().getText()}), fqn = ${fmxTypeParameter.getFullyQualifiedName()}`);
+
+        this.processComments(tp, fmxTypeParameter);
+
+        return fmxTypeParameter;
     }
 
     /**

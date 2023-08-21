@@ -20,7 +20,7 @@ export class ParameterizableInterface extends Interface {
 
   private typeParameters: Set<TypeParameter> = new Set();
 
-  public getTypeParameters() {
+  public getTypeParameters(): Set<TypeParameter> {
     return this.typeParameters;
   }
 

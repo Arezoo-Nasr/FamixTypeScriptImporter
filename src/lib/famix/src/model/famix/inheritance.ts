@@ -22,7 +22,7 @@ export class Inheritance extends Association {
     return this.subclass;
   }
 
-  public setSubclass(subclass: Class | Interface) {
+  public setSubclass(subclass: Class | Interface): void {
     this.subclass = subclass;
     subclass.addSuperInheritance(this);
   }

@@ -192,20 +192,6 @@ export class FamixFunctions {
     }
 
     /**
-     * Creates a Famix type parameter
-     * @param tp A type parameter
-     * @returns The Famix model of the type parameter
-     */
-    public createFamixTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
-        const fmxTypeParameter = new Famix.TypeParameter(this.fmxRep);
-        fmxTypeParameter.setName(tp.getName());
-
-        this.makeFamixIndexFileAnchor(tp, fmxTypeParameter);
-
-        return fmxTypeParameter;
-    }
-
-    /**
      * Creates a Famix property
      * @param property A property
      * @returns The Famix model of the property
@@ -268,6 +254,8 @@ export class FamixFunctions {
         }
         const isConstructor = method instanceof ConstructorDeclaration;
         const isSignature = method instanceof MethodSignature;
+        const isGeneric = method.getTypeParameters().length > 0;
+        fmxMethod.setIsGeneric(isGeneric);
 
         let isAbstract = false;
         let isStatic = false;
@@ -348,6 +336,8 @@ export class FamixFunctions {
         fmxFunction.setName(func.getName());
         fmxFunction.setSignature(this.computeSignature(func.getText()));
         fmxFunction.setCyclomaticComplexity(currentCC[fmxFunction.getName()]);
+        const isGeneric = func.getTypeParameters().length > 0;
+        fmxFunction.setIsGeneric(isGeneric);
 
         let functionTypeName = this.UNKNOWN_VALUE;
         try {
@@ -390,6 +380,20 @@ export class FamixFunctions {
         this.makeFamixIndexFileAnchor(param, fmxParam);
 
         return fmxParam;
+    }
+
+    /**
+     * Creates a Famix type parameter
+     * @param tp A type parameter
+     * @returns The Famix model of the type parameter
+     */
+    public createFamixTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
+        const fmxTypeParameter = new Famix.TypeParameter(this.fmxRep);
+        fmxTypeParameter.setName(tp.getName());
+
+        this.makeFamixIndexFileAnchor(tp, fmxTypeParameter);
+
+        return fmxTypeParameter;
     }
 
     /**
