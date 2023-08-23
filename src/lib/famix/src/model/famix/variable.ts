@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { ContainerEntity } from "./container_entity";
 import { StructuralEntity } from "./structural_entity";
 import { VariableStatement } from "./variable_statement";

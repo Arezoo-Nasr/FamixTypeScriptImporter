@@ -4,16 +4,17 @@ import { ParameterizableClass } from "./parameterizable_class";
 import { ParameterizableInterface } from "./parameterizable_interface";
 import { Method } from "./method";
 import { Function } from "./function";
+import { Accessor } from "./accessor";
 
 export class TypeParameter extends Type {
 
-  private parentGeneric: ParameterizableClass | ParameterizableInterface | Method | Function;
+  private parentGeneric: ParameterizableClass | ParameterizableInterface | Method | Accessor | Function;
 
-  public getParentGeneric(): ParameterizableClass | ParameterizableInterface | Method | Function {
+  public getParentGeneric(): ParameterizableClass | ParameterizableInterface | Method | Accessor | Function {
     return this.parentGeneric;
   }
 
-  public setParentGeneric(parentGeneric: ParameterizableClass | ParameterizableInterface | Method | Function): void {
+  public setParentGeneric(parentGeneric: ParameterizableClass | ParameterizableInterface | Method | Accessor | Function): void {
     this.parentGeneric = parentGeneric;
     parentGeneric.addTypeParameter(this);
   }

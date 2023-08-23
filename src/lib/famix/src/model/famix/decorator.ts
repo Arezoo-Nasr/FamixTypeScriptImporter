@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { NamedEntity } from "./named_entity";
 
 export class Decorator extends NamedEntity {

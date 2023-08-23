@@ -1,22 +1,22 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
-import { ParameterizedType } from "./parameterized_type";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+//import { ParameterizedType } from "./parameterized_type";
 import { Class } from "./class";
 import { TypeParameter } from "./type_parameter";
 
 export class ParameterizableClass extends Class {
 
-  private parameterizedTypes: Set<ParameterizedType> = new Set();
+  // private parameterizedTypes: Set<ParameterizedType> = new Set();
 
-  public getParameterizedTypes(): Set<ParameterizedType> {
-    return this.parameterizedTypes;
-  }
+  // public getParameterizedTypes(): Set<ParameterizedType> {
+  //   return this.parameterizedTypes;
+  // }
 
-  public addParameterizedType(parameterizedType: ParameterizedType): void {
-    if (!this.parameterizedTypes.has(parameterizedType)) {
-      this.parameterizedTypes.add(parameterizedType);
-      parameterizedType.setParentGeneric(this);
-    }
-  }
+  // public addParameterizedType(parameterizedType: ParameterizedType): void {
+  //   if (!this.parameterizedTypes.has(parameterizedType)) {
+  //     this.parameterizedTypes.add(parameterizedType);
+  //     parameterizedType.setParentGeneric(this);
+  //   }
+  // }
 
   private typeParameters: Set<TypeParameter> = new Set();
 
@@ -40,7 +40,7 @@ export class ParameterizableClass extends Class {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("parameterizedTypes", this.getParameterizedTypes());
+    //exporter.addProperty("parameterizedTypes", this.getParameterizedTypes());
     exporter.addProperty("typeParameters", this.getTypeParameters());
   }
 }
