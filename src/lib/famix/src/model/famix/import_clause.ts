@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Association } from "./association";
 import { Module } from "./module";
 import { NamedEntity } from "./named_entity";

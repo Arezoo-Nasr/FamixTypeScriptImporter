@@ -117,8 +117,7 @@ export class FamixFunctions {
             fmxAlias = new Famix.Alias(this.fmxRep);
             fmxAlias.setName(a.getName());
 
-            const fmxType = this.createOrGetFamixType(a.getName());
-
+            const fmxType = this.createOrGetFamixType(aliasName, a);
             fmxAlias.setAliasedEntity(fmxType);
 
             this.makeFamixIndexFileAnchor(a, fmxAlias);
@@ -192,20 +191,6 @@ export class FamixFunctions {
     }
 
     /**
-     * Creates a Famix type parameter
-     * @param tp A type parameter
-     * @returns The Famix model of the type parameter
-     */
-    public createFamixTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
-        const fmxTypeParameter = new Famix.TypeParameter(this.fmxRep);
-        fmxTypeParameter.setName(tp.getName());
-
-        this.makeFamixIndexFileAnchor(tp, fmxTypeParameter);
-
-        return fmxTypeParameter;
-    }
-
-    /**
      * Creates a Famix property
      * @param property A property
      * @returns The Famix model of the property
@@ -222,7 +207,7 @@ export class FamixFunctions {
             console.error(`> WARNING: got exception ${error}. Failed to get usable name for property: ${property.getName()}. Continuing...`);
         }
 
-        const fmxType = this.createOrGetFamixType(propTypeName);
+        const fmxType = this.createOrGetFamixType(propTypeName, property);
         fmxProperty.setDeclaredType(fmxType);
 
         property.getModifiers().forEach(m => fmxProperty.addModifier(m.getText()));
@@ -268,6 +253,8 @@ export class FamixFunctions {
         }
         const isConstructor = method instanceof ConstructorDeclaration;
         const isSignature = method instanceof MethodSignature;
+        const isGeneric = method.getTypeParameters().length > 0;
+        fmxMethod.setIsGeneric(isGeneric);
 
         let isAbstract = false;
         let isStatic = false;
@@ -319,7 +306,7 @@ export class FamixFunctions {
             console.error(`> WARNING: got exception ${error}. Failed to get usable name for return type of method: ${fmxMethod.getName()}. Continuing...`);
         }
 
-        const fmxType = this.createOrGetFamixType(methodTypeName);
+        const fmxType = this.createOrGetFamixType(methodTypeName, method);
         fmxMethod.setDeclaredType(fmxType);
         fmxMethod.setNumberOfLinesOfCode(method.getEndLineNumber() - method.getStartLineNumber());
         const parameters = method.getParameters();
@@ -348,6 +335,8 @@ export class FamixFunctions {
         fmxFunction.setName(func.getName());
         fmxFunction.setSignature(this.computeSignature(func.getText()));
         fmxFunction.setCyclomaticComplexity(currentCC[fmxFunction.getName()]);
+        const isGeneric = func.getTypeParameters().length > 0;
+        fmxFunction.setIsGeneric(isGeneric);
 
         let functionTypeName = this.UNKNOWN_VALUE;
         try {
@@ -356,7 +345,7 @@ export class FamixFunctions {
             console.error(`> WARNING: got exception ${error}. Failed to get usable name for return type of function: ${func.getName()}. Continuing...`);
         }
 
-        const fmxType = this.createOrGetFamixType(functionTypeName);
+        const fmxType = this.createOrGetFamixType(functionTypeName, func);
         fmxFunction.setDeclaredType(fmxType);
         fmxFunction.setNumberOfLinesOfCode(func.getEndLineNumber() - func.getStartLineNumber());
         const parameters = func.getParameters();
@@ -383,13 +372,27 @@ export class FamixFunctions {
             console.error(`> WARNING: got exception ${error}. Failed to get usable name for parameter: ${param.getName()}. Continuing...`);
         }
 
-        const fmxType = this.createOrGetFamixType(paramTypeName);
+        const fmxType = this.createOrGetFamixType(paramTypeName, param);
         fmxParam.setDeclaredType(fmxType);
         fmxParam.setName(param.getName());
 
         this.makeFamixIndexFileAnchor(param, fmxParam);
 
         return fmxParam;
+    }
+
+    /**
+     * Creates a Famix type parameter
+     * @param tp A type parameter
+     * @returns The Famix model of the type parameter
+     */
+    public createFamixTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
+        const fmxTypeParameter = new Famix.TypeParameter(this.fmxRep);
+        fmxTypeParameter.setName(tp.getName());
+
+        this.makeFamixIndexFileAnchor(tp, fmxTypeParameter);
+
+        return fmxTypeParameter;
     }
 
     /**
@@ -421,7 +424,7 @@ export class FamixFunctions {
             console.error(`> WARNING: got exception ${error}. Failed to get usable name for variable: ${variable.getName()}. Continuing...`);
         }
 
-        const fmxType = this.createOrGetFamixType(variableTypeName);
+        const fmxType = this.createOrGetFamixType(variableTypeName, variable);
         fmxVariable.setDeclaredType(fmxType);
         fmxVariable.setName(variable.getName());
 
@@ -451,6 +454,16 @@ export class FamixFunctions {
      */
     public createFamixEnumValue(enumValue: EnumMember): Famix.EnumValue {
         const fmxEnumValue = new Famix.EnumValue(this.fmxRep);
+
+        let enumValueTypeName = this.UNKNOWN_VALUE;
+        try {
+            enumValueTypeName = enumValue.getType().getText().trim();
+        } catch (error) {
+            console.error(`> WARNING: got exception ${error}. Failed to get usable name for enum value: ${enumValue.getName()}. Continuing...`);
+        }
+
+        const fmxType = this.createOrGetFamixType(enumValueTypeName, enumValue);
+        fmxEnumValue.setDeclaredType(fmxType);
         fmxEnumValue.setName(enumValue.getName());
 
         this.makeFamixIndexFileAnchor(enumValue, fmxEnumValue);
@@ -516,20 +529,56 @@ export class FamixFunctions {
     /**
      * Creates or gets a Famix type
      * @param typeName A type name
+     * @param element A ts-morph element
      * @returns The Famix model of the type
      */
-    private createOrGetFamixType(typeName: string): Famix.Type {
-        let fmxType: Famix.Type;
+    private createOrGetFamixType(typeName: string, element: TypeAliasDeclaration | PropertyDeclaration | PropertySignature | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | EnumMember): Famix.Type | Famix.PrimitiveType | Famix.ParameterizedType {
+        let fmxType: Famix.Type | Famix.PrimitiveType | Famix.ParameterizedType;
+        let isPrimitiveType = false;
+        let isParameterizedType = false;
+
+        const typeAncestor = this.findTypeAncestor(element);
+        const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(typeAncestor);
+        const ancestor = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
+
+        if (typeName === "number" || typeName === "string" || typeName === "boolean" || typeName === "bigint" || typeName === "symbol" || typeName === "undefined" || typeName === "null") {
+            isPrimitiveType = true;
+        }
+
+        if(!isPrimitiveType && typeName.includes("<") && typeName.includes(">") && !(typeName.includes("=>"))) {
+            isParameterizedType = true;
+        }
+
         if (!this.fmxTypes.has(typeName)) {
-            fmxType = new Famix.Type(this.fmxRep);
+            if (isPrimitiveType) {
+                fmxType = new Famix.PrimitiveType(this.fmxRep);
+                fmxType.setIsStub(true);
+            }
+            else if (isParameterizedType) {
+                fmxType = new Famix.ParameterizedType(this.fmxRep);
+                const parameterTypeNames = typeName.substring(typeName.indexOf("<") + 1, typeName.indexOf(">")).split(",").map(s => s.trim());
+                const baseTypeName = typeName.substring(0, typeName.indexOf("<")).trim();
+                parameterTypeNames.forEach(parameterTypeName => {
+                    const fmxParameterType = this.createOrGetFamixType(parameterTypeName, element);
+                    (fmxType as Famix.ParameterizedType).addArgument(fmxParameterType);
+                });
+                const fmxBaseType = this.createOrGetFamixType(baseTypeName, element);
+                (fmxType as Famix.ParameterizedType).setBaseType(fmxBaseType);
+            }
+            else {
+                fmxType = new Famix.Type(this.fmxRep);
+            }
+
             fmxType.setName(typeName);
+            fmxType.setContainer(ancestor);
+            
+            this.makeFamixIndexFileAnchor(null, fmxType);
+
             this.fmxTypes.set(typeName, fmxType);
         }
         else {
             fmxType = this.fmxTypes.get(typeName);
         }
-
-        this.makeFamixIndexFileAnchor(null, fmxType);
 
         return fmxType;
     }
@@ -713,6 +762,15 @@ export class FamixFunctions {
      * @returns The ancestor of the node
      */
     private findAncestor(node: Identifier): Node {
-        return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor");
+        return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor" || a.getKind() === SyntaxKind.ClassDeclaration);
+    }
+
+    /**
+     * Finds the ancestor of a ts-morph element
+     * @param element A ts-morph element
+     * @returns The ancestor of the ts-morph element
+     */
+    private findTypeAncestor(element: TypeAliasDeclaration | PropertyDeclaration | PropertySignature | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | EnumMember): Node {
+        return element.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.MethodSignature || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor" || a.getKind() === SyntaxKind.ClassDeclaration || a.getKind() === SyntaxKind.InterfaceDeclaration);
     }
 }

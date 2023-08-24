@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { ScopingEntity } from "./scoping_entity";
 
 export class ScriptEntity extends ScopingEntity {

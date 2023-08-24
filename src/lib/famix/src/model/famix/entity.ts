@@ -1,5 +1,5 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
-import { FamixBaseElement } from "./../../famix_base_element";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
+import { FamixBaseElement } from "../../famix_base_element";
 
 export class Entity extends FamixBaseElement {
 
