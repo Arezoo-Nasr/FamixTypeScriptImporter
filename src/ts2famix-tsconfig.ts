@@ -19,8 +19,8 @@ const project = new Project({
   tsConfigFilePath
 });  
 
-const fmxRep = importer.famixRepFromProject(project);
-const jsonOutput = fmxRep.getJSON();
+const famixRep = importer.famixRepFromProject(project);
+const jsonOutput = famixRep.getJSON();
 const jsonFilePath = argv.output as string;
 
 fs.writeFile(jsonFilePath, jsonOutput, (err) => {

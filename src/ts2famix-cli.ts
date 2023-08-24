@@ -15,8 +15,8 @@ const argv = yargs
 const paths = new Array<string>();
 paths.push(argv.input as string);
 
-const fmxRep = importer.famixRepFromPaths(paths);
-const jsonOutput = fmxRep.getJSON();
+const famixRep = importer.famixRepFromPaths(paths);
+const jsonOutput = famixRep.getJSON();
 const jsonFilePath = argv.output as string;
 
 fs.writeFile(jsonFilePath, jsonOutput, (err) => {
