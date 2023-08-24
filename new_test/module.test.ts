@@ -23,8 +23,8 @@ describe('Tests for module', () => {
 
     const theClass = fmxRep._getFamixClass('ClassZ');
     const importClauseList = Array.from(fmxRep._getAllEntitiesWithType('ImportClause')) as Array<ImportClause>;
-    it("should have seven import clauses", () => {
-        expect(importClauseList?.length).toBe(7);
+    it("should have eight import clauses", () => {
+        expect(importClauseList?.length).toBe(8);
 
         const theImportClause = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'ClassDeclaration' && e.getModuleSpecifier() === 'ts-morph');
         expect(theImportClause).toBeTruthy();
@@ -47,5 +47,8 @@ describe('Tests for module', () => {
 
         const theImportClause7 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Famix' && e.getModuleSpecifier() === '../src/lib/famix/src/model/famix');
         expect(theImportClause7).toBeTruthy();
+
+        const theImportClause8 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'express' && e.getModuleSpecifier() === 'express');
+        expect(theImportClause8).toBeTruthy();
     });
 });

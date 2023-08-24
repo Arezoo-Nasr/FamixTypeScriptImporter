@@ -1,4 +1,4 @@
-import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration, ExportedDeclarations, CommentRange, EnumDeclaration, EnumMember, TypeParameterDeclaration, TypeAliasDeclaration, JSDoc } from "ts-morph";
+import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclaration, Project, VariableDeclaration, InterfaceDeclaration, ParameterDeclaration, Identifier, ConstructorDeclaration, MethodSignature, SourceFile, ModuleDeclaration, PropertyDeclaration, PropertySignature, Decorator, ExpressionWithTypeArguments, GetAccessorDeclaration, SetAccessorDeclaration, ExportedDeclarations, CommentRange, EnumDeclaration, EnumMember, TypeParameterDeclaration, TypeAliasDeclaration, JSDoc, ImportDeclaration } from "ts-morph";
 import * as fs from 'fs';
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
@@ -817,8 +817,16 @@ export class Importer {
         console.info(`processImportClauses: Creating import clauses:`);
         this.modules.forEach(f => {
             f.getImportDeclarations().forEach(i => {
+                let path: string;
+                if (i.getModuleSpecifierSourceFile() === undefined) {
+                    path = this.getUndefinedModulePath(i);
+                }
+                else {
+                    path = i.getModuleSpecifierSourceFile().getFilePath();
+                }
+
                 i.getNamedImports().forEach(ni => {
-                    console.info(`processImportClauses: Importing ${ni.getName()}`);
+                    console.info(`processImportClauses: Importing (named) ${ni.getName()} from ${i.getModuleSpecifierValue()}`);
                     const importedEntityName = ni.getName();
                     let bool = false;
                     this.exports.forEach(e => {
@@ -826,17 +834,19 @@ export class Importer {
                             bool = true;
                         }
                     });
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), i.getModuleSpecifierSourceFile().getFilePath(), ni, bool, false);
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), path, ni, bool, false);
                 });
 
                 const defaultImport = i.getDefaultImport();
                 if (defaultImport !== undefined) {
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), i.getModuleSpecifierSourceFile().getFilePath(), defaultImport, false, true);
+                    console.info(`processImportClauses: Importing (default) ${defaultImport.getText()} from ${i.getModuleSpecifierValue()}`);
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), path, defaultImport, false, true);
                 }
 
                 const namespaceImport = i.getNamespaceImport();
                 if (namespaceImport !== undefined) {
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), i.getModuleSpecifierSourceFile().getFilePath(), namespaceImport, false, false);
+                    console.info(`processImportClauses: Importing (namespace) ${namespaceImport.getText()} from ${i.getModuleSpecifierValue()}`);
+                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), path, namespaceImport, false, false);
                 }
             }); 
         });
@@ -879,5 +889,21 @@ export class Importer {
         });
 
         return implementedOrExtendedInterfaces;
+    }
+
+    /**
+     * Gets the path of an undefined module to be imported
+     * @param i An import declaration
+     * @returns The path of the undefined module to be imported
+     */
+    private getUndefinedModulePath(i: ImportDeclaration): string {
+        let path: string;
+        if (i.getModuleSpecifierValue().substring(i.getModuleSpecifierValue().length - 3) === ".ts") {
+            path = i.getModuleSpecifierValue();
+        }
+        else {
+            path = i.getModuleSpecifierValue() + ".ts";
+        }
+        return path;
     }
 }

@@ -4,3 +4,4 @@ import { Importer } from "../test_src/sampleForModule";
 import { ClassZ } from "../test_src/sampleForModule";
 import Cls from "../test_src/sampleForModule";
 import { Nsp } from "../test_src/sampleForModule";
+import * as express from "express";
