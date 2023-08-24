@@ -58,6 +58,10 @@ eog doc-uml/metamodel.svg &
 ```sh
 ts-node src/ts2famix-tsconfig.ts -i ../path/to/project/tsconfig.json -o JSONModels/projectName.json
 ```
+or
+```sh
+ts-node src/ts2famix-cli.ts -i "../path/to/project/**/*.ts" -o JSONModels/projectName.json
+```
 
 ## Generate an object diagram of the JSON model
 

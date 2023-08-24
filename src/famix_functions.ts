@@ -1,7 +1,6 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, VariableStatement, TypeAliasDeclaration, JSDoc } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, VariableStatement, TypeAliasDeclaration, JSDoc, SyntaxKind } from "ts-morph";
 import * as Famix from "./lib/famix/src/model/famix";
 import { FamixRepository } from "./lib/famix/src/famix_repository";
-import { SyntaxKind } from "@ts-morph/common";
 import { FQNFunctions } from "./fqn";
 // -> enlever les try catch ???
 
