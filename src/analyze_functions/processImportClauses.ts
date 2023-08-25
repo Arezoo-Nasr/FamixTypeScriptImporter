@@ -25,8 +25,7 @@ export class ProcessImportClauses {
         console.info(`processImportClauses: Creating import clauses:`);
         modules.forEach(f => {
             f.getImportDeclarations().forEach(i => {
-                let path: string;
-                path = this.getModulePath(i);
+                const path = this.getModulePath(i);
 
                 i.getNamedImports().forEach(ni => {
                     console.info(`processImportClauses: Importing (named) ${ni.getName()} from ${i.getModuleSpecifierValue()}`);

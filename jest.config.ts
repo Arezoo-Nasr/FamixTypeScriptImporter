@@ -175,8 +175,7 @@ export default {
   // transform: undefined,
   transform: {
     "^.+\\.tsx?$": ["ts-jest", {
-      isolatedModules: true,
-      babel: true
+      isolatedModules: true
     }]
   },
   
