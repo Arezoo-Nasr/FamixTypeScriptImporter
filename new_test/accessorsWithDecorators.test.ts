@@ -78,6 +78,7 @@ describe('Tests for accessors with decorators', () => {
         const theProperty = Array.from(fmxRep._getAllEntitiesWithType("Property") as Set<Property>).find(v => v.getName() === "_x");
         const theMethod1 = fmxRep._getFamixMethod("constructor");
         const theMethod2 = fmxRep._getFamixMethod("x");
+        expect(theMethod2?.getKind()).toBe("getter");
         const theAccess1 = Array.from(fmxRep._getAllEntitiesWithType("Access") as Set<Access>).find(a => a.getVariable() === theProperty && a.getAccessor() === theMethod1);
         const theAccess2 = Array.from(fmxRep._getAllEntitiesWithType("Access") as Set<Access>).find(a => a.getVariable() === theProperty && a.getAccessor() === theMethod2);
         expect(theAccess1).toBeTruthy();
@@ -88,6 +89,7 @@ describe('Tests for accessors with decorators', () => {
         const theProperty = Array.from(fmxRep._getAllEntitiesWithType("Property") as Set<Property>).find(v => v.getName() === "_y");
         const theMethod1 = fmxRep._getFamixMethod("constructor");
         const theMethod2 = fmxRep._getFamixMethod("y");
+        expect(theMethod2?.getKind()).toBe("setter");
         const theAccess1 = Array.from(fmxRep._getAllEntitiesWithType("Access") as Set<Access>).find(a => a.getVariable() === theProperty && a.getAccessor() === theMethod1);
         const theAccess2 = Array.from(fmxRep._getAllEntitiesWithType("Access") as Set<Access>).find(a => a.getVariable() === theProperty && a.getAccessor() === theMethod2);
         expect(theAccess1).toBeTruthy();

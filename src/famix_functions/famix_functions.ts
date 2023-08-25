@@ -225,8 +225,8 @@ export class FamixFunctions {
             fmxMethod = new Famix.Accessor(this.famixRep);
             const isGetter = method instanceof GetAccessorDeclaration;
             const isSetter = method instanceof SetAccessorDeclaration;
-            (fmxMethod as Famix.Accessor).setIsGetter(isGetter);
-            (fmxMethod as Famix.Accessor).setIsSetter(isSetter);
+            if (isGetter) {(fmxMethod as Famix.Accessor).setKind("getter");}
+            if (isSetter) {(fmxMethod as Famix.Accessor).setKind("setter");}
         }
         else {
             fmxMethod = new Famix.Method(this.famixRep);
@@ -243,8 +243,8 @@ export class FamixFunctions {
             isStatic = method.isStatic();
         }
 
+        if (isConstructor) {(fmxMethod as Famix.Accessor).setKind("constructor");}
         fmxMethod.setIsAbstract(isAbstract);
-        fmxMethod.setIsConstructor(isConstructor);
         fmxMethod.setIsClassSide(isStatic);
         fmxMethod.setIsPrivate((method instanceof MethodDeclaration || method instanceof GetAccessorDeclaration || method instanceof SetAccessorDeclaration) ? (method.getModifiers().find(x => x.getText() === 'private')) !== undefined : false);
         fmxMethod.setIsProtected((method instanceof MethodDeclaration || method instanceof GetAccessorDeclaration || method instanceof SetAccessorDeclaration) ? (method.getModifiers().find(x => x.getText() === 'protected')) !== undefined : false);
