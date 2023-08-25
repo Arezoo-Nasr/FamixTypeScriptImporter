@@ -3,7 +3,6 @@ import { SourceLanguage } from "./source_language";
 import { Entity } from "./entity";
 import { Comment } from "./comment";
 import { SourceAnchor } from "./source_anchor";
-import { JSDoc } from "./js_doc";
 
 export class SourcedEntity extends Entity {
 
@@ -43,19 +42,6 @@ export class SourcedEntity extends Entity {
     }
   }
 
-  private jsDocs: Set<JSDoc> = new Set();
-
-  public getJSDocs(): Set<JSDoc> {
-    return this.jsDocs;
-  }
-
-  public addJSDoc(jsDoc: JSDoc): void {
-    if (!this.jsDocs.has(jsDoc)) {
-      this.jsDocs.add(jsDoc);
-      jsDoc.setContainer(this);
-    }
-  }
-
   private declaredSourceLanguage: SourceLanguage;
 
   public getDeclaredSourceLanguage(): SourceLanguage {
@@ -79,7 +65,6 @@ export class SourcedEntity extends Entity {
     exporter.addProperty("isStub", this.getIsStub());
     exporter.addProperty("sourceAnchor", this.getSourceAnchor());
     exporter.addProperty("comments", this.getComments());
-    exporter.addProperty("jsDocs", this.getJSDocs());
     exporter.addProperty("declaredSourceLanguage", this.getDeclaredSourceLanguage());
   }
 }

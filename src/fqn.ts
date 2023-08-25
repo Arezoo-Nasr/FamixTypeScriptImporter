@@ -116,9 +116,6 @@ export class FQNFunctions {
             case ts.SyntaxKind.Constructor:
                 return "constructor";   
             
-            case ts.SyntaxKind.VariableStatement:
-                return "";
-            
             default:
                 // ancestor hasn't got a useful name
                 return "";

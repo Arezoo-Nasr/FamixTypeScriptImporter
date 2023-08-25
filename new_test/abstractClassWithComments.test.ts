@@ -47,9 +47,12 @@ describe('Tests for abstract class with comments', () => {
         const comments = Array.from(theFunction?.getComments() as Set<Comment>);
         expect(comments[0]?.getContent()).toBe("// after");
         expect(comments[0]?.getContainer()).toBe(theFunction);
+        expect(comments[0]?.getIsJSDoc()).toBe(false);
         expect(comments[1]?.getContent()).toBe("/* test */");
         expect(comments[1]?.getContainer()).toBe(theFunction);
+        expect(comments[1]?.getIsJSDoc()).toBe(false);
         expect(comments[2]?.getContent()).toBe("/**\n * test2\n */");
         expect(comments[2]?.getContainer()).toBe(theFunction); 
+        expect(comments[2]?.getIsJSDoc()).toBe(true);
     });
 });
