@@ -81,7 +81,7 @@ describe('Entities', () => {
     it("should contain a constructor in EntityClass", () => {
         const theConstructor = fmxRep._getFamixMethod("constructor") as Method;
         expect(theConstructor).toBeTruthy();
-        expect(theConstructor.getIsConstructor()).toBe(true);
+        expect(theConstructor.getKind()).toBe("constructor");
     });
 
     it("should have a parent relationship between EntityClass and its methods", () => {
