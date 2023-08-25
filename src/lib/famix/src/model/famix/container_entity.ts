@@ -5,7 +5,6 @@ import { NamedEntity } from "./named_entity";
 import { Reference } from "./reference";
 import { Access } from "./access";
 import { Function } from "./function";
-import { VariableStatement } from "./variable_statement";
 import { Variable } from "./variable";
 
 export class ContainerEntity extends NamedEntity {
@@ -135,17 +134,11 @@ export class ContainerEntity extends NamedEntity {
     return this.variables;
   }
 
-  private addVariable(variable: Variable): void {
+  public addVariable(variable: Variable): void {
     if (!this.variables.has(variable)) {
       this.variables.add(variable);
       variable.setParentContainerEntity(this);
     }
-  }
-
-  public addVariables(variableStatement: VariableStatement): void {
-    variableStatement.getVariablesInStatement().forEach((variable) => {
-      this.addVariable(variable);
-    });
   }
 
 

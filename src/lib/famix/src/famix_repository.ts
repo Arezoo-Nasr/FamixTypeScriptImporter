@@ -151,9 +151,9 @@ export class FamixRepository {
    * @param model A JSON model
    * @returns The map of Famix element ids and their Famix element from the JSON model
    */
-  public _initMapFromModel(model: string): Map<number, any> {
+  public _initMapFromModel(model: string): Map<number, unknown> {
     const parsedModel: Array<any> = JSON.parse(model);
-    const idToElementMap: Map<number, any> = new Map();
+    const idToElementMap: Map<number, unknown> = new Map();
     parsedModel.forEach(element => {
         idToElementMap.set(element.id, element);
     });

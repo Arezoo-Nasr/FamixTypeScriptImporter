@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, VariableStatement, TypeAliasDeclaration, JSDoc } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, TypeAliasDeclaration } from "ts-morph";
 import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
@@ -219,7 +219,7 @@ export class FamixFunctions {
      * @param currentCC The cyclomatic complexity metrics of the current source file
      * @returns The Famix model of the method or the accessor
      */
-    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration, currentCC: any): Famix.Method | Famix.Accessor {
+    public createFamixMethod(method: MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration, currentCC: unknown): Famix.Method | Famix.Accessor {
         let fmxMethod: Famix.Method | Famix.Accessor;
         if (method instanceof GetAccessorDeclaration || method instanceof SetAccessorDeclaration) {
             fmxMethod = new Famix.Accessor(this.famixRep);
@@ -310,7 +310,7 @@ export class FamixFunctions {
      * @param currentCC The cyclomatic complexity metrics of the current source file
      * @returns The Famix model of the function
      */
-    public createFamixFunction(func: FunctionDeclaration, currentCC: any): Famix.Function {
+    public createFamixFunction(func: FunctionDeclaration, currentCC: unknown): Famix.Function {
         const fmxFunction = new Famix.Function(this.famixRep);
         fmxFunction.setName(func.getName());
         fmxFunction.setSignature(this.computeSignature(func.getText()));
@@ -373,20 +373,6 @@ export class FamixFunctions {
         this.famixFunctionsIndex.makeFamixIndexFileAnchor(tp, fmxTypeParameter);
 
         return fmxTypeParameter;
-    }
-
-    /**
-     * Creates a Famix variable statement
-     * @param variableStatement A variable statement
-     * @returns The Famix model of the variable statement
-     */
-    public createFamixVariableStatement(variableStatement: VariableStatement): Famix.VariableStatement {
-        const fmxVariableStatement = new Famix.VariableStatement(this.famixRep);
-        fmxVariableStatement.setName("variableStatement");
-
-        this.famixFunctionsIndex.makeFamixIndexFileAnchor(variableStatement, fmxVariableStatement);
-
-        return fmxVariableStatement;
     }
 
     /**
@@ -474,32 +460,17 @@ export class FamixFunctions {
     }
 
     /**
-     * Creates a Famix JS doc
-     * @param jsDoc A JS doc
-     * @param fmxScope The Famix model of the JS doc's container
-     * @returns The Famix model of the JS doc
-     */
-    public createFamixJSDoc(jsDoc: JSDoc, fmxScope: Famix.NamedEntity): Famix.JSDoc {
-        const fmxJSDoc = new Famix.JSDoc(this.famixRep);
-        fmxJSDoc.setContent(jsDoc.getText());
-        fmxJSDoc.setContainer(fmxScope);
-        fmxJSDoc.setDescription(jsDoc.getDescription().trim());
-
-        this.famixFunctionsIndex.makeFamixIndexFileAnchor(jsDoc, fmxJSDoc);
-
-        return fmxJSDoc;
-    }
-
-    /**
      * Creates a Famix comment
      * @param comment A comment
      * @param fmxScope The Famix model of the comment's container
+     * @param isJSDoc A boolean indicating if the comment is a JSDoc
      * @returns The Famix model of the comment
      */
-    public createFamixComment(comment: CommentRange, fmxScope: Famix.NamedEntity): Famix.Comment {
+    public createFamixComment(comment: CommentRange, fmxScope: Famix.NamedEntity, isJSDoc: boolean): Famix.Comment {
         const fmxComment = new Famix.Comment(this.famixRep);
         fmxComment.setContent(comment.getText());
         fmxComment.setContainer(fmxScope);
+        fmxComment.setIsJSDoc(isJSDoc);
 
         this.famixFunctionsIndex.makeFamixIndexFileAnchor(comment, fmxComment);
 

@@ -27,7 +27,7 @@ export class FamixJSONExporter {
    */
   public addProperty(name: string, prop: unknown): void {
     if (prop instanceof Set) {
-      const valueArray: Array<any> = [];
+      const valueArray: Array<unknown> = [];
       for (const value of Array.from(prop.values())) {
         if (value instanceof FamixBaseElement) {
           valueArray.push({ "ref": value.id });

@@ -3,6 +3,16 @@ import { SourcedEntity } from "./sourced_entity";
 
 export class Comment extends SourcedEntity {
 
+  private isJSDoc: boolean;
+
+  public getIsJSDoc(): boolean {
+    return this.isJSDoc;
+  }
+
+  public setIsJSDoc(isJSDoc: boolean): void {
+    this.isJSDoc = isJSDoc;
+  }
+
   private container: SourcedEntity;
 
   public getContainer(): SourcedEntity {
@@ -33,6 +43,7 @@ export class Comment extends SourcedEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("isJSDoc", this.getIsJSDoc());
     exporter.addProperty("container", this.getContainer());
     exporter.addProperty("content", this.getContent());
   }
