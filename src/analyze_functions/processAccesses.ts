@@ -8,9 +8,6 @@ export class ProcessAccesses {
 
     private famixFunctions: FamixFunctions; // FamixFunctions object, it contains all the functions needed to create Famix entities
 
-    // not used
-    private access_nodes = new Array<Identifier>();
-
     /**
      * Initializes the ProcessAccesses object
      * @param famixFunctions FamixFunctions object, it contains all the functions needed to create Famix entities
@@ -42,8 +39,6 @@ export class ProcessAccesses {
      * @param id An id of a parameter, a variable or a property
      */
     private processNodeForAccesses(n: Identifier, id: number): void {
-        this.access_nodes.push(n);
-
         try {
             this.famixFunctions.createFamixAccess(n, id);
 

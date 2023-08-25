@@ -5,9 +5,6 @@ export class ProcessInvocations {
 
     private famixFunctions: FamixFunctions; // FamixFunctions object, it contains all the functions needed to create Famix entities
 
-    // not used
-    private invoc_nodes = new Array<Identifier>();
-
     /**
      * Initializes the ProcessInvocations object
      * @param famixFunctions FamixFunctions object, it contains all the functions needed to create Famix entities
@@ -40,8 +37,6 @@ export class ProcessInvocations {
      * @param id The id of the method or the function
      */
     private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, id: number): void {
-        this.invoc_nodes.push(n);
-
         try {
             this.famixFunctions.createFamixInvocation(n, m, id);
 

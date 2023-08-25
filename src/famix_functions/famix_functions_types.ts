@@ -1,0 +1,100 @@
+import { ConstructorDeclaration, FunctionDeclaration, MethodDeclaration, MethodSignature, PropertyDeclaration, PropertySignature, VariableDeclaration, ParameterDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, EnumMember, TypeAliasDeclaration, Node, SyntaxKind } from "ts-morph";
+import * as Famix from "../lib/famix/src/model/famix";
+import { FamixRepository } from "../lib/famix/src/famix_repository";
+import { FQNFunctions } from "../fqn";
+import { FamixFunctionsIndex } from "./famix_functions_index";
+
+/**
+ * This class is used to build a Famix model for the types
+ */
+export class FamixFunctionsTypes {
+
+    private famixRep: FamixRepository; // The Famix repository
+    private FQNFunctions = new FQNFunctions(); // The fully qualified name functions
+    private fmxTypes = new Map<string, Famix.Type>(); // Maps the type names to their Famix model
+    private famixFunctionsIndex: FamixFunctionsIndex; // FamixFunctionsIndex object, it contains all the functions needed to create Famix index file anchors
+
+    /**
+     * Initializes the FamixFunctionsIndex object
+     * @param famixRep The Famix repository
+     */
+    constructor(famixRep: FamixRepository) {
+        this.famixRep = famixRep;
+        this.famixFunctionsIndex = new FamixFunctionsIndex(famixRep);
+    }
+
+    /**
+     * Creates or gets a Famix type
+     * @param typeName A type name
+     * @param element A ts-morph element
+     * @returns The Famix model of the type
+     */
+    public createOrGetFamixType(typeName: string, element: TypeAliasDeclaration | PropertyDeclaration | PropertySignature | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | EnumMember): Famix.Type | Famix.PrimitiveType | Famix.ParameterizedType {
+        let fmxType: Famix.Type | Famix.PrimitiveType | Famix.ParameterizedType;
+        let isPrimitiveType = false;
+        let isParameterizedType = false;
+
+        const typeAncestor = this.findTypeAncestor(element);
+        const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(typeAncestor);
+        const ancestor = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
+
+        if (typeName === "number" || typeName === "string" || typeName === "boolean" || typeName === "bigint" || typeName === "symbol" || typeName === "undefined" || typeName === "null") {
+            isPrimitiveType = true;
+        }
+
+        if(!isPrimitiveType && typeName.includes("<") && typeName.includes(">") && !(typeName.includes("=>"))) {
+            isParameterizedType = true;
+        }
+
+        if (!this.fmxTypes.has(typeName)) {
+            if (isPrimitiveType) {
+                fmxType = new Famix.PrimitiveType(this.famixRep);
+                fmxType.setIsStub(true);
+            }
+            else if (isParameterizedType) {
+                fmxType = new Famix.ParameterizedType(this.famixRep);
+                const parameterTypeNames = typeName.substring(typeName.indexOf("<") + 1, typeName.indexOf(">")).split(",").map(s => s.trim());
+                const baseTypeName = typeName.substring(0, typeName.indexOf("<")).trim();
+                parameterTypeNames.forEach(parameterTypeName => {
+                    const fmxParameterType = this.createOrGetFamixType(parameterTypeName, element);
+                    (fmxType as Famix.ParameterizedType).addArgument(fmxParameterType);
+                });
+                const fmxBaseType = this.createOrGetFamixType(baseTypeName, element);
+                (fmxType as Famix.ParameterizedType).setBaseType(fmxBaseType);
+            }
+            else {
+                fmxType = new Famix.Type(this.famixRep);
+            }
+
+            fmxType.setName(typeName);
+            fmxType.setContainer(ancestor);
+            
+            this.famixFunctionsIndex.makeFamixIndexFileAnchor(null, fmxType);
+
+            this.fmxTypes.set(typeName, fmxType);
+        }
+        else {
+            fmxType = this.fmxTypes.get(typeName);
+        }
+
+        return fmxType;
+    }
+
+    /**
+     * Gets a Famix entity by fully qualified name
+     * @param ancestorFQN A fully qualified name
+     * @returns The Famix entity corresponding to the fully qualified name
+     */
+    private getFamixEntityByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
+        return this.famixRep.getFamixEntityByFullyQualifiedName(ancestorFQN) as Famix.Entity;
+    }
+
+    /**
+     * Finds the ancestor of a ts-morph element
+     * @param element A ts-morph element
+     * @returns The ancestor of the ts-morph element
+     */
+    private findTypeAncestor(element: TypeAliasDeclaration | PropertyDeclaration | PropertySignature | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | ParameterDeclaration | VariableDeclaration | EnumMember): Node {
+        return element.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.MethodSignature || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor" || a.getKind() === SyntaxKind.ClassDeclaration || a.getKind() === SyntaxKind.InterfaceDeclaration);
+    }
+}
