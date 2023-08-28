@@ -91,6 +91,9 @@ export class FQNFunctions {
     
             case ts.SyntaxKind.FunctionDeclaration:
                 return a.asKind(ts.SyntaxKind.FunctionDeclaration)?.getName();
+
+            case ts.SyntaxKind.FunctionExpression:
+                return (a.asKind(ts.SyntaxKind.FunctionExpression)?.getName()) ? a.asKind(ts.SyntaxKind.FunctionExpression)?.getName() : "anonymous";
             
             case ts.SyntaxKind.Parameter:
                 return a.asKind(ts.SyntaxKind.Parameter)?.getName();
