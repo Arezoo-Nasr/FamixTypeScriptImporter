@@ -28,9 +28,15 @@ describe('Tests for module', () => {
 
         const theImportClause = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'ClassDeclaration' && e.getModuleSpecifier() === 'ts-morph');
         expect(theImportClause).toBeTruthy();
+        const entity = theImportClause?.getImportedEntity();
+        expect(entity?.getName()).toBe('ClassDeclaration');
+        expect(entity?.getIsStub()).toBe(true);
 
         const theImportClause2 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'ConstructorDeclaration' && e.getModuleSpecifier() === 'ts-morph');
         expect(theImportClause2).toBeTruthy();
+        const entity2 = theImportClause2?.getImportedEntity();
+        expect(entity2?.getName()).toBe('ConstructorDeclaration');
+        expect(entity2?.getIsStub()).toBe(true);
 
         const theImportClause3 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'Importer' && e.getModuleSpecifier() === '../test_src/sampleForModule');
         expect(theImportClause3).toBeTruthy();

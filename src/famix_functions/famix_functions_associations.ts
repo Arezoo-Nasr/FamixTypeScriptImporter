@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, SourceFile, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, SyntaxKind } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, SourceFile, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, SyntaxKind, FunctionExpression, ExpressionWithTypeArguments } from "ts-morph";
 import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
@@ -52,7 +52,7 @@ export class FamixFunctionsAssociations {
      * @param m A method or a function
      * @param id The id of the method or the function
      */
-    public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, id: number): void {
+    public createFamixInvocation(node: Identifier, m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | FunctionExpression, id: number): void {
         const fmxMethodOrFunction = this.getFamixEntityById(id) as Famix.BehavioralEntity;
         const nodeReferenceAncestor = this.findAncestor(node);
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(nodeReferenceAncestor);
@@ -74,7 +74,7 @@ export class FamixFunctionsAssociations {
      * @param cls A class or an interface
      * @param inhClass The inherited class or interface
      */
-    public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | InterfaceDeclaration): void {
+    public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | InterfaceDeclaration | ExpressionWithTypeArguments): void {
         const fmxInheritance = new Famix.Inheritance(this.famixRep);
         const clsName = cls.getName();
         
@@ -86,13 +86,19 @@ export class FamixFunctionsAssociations {
             subClass = this.famixInterfaces.get(clsName);
         }
         
-        const inhClassName = inhClass.getName();
+        let inhClassName: string;
         let superClass: Famix.Class | Famix.Interface;
-        if (inhClass instanceof ClassDeclaration) {
-            superClass = this.famixClasses.get(inhClassName);
+        if (inhClass instanceof ClassDeclaration || inhClass instanceof InterfaceDeclaration) {
+            inhClassName = inhClass.getName();
+            if (inhClass instanceof ClassDeclaration) {
+                superClass = this.famixClasses.get(inhClassName);
+            }
+            else {
+                superClass = this.famixInterfaces.get(inhClassName);
+            }
         }
         else {
-            superClass = this.famixInterfaces.get(inhClassName);
+            inhClassName = inhClass.getExpression().getText();
         }
 
         if (superClass === undefined) {
@@ -197,6 +203,6 @@ export class FamixFunctionsAssociations {
      * @returns The ancestor of the node
      */
     private findAncestor(node: Identifier): Node {
-        return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor" || a.getKind() === SyntaxKind.ClassDeclaration);
+        return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.FunctionExpression || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor" || a.getKind() === SyntaxKind.ClassDeclaration);
     }
 }

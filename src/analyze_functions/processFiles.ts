@@ -378,6 +378,12 @@ export class ProcessFiles {
 
             this.processFunctions(m, fmxMethod);
 
+            const functionExpressions = m.getDescendantsOfKind(SyntaxKind.FunctionExpression);
+            functionExpressions.forEach((func) => {
+                const fmxFunc = this.processFunction(func);
+                fmxMethod.addFunction(fmxFunc);
+            });
+
             this.methodsAndFunctionsWithId.set(fmxMethod.id, m);
         }
 

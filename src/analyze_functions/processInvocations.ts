@@ -1,4 +1,4 @@
-import { MethodDeclaration, FunctionDeclaration, Identifier, ConstructorDeclaration, GetAccessorDeclaration, SetAccessorDeclaration } from "ts-morph";
+import { MethodDeclaration, FunctionDeclaration, Identifier, ConstructorDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, FunctionExpression } from "ts-morph";
 import { FamixFunctions } from "../famix_functions/famix_functions";
 
 export class ProcessInvocations {
@@ -17,10 +17,10 @@ export class ProcessInvocations {
      * Builds a Famix model for the invocations of the methods and functions of the source files
      * @param methodsAndFunctionsWithId A map of methods and functions with their id
      */
-    public processInvocations(methodsAndFunctionsWithId: Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration>): void {
+    public processInvocations(methodsAndFunctionsWithId: Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | FunctionExpression>): void {
         console.info(`Creating invocations:`);
         methodsAndFunctionsWithId.forEach((m, id) => {
-            console.info(`Invocations to ${(m instanceof MethodDeclaration || m instanceof GetAccessorDeclaration || m instanceof SetAccessorDeclaration || m instanceof FunctionDeclaration) ? m.getName() : "constructor"}`);
+            console.info(`Invocations to ${(m instanceof MethodDeclaration || m instanceof GetAccessorDeclaration || m instanceof SetAccessorDeclaration || m instanceof FunctionDeclaration) ? m.getName() : ((m instanceof ConstructorDeclaration) ? 'constructor' : (m.getName ? m.getName() : 'anonymous'))}`);
             try {
                 const temp_nodes = m.findReferencesAsNodes() as Array<Identifier>;
                 temp_nodes.forEach(node => this.processNodeForInvocations(node, m, id));
@@ -36,7 +36,7 @@ export class ProcessInvocations {
      * @param m A method or a function
      * @param id The id of the method or the function
      */
-    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration, id: number): void {
+    private processNodeForInvocations(n: Identifier, m: MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | FunctionExpression, id: number): void {
         try {
             this.famixFunctions.createFamixInvocation(n, m, id);
 
