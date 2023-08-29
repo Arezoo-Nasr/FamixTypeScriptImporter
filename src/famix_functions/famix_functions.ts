@@ -19,7 +19,7 @@ export class FamixFunctions {
     private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespace names to their Famix model
     private fmxFiles = new Map<string, Famix.ScriptEntity | Famix.Module>(); // Maps the source file names to their Famix model
     private famixFunctionsIndex = new FamixFunctionsIndex(this.famixRep); // FamixFunctionsIndex object, it contains all the functions needed to create Famix index file anchors
-    private famixFunctionsAssociations = new FamixFunctionsAssociations(this.famixRep, this.fmxClasses, this.fmxInterfaces); // FamixFunctions object, it contains all the functions needed to create Famix associations
+    private famixFunctionsAssociations = new FamixFunctionsAssociations(this.famixRep, this.fmxClasses, this.fmxInterfaces); // FamixFunctionsAssociations object, it contains all the functions needed to create Famix associations
     private famixFunctionsTypes = new FamixFunctionsTypes(this.famixRep); // FamixFunctionsTypes object, it contains all the functions needed to create Famix types
     private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable
 
@@ -64,16 +64,14 @@ export class FamixFunctions {
     /**
      * Creates or gets a Famix namespace
      * @param m A namespace
-     * @param parentScope The Famix model of the namespace's parent (the parent can be a source file or a namespace)
      * @returns The Famix model of the namespace
      */
-    public createOrGetFamixNamespace(m: ModuleDeclaration, parentScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): Famix.Namespace {
+    public createOrGetFamixNamespace(m: ModuleDeclaration): Famix.Namespace {
         let fmxNamespace: Famix.Namespace;
         const namespaceName = m.getName();
         if (!this.fmxNamespaces.has(namespaceName)) {
             fmxNamespace = new Famix.Namespace(this.famixRep);
             fmxNamespace.setName(namespaceName);
-            fmxNamespace.setParentScope(parentScope);
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(m, fmxNamespace);
 
@@ -420,24 +418,24 @@ export class FamixFunctions {
 
     /**
      * Creates a Famix enum value
-     * @param enumValue An enum value
-     * @returns The Famix model of the enum value
+     * @param enumMember An enum member
+     * @returns The Famix model of the enum member
      */
-    public createFamixEnumValue(enumValue: EnumMember): Famix.EnumValue {
+    public createFamixEnumValue(enumMember: EnumMember): Famix.EnumValue {
         const fmxEnumValue = new Famix.EnumValue(this.famixRep);
 
         let enumValueTypeName = this.UNKNOWN_VALUE;
         try {
-            enumValueTypeName = enumValue.getType().getText().trim();
+            enumValueTypeName = enumMember.getType().getText().trim();
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for enum value: ${enumValue.getName()}. Continuing...`);
+            console.error(`> WARNING: got exception ${error}. Failed to get usable name for enum value: ${enumMember.getName()}. Continuing...`);
         }
 
-        const fmxType = this.createOrGetFamixType(enumValueTypeName, enumValue);
+        const fmxType = this.createOrGetFamixType(enumValueTypeName, enumMember);
         fmxEnumValue.setDeclaredType(fmxType);
-        fmxEnumValue.setName(enumValue.getName());
+        fmxEnumValue.setName(enumMember.getName());
 
-        this.famixFunctionsIndex.makeFamixIndexFileAnchor(enumValue, fmxEnumValue);
+        this.famixFunctionsIndex.makeFamixIndexFileAnchor(enumMember, fmxEnumValue);
 
         return fmxEnumValue;
     }
@@ -495,7 +493,7 @@ export class FamixFunctions {
     /**
      * Creates a Famix access
      * @param node A node
-     * @param id An id of a parameter, a variable or a property
+     * @param id An id of a parameter, a variable, a property or an enum member
      */
     public createFamixAccess(node: Identifier, id: number): void {
         this.famixFunctionsAssociations.createFamixAccess(node, id);
@@ -513,8 +511,8 @@ export class FamixFunctions {
 
     /**
      * Creates a Famix inheritance
-     * @param cls A class or an interface
-     * @param inhClass The inherited class or interface
+     * @param cls A class or an interface (subclass)
+     * @param inhClass The inherited class or interface (superclass)
      */
     public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | InterfaceDeclaration | ExpressionWithTypeArguments): void {
         this.famixFunctionsAssociations.createFamixInheritance(cls, inhClass);
@@ -535,11 +533,11 @@ export class FamixFunctions {
 
     /**
      * Gets a Famix entity by fully qualified name
-     * @param ancestorFQN A fully qualified name
+     * @param fullyQualifiedName A fully qualified name
      * @returns The Famix entity corresponding to the fully qualified name
      */
-    private getFamixEntityByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
-        return this.famixRep.getFamixEntityByFullyQualifiedName(ancestorFQN) as Famix.Entity;
+    private getFamixEntityByFullyQualifiedName(fullyQualifiedName: string): Famix.Entity {
+        return this.famixRep.getFamixEntityByFullyQualifiedName(fullyQualifiedName) as Famix.Entity;
     }
 
     /**

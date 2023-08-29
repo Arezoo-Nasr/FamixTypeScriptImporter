@@ -30,7 +30,7 @@ const parsedModel: Array<FamixTypeScriptElement> = JSON.parse(fs.readFileSync(js
 const classNameMap = new Map<string, string>();
 const associations = new Array<Association>();
 
-// maps all class names to their ids
+// maps all class names to their id
 parsedModel.forEach(element => {
     // map has id as key and unique (plantuml) class name
     classNameMap.set(element.id, uniqueElementName(element));
@@ -107,7 +107,7 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
                     });
                 } else if (typeof attribute === 'object') {
                     associations.push({ from: element.id, to: attribute.ref, name: property });
-                } else {  // typeof string, boolean, number, etc.
+                } else {  // typeof string, boolean, number, etc
                     // treats it as a simple attribute
                     plantUMLString += `${property} = ${element[property]}\n`;
                 }

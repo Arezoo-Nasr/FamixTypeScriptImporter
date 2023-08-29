@@ -1,6 +1,9 @@
 import { MethodDeclaration, FunctionDeclaration, Identifier, ConstructorDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, FunctionExpression } from "ts-morph";
 import { FamixFunctions } from "../famix_functions/famix_functions";
 
+/**
+ * This class is used to build a Famix model for the invocations
+ */
 export class ProcessInvocations {
 
     private famixFunctions: FamixFunctions; // FamixFunctions object, it contains all the functions needed to create Famix entities

@@ -31,7 +31,7 @@ export class FamixFunctionsAssociations {
     /**
      * Creates a Famix access
      * @param node A node
-     * @param id An id of a parameter, a variable or a property
+     * @param id An id of a parameter, a variable, a property or an enum member
      */
     public createFamixAccess(node: Identifier, id: number): void {
         const fmxVar = this.famixRep.getFamixEntityById(id) as Famix.StructuralEntity;
@@ -71,8 +71,8 @@ export class FamixFunctionsAssociations {
 
     /**
      * Creates a Famix inheritance
-     * @param cls A class or an interface
-     * @param inhClass The inherited class or interface
+     * @param cls A class or an interface (subclass)
+     * @param inhClass The inherited class or interface (superclass)
      */
     public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | InterfaceDeclaration | ExpressionWithTypeArguments): void {
         const fmxInheritance = new Famix.Inheritance(this.famixRep);
@@ -190,11 +190,11 @@ export class FamixFunctionsAssociations {
 
     /**
      * Gets a Famix entity by fully qualified name
-     * @param ancestorFQN A fully qualified name
+     * @param fullyQualifiedName A fully qualified name
      * @returns The Famix entity corresponding to the fully qualified name
      */
-    private getFamixEntityByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
-        return this.famixRep.getFamixEntityByFullyQualifiedName(ancestorFQN) as Famix.Entity;
+    private getFamixEntityByFullyQualifiedName(fullyQualifiedName: string): Famix.Entity {
+        return this.famixRep.getFamixEntityByFullyQualifiedName(fullyQualifiedName) as Famix.Entity;
     }
     
     /**

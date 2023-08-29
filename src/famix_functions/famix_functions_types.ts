@@ -11,7 +11,7 @@ export class FamixFunctionsTypes {
 
     private famixRep: FamixRepository; // The Famix repository
     private FQNFunctions = new FQNFunctions(); // The fully qualified name functions
-    private fmxTypes = new Map<string, Famix.Type>(); // Maps the type names to their Famix model
+    private fmxTypes = new Map<string, Famix.Type | Famix.PrimitiveType | Famix.ParameterizedType>(); // Maps the type names to their Famix model
     private famixFunctionsIndex: FamixFunctionsIndex; // FamixFunctionsIndex object, it contains all the functions needed to create Famix index file anchors
 
     /**
@@ -82,11 +82,11 @@ export class FamixFunctionsTypes {
 
     /**
      * Gets a Famix entity by fully qualified name
-     * @param ancestorFQN A fully qualified name
+     * @param fullyQualifiedName A fully qualified name
      * @returns The Famix entity corresponding to the fully qualified name
      */
-    private getFamixEntityByFullyQualifiedName(ancestorFQN: string): Famix.Entity {
-        return this.famixRep.getFamixEntityByFullyQualifiedName(ancestorFQN) as Famix.Entity;
+    private getFamixEntityByFullyQualifiedName(fullyQualifiedName: string): Famix.Entity {
+        return this.famixRep.getFamixEntityByFullyQualifiedName(fullyQualifiedName) as Famix.Entity;
     }
 
     /**

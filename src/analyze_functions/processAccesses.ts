@@ -34,9 +34,9 @@ export class ProcessAccesses {
     }
 
     /**
-     * Builds a Famix model for an access on a parameter, variable or property
+     * Builds a Famix model for an access on a parameter, variable, property or enum member
      * @param n A node
-     * @param id An id of a parameter, a variable or a property
+     * @param id An id of a parameter, a variable, a property or an enum member
      */
     private processNodeForAccesses(n: Identifier, id: number): void {
         try {
