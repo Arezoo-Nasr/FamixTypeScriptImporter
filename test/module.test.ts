@@ -26,10 +26,10 @@ describe('Tests for module', () => {
 
     const theClass = fmxRep._getFamixClass('ClassZ');
     const importClauseList = Array.from(fmxRep._getAllEntitiesWithType('ImportClause')) as Array<ImportClause>;
-    it("should have nine import clauses", () => {
-        expect(importClauseList?.length).toBe(9);
+    it("should have ten import clauses", () => {
+        expect(importClauseList?.length).toBe(10);
         expect(theFile2?.getImportClauses().size).toBe(8);
-        expect(theFile3?.getImportClauses().size).toBe(1);
+        expect(theFile3?.getImportClauses().size).toBe(2);
 
         const theImportClause = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule2.ts' && e.getImportedEntity().getName() === 'ClassDeclaration' && e.getModuleSpecifier() === 'ts-morph');
         expect(theImportClause).toBeTruthy();
@@ -64,5 +64,8 @@ describe('Tests for module', () => {
 
         const theImportClause9 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule3.ts' && e.getImportedEntity().getName() === 'ClassX' && e.getModuleSpecifier() === 'express.ts');
         expect(theImportClause9).toBeTruthy();
+
+        const theImportClause10 = importClauseList.find(e => e.getImporter().getName() === 'sampleForModule3.ts' && e.getImportedEntity().getName() === 'test' && e.getModuleSpecifier() === './sampleForModule.ts');
+        expect(theImportClause10).toBeTruthy();
     });
 });
