@@ -20,7 +20,7 @@ export class ProcessInvocations {
     public processInvocations(methodsAndFunctionsWithId: Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | FunctionExpression>): void {
         console.info(`Creating invocations:`);
         methodsAndFunctionsWithId.forEach((m, id) => {
-            console.info(`Invocations to ${(m instanceof MethodDeclaration || m instanceof GetAccessorDeclaration || m instanceof SetAccessorDeclaration || m instanceof FunctionDeclaration) ? m.getName() : ((m instanceof ConstructorDeclaration) ? 'constructor' : (m.getName ? m.getName() : 'anonymous'))}`);
+            console.info(`Invocations to ${(m instanceof MethodDeclaration || m instanceof GetAccessorDeclaration || m instanceof SetAccessorDeclaration || m instanceof FunctionDeclaration) ? m.getName() : ((m instanceof ConstructorDeclaration) ? 'constructor' : (m.getName() ? m.getName() : 'anonymous'))}`);
             try {
                 const temp_nodes = m.findReferencesAsNodes() as Array<Identifier>;
                 temp_nodes.forEach(node => this.processNodeForInvocations(node, m, id));

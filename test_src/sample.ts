@@ -1,4 +1,3 @@
-
 var x = "hello";
 
 export class ClassA {
@@ -11,7 +10,7 @@ export class ClassA {
                 var w = 0;
             }
         }
-}    
+    }    
 }
 
 namespace ANamespace {

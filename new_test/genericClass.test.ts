@@ -30,6 +30,7 @@ describe('Tests for generic class', () => {
         expect(MyClass?.getTypeParameters().size).toBe(1);
         if (MyClass) {
             expect((Array.from(MyClass.getTypeParameters())[0] as TypeParameter).getName()).toBe("T");
+            expect((Array.from(MyClass.getTypeParameters())[0] as TypeParameter).getParentGeneric()).toBe(MyClass);
         }
     });
 

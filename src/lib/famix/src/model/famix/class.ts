@@ -6,16 +6,6 @@ import { Inheritance } from "./inheritance";
 
 export class Class extends Type {
 
-  private isTestCase: boolean;
-
-  public getIsTestCase(): boolean {
-    return this.isTestCase;
-  }
-
-  public setIsTestCase(isTestCase: boolean): void {
-    this.isTestCase = isTestCase;
-  }
-
   private isAbstract: boolean;
 
   public getIsAbstract(): boolean {
@@ -87,7 +77,6 @@ export class Class extends Type {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("isTestCase", this.getIsTestCase());
     exporter.addProperty("isAbstract", this.getIsAbstract());
     exporter.addProperty("properties", this.getProperties());
     exporter.addProperty("methods", this.getMethods());

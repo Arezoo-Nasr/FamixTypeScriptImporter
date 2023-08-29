@@ -378,11 +378,7 @@ export class ProcessFiles {
 
             this.processFunctions(m, fmxMethod);
 
-            const functionExpressions = m.getDescendantsOfKind(SyntaxKind.FunctionExpression);
-            functionExpressions.forEach((func) => {
-                const fmxFunc = this.processFunction(func);
-                fmxMethod.addFunction(fmxFunc);
-            });
+            this.processFunctionExpressions(m, fmxMethod);
 
             this.methodsAndFunctionsWithId.set(fmxMethod.id, m);
         }
@@ -419,16 +415,26 @@ export class ProcessFiles {
         this.processFunctions(f, fmxFunction);
 
         if (f instanceof FunctionDeclaration && !(f.getParent() instanceof Block)) {
-            const functionExpressions = f.getDescendantsOfKind(SyntaxKind.FunctionExpression);
-            functionExpressions.forEach((func) => {
-                const fmxFunc = this.processFunction(func);
-                fmxFunction.addFunction(fmxFunc);
-            });
+            this.processFunctionExpressions(f, fmxFunction);
         }
 
         this.methodsAndFunctionsWithId.set(fmxFunction.id, f);
 
         return fmxFunction;
+    }
+
+    /**
+     * Builds a Famix model for the function expressions of a function or a method
+     * @param f A function or a method
+     * @param fmxScope The Famix model of the function or the method
+     */
+    private processFunctionExpressions(f: FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.Function | Famix.Method | Famix.Accessor): void {
+        console.info(`processFunctionExpressions: ---------- Finding Function Expressions:`);
+        const functionExpressions = f.getDescendantsOfKind(SyntaxKind.FunctionExpression);
+        functionExpressions.forEach((func) => {
+            const fmxFunc = this.processFunction(func);
+            fmxScope.addFunction(fmxFunc);
+        });
     }
 
     /**

@@ -6,16 +6,6 @@ import { Inheritance } from "./inheritance";
 
 export class Interface extends Type {
 
-  private isTestCase: boolean;
-
-  public getIsTestCase(): boolean {
-    return this.isTestCase;
-  }
-
-  public setIsTestCase(isTestCase: boolean): void {
-    this.isTestCase = isTestCase;
-  }
-
   private properties: Set<Property> = new Set();
 
   public getProperties(): Set<Property> {
@@ -77,7 +67,6 @@ export class Interface extends Type {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("isTestCase", this.getIsTestCase());
     exporter.addProperty("properties", this.getProperties());
     exporter.addProperty("methods", this.getMethods());
     exporter.addProperty("superInheritances", this.getSuperInheritances());

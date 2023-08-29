@@ -6,7 +6,7 @@ const importer = new Importer();
 const fmxRep = importer.famixRepFromSource("interfaceInheritsUndefinedInterface", 
     'import {FileSystemHost} from "ts-morph";\n\
 \n\
-interface MyInterface2 extends FileSystemHost {}\n\
+interface MyInterface extends FileSystemHost {}\n\
 ');
 
 describe('Tests for interface inherits undefined interface', () => {
@@ -15,13 +15,13 @@ describe('Tests for interface inherits undefined interface', () => {
         expect(fmxRep._getAllEntitiesWithType("Interface").size).toBe(2);
     });
 
-    it("should contain an interface MyInterface2 that extends an interface MyInterface1", () => {
+    it("should contain an interface MyInterface that extends an interface FileSystemHost", () => {
         const cList = Array.from(fmxRep._getAllEntitiesWithType("Interface") as Set<Interface>);
         expect(cList).toBeTruthy();
         const myInterface1 = cList.find(p => p.getName() === "FileSystemHost");
         expect(myInterface1).toBeTruthy();
         expect(myInterface1?.getIsStub()).toBe(true);
-        const myInterface2 = cList.find(p => p.getName() === "MyInterface2");
+        const myInterface2 = cList.find(p => p.getName() === "MyInterface");
         expect(myInterface2).toBeTruthy();
         if (myInterface2) {
             expect(myInterface2.getSubInheritances().size).toBe(0);
