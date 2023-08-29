@@ -62,7 +62,7 @@ export class NamedEntity extends SourcedEntity {
   public addAlias(alias: Alias): void {
     if (!this.aliases.has(alias)) {
       this.aliases.add(alias);
-      alias.setAliasedEntity(this);
+      alias.setParentEntity(this);
     }
   }
 

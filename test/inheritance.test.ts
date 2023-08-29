@@ -17,14 +17,14 @@ describe('Inheritance', () => {
 
     it("should contain a Fish class who has a superclass Animal", () => {
         const fishCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "Fish"))[0];
-        const superInheritance = idToElementMap.get(fishCls.superInheritances[0].ref);
-        expect(idToElementMap.get(superInheritance.superclass.ref).name).toBe("Animal");
+        const superInheritance = idToElementMap.get(fishCls.superInheritances[0].ref) as any;
+        expect((idToElementMap.get(superInheritance.superclass.ref) as any).name).toBe("Animal");
     });
 
     it("should contain an Animal class who has a subclass Fish", () => {
         const animalCls = parsedModel.filter(el => (el.FM3 === "FamixTypeScript.Class" && el.name === "Animal"))[0];
-        const subInheritance = idToElementMap.get(animalCls.subInheritances[0].ref);
-        expect(idToElementMap.get(subInheritance.subclass.ref).name).toBe("Fish");
+        const subInheritance = idToElementMap.get(animalCls.subInheritances[0].ref) as any;
+        expect((idToElementMap.get(subInheritance.subclass.ref) as any).name).toBe("Fish");
     });
     
     it("should contain a Flyable interface", () => {

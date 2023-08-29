@@ -55,9 +55,9 @@ export class ProcessImportClauses {
     }
 
     /**
-     * Gets the path of an undefined module to be imported
+     * Gets the path of a module to be imported
      * @param i An import declaration
-     * @returns The path of the undefined module to be imported
+     * @returns The path of the module to be imported
      */
     private getModulePath(i: ImportDeclaration): string {
         let path: string;

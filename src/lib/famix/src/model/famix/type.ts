@@ -3,6 +3,7 @@ import { StructuralEntity } from "./structural_entity";
 import { ContainerEntity } from "./container_entity";
 import { Reference } from "./reference";
 import { BehavioralEntity } from "./behavioral_entity";
+import { Alias } from "./alias";
 
 export class Type extends ContainerEntity {
 
@@ -15,6 +16,19 @@ export class Type extends ContainerEntity {
   public setContainer(container: ContainerEntity): void {
     this.container = container;
     container.addType(this);
+  }
+
+  private typeAliases: Set<Alias> = new Set();
+
+  public getTypeAliases(): Set<Alias> {
+    return this.typeAliases;
+  }
+
+  public addTypeAlias(typeAlias: Alias): void {
+    if (!this.typeAliases.has(typeAlias)) {
+      this.typeAliases.add(typeAlias);
+      typeAlias.setAliasedEntity(this);
+    }
   }
 
   private structuresWithDeclaredType: Set<StructuralEntity> = new Set();
@@ -66,6 +80,7 @@ export class Type extends ContainerEntity {
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("container", this.getContainer());
+    exporter.addProperty("typeAliases", this.getTypeAliases());
     exporter.addProperty("structuresWithDeclaredType", this.getStructuresWithDeclaredType());
     exporter.addProperty("behavioralEntitiesWithDeclaredType", this.getBehavioralEntitiesWithDeclaredType());
     exporter.addProperty("incomingReferences", this.getIncomingReferences());

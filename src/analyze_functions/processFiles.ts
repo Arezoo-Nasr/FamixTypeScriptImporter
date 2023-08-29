@@ -10,7 +10,7 @@ export class ProcessFiles {
 
     private famixFunctions: FamixFunctions; // FamixFunctions object, it contains all the functions needed to create Famix entities
     private methodsAndFunctionsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | FunctionExpression>(); // Maps the Famix method, constructor, getter, setter and function ids to their ts-morph method, constructor, getter, setter or function object
-    private accesses = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>(); // Maps the Famix parameter, variable, property and enum value ids to their ts-morph parameter, variable, property or enum value object
+    private accesses = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>(); // Maps the Famix parameter, variable, property and enum value ids to their ts-morph parameter, variable, property or enum member object
     private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
     private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
     private modules = new Array<SourceFile>(); // Array of all the source files which are modules
@@ -105,7 +105,7 @@ export class ProcessFiles {
 
         this.processComments(f, fmxFile);
 
-        this.processAliases(f);
+        this.processAliases(f, fmxFile);
 
         this.processClasses(f, fmxFile);
 
@@ -123,17 +123,16 @@ export class ProcessFiles {
     /**
      * Builds a Famix model for a namespace
      * @param m A namespace
-     * @param parentScope The Famix model of the namespace's parent (the parent can be a source file or a namespace)
      * @returns A Famix.Namespace representing the namespace
      */
-    private processNamespace(m: ModuleDeclaration, parentScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): Famix.Namespace {
-        const fmxNamespace = this.famixFunctions.createOrGetFamixNamespace(m, parentScope);
+    private processNamespace(m: ModuleDeclaration): Famix.Namespace {
+        const fmxNamespace = this.famixFunctions.createOrGetFamixNamespace(m);
 
         console.info(`processNamespace: namespace: ${m.getName()}, (${m.getType().getText()}), ${fmxNamespace.getFullyQualifiedName()}`);
 
         this.processComments(m, fmxNamespace);
 
-        this.processAliases(m);
+        this.processAliases(m, fmxNamespace);
 
         this.processClasses(m, fmxNamespace);
 
@@ -155,10 +154,11 @@ export class ProcessFiles {
      * @param m A container (a source file, a namespace, a function or a method)
      * @param fmxScope The Famix model of the container
      */
-    private processAliases(m: SourceFile | ModuleDeclaration | FunctionDeclaration | FunctionExpression | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration): void {
+    private processAliases(m: SourceFile | ModuleDeclaration | FunctionDeclaration | FunctionExpression | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace | Famix.Function | Famix.Method | Famix.Accessor): void {
         console.info(`processAliases: ---------- Finding Aliases:`);
         m.getTypeAliases().forEach(a => {
-            this.processAlias(a);
+            const fmxAlias = this.processAlias(a);
+            fmxScope.addAlias(fmxAlias);
         });
     }
 
@@ -237,7 +237,7 @@ export class ProcessFiles {
     private processNamespaces(m: SourceFile | ModuleDeclaration, fmxScope: Famix.ScriptEntity | Famix.Module | Famix.Namespace): void {
         console.info(`processNamespaces: ---------- Finding Namespaces:`);
         m.getModules().forEach(md => {
-            const fmxNsp = this.processNamespace(md, fmxScope);
+            const fmxNsp = this.processNamespace(md);
             fmxScope.addNamespace(fmxNsp);
         });
     }
@@ -247,12 +247,14 @@ export class ProcessFiles {
      * @param a An alias
      * @returns A Famix.Alias representing the alias
      */
-    private processAlias(a: TypeAliasDeclaration): void {
+    private processAlias(a: TypeAliasDeclaration): Famix.Alias {
         const fmxAlias = this.famixFunctions.createFamixAlias(a);
 
         console.info(`processAlias: alias: ${a.getName()}, (${a.getType().getText()}), fqn = ${fmxAlias.getFullyQualifiedName()}`);
 
         this.processComments(a, fmxAlias);
+
+        return fmxAlias;
     }
 
     /**
@@ -370,7 +372,7 @@ export class ProcessFiles {
         this.processParameters(m, fmxMethod);
 
         if (!(m instanceof MethodSignature)) {
-            this.processAliases(m);
+            this.processAliases(m, fmxMethod);
 
             this.processVariables(m, fmxMethod);
 
@@ -402,7 +404,7 @@ export class ProcessFiles {
 
         this.processComments(f, fmxFunction);
 
-        this.processAliases(f);
+        this.processAliases(f, fmxFunction);
 
         this.processTypeParameters(f, fmxFunction);
 
@@ -488,7 +490,7 @@ export class ProcessFiles {
 
     /**
      * Builds a Famix model for a type parameter
-     * @param tp A type
+     * @param tp A type parameter
      * @returns A Famix.TypeParameter representing the type parameter
      */
     private processTypeParameter(tp: TypeParameterDeclaration): Famix.TypeParameter {
@@ -504,7 +506,7 @@ export class ProcessFiles {
     /**
      * Builds a Famix model for the variables of a variable statement
      * @param v A variable statement
-     * @returns An array of Famix.Variables representing the variables
+     * @returns An array of Famix.Variable representing the variables
      */
     private processVariableStatement(v: VariableStatement): Array<Famix.Variable> {
         const fmxVariables = new Array<Famix.Variable>();
@@ -558,9 +560,9 @@ export class ProcessFiles {
     }
 
     /**
-     * Builds a Famix model for an enum value
-     * @param v An enum value
-     * @returns A Famix.EnumValue representing the enum value
+     * Builds a Famix model for an enum member
+     * @param v An enum member
+     * @returns A Famix.EnumValue representing the enum member
      */
     private processEnumValue(v: EnumMember): Famix.EnumValue {
         const fmxEnumValue = this.famixFunctions.createFamixEnumValue(v);

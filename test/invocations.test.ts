@@ -37,8 +37,7 @@ describe('Invocations', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn.substring(methodFqn.length-clsName.length-1-mName.length)).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(
-                methodFqn);
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(methodFqn);
             expect(theMethod).toBeTruthy();    
         }
     });
@@ -51,8 +50,7 @@ describe('Invocations', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn.substring(methodFqn.length-clsName.length-1-mName.length)).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(
-                methodFqn);
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(methodFqn);
             expect(theMethod).toBeTruthy();    
         }
     });
@@ -65,8 +63,7 @@ describe('Invocations', () => {
         if (theClass) {
             const methodFqn = Array.from(theClass.getMethods())[0].getFullyQualifiedName();
             expect(methodFqn.substring(methodFqn.length-clsName.length-1-mName.length)).toBe(clsName + '.' + mName);
-            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(
-                methodFqn);
+            const theMethod = fmxRep.getFamixEntityByFullyQualifiedName(methodFqn);
             expect(theMethod).toBeTruthy();    
         }
     });

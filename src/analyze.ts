@@ -61,6 +61,7 @@ export class Importer {
 
     /**
      * Main method for tests
+     * @param filename The name of the file to analyze
      * @param source A TypeScript source code
      * @returns The Famix repository containing the Famix model
      */
@@ -80,9 +81,9 @@ export class Importer {
      * @returns The Famix repository containing the Famix model
      */
     public famixRepFromProject(project: Project): FamixRepository {
-        const sourceFilesNames = project.getSourceFiles().map(f => f.getFilePath()) as Array<string>;
+        const sourceFileNames = project.getSourceFiles().map(f => f.getFilePath()) as Array<string>;
 
-        const famixRep = this.famixRepFromPaths(sourceFilesNames);
+        const famixRep = this.famixRepFromPaths(sourceFileNames);
 
         return famixRep;
     }

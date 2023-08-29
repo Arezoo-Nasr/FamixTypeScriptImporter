@@ -27,9 +27,13 @@ describe('Tests for alias', () => {
         expect(theType.getName()).toBe("Point");
     });
 
+    const theFile = fmxRep._getFamixFile("alias.ts");
     it("should contain an alias on type Point", () => {
-        expect(theType.getAliases().size).toBe(1);
-        expect(Array.from(theType.getAliases())[0]).toBe(theAlias);
+        expect(theFile?.getAliases().size).toBe(1);
+        expect(Array.from(theFile?.getAliases() as Set<Alias>)[0]).toBe(theAlias);
         expect(theAlias.getAliasedEntity()).toBe(theType);
+        expect(theAlias.getParentEntity()).toBe(theFile);
+        expect(theType.getTypeAliases().size).toBe(1);
+        expect(Array.from(theType.getTypeAliases())[0]).toBe(theAlias);
     });
 });
