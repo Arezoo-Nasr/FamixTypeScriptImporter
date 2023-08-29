@@ -29,6 +29,9 @@ describe('Tests for types', () => {
         expect(Array.from(fmxRep._getAllEntitiesWithType("PrimitiveType") as Set<PrimitiveType>).find(t => t.getName() === "string")).toBeTruthy();
         expect(Array.from(fmxRep._getAllEntitiesWithType("PrimitiveType") as Set<PrimitiveType>).find(t => t.getName() === "number")).toBeTruthy();
         expect(Array.from(fmxRep._getAllEntitiesWithType("PrimitiveType") as Set<PrimitiveType>).find(t => t.getName() === "boolean")).toBeTruthy();
+        expect(Array.from(fmxRep._getAllEntitiesWithType("PrimitiveType") as Set<PrimitiveType>).find(t => t.getName() === "string")?.getIsStub()).toBe(true);
+        expect(Array.from(fmxRep._getAllEntitiesWithType("PrimitiveType") as Set<PrimitiveType>).find(t => t.getName() === "number")?.getIsStub()).toBe(true);
+        expect(Array.from(fmxRep._getAllEntitiesWithType("PrimitiveType") as Set<PrimitiveType>).find(t => t.getName() === "boolean")?.getIsStub()).toBe(true);
         expect(fmxRep._getAllEntitiesWithType("ParameterizedType").size).toBe(1);
         expect(Array.from(fmxRep._getAllEntitiesWithType("ParameterizedType") as Set<ParameterizedType>).find(t => t.getName() === "Map<any, boolean>")).toBeTruthy();
     });

@@ -37,7 +37,7 @@ export class ProcessInheritances {
             implementedInterfaces.forEach(impInter => {
                 this.famixFunctions.createFamixInheritance(cls, impInter);
 
-                console.info(`processInheritances: class: ${cls.getName()}, (${cls.getType().getText()}), impInter: ${impInter.getName()}, (${impInter.getType().getText()})`);
+                console.info(`processInheritances: class: ${cls.getName()}, (${cls.getType().getText()}), impInter: ${(impInter instanceof InterfaceDeclaration) ? impInter.getName() : impInter.getExpression().getText()}, (${(impInter instanceof InterfaceDeclaration) ? impInter.getType().getText() : impInter.getExpression().getText()})`);
             });
         });
 
@@ -47,7 +47,7 @@ export class ProcessInheritances {
             extendedInterfaces.forEach(extInter => {
                 this.famixFunctions.createFamixInheritance(inter, extInter);
 
-                console.info(`processInheritances: inter: ${inter.getName()}, (${inter.getType().getText()}), extInter: ${extInter.getName()}, (${extInter.getType().getText()})`);
+                console.info(`processInheritances: inter: ${inter.getName()}, (${inter.getType().getText()}), extInter: ${(extInter instanceof InterfaceDeclaration) ? extInter.getName() : extInter.getExpression().getText()}, (${(extInter instanceof InterfaceDeclaration) ? extInter.getType().getText() : extInter.getExpression().getText()})`);
             });
         });
     }
@@ -56,9 +56,9 @@ export class ProcessInheritances {
      * Gets the interfaces implemented or extended by a class or an interface
      * @param interfaces An array of interfaces
      * @param subClass A class or an interface
-     * @returns An array of InterfaceDeclaration containing the interfaces implemented or extended by the subClass
+     * @returns An array of InterfaceDeclaration and ExpressionWithTypeArguments containing the interfaces implemented or extended by the subClass
      */
-    private getImplementedOrExtendedInterfaces(interfaces: Array<InterfaceDeclaration>, subClass: ClassDeclaration | InterfaceDeclaration): Array<InterfaceDeclaration> {
+    private getImplementedOrExtendedInterfaces(interfaces: Array<InterfaceDeclaration>, subClass: ClassDeclaration | InterfaceDeclaration): Array<InterfaceDeclaration | ExpressionWithTypeArguments> {
         let impOrExtInterfaces: Array<ExpressionWithTypeArguments>;
         if (subClass instanceof ClassDeclaration) {
             impOrExtInterfaces = subClass.getImplements();
@@ -68,11 +68,14 @@ export class ProcessInheritances {
         }
 
         const interfacesNames = interfaces.map(i => i.getName());
-        const implementedOrExtendedInterfaces = new Array<InterfaceDeclaration>();
+        const implementedOrExtendedInterfaces = new Array<InterfaceDeclaration | ExpressionWithTypeArguments>();
 
         impOrExtInterfaces.forEach(i => {
             if (interfacesNames.includes(i.getExpression().getText())) {
                 implementedOrExtendedInterfaces.push(interfaces[interfacesNames.indexOf(i.getExpression().getText())]);
+            }
+            else {
+                implementedOrExtendedInterfaces.push(i);
             }
         });
 
