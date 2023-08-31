@@ -23,9 +23,11 @@ describe('Tests for namespaces and classes', () => {
         expect(fmxRep._getFamixNamespaces().size).toBe(2);
     });
 
+    const theFile = fmxRep._getFamixFile("namespacesAndClasses.ts");
     const theNamespace1 = fmxRep._getFamixNamespace("MyNamespace");
     it("should contain a namespace MyNamespace", () => {
         expect(theNamespace1).toBeTruthy();
+        expect(theNamespace1?.getParentScope()).toBe(theFile);
     });
 
     it("should contain two classes", () => {
@@ -35,6 +37,7 @@ describe('Tests for namespaces and classes', () => {
     const theNamespace2 = fmxRep._getFamixNamespace("Nsp3");
     it("should contain a namespace Nsp3", () => {
         expect(theNamespace2).toBeTruthy();
+        expect(theNamespace2?.getParentScope()).toBe(theFile);
     });
     
     it("should contain one class", () => {

@@ -1,10 +1,21 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./type";
 import { ContainerEntity } from "./container_entity";
 import { Parameter } from "./parameter";
 import { Invocation } from "./invocation";
+import { TypeParameter } from "./type_parameter";
 
 export class BehavioralEntity extends ContainerEntity {
+
+  private isGeneric: boolean;
+
+  public getIsGeneric(): boolean {
+    return this.isGeneric;
+  }
+
+  public setIsGeneric(isGeneric: boolean): void {
+    this.isGeneric = isGeneric;
+  }
 
   private signature: string;
 
@@ -63,6 +74,19 @@ export class BehavioralEntity extends ContainerEntity {
     declaredType.addBehavioralEntityWithDeclaredType(this);
   }
 
+  private typeParameters: Set<TypeParameter> = new Set();
+
+  public getTypeParameters(): Set<TypeParameter> {
+    return this.typeParameters;
+  }
+
+  public addTypeParameter(typeParameter: TypeParameter): void {
+    if (!this.typeParameters.has(typeParameter)) {
+      this.typeParameters.add(typeParameter);
+      typeParameter.setParentGeneric(this);
+    }
+  }
+
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("BehavioralEntity", this);
@@ -72,10 +96,12 @@ export class BehavioralEntity extends ContainerEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("isGeneric", this.getIsGeneric());
     exporter.addProperty("signature", this.getSignature());
     exporter.addProperty("parameters", this.getParameters());
     exporter.addProperty("numberOfParameters", this.getNumberOfParameters());
     exporter.addProperty("incomingInvocations", this.getIncomingInvocations());
     exporter.addProperty("declaredType", this.getDeclaredType());
+    exporter.addProperty("typeParameters", this.getTypeParameters());
   }
 }

@@ -1,31 +1,21 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./type";
 import { Method } from "./method";
-import { Field } from "./field";
+import { Property } from "./property";
 import { Inheritance } from "./inheritance";
 
 export class Interface extends Type {
 
-  private isTestCase: boolean;
+  private properties: Set<Property> = new Set();
 
-  public getIsTestCase(): boolean {
-    return this.isTestCase;
+  public getProperties(): Set<Property> {
+    return this.properties;
   }
 
-  public setIsTestCase(isTestCase: boolean): void {
-    this.isTestCase = isTestCase;
-  }
-
-  private fields: Set<Field> = new Set();
-
-  public getFields(): Set<Field> {
-    return this.fields;
-  }
-
-  public addField(field: Field): void {
-    if (!this.fields.has(field)) {
-      this.fields.add(field);
-      field.setParentEntity(this);
+  public addProperty(property: Property): void {
+    if (!this.properties.has(property)) {
+      this.properties.add(property);
+      property.setParentEntity(this);
     }
   }
 
@@ -77,8 +67,7 @@ export class Interface extends Type {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("isTestCase", this.getIsTestCase());
-    exporter.addProperty("fields", this.getFields());
+    exporter.addProperty("properties", this.getProperties());
     exporter.addProperty("methods", this.getMethods());
     exporter.addProperty("superInheritances", this.getSuperInheritances());
     exporter.addProperty("subInheritances", this.getSubInheritances());  

@@ -1,31 +1,31 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { SourcedEntity } from "./sourced_entity";
 
 export class Association extends SourcedEntity {
 
-  private associationNext: Association;
+  private next: Association;
 
   public getNext(): Association {
-    return this.associationNext;
+    return this.next;
   }
 
-  public setNext(associationNext: Association): void {
-    if (this.associationNext === undefined) {
-      this.associationNext = associationNext;
-      associationNext.setPrevious(this);
+  public setNext(next: Association): void {
+    if (this.next === undefined) {
+      this.next = next;
+      next.setPrevious(this);
     }
   }
 
-  private associationPrevious: Association;
+  private previous: Association;
 
   public getPrevious(): Association {
-    return this.associationPrevious;
+    return this.previous;
   }
 
-  public setPrevious(associationPrevious: Association): void {
-    if (this.associationPrevious === undefined) {
-      this.associationPrevious = associationPrevious;
-      associationPrevious.setNext(this);
+  public setPrevious(previous: Association): void {
+    if (this.previous === undefined) {
+      this.previous = previous;
+      previous.setNext(this);
     }
   }
 

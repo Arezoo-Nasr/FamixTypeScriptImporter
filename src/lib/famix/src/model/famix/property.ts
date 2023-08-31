@@ -1,9 +1,9 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Class } from "./class";
 import { Interface } from "./interface";
 import { StructuralEntity } from "./structural_entity";
 
-export class Field extends StructuralEntity {
+export class Property extends StructuralEntity {
 
   private isClassSide: boolean;
 
@@ -15,15 +15,15 @@ export class Field extends StructuralEntity {
     this.isClassSide = isClassSide;
   }
 
-  private parentType: Class | Interface;
+  private parentEntity: Class | Interface;
 
   public getParentEntity(): Class | Interface {
-    return this.parentType;
+    return this.parentEntity;
   }
 
-  public setParentEntity(parentType: Class | Interface): void {
-    this.parentType = parentType;
-    parentType.addField(this);
+  public setParentEntity(parentEntity: Class | Interface): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addProperty(this);
   }
 
   private modifiers: Set<string> = new Set();
@@ -38,8 +38,9 @@ export class Field extends StructuralEntity {
     }
   }
 
+  
   public getJSON(): string {
-    const mse: FamixJSONExporter = new FamixJSONExporter("Field", this);
+    const mse: FamixJSONExporter = new FamixJSONExporter("Property", this);
     this.addPropertiesToExporter(mse);
     return mse.getJSON();
   }

@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { SourceAnchor } from "./source_anchor";
 
 export class IndexedFileAnchor extends SourceAnchor {

@@ -6,7 +6,7 @@ import * as ts from "ts-morph";
 export class FQNFunctions {
 
     /**
-     * Gets the fully qualified name of a node
+     * Gets the fully qualified name of a node, if it has one
      * @param node A node
      * @returns The fully qualified name of the node, or undefined if it doesn't have one
      */
@@ -91,6 +91,9 @@ export class FQNFunctions {
     
             case ts.SyntaxKind.FunctionDeclaration:
                 return a.asKind(ts.SyntaxKind.FunctionDeclaration)?.getName();
+
+            case ts.SyntaxKind.FunctionExpression:
+                return (a.asKind(ts.SyntaxKind.FunctionExpression)?.getName()) ? a.asKind(ts.SyntaxKind.FunctionExpression)?.getName() : "anonymous";
             
             case ts.SyntaxKind.Parameter:
                 return a.asKind(ts.SyntaxKind.Parameter)?.getName();
@@ -99,13 +102,10 @@ export class FQNFunctions {
                 return a.asKind(ts.SyntaxKind.VariableDeclaration)?.getName();
 
             case ts.SyntaxKind.Decorator:
-                return a.asKind(ts.SyntaxKind.Decorator)?.getName();    
+                return "@" + a.asKind(ts.SyntaxKind.Decorator)?.getName();    
 
             case ts.SyntaxKind.TypeParameter:
                 return a.asKind(ts.SyntaxKind.TypeParameter)?.getName();
-
-            case ts.SyntaxKind.ImportSpecifier:
-                return a.asKind(ts.SyntaxKind.ImportSpecifier)?.getName();
 
             case ts.SyntaxKind.EnumDeclaration:
                 return a.asKind(ts.SyntaxKind.EnumDeclaration)?.getName();
@@ -113,11 +113,11 @@ export class FQNFunctions {
             case ts.SyntaxKind.EnumMember:
                 return a.asKind(ts.SyntaxKind.EnumMember)?.getName();
 
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return a.asKind(ts.SyntaxKind.TypeAliasDeclaration)?.getName();
+
             case ts.SyntaxKind.Constructor:
                 return "constructor";   
-            
-            case ts.SyntaxKind.VariableStatement:
-                return "";
             
             default:
                 // ancestor hasn't got a useful name

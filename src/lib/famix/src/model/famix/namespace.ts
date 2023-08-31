@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { ScopingEntity } from "./scoping_entity";
 
 export class Namespace extends ScopingEntity {
@@ -14,16 +14,6 @@ export class Namespace extends ScopingEntity {
     parentScope.addNamespace(this);
   }
 
-  private numberOfAttributes: number;
-
-  public getNumberOfAttributes(): number {
-    return this.numberOfAttributes;
-  }
-
-  public setNumberOfAttributes(numberOfAttributes: number): void {
-    this.numberOfAttributes = numberOfAttributes;
-  }
-
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Namespace", this);
@@ -34,6 +24,5 @@ export class Namespace extends ScopingEntity {
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("parentScope", this.getParentScope());
-    exporter.addProperty("numberOfAttributes", this.getNumberOfAttributes());
   }
 }

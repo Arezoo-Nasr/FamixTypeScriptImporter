@@ -1,19 +1,16 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./type";
-import { ParameterizableClass } from "./parameterizable_class";
-import { ParameterizableInterface } from "./parameterizable_interface";
 
 export class ParameterizedType extends Type {
 
-  private parentGeneric: ParameterizableClass | ParameterizableInterface;
+  private baseType: Type;
 
-  public getParentGeneric(): ParameterizableClass | ParameterizableInterface {
-    return this.parentGeneric;
+  public getBaseType(): Type {
+    return this.baseType;
   }
 
-  public setParentGeneric(parentGeneric: ParameterizableClass | ParameterizableInterface): void {
-    this.parentGeneric = parentGeneric;
-    parentGeneric.addParameterizedType(this);
+  public setBaseType(baseType: Type): void {
+    this.baseType = baseType;
   }
 
   private arguments: Set<Type> = new Set();
@@ -37,7 +34,7 @@ export class ParameterizedType extends Type {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("parentGeneric", this.getParentGeneric());
+    exporter.addProperty("baseType", this.getBaseType());
     exporter.addProperty("arguments", this.getArguments());
   }
 }

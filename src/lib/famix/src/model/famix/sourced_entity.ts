@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { SourceLanguage } from "./source_language";
 import { Entity } from "./entity";
 import { Comment } from "./comment";
@@ -35,10 +35,10 @@ export class SourcedEntity extends Entity {
     return this.comments;
   }
 
-  public addComment(comments: Comment): void {
-    if (!this.comments.has(comments)) {
-      this.comments.add(comments);
-      comments.setContainer(this);
+  public addComment(comment: Comment): void {
+    if (!this.comments.has(comment)) {
+      this.comments.add(comment);
+      comment.setContainer(this);
     }
   }
 

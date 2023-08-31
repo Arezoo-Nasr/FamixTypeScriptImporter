@@ -1,19 +1,19 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { Type } from "./type";
 import { EnumValue } from "./enum_value";
 
 export class Enum extends Type {
 
-  private enumValues: Set<EnumValue> = new Set();
+  private values: Set<EnumValue> = new Set();
 
   public getValues(): Set<EnumValue> {
-    return this.enumValues;
+    return this.values;
   }
 
-  public addValue(enumValue: EnumValue): void {
-    if (!this.enumValues.has(enumValue)) {
-      this.enumValues.add(enumValue);
-      enumValue.setParentEntity(this);
+  public addValue(value: EnumValue): void {
+    if (!this.values.has(value)) {
+      this.values.add(value);
+      value.setParentEntity(this);
     }
   }
   

@@ -81,7 +81,7 @@ describe('Entities', () => {
     it("should contain a constructor in EntityClass", () => {
         const theConstructor = fmxRep._getFamixMethod("constructor") as Method;
         expect(theConstructor).toBeTruthy();
-        expect(theConstructor.getIsConstructor()).toBe(true);
+        expect(theConstructor.getKind()).toBe("constructor");
     });
 
     it("should have a parent relationship between EntityClass and its methods", () => {
@@ -93,12 +93,12 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with eight attributes", () => {
-        expect(theClass?.getFields().size).toBe(8);
+        expect(theClass?.getProperties().size).toBe(8);
     });
 
     it("should contain an EntityClass with an attribute named 'name' that is public", () => {
         if (theClass) {
-            const nameAttribute = Array.from(theClass.getFields())[0];
+            const nameAttribute = Array.from(theClass.getProperties())[0];
             expect(nameAttribute.getName()).toBe("name");
             expect(nameAttribute.getModifiers()).toContain("public");
         }
@@ -106,13 +106,13 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'name' of type string", () => {
         if (theClass) {
-            expect(Array.from(theClass.getFields())[0].getDeclaredType().getName()).toBe("string");
+            expect(Array.from(theClass.getProperties())[0].getDeclaredType().getName()).toBe("string");
         }
     });
 
     it("should contain an EntityClass with an attribute named 'p1' that is private and of type boolean", () => {
         if (theClass) {
-            const p1Attribute = Array.from(theClass.getFields())[1];
+            const p1Attribute = Array.from(theClass.getProperties())[1];
             expect(p1Attribute.getName()).toBe("p1");
             expect(p1Attribute.getModifiers()).toContain("private");
             expect(p1Attribute.getDeclaredType().getName()).toBe("boolean");
@@ -121,7 +121,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named '#p2' that is run-time private and of type boolean", () => {
         if (theClass) {
-            const p2Attribute = Array.from(theClass.getFields())[2];
+            const p2Attribute = Array.from(theClass.getProperties())[2];
             expect(p2Attribute.getName()).toBe("#p2");
             expect(p2Attribute.getDeclaredType().getName()).toBe("boolean");
         }
@@ -129,7 +129,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'prot1' that is protected and of type Map<any, any>", () => {
         if (theClass) {
-            const prot1Attribute = Array.from(theClass.getFields())[3];
+            const prot1Attribute = Array.from(theClass.getProperties())[3];
             expect(prot1Attribute.getName()).toBe("prot1");
             expect(prot1Attribute.getModifiers()).toContain("protected");
             expect(prot1Attribute.getDeclaredType().getName()).toBe("Map<any, any>");
@@ -138,7 +138,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'trustMe' that is guaranteed to be there (!) and of type string", () => {
         if (theClass) {
-            const trustMeAttribute = Array.from(theClass.getFields())[4];
+            const trustMeAttribute = Array.from(theClass.getProperties())[4];
             expect(trustMeAttribute.getName()).toBe("trustMe");
             expect(trustMeAttribute.getModifiers()).toContain("!");
             expect(trustMeAttribute.getDeclaredType().getName()).toBe("string");
@@ -147,7 +147,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'ro' that is readonly and of type \"yes\"", () => {
         if (theClass) {
-            const roAttribute = Array.from(theClass.getFields())[5];
+            const roAttribute = Array.from(theClass.getProperties())[5];
             expect(roAttribute.getName()).toBe("ro");
             expect(roAttribute.getModifiers()).toContain("readonly");
             expect(roAttribute.getDeclaredType().getName()).toBe('"yes"');
@@ -156,7 +156,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named '#userCount' that is static and of type number", () => {
         if (theClass) {
-            const userCountAttribute = Array.from(theClass.getFields())[6];
+            const userCountAttribute = Array.from(theClass.getProperties())[6];
             expect(userCountAttribute.getName()).toBe("#userCount");
             expect(userCountAttribute.getModifiers()).toContain("static");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('number');
@@ -165,7 +165,7 @@ describe('Entities', () => {
 
     it("should contain an EntityClass with an attribute named 'optional' that is optional (?) and of type string", () => {
         if (theClass) {
-            const userCountAttribute = Array.from(theClass.getFields())[7];
+            const userCountAttribute = Array.from(theClass.getProperties())[7];
             expect(userCountAttribute.getName()).toBe("optional");
             expect(userCountAttribute.getModifiers()).toContain("?");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('string');

@@ -1,17 +1,29 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { NamedEntity } from "./named_entity";
+import { Type } from "./type";
 
 export class Alias extends NamedEntity {
 
-  private aliasedEntity: NamedEntity;
+  private parentEntity: NamedEntity;
 
-  public getAliasedEntity(): NamedEntity {
+  public getParentEntity(): NamedEntity {
+    return this.parentEntity;
+  }
+
+  public setParentEntity(parentEntity: NamedEntity): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addAlias(this);
+  }
+
+  private aliasedEntity: Type;
+
+  public getAliasedEntity(): Type {
     return this.aliasedEntity;
   }
 
-  public setAliasedEntity(aliasedEntity: NamedEntity): void {
+  public setAliasedEntity(aliasedEntity: Type): void {
     this.aliasedEntity = aliasedEntity;
-    aliasedEntity.addAlias(this);
+    aliasedEntity.addTypeAlias(this);
   }
 
 
@@ -23,6 +35,7 @@ export class Alias extends NamedEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("parentEntity", this.getParentEntity());
     exporter.addProperty("aliasedEntity", this.getAliasedEntity());
   }
 }

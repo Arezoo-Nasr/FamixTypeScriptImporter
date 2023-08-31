@@ -1,27 +1,37 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { SourcedEntity } from "./sourced_entity";
 
 export class Comment extends SourcedEntity {
 
-  private commentContainer: SourcedEntity;
+  private isJSDoc: boolean;
+
+  public getIsJSDoc(): boolean {
+    return this.isJSDoc;
+  }
+
+  public setIsJSDoc(isJSDoc: boolean): void {
+    this.isJSDoc = isJSDoc;
+  }
+
+  private container: SourcedEntity;
 
   public getContainer(): SourcedEntity {
-    return this.commentContainer;
+    return this.container;
   }
 
-  public setContainer(commentContainer: SourcedEntity): void {
-    this.commentContainer = commentContainer;
-    commentContainer.addComment(this);
+  public setContainer(container: SourcedEntity): void {
+    this.container = container;
+    container.addComment(this);
   }
 
-  private commentContent: string;
+  private content: string;
 
   public getContent(): string {
-    return this.commentContent;
+    return this.content;
   }
 
-  public setContent(commentContent: string): void {
-    this.commentContent = commentContent;
+  public setContent(content: string): void {
+    this.content = content;
   }
 
 
@@ -33,6 +43,7 @@ export class Comment extends SourcedEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
+    exporter.addProperty("isJSDoc", this.getIsJSDoc());
     exporter.addProperty("container", this.getContainer());
     exporter.addProperty("content", this.getContent());
   }

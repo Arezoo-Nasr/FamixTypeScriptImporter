@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { ScriptEntity } from "./script_entity";
 import { ImportClause } from "./import_clause";
 

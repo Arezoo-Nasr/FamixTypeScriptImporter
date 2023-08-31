@@ -36,17 +36,6 @@ export class FamixRepository {
     return entity;
   }
 
-  /**
-   * Gets a Famix entity by name
-   * @param name A name
-   * @returns The Famix entity corresponding to the name or undefined if it doesn't exist
-   */
-  public getFamixEntityByName(name: string): FamixBaseElement | undefined {
-    const allEntities = Array.from(this.elements.values()).filter(e => e instanceof NamedEntity) as Array<NamedEntity>;
-    const entity = allEntities.find(e => e.getName() === name);
-    return entity;
-  }
-
   
   // Only for tests
 
@@ -105,11 +94,11 @@ export class FamixRepository {
 
   /**
    * Gets a Famix namespace by name
-   * @param moduleName A namespace name
+   * @param name A namespace name
    * @returns The Famix namespace corresponding to the name or undefined if it doesn't exist
    */
-  public _getFamixNamespace(moduleName: string): Namespace | undefined {
-    return Array.from(this.famixNamespaces.values()).find(ns => ns.getName() === moduleName);
+  public _getFamixNamespace(name: string): Namespace | undefined {
+    return Array.from(this.famixNamespaces.values()).find(ns => ns.getName() === name);
   }
 
   /**
@@ -158,13 +147,13 @@ export class FamixRepository {
   }
 
   /**
-   * Gets the map of Famix elements ids and their Famix element from a JSON model
+   * Gets the map of Famix element ids and their Famix element from a JSON model
    * @param model A JSON model
-   * @returns The map of Famix elements ids and their Famix element from the JSON model
+   * @returns The map of Famix element ids and their Famix element from the JSON model
    */
-  public _initMapFromModel(model: string): Map<number, any> {
+  public _initMapFromModel(model: string): Map<number, unknown> {
     const parsedModel: Array<any> = JSON.parse(model);
-    const idToElementMap: Map<number, any> = new Map();
+    const idToElementMap: Map<number, unknown> = new Map();
     parsedModel.forEach(element => {
         idToElementMap.set(element.id, element);
     });

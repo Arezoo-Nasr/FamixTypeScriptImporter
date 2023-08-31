@@ -32,8 +32,8 @@ describe('Tests for methods', () => {
     });
 
     it("should be a public method 'method", () => {
+        expect(theMethod.getKind()).toBe(undefined);
         expect(theMethod.getIsAbstract()).toBe(false);
-        expect(theMethod.getIsConstructor()).toBe(false);
         expect(theMethod.getIsClassSide()).toBe(false);
         expect(theMethod.getIsPrivate()).toBe(false);
         expect(theMethod.getIsProtected()).toBe(false);

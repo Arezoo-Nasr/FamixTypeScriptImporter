@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { StructuralEntity } from "./structural_entity";
 import { BehavioralEntity } from "./behavioral_entity";
 
@@ -10,9 +10,9 @@ export class Parameter extends StructuralEntity {
     return this.parentEntity;
   }
 
-  public setParentEntity(newParentBehavioralEntity: BehavioralEntity): void {
-    this.parentEntity = newParentBehavioralEntity;
-    newParentBehavioralEntity.addParameter(this);
+  public setParentEntity(parentEntity: BehavioralEntity): void {
+    this.parentEntity = parentEntity;
+    parentEntity.addParameter(this);
   }
 
 

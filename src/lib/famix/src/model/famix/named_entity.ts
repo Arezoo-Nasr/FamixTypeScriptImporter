@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { SourcedEntity } from "./sourced_entity";
 import { Invocation } from "./invocation";
 import { ImportClause } from "./import_clause";
@@ -62,7 +62,7 @@ export class NamedEntity extends SourcedEntity {
   public addAlias(alias: Alias): void {
     if (!this.aliases.has(alias)) {
       this.aliases.add(alias);
-      alias.setAliasedEntity(this);
+      alias.setParentEntity(this);
     }
   }
 

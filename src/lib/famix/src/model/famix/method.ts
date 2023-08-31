@@ -1,4 +1,4 @@
-import { FamixJSONExporter } from "./../../famix_JSON_exporter";
+import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { BehavioralEntity } from "./behavioral_entity";
 import { Class } from "./class";
 import { Interface } from "./interface";
@@ -16,6 +16,16 @@ export class Method extends BehavioralEntity {
     parentEntity.addMethod(this);
   }
 
+  private kind: string;
+
+  public getKind(): string {
+    return this.kind;
+  }
+
+  public setKind(kind: string): void {
+    this.kind = kind;
+  }
+
   private isAbstract: boolean;
 
   public getIsAbstract(): boolean {
@@ -24,16 +34,6 @@ export class Method extends BehavioralEntity {
 
   public setIsAbstract(isAbstract: boolean): void {
     this.isAbstract = isAbstract;
-  }
-  
-  private isConstructor: boolean;
-
-  public getIsConstructor(): boolean {
-    return this.isConstructor;
-  }
-
-  public setIsConstructor(isConstructor: boolean): void {
-    this.isConstructor = isConstructor;
   }
 
   private isClassSide: boolean;
@@ -76,6 +76,7 @@ export class Method extends BehavioralEntity {
     this.isProtected = isProtected;
   }
 
+  
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Method", this);
     this.addPropertiesToExporter(mse);
@@ -85,8 +86,8 @@ export class Method extends BehavioralEntity {
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("parentEntity", this.getParentEntity());
+    exporter.addProperty("kind", this.getKind());
     exporter.addProperty("isAbstract", this.getIsAbstract());
-    exporter.addProperty("isConstructor", this.getIsConstructor());
     exporter.addProperty("isClassSide", this.getIsClassSide());
     exporter.addProperty("isPrivate", this.getIsPrivate());
     exporter.addProperty("isPublic", this.getIsPublic());

@@ -30,7 +30,7 @@ const parsedModel: Array<FamixTypeScriptElement> = JSON.parse(fs.readFileSync(js
 const classNameMap = new Map<string, string>();
 const associations = new Array<Association>();
 
-// maps all the classnames to their ids
+// maps all class names to their id
 parsedModel.forEach(element => {
     // map has id as key and unique (plantuml) class name
     classNameMap.set(element.id, uniqueElementName(element));
@@ -54,7 +54,7 @@ parsedModel.forEach(element => {
 
 // creates associations
 associations.forEach(association => {
-    // inheritance is a special case - show it in UML even though it doesn't make 100% sense in object diagrams
+    // inheritance is a special case, show it in UML even though it doesn't make 100% sense in object diagrams
     const isInheritance = association.name.startsWith('Inheritance');
     if (isInheritance) {
         plantUMLOutString += `${classNameMap.get(association.from)} --|> ${classNameMap.get(association.to)} #line:${INHERITANCE_LINK_COLOR}\n`;
@@ -107,7 +107,7 @@ function propertiesToPlantUML(element: FamixTypeScriptElement) {
                     });
                 } else if (typeof attribute === 'object') {
                     associations.push({ from: element.id, to: attribute.ref, name: property });
-                } else {  // typeof string, boolean, number, etc.
+                } else {  // typeof string, boolean, number, etc
                     // treats it as a simple attribute
                     plantUMLString += `${property} = ${element[property]}\n`;
                 }
