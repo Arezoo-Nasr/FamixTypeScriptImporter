@@ -1,18 +1,19 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Comment } from '../src/lib/famix/src/model/famix/comment';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("abstractClassWithComments.ts", `// before
+abstract class MyAbstractClass {} // a comment
+// after
+/* test */
+/**
+ * test2
+ */
+function tst() {}`);
 
-const fmxRep = importer.famixRepFromSource("abstractClassWithComments", 
-    '// before\n\
-abstract class MyAbstractClass {} // a comment\n\
-// after\n\
-/* test */\n\
-/**\n\
- * test2\n\
- */\n\
-function tst() {}\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for abstract class with comments', () => {
     

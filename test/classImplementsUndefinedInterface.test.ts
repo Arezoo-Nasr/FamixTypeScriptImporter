@@ -1,14 +1,18 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Class } from '../src/lib/famix/src/model/famix/class';
 import { Interface } from '../src/lib/famix/src/model/famix/interface';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("classImplementsUndefinedInterface", 
-    'import {FileSystemHost} from "ts-morph";\n\
-\n\
-class myClass implements FileSystemHost {}\n\
-');
+project.createSourceFile("classImplementsUndefinedInterface.ts",
+`import {FileSystemHost} from "ts-morph";
+
+class myClass implements FileSystemHost {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for class implements undefined interface', () => {
 

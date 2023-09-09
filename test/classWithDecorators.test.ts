@@ -1,43 +1,47 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Decorator } from '../src/lib/famix/src/model/famix/decorator';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("classWithDecorators", 
-    'function sealed(constructor: Function) { // function can\'t take other parameters with constructor\n\
-    Object.seal(constructor);\n\
-    Object.seal(constructor.prototype);\n\
-}\n\
-\n\
-function reportableClassDecorator<T extends { new (...args: any[]): {} }>(constructor: T) {\n\
-    return class extends constructor {\n\
-        reportingURL = "http://www...";\n\
-    };\n\
-}\n\
-\n\
-// the signature is different from the one of the other decorators\n\
-var d = function decoratorWithParameter(parameter: string) {\n\
-    return function (target: Function) {\n\
-        // use parameter in decorator behavior\n\
-        console.log("Decorator parameter :", parameter);\n\
-    };\n\
-};\n\
-\n\
-var c = d("param2");\n\
-\n\
-@c\n\
-@d("param")\n\
-@sealed\n\
-@reportableClassDecorator\n\
-class BugReport {\n\
-    type = "report";\n\
-    title: string;\n\
-    \n\
-    constructor(t: string) {\n\
-        this.title = t;\n\
-    }\n\
-}\n\
-');
+project.createSourceFile("classWithDecorators.ts",
+`function sealed(constructor: Function) { // function can't take other parameters with constructor
+    Object.seal(constructor);
+    Object.seal(constructor.prototype);
+}
+
+function reportableClassDecorator<T extends { new (...args: any[]): {} }>(constructor: T) {
+    return class extends constructor {
+        reportingURL = "http://www...";
+    };
+}
+
+// the signature is different from the one of the other decorators
+var d = function decoratorWithParameter(parameter: string) {
+    return function (target: Function) {
+        // use parameter in decorator behavior
+        console.log("Decorator parameter :", parameter);
+    };
+};
+
+var c = d("param2");
+
+@c
+@d("param")
+@sealed
+@reportableClassDecorator
+class BugReport {
+    type = "report";
+    title: string;
+    
+    constructor(t: string) {
+        this.title = t;
+    }
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for class with decorators', () => {
     

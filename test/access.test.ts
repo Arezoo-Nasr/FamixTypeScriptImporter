@@ -1,22 +1,24 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Property, Method } from "../src/lib/famix/src/model/famix";
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("access.ts",
+`class AccessClassForTesting {
+    private privateAttribute;
+    public publicAttribute;
+    
+    public returnAccessName() {
+        return this.publicAttribute;
+    }
+    
+    private privateMethod() {
+        return this.privateAttribute;
+    }
+}`);
 
-const fmxRep = importer.famixRepFromSource("access", 
-    'class AccessClassForTesting {\n\
-    private privateAttribute;\n\
-    public publicAttribute;\n\
-    \n\
-    public returnAccessName() {\n\
-        return this.publicAttribute;\n\
-    }\n\
-    \n\
-    private privateMethod() {\n\
-        return this.privateAttribute;\n\
-    }\n\
-}\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Accesses', () => {
 

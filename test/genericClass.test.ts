@@ -1,11 +1,15 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { ParameterizableClass, TypeParameter } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("genericClass", 
-    'class MyClass<T> {}\n\
-');
+project.createSourceFile("genericClass.ts",
+`class MyClass<T> {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for generic class', () => {
 

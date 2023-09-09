@@ -1,21 +1,25 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Decorator } from '../src/lib/famix/src/model/famix/decorator';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("methodWithDecorator",
-    'function first() {\n\
-    console.log("first(): factory evaluated");\n\
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {\n\
-        console.log("first(): called");\n\
-    };\n\
-}\n\
-\n\
-class ExampleClass {\n\
-    @first()\n\
-    method() {}\n\
-}\n\
-');
+project.createSourceFile("methodWithDecorator.ts",
+`function first() {
+    console.log("first(): factory evaluated");
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+        console.log("first(): called");
+    };
+}
+
+class ExampleClass {
+    @first()
+    method() {}
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for method with decorator', () => {
     

@@ -1,13 +1,17 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("inheritance", 
-    'class Animal {}\n\
-class Fish extends Animal {}\n\
-interface Flyable {}\n\
-class Bird extends Animal implements Flyable {}\n\
-');
+project.createSourceFile("inheritance.ts",
+`class Animal {}
+class Fish extends Animal {}
+interface Flyable {}
+class Bird extends Animal implements Flyable {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Inheritance', () => {
 

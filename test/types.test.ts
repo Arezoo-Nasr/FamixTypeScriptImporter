@@ -1,17 +1,20 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { ParameterizedType } from '../src/lib/famix/src/model/famix/parameterized_type';
 import { PrimitiveType } from '../src/lib/famix/src/model/famix/primitive_type';
 import { Type } from '../src/lib/famix/src/model/famix/type';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("types.ts",
+`let a: string;
+let b: number;
+let c: Map<any, boolean>;
+class A {}
+let d = new A();
+`);
 
-const fmxRep = importer.famixRepFromSource("types", 
-    'let a: string;\n\
-let b: number;\n\
-let c: Map<any, boolean>;\n\
-class A {}\n\
-let d = new A();\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for types', () => {
     

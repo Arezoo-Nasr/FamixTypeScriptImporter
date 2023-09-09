@@ -1,36 +1,39 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Decorator } from '../src/lib/famix/src/model/famix/decorator';
 import { Parameter } from '../src/lib/famix/src/model/famix/parameter';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("parameterWithDecorators.ts",
+`function deco2(bo: boolean) {
+    return function(target: Object, propertyKey: string, parameterIndex: number) {
+        console.log(bo);
+    };
+}
 
-const fmxRep = importer.famixRepFromSource("parameterWithDecorators",
-    'function deco2(bo: boolean) {\n\
-    return function(target: Object, propertyKey: string, parameterIndex: number) {\n\
-        console.log(bo);\n\
-    };\n\
-}\n\
-\n\
-var tes = deco2(false);\n\
-\n\
-class BugReport2 {\n\
-    type = "report";\n\
-    title: string;\n\
-    \n\
-    constructor(t: string) {\n\
-        this.title = t;\n\
-    }\n\
-    \n\
-    print(@tes @deco2(true) verbose: boolean) {\n\
-        if (verbose) {\n\
-            return `type: ${this.type}, title: ${this.title}`;\n\
-        }\n\
-        else {\n\
-            return this.title;\n\
-        }\n\
-    }\n\
-}\n\
-');
+var tes = deco2(false);
+
+class BugReport2 {
+    type = "report";
+    title: string;
+    
+    constructor(t: string) {
+        this.title = t;
+    }
+    
+    print(@tes @deco2(true) verbose: boolean) {
+        if (verbose) {
+            return \`type: \${this.type}, title: \${this.title}\`;
+        }
+        else {
+            return this.title;
+        }
+    }
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for parameter with decorators', () => {
     

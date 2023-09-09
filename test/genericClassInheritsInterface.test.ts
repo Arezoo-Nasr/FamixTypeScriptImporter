@@ -1,13 +1,17 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { ParameterizableClass, ParameterizableInterface } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("genericClassInheritsInterface", 
-    'interface MyDaoInterface<T> {}\n\
-\n\
-class MyDao<T> implements MyDaoInterface<T> {}\n\
-');
+project.createSourceFile("genericClassInheritsInterface.ts",
+`interface MyDaoInterface<T> {}
+
+class MyDao<T> implements MyDaoInterface<T> {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for generic class inherits interface', () => {
 

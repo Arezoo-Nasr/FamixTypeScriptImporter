@@ -2,17 +2,21 @@ import { Importer } from '../src/analyze';
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Variable } from "../src/lib/famix/src/model/famix/variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
+import { Project } from 'ts-morph';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("genericWithInvocation", 
-    'class AA {\n\
-    public i<T> (j: T): void {}\n\
-}\n\
-\n\
-const x = new AA();\n\
-x.i<string>("ok");\n\
-');
+project.createSourceFile("genericWithInvocation.ts",
+`class AA {
+    public i<T> (j: T): void {}
+}
+
+const x = new AA();
+x.i<string>("ok");
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for generics', () => {
 

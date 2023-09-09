@@ -1,15 +1,18 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Access } from '../src/lib/famix/src/model/famix/access';
 import { ScriptEntity } from '../src/lib/famix/src/model/famix/script_entity';
 import { Variable } from '../src/lib/famix/src/model/famix/variable';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("simpleTest2.ts",
+`var a: number = 10;
+    
+console.log(a);
+`);
 
-const fmxRep = importer.famixRepFromSource("simpleTest2", 
-    'var a: number = 10;\n\
-    \n\
-console.log(a);\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for simple test 2', () => {
     

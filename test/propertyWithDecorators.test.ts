@@ -1,50 +1,53 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Decorator } from '../src/lib/famix/src/model/famix/decorator';
 import { Property } from '../src/lib/famix/src/model/famix/property';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("propertyWithDecorators.ts",
+`import "reflect-metadata";
 
-const fmxRep = importer.famixRepFromSource("propertyWithDecorators",
-    'import "reflect-metadata";\n\
-\n\
-const formatMetadataKey = Symbol("format");\n\
-\n\
-function format(formatString: string) {\n\
-    return Reflect.metadata(formatMetadataKey, formatString);\n\
-}\n\
-\n\
-function getFormat(target: any, propertyKey: string) {\n\
-    return Reflect.getMetadata(formatMetadataKey, target, propertyKey);\n\
-}\n\
-\n\
-function deco(bo: boolean) {\n\
-    return function(target: any, propertyKey: string) { // no property descriptor in the signature of the property decorator\n\
-        console.log(bo);\n\
-    };\n\
-}\n\
-\n\
-var h = format("Hello, %s");\n\
-var o = deco(true);\n\
-var t = deco;\n\
-\n\
-class Greeter {\n\
-    @deco(true)\n\
-    @h\n\
-    @o\n\
-    @t(false)\n\
-    @format("Hello, %s")\n\
-    greeting: string;\n\
-    \n\
-    constructor(message: string) {\n\
-        this.greeting = message;\n\
-    }\n\
-    \n\
-    greet() {\n\
-        let formatString = getFormat(this, "greeting");\n\
-        return formatString.replace("%s", this.greeting);\n\
-    }\n\
-}\n\
-');
+const formatMetadataKey = Symbol("format");
+
+function format(formatString: string) {
+    return Reflect.metadata(formatMetadataKey, formatString);
+}
+
+function getFormat(target: any, propertyKey: string) {
+    return Reflect.getMetadata(formatMetadataKey, target, propertyKey);
+}
+
+function deco(bo: boolean) {
+    return function(target: any, propertyKey: string) { // no property descriptor in the signature of the property decorator
+        console.log(bo);
+    };
+}
+
+var h = format("Hello, %s");
+var o = deco(true);
+var t = deco;
+
+class Greeter {
+    @deco(true)
+    @h
+    @o
+    @t(false)
+    @format("Hello, %s")
+    greeting: string;
+    
+    constructor(message: string) {
+        this.greeting = message;
+    }
+    
+    greet() {
+        let formatString = getFormat(this, "greeting");
+        return formatString.replace("%s", this.greeting);
+    }
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for property with decorators', () => {
     

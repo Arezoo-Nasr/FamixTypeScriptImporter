@@ -1,15 +1,18 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Method } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("entities_json.ts",
+`class EntityClass {
+    constructor() {}
+    public move() {}
+    private move2() {}
+}
+`);
 
-const fmxRep = importer.famixRepFromSource("entities_json", 
-    'class EntityClass {\n\
-    constructor() {}\n\
-    public move() {}\n\
-    private move2() {}\n\
-}\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Entities json', () => {
 

@@ -1,24 +1,27 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
-import { Function } from "../src/lib/famix/src/model/famix/function";
+import { Function as FamixFunctionEntity } from "../src/lib/famix/src/model/famix/function";
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("functionReturnsFunction", 
-    'export function deco() {\n\
-    function fct() {\n\
-        return function logMethod(target: any, propertyKey: string, descriptor: PropertyDescriptor) {\n\
-            const originalMethod = descriptor.value;\n\
-            descriptor.value = function (...args: any[]) {\n\
-                console.log(`Calling ${propertyKey} with arguments: ${JSON.stringify(args)}`);\n\
-                const result = originalMethod.apply(this, args);\n\
-                console.log(`Method ${propertyKey} returned: ${JSON.stringify(result)}`);\n\
-                return result;\n\
-            };\n\
-            return descriptor;\n\
-        };\n\
-    }\n\
-}\n\
-');
+project.createSourceFile("functionReturnsFunction.ts",
+`export function deco() {
+    function fct() {
+        return function logMethod(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+            const originalMethod = descriptor.value;
+            descriptor.value = function (...args: any[]) {
+                console.log(\`Calling \${propertyKey} with arguments: \${JSON.stringify(args)}\`);
+                const result = originalMethod.apply(this, args);
+                console.log(\`Method \${propertyKey} returned: \${JSON.stringify(result)}\`);
+                return result;
+            };
+            return descriptor;
+        };
+    }
+}`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for function returns function', () => {
     
@@ -27,25 +30,25 @@ describe('Tests for function returns function', () => {
         expect(functionList?.size).toBe(4);
     });
 
-    const theFunction = Array.from(functionList)[0] as Function;
+    const theFunction = Array.from(functionList)[0] as FamixFunctionEntity;
     it("should contain a function 'deco'", () => {
         expect(theFunction).toBeTruthy();
         expect(theFunction?.getName()).toBe('deco');
     });
 
-    const theFunction2 = Array.from(functionList)[1] as Function;
+    const theFunction2 = Array.from(functionList)[1] as FamixFunctionEntity;
     it("should contain a function 'fct'", () => {
         expect(theFunction2).toBeTruthy();
         expect(theFunction2?.getName()).toBe('fct');
     });
 
-    const theFunction3 = Array.from(functionList)[2] as Function;
+    const theFunction3 = Array.from(functionList)[2] as FamixFunctionEntity;
     it("should contain a function 'logMethod'", () => {
         expect(theFunction3).toBeTruthy();
         expect(theFunction3?.getName()).toBe('logMethod');
     });
 
-    const theFunction4 = Array.from(functionList)[3] as Function;
+    const theFunction4 = Array.from(functionList)[3] as FamixFunctionEntity;
     it("should contain a function 'anonymous'", () => {
         expect(theFunction4).toBeTruthy();
         expect(theFunction4?.getName()).toBe('anonymous');

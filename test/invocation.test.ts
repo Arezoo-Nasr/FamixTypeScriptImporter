@@ -2,20 +2,25 @@ import { Importer } from '../src/analyze';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
+import { Project } from 'ts-morph';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("invocation", 
-    'class A {\n\
-    public x(): void {}\n\
-}\n\
-\n\
-class B {\n\
-    public y(): void {\n\
-        new A().x();\n\
-    }\n\
-}\n\
-');
+
+project.createSourceFile("invocation.ts",
+`class A {
+    public x(): void {}
+}
+
+class B {
+    public y(): void {
+        new A().x();
+    }
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for invocation', () => {
 

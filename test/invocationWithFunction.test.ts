@@ -5,8 +5,8 @@ import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
 import { Project } from 'ts-morph';
 
 const importer = new Importer();
-
 const project = new Project();
+
 project.createSourceFile("invocationWithFunction.ts", 
 `function func(): void {}
 const x1 = func();`);

@@ -1,23 +1,27 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Access } from '../src/lib/famix/src/model/famix/access';
 import { Enum } from '../src/lib/famix/src/model/famix/enum';
 import { ScriptEntity } from '../src/lib/famix/src/model/famix/script_entity';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("enum", 
-    'enum Weekday {\n\
-    MONDAY = "Monday",\n\
-    TUESDAY = "Tuesday",\n\
-    WEDNESDAY = "Wednesday",\n\
-    THURSDAY = "Thursday",\n\
-    FRIDAY = "Friday",\n\
-    SATURDAY = "Saturday",\n\
-    SUNDAY = "Sunday"\n\
-}\n\
-\n\
-const aDay: Weekday = Weekday.MONDAY;\n\
-');
+project.createSourceFile("enum.ts",
+`enum Weekday {
+    MONDAY = "Monday",
+    TUESDAY = "Tuesday",
+    WEDNESDAY = "Wednesday",
+    THURSDAY = "Thursday",
+    FRIDAY = "Friday",
+    SATURDAY = "Saturday",
+    SUNDAY = "Sunday"
+}
+
+const aDay: Weekday = Weekday.MONDAY;
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for enum', () => {
     

@@ -1,48 +1,51 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Access } from '../src/lib/famix/src/model/famix/access';
 import { Decorator } from '../src/lib/famix/src/model/famix/decorator';
 import { Property } from '../src/lib/famix/src/model/famix/property';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile('accessorsWithDecorators.ts',
+`function configurable(value: boolean) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+        descriptor.configurable = value;
+    };
+}
 
-const fmxRep = importer.famixRepFromSource("accessorsWithDecorators",
-    'function configurable(value: boolean) {\n\
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {\n\
-        descriptor.configurable = value;\n\
-    };\n\
-}\n\
-\n\
-var b = function() {\n\
-    return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {};\n\
-};\n\
-\n\
-var x = b();\n\
-\n\
-class Point {\n\
-    private _x: number;\n\
-    private _y: number;\n\
-    \n\
-    constructor(x: number, y: number) {\n\
-        this._x = x;\n\
-        this._y = y;\n\
-    }\n\
-    \n\
-    @x\n\
-    @b()\n\
-    @configurable(false)\n\
-    get x() {\n\
-        return this._x;\n\
-    }\n\
-    \n\
-    @x\n\
-    @b()\n\
-    @configurable(false)\n\
-    set y(y: number) {\n\
-        this._y = y;\n\
-    }\n\
-}\n\
-');
+var b = function() {
+    return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {};
+};
 
+var x = b();
+
+class Point {
+    private _x: number;
+    private _y: number;
+    
+    constructor(x: number, y: number) {
+        this._x = x;
+        this._y = y;
+    }
+    
+    @x
+    @b()
+    @configurable(false)
+    get x() {
+        return this._x;
+    }
+    
+    @x
+    @b()
+    @configurable(false)
+    set y(y: number) {
+        this._y = y;
+    }
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
+    
 describe('Tests for accessors with decorators', () => {
     
     it("should contain one class", () => {

@@ -16,7 +16,7 @@ describe('ts2famix should handle command line options', () => {
     });
 
     test('should show that a json was produced', () => {
-        const output = execSync(`${commandLineStart} -i "./test_src/**/*.ts" -o JSONModels/temp.json`, {
+        const output = execSync(`${commandLineStart} -i "./test_src/**/sampleForModule.ts" -o JSONModels/temp.json`, {
             encoding: 'utf-8',
         });
         expect(output).toContain(`JSONModels/temp.json`);

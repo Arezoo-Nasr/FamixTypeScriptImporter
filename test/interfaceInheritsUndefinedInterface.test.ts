@@ -1,13 +1,17 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Interface } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("interfaceInheritsUndefinedInterface", 
-    'import {FileSystemHost} from "ts-morph";\n\
-\n\
-interface MyInterface extends FileSystemHost {}\n\
-');
+project.createSourceFile("interfaceInheritsUndefinedInterface.ts",
+`import {FileSystemHost} from "ts-morph";
+
+interface MyInterface extends FileSystemHost {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for interface inherits undefined interface', () => {
 

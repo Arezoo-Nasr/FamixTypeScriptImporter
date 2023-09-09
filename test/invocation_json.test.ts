@@ -1,25 +1,29 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("invocation_json", 
-    'class Class1 {\n\
-    public returnHi() {}\n\
-}\n\
-\n\
-class Class2 {\n\
-    public returnName() {}\n\
-}\n\
-\n\
-class Class3 {\n\
-    public getString() {\n\
-        var class1Obj = new Class1();\n\
-        var class2Obj = new Class2();\n\
-        var returnValue1 = class1Obj.returnHi();\n\
-        var returnValue2 = class2Obj.returnName();\n\
-    }\n\
-}\n\
-');
+project.createSourceFile("invocation.ts",
+`class Class1 {
+    public returnHi() {}
+}
+
+class Class2 {
+    public returnName() {}
+}
+
+class Class3 {
+    public getString() {
+        var class1Obj = new Class1();
+        var class2Obj = new Class2();
+        var returnValue1 = class1Obj.returnHi();
+        var returnValue2 = class2Obj.returnName();
+    }
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Invocations json', () => {
 

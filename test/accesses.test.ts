@@ -1,21 +1,24 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Access } from '../src/lib/famix/src/model/famix/access';
 import { Parameter } from '../src/lib/famix/src/model/famix/parameter';
 import { Variable } from '../src/lib/famix/src/model/famix/variable';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile('accesses.ts',
+`var b = 2;
 
-const fmxRep = importer.famixRepFromSource("accesses",
-    'var b = 2;\n\
-\n\
-var x = b;\n\
-\n\
-class P {\n\
-    m(param) {\n\
-        var z = param;\n\
-    }\n\
-}\n\
-');
+var x = b;
+
+class P {
+    m(param) {
+        var z = param;
+    }
+}
+`); 
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for accesses', () => {
     

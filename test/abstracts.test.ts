@@ -1,15 +1,17 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Method } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("abstracts.ts",
+`abstract class MyAbstractClass {
+    public abstract abstractMethod1();
+    public abstract abstractMethod2();
+    public concreteMethod() {}
+}`);
 
-const fmxRep = importer.famixRepFromSource("abstracts", 
-    'abstract class MyAbstractClass {\n\
-    public abstract abstractMethod1();\n\
-    public abstract abstractMethod2();\n\
-    public concreteMethod() {}\n\
-}\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Abstract classes and methods', () => {
 

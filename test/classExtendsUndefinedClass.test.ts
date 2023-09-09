@@ -1,13 +1,17 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Interface } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("classExtendsUndefinedClass", 
-    'import {ClassDeclaration} from "ts-morph";\n\
-\n\
-class MyClass extends ClassDeclaration {}\n\
-');
+project.createSourceFile("classExtendsUndefinedClass.ts",
+`import {ClassDeclaration} from "ts-morph";
+
+class MyClass extends ClassDeclaration {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for class extends undefined class', () => {
 

@@ -1,15 +1,19 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Alias } from '../src/lib/famix/src/model/famix';
 import { Type } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("alias", 
-    'type Point = {\n\
-    x: number;\n\
-    y: number;\n\
-};\n\
-');
+
+project.createSourceFile("alias.ts", 
+`type Point = {
+    x: number;
+    y: number;
+};`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for alias', () => {
     

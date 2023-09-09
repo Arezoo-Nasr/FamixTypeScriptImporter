@@ -1,17 +1,21 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
-import { Function } from "../src/lib/famix/src/model/famix/function";
+import { Function as FamixFunctionEntity } from "../src/lib/famix/src/model/famix/function";
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("functionWithParameters", 
-    'function fct(i: number, x: string): number {\n\
-    return 0;\n\
-}\n\
-');
+project.createSourceFile("functionWithParameters.ts",
+`function fct(i: number, x: string): number {
+    return 0;
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for function with parameters', () => {
     
-    const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as Function;
+    const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as FamixFunctionEntity;
     it("should have two parameters", () => {
         expect(theFunction?.getParameters().size).toBe(2);
     });

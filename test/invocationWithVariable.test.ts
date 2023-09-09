@@ -2,17 +2,21 @@ import { Importer } from '../src/analyze';
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Variable } from "../src/lib/famix/src/model/famix/variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
+import { Project } from 'ts-morph';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("invocationWithVariable", 
-    'class AAA {\n\
-    public method(): void {}\n\
-}\n\
-\n\
-const x1 = new AAA();\n\
-x1.method();\n\
-');
+project.createSourceFile("invocationWithVariable.ts",
+`class AAA {
+    public method(): void {}
+}
+
+const x1 = new AAA();
+x1.method();
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for invocation with variable', () => {
     

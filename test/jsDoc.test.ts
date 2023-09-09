@@ -1,15 +1,19 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Comment } from '../src/lib/famix/src/model/famix/comment';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("jsDoc", 
-    '/**\n\
-* Gets the name.\n\
-* @param person - Person to get the name from.\n\
-*/\n\
-function getName(person: string) {}\n\
-');
+project.createSourceFile("jsDoc.ts",
+`/**
+* Gets the name.
+* @param person - Person to get the name from.
+*/
+function getName(person: string) {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for JS doc', () => {
     

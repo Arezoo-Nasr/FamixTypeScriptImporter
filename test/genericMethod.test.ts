@@ -1,15 +1,19 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Class } from "../src/lib/famix/src/model/famix/class";
 import { Method } from "../src/lib/famix/src/model/famix/method";
 import { Parameter } from "../src/lib/famix/src/model/famix/parameter";
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("genericMethod", 
-    'class AA {\n\
-    public i<T> (j: T): void {}\n\
-}\n\
-');
+project.createSourceFile("genericMethod.ts",
+`class AA {
+    public i<T> (j: T): void {}
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for generics', () => {
 

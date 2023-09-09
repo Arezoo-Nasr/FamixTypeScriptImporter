@@ -1,32 +1,48 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
+import * as fs from 'fs';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("metrics", 
-    'class ForMetrics {\n\
-    public methodCyclomaticOne() {}\n\
-    \n\
-    public methodCyclomaticFour() {\n\
-        // make higher cyclomatic complexity\n\
-        for (let i = 0; i < 50; i++) { // 2\n\
-            for (let j = 0; j < 50; j++) { // 3\n\
-                if (i < 10) {} // 4\n\
-            }\n\
-        }\n\
-    }\n\
-}\n\
-\n\
-function functionCyclomaticOne() {}\n\
-\n\
-function functionCyclomaticFour() {\n\
-    // make higher cyclomatic complexity\n\
-    for (let i = 0; i < 50; i++) { // 2\n\
-        for (let j = 0; j < 50; j++) { // 3\n\
-            if (i < 10) {} // 4\n\
-        }\n\
-    }\n\
-}\n\
-');
+// Note: metrics test is tricky because we must create the file on disk
+
+const sourcePath = "./test_src/metrics.ts";
+// remove file if it already exists
+if (fs.existsSync(sourcePath)) {
+    // Delete the existing file
+    fs.unlinkSync(sourcePath);
+}
+
+const sourceFile = project.createSourceFile(sourcePath,
+`class ForMetrics {
+    public methodCyclomaticOne() {}
+    
+    public methodCyclomaticFour() {
+        // make higher cyclomatic complexity
+        for (let i = 0; i < 50; i++) { // 2
+            for (let j = 0; j < 50; j++) { // 3
+                if (i < 10) {} // 4
+            }
+        }
+    }
+}
+
+function functionCyclomaticOne() {}
+
+function functionCyclomaticFour() {
+    // make higher cyclomatic complexity
+    for (let i = 0; i < 50; i++) { // 2
+        for (let j = 0; j < 50; j++) { // 3
+            if (i < 10) {} // 4
+        }
+    }
+}
+`);
+
+sourceFile.saveSync(); // save file to disk so metrics are calculated (this is slower)
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Metrics', () => {
 

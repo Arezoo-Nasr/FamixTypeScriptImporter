@@ -1,13 +1,17 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Method } from "../src/lib/famix/src/model/famix/method";
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("methods", 
-    'class AAA {\n\
-    public method(): void {}\n\
-}\n\
-');
+project.createSourceFile("methods.ts",
+`class AAA {
+    public method(): void {}
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for methods', () => {
     

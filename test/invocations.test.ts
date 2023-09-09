@@ -1,31 +1,35 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Invocation, Method } from "../src/lib/famix/src/model/famix";
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("invocations", 
-    'class Class1 {\n\
-    public returnHi(): string {\n\
-        return "Hi";\n\
-    }\n\
-}\n\
-\n\
-class Class2 {\n\
-    public returnName() {}\n\
-}\n\
-\n\
-class Class3 {\n\
-    public getString() {\n\
-        var class1Obj = new Class1();\n\
-        var class2Obj = new Class2();\n\
-        var returnValue1 = class1Obj.returnHi();\n\
-        var returnValue2 = class2Obj.returnName();\n\
-        var x = a();\n\
-    }\n\
-}\n\
-\n\
-function a() {}\n\
-');
+project.createSourceFile("invocations.ts",
+`class Class1 {
+    public returnHi(): string {
+        return "Hi";
+    }
+}
+
+class Class2 {
+    public returnName() {}
+}
+
+class Class3 {
+    public getString() {
+        var class1Obj = new Class1();
+        var class2Obj = new Class2();
+        var returnValue1 = class1Obj.returnHi();
+        var returnValue2 = class2Obj.returnName();
+        var x = a();
+    }
+}
+
+function a() {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Invocations', () => {
 

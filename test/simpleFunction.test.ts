@@ -1,13 +1,16 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
-import { Function } from "../src/lib/famix/src/model/famix/function";
+import { Function as FamixFunctionEntity } from "../src/lib/famix/src/model/famix/function";
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("simpleFunction.ts",
+`function fct(): number {
+    return 0;
+}
+`);
 
-const fmxRep = importer.famixRepFromSource("simpleFunction", 
-    'function fct(): number {\n\
-    return 0;\n\
-}\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for simple function', () => {
     
@@ -16,7 +19,7 @@ describe('Tests for simple function', () => {
         expect(functionList?.size).toBe(1);
     });
 
-    const theFunction = Array.from(functionList)[0] as Function;
+    const theFunction = Array.from(functionList)[0] as FamixFunctionEntity;
     it("should contain a function 'fct'", () => {
         expect(theFunction).toBeTruthy();
         expect(theFunction?.getName()).toBe('fct');

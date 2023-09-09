@@ -1,21 +1,26 @@
 import { Importer } from '../src/analyze';
 import { Type } from '../src/lib/famix/src/model/famix/type';
 import { Class } from '../src/lib/famix/src/model/famix/class';
+import { Project } from 'ts-morph';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("namespacesAndClasses", 
-    'namespace MyNamespace {\n\
-	class EntityClass {}\n\
-	class class2 {}\n\
-}\n\
-\n\
-class clsOutNsp {}\n\
-\n\
-namespace Nsp3 {\n\
-	class clsInNsp3 {}\n\
-}\n\
-');
+project.createSourceFile("namespacesAndClasses.ts",
+`namespace MyNamespace {
+	class EntityClass {}
+	class class2 {}
+}
+
+class clsOutNsp {}
+
+namespace Nsp3 {
+	class clsInNsp3 {}
+}
+`);
+
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for namespaces and classes', () => {
     

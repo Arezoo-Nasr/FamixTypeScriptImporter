@@ -1,20 +1,24 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("namespaces", 
-    'namespace MyNamespace {}\n\
-\n\
-module MyModule {}\n\
-\n\
-declare module aModule {}\n\
-\n\
-declare module "someModule" {}\n\
-\n\
-declare module "otherModule";\n\
-\n\
-declare namespace MyNamespace2 {}\n\
-');
+project.createSourceFile("namespaces.ts", 
+`namespace MyNamespace {}
+
+module MyModule {}
+
+declare module aModule {}
+
+declare module "someModule" {}
+
+declare module "otherModule";
+
+declare namespace MyNamespace2 {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for namespaces', () => {
     

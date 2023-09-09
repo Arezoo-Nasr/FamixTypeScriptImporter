@@ -1,11 +1,14 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { ScriptEntity } from '../src/lib/famix/src/model/famix/script_entity';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("simpleTest.ts",
+`console.log("Hello");
+`);
 
-const fmxRep = importer.famixRepFromSource("simpleTest", 
-    'console.log("Hello");\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for simple test', () => {
     

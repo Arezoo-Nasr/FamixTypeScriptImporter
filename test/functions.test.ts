@@ -1,11 +1,14 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 
 const importer = new Importer();
+const project = new Project();
+project.createSourceFile("functions.ts",
+`function a() {}
+function b() {}
+`);
 
-const fmxRep = importer.famixRepFromSource("functions", 
-    'function a() {}\n\
-function b() {}\n\
-');
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Functions', () => {
 

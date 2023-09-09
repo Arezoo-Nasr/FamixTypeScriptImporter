@@ -1,21 +1,25 @@
 import { Importer } from '../src/analyze';
-import { Function } from "../src/lib/famix/src/model/famix/function";
+import { Function as FamixFunctionEntity } from "../src/lib/famix/src/model/famix/function";
 import { Comment } from '../src/lib/famix/src/model/famix/comment';
+import { Project } from 'ts-morph';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("functionWithVariables", 
-    'function fct(): number {\n\
-    // comment 1\n\
-    let i: number /*comment 2*/, j: number; // comment 3\n\
-    const x: string = "";\n\
-    return 0;\n\
-}\n\
-');
+project.createSourceFile("functionWithVariables.ts",
+`function fct(): number {
+    // comment 1
+    let i: number /*comment 2*/, j: number; // comment 3
+    const x: string = "";
+    return 0;
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for function with variables', () => {
     
-    const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as Function;
+    const theFunction = Array.from(fmxRep._getAllEntitiesWithType('Function'))[0] as FamixFunctionEntity;
     it("should have three variables", () => {
         expect(theFunction?.getVariables().size).toBe(3);
     });

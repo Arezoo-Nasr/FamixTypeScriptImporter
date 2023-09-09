@@ -1,38 +1,42 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
-import { Method, Function, Variable} from '../src/lib/famix/src/model/famix';
+import { Method, Function as FamixFunctionEntity, Variable} from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("entities", 
-    'namespace MyNamespace {\n\
-    \n\
-    class EntityClass {\n\
-        public name: string;\n\
-        private p1: boolean; // type-only private\n\
-        #p2: boolean; // runtime private\n\
-        protected prot1: Map<any, any>;\n\
-        trustMe!: string;\n\
-        readonly ro = "yes";\n\
-        static #userCount: number;\n\
-        optional?: string;\n\
-        \n\
-        constructor() {}\n\
-        public move() {}\n\
-        private move2(family: string): void {}\n\
-        #move3() {}\n\
-    }\n\
-    \n\
-    class class2 extends EntityClass {}\n\
-    \n\
-    class clsInNsp {\n\
-        public static aStaticMethod() {}\n\
-    }\n\
-}\n\
-\n\
-// global scope\n\
-var globalA;\n\
-function globalFunc() {}\n\
-');
+project.createSourceFile("entities.ts",
+`namespace MyNamespace {
+    
+    class EntityClass {
+        public name: string;
+        private p1: boolean; // type-only private
+        #p2: boolean; // runtime private
+        protected prot1: Map<any, any>;
+        trustMe!: string;
+        readonly ro = "yes";
+        static #userCount: number;
+        optional?: string;
+        
+        constructor() {}
+        public move() {}
+        private move2(family: string): void {}
+        #move3() {}
+    }
+    
+    class class2 extends EntityClass {}
+    
+    class clsInNsp {
+        public static aStaticMethod() {}
+    }
+}
+
+// global scope
+var globalA;
+function globalFunc() {}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Entities', () => {
 
@@ -217,7 +221,7 @@ describe('Entities', () => {
 
     // global scope
     it("should contain a function 'globalFunc' with global scope", () => {
-        const globalFunc = fmxRep._getFamixFunction('globalFunc') as Function;
+        const globalFunc = fmxRep._getFamixFunction('globalFunc') as FamixFunctionEntity;
         expect(globalFunc).toBeTruthy();
         expect(globalFunc.getName()).toBe('globalFunc');
         expect(globalFunc.getParentContainerEntity().getName()).toBe('entities.ts');

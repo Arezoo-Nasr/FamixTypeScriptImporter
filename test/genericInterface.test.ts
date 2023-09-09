@@ -1,14 +1,18 @@
+import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { ParameterizableInterface, TypeParameter } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
+const project = new Project();
 
-const fmxRep = importer.famixRepFromSource("genericInterface", 
-    'interface MyInterface<T> {\n\
-    myProperty;\n\
-    myMethod();\n\
-}\n\
-');
+project.createSourceFile("genericInterface.ts",
+`interface MyInterface<T> {
+    myProperty;
+    myMethod();
+}
+`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for generic interface', () => {
 
