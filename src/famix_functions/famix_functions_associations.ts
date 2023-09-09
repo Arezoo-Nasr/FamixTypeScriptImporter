@@ -11,20 +11,20 @@ export class FamixFunctionsAssociations {
 
     private famixRep: FamixRepository; // The Famix repository
     private FQNFunctions = new FQNFunctions(); // The fully qualified name functions
-    private famixClasses: Map<string, Famix.Class | Famix.ParameterizableClass>; // Maps the class names to their Famix model
-    private famixInterfaces: Map<string, Famix.Interface | Famix.ParameterizableInterface>; // Maps the interface names to their Famix model
+    private famixClassMap: Map<string, Famix.Class | Famix.ParameterizableClass>; // Maps the class names to their Famix model
+    private famixInterfaceMap: Map<string, Famix.Interface | Famix.ParameterizableInterface>; // Maps the interface names to their Famix model
     private famixFunctionsIndex: FamixFunctionsIndex; // FamixFunctionsIndex object, it contains all the functions needed to create Famix index file anchors
 
     /**
      * Initializes the FamixFunctionsAssociations object
      * @param famixRep The Famix repository
-     * @param fmxClasses The map of the class names and their Famix model
-     * @param fmxInterfaces The map of the interface names and their Famix model
+     * @param fmxClassMap The map of the class names and their Famix model
+     * @param fmxInterfaceMap The map of the interface names and their Famix model
      */
-    constructor(famixRep: FamixRepository, fmxClasses: Map<string, Famix.Class | Famix.ParameterizableClass>, fmxInterfaces: Map<string, Famix.Interface | Famix.ParameterizableInterface>) {
+    constructor(famixRep: FamixRepository, fmxClassMap: Map<string, Famix.Class | Famix.ParameterizableClass>, fmxInterfaceMap: Map<string, Famix.Interface | Famix.ParameterizableInterface>) {
         this.famixRep = famixRep;
-        this.famixClasses = fmxClasses;
-        this.famixInterfaces = fmxInterfaces;
+        this.famixClassMap = fmxClassMap;
+        this.famixInterfaceMap = fmxInterfaceMap;
         this.famixFunctionsIndex = new FamixFunctionsIndex(famixRep);
     }
 
@@ -76,42 +76,49 @@ export class FamixFunctionsAssociations {
      */
     public createFamixInheritance(cls: ClassDeclaration | InterfaceDeclaration, inhClass: ClassDeclaration | InterfaceDeclaration | ExpressionWithTypeArguments): void {
         const fmxInheritance = new Famix.Inheritance(this.famixRep);
-        const clsName = cls.getName();
-        
+        // const clsName = cls.getName();
+        const classFullyQualifiedName = this.FQNFunctions.getFQN(cls);
+        console.info(`createFamixInheritance: classFullyQualifiedName: class fqn = ${classFullyQualifiedName}`);
         let subClass: Famix.Class | Famix.Interface;
         if (cls instanceof ClassDeclaration) {
-            subClass = this.famixClasses.get(clsName);
+            subClass = this.famixClassMap.get(classFullyQualifiedName);
         }
         else {
-            subClass = this.famixInterfaces.get(clsName);
+            subClass = this.famixInterfaceMap.get(classFullyQualifiedName);
         }
         
         let inhClassName: string;
+        let inhClassFullyQualifiedName: string;
         let superClass: Famix.Class | Famix.Interface;
         if (inhClass instanceof ClassDeclaration || inhClass instanceof InterfaceDeclaration) {
             inhClassName = inhClass.getName();
+            inhClassFullyQualifiedName = this.FQNFunctions.getFQN(inhClass);
             if (inhClass instanceof ClassDeclaration) {
-                superClass = this.famixClasses.get(inhClassName);
+                superClass = this.famixClassMap.get(inhClassFullyQualifiedName);
             }
             else {
-                superClass = this.famixInterfaces.get(inhClassName);
+                superClass = this.famixInterfaceMap.get(inhClassFullyQualifiedName);
             }
         }
         else {
+            // inhClass is an ExpressionWithTypeArguments
             inhClassName = inhClass.getExpression().getText();
+            // what is inhClassFullyQualifiedName? TODO
+            inhClassFullyQualifiedName = 'Undefined_Scope_from_importer.' + inhClassName;
         }
 
         if (superClass === undefined) {
             if (inhClass instanceof ClassDeclaration) {
                 superClass = new Famix.Class(this.famixRep);
-                this.famixClasses.set(inhClassName, superClass);
+                this.famixClassMap.set(inhClassFullyQualifiedName, superClass);
             }
             else {
                 superClass = new Famix.Interface(this.famixRep);
-                this.famixInterfaces.set(inhClassName, superClass);
+                this.famixInterfaceMap.set(inhClassFullyQualifiedName, superClass);
             }
 
             superClass.setName(inhClassName);
+            superClass.setFullyQualifiedName(inhClassFullyQualifiedName);
             superClass.setIsStub(true);
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(inhClass, superClass);

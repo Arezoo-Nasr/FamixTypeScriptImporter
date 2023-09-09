@@ -2,6 +2,7 @@ import { ClassDeclaration, MethodDeclaration, VariableStatement, FunctionDeclara
 import * as Famix from "../lib/famix/src/model/famix";
 import { FamixFunctions } from "../famix_functions/famix_functions";
 import { calculate } from "../lib/ts-complex/cyclomatic-service";
+import * as fs from 'fs';
 
 /**
  * This class is used to build a Famix model for an array of source files
@@ -33,8 +34,11 @@ export class ProcessFiles {
         sourceFiles.forEach(file => {
             console.info(`processFiles: File: >>>>>>>>>> ${file.getBaseName()}`);
 
-            // Computes the cyclomatic complexity metrics for the current source file
-            this.currentCC = calculate(file.getFilePath());
+            // Computes the cyclomatic complexity metrics for the current source file if it exists (i.e. if it is not from a jest test)
+            if (fs.existsSync(file.getFilePath()))
+                this.currentCC = calculate(file.getFilePath());
+            else
+                this.currentCC = 0;
 
             this.processFile(file);
         });

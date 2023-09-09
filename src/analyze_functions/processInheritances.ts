@@ -21,7 +21,7 @@ export class ProcessInheritances {
      * @param classes An array of classes
      * @param interfaces An array of interfaces
      */
-    public processInheritances(classes: Array<ClassDeclaration>, interfaces: Array<InterfaceDeclaration>): void {
+    public processInheritances(classes: ClassDeclaration[], interfaces: InterfaceDeclaration[]): void {
         console.info(`processInheritances: Creating inheritances:`);
         classes.forEach(cls => {
             console.info(`processInheritances: Checking class inheritance for ${cls.getName()}`);

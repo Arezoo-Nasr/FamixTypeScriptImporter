@@ -1,13 +1,15 @@
 import { Importer } from '../src/analyze';
 import { Interface } from '../src/lib/famix/src/model/famix';
+import { Project } from 'ts-morph';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource("interfaceInheritsInterface", 
-    'interface MyInterface1 {}\n\
-\n\
-interface MyInterface2 extends MyInterface1 {}\n\
-');
+const project = new Project();
+project.createSourceFile("interfaceInheritsInterface.ts",
+`interface MyInterface1 {}
+interface MyInterface2 extends MyInterface1 {}`);
+
+const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for interface inherits interface', () => {
 

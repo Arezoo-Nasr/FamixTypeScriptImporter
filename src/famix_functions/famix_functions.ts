@@ -13,13 +13,13 @@ export class FamixFunctions {
 
     private famixRep = new FamixRepository(); // The Famix repository
     private FQNFunctions = new FQNFunctions(); // The fully qualified name functions
-    private fmxAliases = new Map<string, Famix.Alias>(); // Maps the alias names to their Famix model
-    private fmxClasses = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the class names to their Famix model
-    private fmxInterfaces = new Map<string, Famix.Interface | Famix.ParameterizableInterface>(); // Maps the interface names to their Famix model
-    private fmxNamespaces = new Map<string, Famix.Namespace>(); // Maps the namespace names to their Famix model
-    private fmxFiles = new Map<string, Famix.ScriptEntity | Famix.Module>(); // Maps the source file names to their Famix model
+    private fmxAliasMap = new Map<string, Famix.Alias>(); // Maps the alias names to their Famix model
+    private fmxClassMap = new Map<string, Famix.Class | Famix.ParameterizableClass>(); // Maps the fully qualifiedclass names to their Famix model
+    private fmxInterfaceMap = new Map<string, Famix.Interface | Famix.ParameterizableInterface>(); // Maps the interface names to their Famix model
+    private fmxNamespaceMap = new Map<string, Famix.Namespace>(); // Maps the namespace names to their Famix model
+    private fmxFileMap = new Map<string, Famix.ScriptEntity | Famix.Module>(); // Maps the source file names to their Famix model
     private famixFunctionsIndex = new FamixFunctionsIndex(this.famixRep); // FamixFunctionsIndex object, it contains all the functions needed to create Famix index file anchors
-    private famixFunctionsAssociations = new FamixFunctionsAssociations(this.famixRep, this.fmxClasses, this.fmxInterfaces); // FamixFunctionsAssociations object, it contains all the functions needed to create Famix associations
+    private famixFunctionsAssociations = new FamixFunctionsAssociations(this.famixRep, this.fmxClassMap, this.fmxInterfaceMap); // FamixFunctionsAssociations object, it contains all the functions needed to create Famix associations
     private famixFunctionsTypes = new FamixFunctionsTypes(this.famixRep); // FamixFunctionsTypes object, it contains all the functions needed to create Famix types
     private UNKNOWN_VALUE = '(unknown due to parsing error)'; // The value to use when a name is not usable
 
@@ -40,7 +40,7 @@ export class FamixFunctions {
     public createOrGetFamixFile(f: SourceFile, isModule: boolean): Famix.ScriptEntity | Famix.Module {
         let fmxFile: Famix.ScriptEntity | Famix.Module;
         const fileName = f.getBaseName();
-        if (!this.fmxFiles.has(fileName)) {
+        if (!this.fmxFileMap.has(fileName)) {
             if (isModule) {
                 fmxFile = new Famix.Module(this.famixRep); 
             }
@@ -53,10 +53,10 @@ export class FamixFunctions {
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(f, fmxFile);
 
-            this.fmxFiles.set(fileName, fmxFile);
+            this.fmxFileMap.set(fileName, fmxFile);
         }
         else {
-            fmxFile = this.fmxFiles.get(fileName);
+            fmxFile = this.fmxFileMap.get(fileName);
         }
         return fmxFile;
     }
@@ -69,16 +69,16 @@ export class FamixFunctions {
     public createOrGetFamixNamespace(m: ModuleDeclaration): Famix.Namespace {
         let fmxNamespace: Famix.Namespace;
         const namespaceName = m.getName();
-        if (!this.fmxNamespaces.has(namespaceName)) {
+        if (!this.fmxNamespaceMap.has(namespaceName)) {
             fmxNamespace = new Famix.Namespace(this.famixRep);
             fmxNamespace.setName(namespaceName);
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(m, fmxNamespace);
 
-            this.fmxNamespaces.set(namespaceName, fmxNamespace);
+            this.fmxNamespaceMap.set(namespaceName, fmxNamespace);
         }
         else {
-            fmxNamespace = this.fmxNamespaces.get(namespaceName);
+            fmxNamespace = this.fmxNamespaceMap.get(namespaceName);
         }
         return fmxNamespace;
     }
@@ -91,7 +91,7 @@ export class FamixFunctions {
     public createFamixAlias(a: TypeAliasDeclaration): Famix.Alias {
         let fmxAlias: Famix.Alias;
         const aliasName = a.getName();
-        if (!this.fmxAliases.has(aliasName)) {
+        if (!this.fmxAliasMap.has(aliasName)) {
             fmxAlias = new Famix.Alias(this.famixRep);
             fmxAlias.setName(a.getName());
 
@@ -100,10 +100,10 @@ export class FamixFunctions {
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(a, fmxAlias);
 
-            this.fmxAliases.set(aliasName, fmxAlias);
+            this.fmxAliasMap.set(aliasName, fmxAlias);
         }
         else {
-            fmxAlias = this.fmxAliases.get(aliasName);
+            fmxAlias = this.fmxAliasMap.get(aliasName);
         }
         return fmxAlias;
     }
@@ -116,8 +116,9 @@ export class FamixFunctions {
     public createOrGetFamixClass(cls: ClassDeclaration): Famix.Class | Famix.ParameterizableClass {
         let fmxClass: Famix.Class | Famix.ParameterizableClass;
         const isAbstract = cls.isAbstract();
+        const classFullyQualifiedName = this.FQNFunctions.getFQN(cls);
         const clsName = cls.getName();
-        if (!this.fmxClasses.has(clsName)) {
+        if (!this.fmxClassMap.has(classFullyQualifiedName)) {
             const isGeneric = cls.getTypeParameters().length;
             if (isGeneric) {
                 fmxClass = new Famix.ParameterizableClass(this.famixRep);
@@ -127,14 +128,15 @@ export class FamixFunctions {
             }
 
             fmxClass.setName(clsName);
+            fmxClass.setFullyQualifiedName(classFullyQualifiedName);
             fmxClass.setIsAbstract(isAbstract);
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(cls, fmxClass);
 
-            this.fmxClasses.set(clsName, fmxClass);
+            this.fmxClassMap.set(classFullyQualifiedName, fmxClass);
         }
         else {
-            fmxClass = this.fmxClasses.get(clsName) as (Famix.Class | Famix.ParameterizableClass);
+            fmxClass = this.fmxClassMap.get(classFullyQualifiedName) as (Famix.Class | Famix.ParameterizableClass);
         }
         return fmxClass;
     }
@@ -147,7 +149,8 @@ export class FamixFunctions {
     public createOrGetFamixInterface(inter: InterfaceDeclaration): Famix.Interface | Famix.ParameterizableInterface {
         let fmxInterface: Famix.Interface | Famix.ParameterizableInterface;
         const interName = inter.getName();
-        if (!this.fmxInterfaces.has(interName)) {
+        const interFullyQualifiedName = this.FQNFunctions.getFQN(inter);
+        if (!this.fmxInterfaceMap.has(interName)) {
             const isGeneric = inter.getTypeParameters().length;
             if (isGeneric) {
                 fmxInterface = new Famix.ParameterizableInterface(this.famixRep);
@@ -160,10 +163,10 @@ export class FamixFunctions {
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(inter, fmxInterface);
 
-            this.fmxInterfaces.set(interName, fmxInterface);
+            this.fmxInterfaceMap.set(interFullyQualifiedName, fmxInterface);
         }
         else {
-            fmxInterface = this.fmxInterfaces.get(interName) as (Famix.Interface | Famix.ParameterizableInterface);
+            fmxInterface = this.fmxInterfaceMap.get(interName) as (Famix.Interface | Famix.ParameterizableInterface);
         }
         return fmxInterface;
     }

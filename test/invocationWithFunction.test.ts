@@ -1,18 +1,31 @@
 import { Importer } from '../src/analyze';
-import { Function } from "../src/lib/famix/src/model/famix/function";
+import { Function as FamixFunctionEntity } from "../src/lib/famix/src/model/famix/function";
 import { Variable } from "../src/lib/famix/src/model/famix/variable";
 import { Invocation } from "../src/lib/famix/src/model/famix/invocation";
+import { Project } from 'ts-morph';
 
 const importer = new Importer();
 
-const fmxRep = importer.famixRepFromSource("invocationWithFunction", 
-    'function func(): void {}\n\
-\n\
-const x1 = func();\n\
-');
+const project = new Project();
+project.createSourceFile("invocationWithFunction.ts", 
+`function func(): void {}
+const x1 = func();`);
+
+const fmxRep = importer.famixRepFromProject(project);
+
+describe('tests for project containing the source file', () => {
+    it("should contain one source file", () => {
+        expect(project.getSourceFiles().length).toBe(1);
+    });
+    it("should contain a source file 'invocationWithFunction.ts'", () => {
+        expect(project.getSourceFiles()[0].getFilePath().endsWith("invocationWithFunction.ts")).toBe(true);
+    });
+});
 
 describe('Tests for invocation with function', () => {
-    
+    it("should contain one function", () => {
+        expect(fmxRep._getAllEntitiesWithType("Function").size).toBe(1);
+    });
     it("should contain a variable 'x1'", () => {
         const pList = Array.from(fmxRep._getAllEntitiesWithType("Variable") as Set<Variable>);
         expect(pList).toBeTruthy();
@@ -20,7 +33,7 @@ describe('Tests for invocation with function', () => {
         expect(x1).toBeTruthy();
     });
     
-    const theFunction = fmxRep._getFamixFunction("func") as Function;
+    const theFunction = fmxRep._getFamixFunction("func") as FamixFunctionEntity;
     const invocations = Array.from(fmxRep._getAllEntitiesWithType("Invocation"));
     
     it("should contain one invocation", () => {

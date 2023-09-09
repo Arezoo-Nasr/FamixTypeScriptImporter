@@ -27,44 +27,47 @@ export class Importer {
      * @returns The Famix repository containing the Famix model
      */
     public famixRepFromPaths(paths: Array<string>): FamixRepository {
-        let famixRep: FamixRepository;
 
-        try {
-            console.info(`famixRepFromPaths: paths: ${paths}`);
+//        try {
+        console.info(`famixRepFromPaths: paths: ${paths}`);
+        this.project.addSourceFilesAtPaths(paths);
+        this.processEntities(this.project);
 
-            const sourceFiles = this.project.addSourceFilesAtPaths(paths);
-            this.processFiles.processFiles(sourceFiles);
-
-            const accesses = this.processFiles.getAccesses();
-            const methodsAndFunctionsWithId = this.processFiles.getMethodsAndFunctionsWithId();
-            const classes = this.processFiles.getClasses();
-            const interfaces = this.processFiles.getInterfaces();
-            const modules = this.processFiles.getModules();
-            const exports = this.processFiles.getExports();
-
-            this.processImportClauses.processImportClauses(modules, exports);
-            this.processAccesses.processAccesses(accesses);
-            this.processInvocations.processInvocations(methodsAndFunctionsWithId);
-            this.processInheritances.processInheritances(classes, interfaces);
-
-            famixRep = this.famixFunctions.getFamixRepository();
-        }
-        catch (error) {
-            console.error(`> ERROR: got exception ${error}. Exiting...`);
-            console.error(error.message);
-            console.error(error.stack);
-            process.exit(1);
-        }
+        const famixRep = this.famixFunctions.getFamixRepository();
+//        }
+//        catch (error) {
+            // console.error(`> ERROR: got exception ${error}. Exiting...`);
+            // console.error(error.message);
+            // console.error(error.stack);
+            // process.exit(1);
+//        }
 
         return famixRep;
     }
 
+    private processEntities(project) {
+        this.processFiles.processFiles(project.getSourceFiles());
+        const accesses = this.processFiles.getAccesses();
+        const methodsAndFunctionsWithId = this.processFiles.getMethodsAndFunctionsWithId();
+        const classes = this.processFiles.getClasses();
+        const interfaces = this.processFiles.getInterfaces();
+        const modules = this.processFiles.getModules();
+        const exports = this.processFiles.getExports();
+
+        this.processImportClauses.processImportClauses(modules, exports);
+        this.processAccesses.processAccesses(accesses);
+        this.processInvocations.processInvocations(methodsAndFunctionsWithId);
+        this.processInheritances.processInheritances(classes, interfaces);
+    }
+
     /**
      * Main method for tests
+     *
      * @param filename The name of the file to analyze
      * @param source A TypeScript source code
      * @returns The Famix repository containing the Famix model
      */
+    // TODO: this is slow because it writes the source code to a file and then reads it again - it's possible to just pass the source code to the ts-morph project
     public famixRepFromSource(filename: string, source: string): FamixRepository {
         const filePath = `./test_src/${filename}.ts`;
 
@@ -81,10 +84,11 @@ export class Importer {
      * @returns The Famix repository containing the Famix model
      */
     public famixRepFromProject(project: Project): FamixRepository {
-        const sourceFileNames = project.getSourceFiles().map(f => f.getFilePath()) as Array<string>;
+        //const sourceFileNames = project.getSourceFiles().map(f => f.getFilePath()) as Array<string>;
 
-        const famixRep = this.famixRepFromPaths(sourceFileNames);
+        //const famixRep = this.famixRepFromPaths(sourceFileNames);
+        this.processEntities(project);
 
-        return famixRep;
+        return this.famixFunctions.getFamixRepository();
     }
 }
