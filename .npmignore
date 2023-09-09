@@ -1,0 +1,8 @@
+node_modules
+test
+test_src
+PUMLModels
+JSONModels
+doc-metamodel
+coverage
+.github
