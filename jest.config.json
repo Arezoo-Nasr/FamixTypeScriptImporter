@@ -1,0 +1,10 @@
+{
+  "collectCoverage": false,
+  "coverageDirectory": "coverage",
+  "coverageProvider": "babel",
+  "transform": {
+    "^.+\\.tsx?$": ["ts-jest", { "isolatedModules": true }]
+  },
+  "testEnvironment": "jest-environment-node",
+  "verbose": true
+}
