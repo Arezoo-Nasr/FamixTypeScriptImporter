@@ -347,12 +347,13 @@ export class ProcessFiles {
         const fmxProperty = this.famixFunctions.createFamixProperty(p);
 
         console.info(`processProperty: property: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxProperty.getFullyQualifiedName()}`);
+        console.info(` ---> It's a Property${(p instanceof PropertySignature) ? "Signature" : "Declaration"}!`);
 
         this.processComments(p, fmxProperty);
 
         if (!(p instanceof PropertySignature)) {
             this.processDecorators(p, fmxProperty);
-
+            console.info(`processProperty: adding access: ${p.getName()}, (${p.getType().getText()}) Famix ${fmxProperty.getName()}`);
             this.accesses.set(fmxProperty.id, p);
         }
 

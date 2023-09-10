@@ -40,9 +40,16 @@ export class ProcessAccesses {
      */
     private processNodeForAccesses(n: Identifier, id: number): void {
         try {
+            // sometimes node's first ancestor is a PropertyDeclaration, which is not an access
+            // see https://github.com/fuhrmanator/FamixTypeScriptImporter/issues/9
+            // check for a node whose first ancestor is a property declaration and bail?
+            // This may be a bug in ts-morph?
+            if (n.getFirstAncestorOrThrow().getKindName() === "PropertyDeclaration") {
+                console.info(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()}) is a PropertyDeclaration. Skipping...`);
+                return;
+            }
             this.famixFunctions.createFamixAccess(n, id);
-
-            console.info(`processNodeForAccesses: node: node, (${n.getType().getText()})`);
+            console.info(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()})`);
         } catch (error) {
             console.error(`> WARNING: got exception ${error}. ScopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing...`);
         }
