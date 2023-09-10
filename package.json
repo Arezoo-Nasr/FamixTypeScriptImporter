@@ -1,7 +1,7 @@
 {
   "name": "ts2famix",
   "version": "1.0.9",
-  "description": "Examples of the TypeScript compiler API usage",
+  "description": "A TypeScript to JSON importer for Moose 10.",
   "main": "dist/ts2famix-cli.js",
   "scripts": {
     "dev": "ts-node src/ts2famix-cli.ts",

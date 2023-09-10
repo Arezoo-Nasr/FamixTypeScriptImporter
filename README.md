@@ -7,20 +7,59 @@ Create a [FamixTypeScript](https://github.com/fuhrmanator/FamixTypeScript) model
 ## Installation
 
 ```sh
-npm install
+npm install ts2famix
 ```
 
 ## Usage
 
-Instructions for using the command-line importer :
+Instructions for using the command-line importer:
 
 ```sh
-ts-node src/ts2famix-tsconfig.ts --help
+ts2famix --help
+```
+
+## Parse a full project
+
+```sh
+ts2famix -i ../path/to/project/tsconfig.json -o JSONModels/projectName.json
 ```
 or
 ```sh
-ts-node src/ts2famix-cli.ts --help
+ts2famix -i "../path/to/project/**/*.ts" -o JSONModels/projectName.json
 ```
+
+## Import the JSON model into Moose 🫎
+
+You need to copy the "```JSONModels/projectName.json```" into your "```Pharo/images/[imageName]```" directory.
+
+For a Moose Suite 10 (stable) user with the Pharo directory in the root directory, do : 
+```sh
+cp JSONModels/projectName.json ~/Pharo/images/Moose\ Suite\ 10\ \(stable\)/.
+```
+
+Then, in a Moose Playground, do :
+```st
+Metacello new 
+  githubUser: 'fuhrmanator' project: 'FamixTypeScript' commitish: 'master' path: 'src';
+  baseline: 'FamixTypeScript';
+  load
+```
+
+This command installs the TypeScript metamodel into Moose.
+
+Then, generate the metamodel with :  
+```Library > Famix > Manage metamodels > Regenerate all metamodels```
+
+Then, in a Moose Playground, do :
+```st
+'projectName.json' asFileReference readStreamDo:
+  [ :stream | model := FamixTypeScriptModel new 
+    importFromJSONStream: stream. model install ].
+```
+
+This command imports the JSON model into Moose.
+
+## Developer info
 
 Run tests :
 ```sh
@@ -57,52 +96,11 @@ Then, open "```doc-uml/metamodel.svg```" with your favorite image viewer :
 eog doc-uml/metamodel.svg &
 ```
 
-## Parse a full project
-
-```sh
-ts-node src/ts2famix-tsconfig.ts -i ../path/to/project/tsconfig.json -o JSONModels/projectName.json
-```
-or
-```sh
-ts-node src/ts2famix-cli.ts -i "../path/to/project/**/*.ts" -o JSONModels/projectName.json
-```
-
 ## Generate an object diagram of the JSON model
 
 ```sh
 ts-node src/famix2puml.ts -i JSONModels/projectName.json -o PUMLModels/projectName.puml
 ```
-
-## Import the JSON model into Moose 🫎
-
-You need to copy the "```JSONModels/projectName.json```" into your "```Pharo/images/[imageName]```" directory.
-
-For a Moose Suite 10 (stable) user with the Pharo directory in the root directory, do : 
-```sh
-cp JSONModels/projectName.json ~/Pharo/images/Moose\ Suite\ 10\ \(stable\)/.
-```
-
-Then, in a Moose Playground, do :
-```st
-Metacello new 
-  githubUser: 'fuhrmanator' project: 'FamixTypeScript' commitish: 'master' path: 'src';
-  baseline: 'FamixTypeScript';
-  load
-```
-
-This command installs the TypeScript metamodel into Moose.
-
-Then, generate the metamodel with :  
-```Library > Famix > Manage metamodels > Regenerate all metamodels```
-
-Then, in a Moose Playground, do :
-```st
-'projectName.json' asFileReference readStreamDo:
-  [ :stream | model := FamixTypeScriptModel new 
-    importFromJSONStream: stream. model install ].
-```
-
-This command imports the JSON model into Moose.
 
 ## TypeScript Metamodel API documentation (visualization)
 
