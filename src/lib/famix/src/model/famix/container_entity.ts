@@ -4,7 +4,7 @@ import { Invocation } from "./invocation";
 import { NamedEntity } from "./named_entity";
 import { Reference } from "./reference";
 import { Access } from "./access";
-import { Function } from "./function";
+import { Function as FamixFunctionEntity } from "./function";
 import { Variable } from "./variable";
 
 export class ContainerEntity extends NamedEntity {
@@ -115,13 +115,13 @@ export class ContainerEntity extends NamedEntity {
     }
   }
 
-  private childrenFunctions: Set<Function> = new Set();
+  private childrenFunctions: Set<FamixFunctionEntity> = new Set();
 
-  public getFunctions(): Set<Function> {
+  public getFunctions(): Set<FamixFunctionEntity> {
     return this.childrenFunctions;
   }
 
-  public addFunction(childFunction: Function): void {
+  public addFunction(childFunction: FamixFunctionEntity): void {
     if (!this.childrenFunctions.has(childFunction)) {
       this.childrenFunctions.add(childFunction);
       childFunction.setParentContainerEntity(this);

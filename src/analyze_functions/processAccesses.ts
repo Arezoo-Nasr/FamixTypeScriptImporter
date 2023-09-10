@@ -18,11 +18,11 @@ export class ProcessAccesses {
 
     /**
      * Builds a Famix model for the accesses on the parameters, variables, properties and enum members of the source files
-     * @param accesses A map of parameters, variables, properties and enum members with their id
+     * @param accessMap A map of parameters, variables, properties and enum members with their id
      */
-    public processAccesses(accesses: Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>): void {
+    public processAccesses(accessMap: Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>): void {
         console.info(`processAccesses: Creating accesses:`);
-        accesses.forEach((v, id) => {
+        accessMap.forEach((v, id) => {
             console.info(`processAccesses: Accesses to ${v.getName()}`);
             try {
                 const temp_nodes = v.findReferencesAsNodes() as Array<Identifier>;
@@ -45,7 +45,7 @@ export class ProcessAccesses {
             // check for a node whose first ancestor is a property declaration and bail?
             // This may be a bug in ts-morph?
             if (n.getFirstAncestorOrThrow().getKindName() === "PropertyDeclaration") {
-                console.info(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()}) is a PropertyDeclaration. Skipping...`);
+                console.info(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()})'s first ancestor is a PropertyDeclaration. Skipping...`);
                 return;
             }
             this.famixFunctions.createFamixAccess(n, id);

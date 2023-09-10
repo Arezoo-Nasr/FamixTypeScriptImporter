@@ -11,7 +11,7 @@ export class ProcessFiles {
 
     private famixFunctions: FamixFunctions; // FamixFunctions object, it contains all the functions needed to create Famix entities
     private methodsAndFunctionsWithId = new Map<number, MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | FunctionExpression>(); // Maps the Famix method, constructor, getter, setter and function ids to their ts-morph method, constructor, getter, setter or function object
-    private accesses = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>(); // Maps the Famix parameter, variable, property and enum value ids to their ts-morph parameter, variable, property or enum member object
+    private accessMap = new Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>(); // Maps the Famix parameter, variable, property and enum value ids to their ts-morph parameter, variable, property or enum member object
     private classes = new Array<ClassDeclaration>(); // Array of all the classes of the source files
     private interfaces = new Array<InterfaceDeclaration>(); // Array of all the interfaces of the source files
     private modules = new Array<SourceFile>(); // Array of all the source files which are modules
@@ -57,7 +57,7 @@ export class ProcessFiles {
      * @returns The map of accesses
      */
     public getAccesses(): Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember> {
-        return this.accesses;
+        return this.accessMap;
     }
 
     /**
@@ -348,14 +348,19 @@ export class ProcessFiles {
 
         console.info(`processProperty: property: ${p.getName()}, (${p.getType().getText()}), fqn = ${fmxProperty.getFullyQualifiedName()}`);
         console.info(` ---> It's a Property${(p instanceof PropertySignature) ? "Signature" : "Declaration"}!`);
-
-        this.processComments(p, fmxProperty);
+        const ancestor = p.getFirstAncestorOrThrow();
+        console.info(` ---> Its first ancestor is a ${ancestor.getKindName()}`);
 
         if (!(p instanceof PropertySignature)) {
             this.processDecorators(p, fmxProperty);
-            console.info(`processProperty: adding access: ${p.getName()}, (${p.getType().getText()}) Famix ${fmxProperty.getName()}`);
-            this.accesses.set(fmxProperty.id, p);
+            // only add access if the p's first ancestor is not a PropertyDeclaration
+            if (ancestor.getKindName() !== "PropertyDeclaration") {
+                console.info(`processProperty: adding access: ${p.getName()}, (${p.getType().getText()}) Famix ${fmxProperty.getName()}`);
+                this.accessMap.set(fmxProperty.id, p);
+            }
         }
+
+        this.processComments(p, fmxProperty);
 
         return fmxProperty;
     }
@@ -474,7 +479,8 @@ export class ProcessFiles {
         const parent = p.getParent();
 
         if (!(parent instanceof MethodSignature)) {
-            this.accesses.set(fmxParam.id, p);
+            console.info(`processParameter: adding access: ${p.getName()}, (${p.getType().getText()}) Famix ${fmxParam.getName()}`);
+            this.accessMap.set(fmxParam.id, p);
         }
 
         return fmxParam;
@@ -539,7 +545,8 @@ export class ProcessFiles {
 
         this.processComments(v, fmxVar);
 
-        this.accesses.set(fmxVar.id, v);
+        console.info(`processVariable: adding access: ${v.getName()}, (${v.getType().getText()}) Famix ${fmxVar.getName()}`);
+        this.accessMap.set(fmxVar.id, v);
 
         return fmxVar;
     }
@@ -576,7 +583,8 @@ export class ProcessFiles {
 
         this.processComments(v, fmxEnumValue);
 
-        this.accesses.set(fmxEnumValue.id, v);
+        console.info(`processEnumValue: adding access: ${v.getName()}, (${v.getType().getText()}) Famix ${fmxEnumValue.getName()}`);
+        this.accessMap.set(fmxEnumValue.id, v);
 
         return fmxEnumValue;
     }
