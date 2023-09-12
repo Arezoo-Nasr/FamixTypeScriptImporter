@@ -11,7 +11,7 @@ export class FamixFunctionsTypes {
 
     private famixRep: FamixRepository; // The Famix repository
     private FQNFunctions = new FQNFunctions(); // The fully qualified name functions
-    private fmxTypes = new Map<string, Famix.Type | Famix.PrimitiveType | Famix.ParameterizedType>(); // Maps the type names to their Famix model
+    private fmxTypeMap = new Map<string, Famix.Type | Famix.PrimitiveType | Famix.ParameterizedType>(); // Maps the type names to their Famix model
     private famixFunctionsIndex: FamixFunctionsIndex; // FamixFunctionsIndex object, it contains all the functions needed to create Famix index file anchors
 
     /**
@@ -34,6 +34,8 @@ export class FamixFunctionsTypes {
         let isPrimitiveType = false;
         let isParameterizedType = false;
 
+        console.info("Creating (or getting) type: " + typeName + "' of element: " + element.getText() + " of kind: " + element.getKindName());
+
         const typeAncestor = this.findTypeAncestor(element);
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(typeAncestor);
         const ancestor = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
@@ -49,7 +51,7 @@ export class FamixFunctionsTypes {
             isParameterizedType = true;
         }
 
-        if (!this.fmxTypes.has(typeName)) {
+        if (!this.fmxTypeMap.has(typeName)) {
             if (isPrimitiveType) {
                 fmxType = new Famix.PrimitiveType(this.famixRep);
                 fmxType.setIsStub(true);
@@ -74,10 +76,10 @@ export class FamixFunctionsTypes {
             
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(null, fmxType);
 
-            this.fmxTypes.set(typeName, fmxType);
+            this.fmxTypeMap.set(typeName, fmxType);
         }
         else {
-            fmxType = this.fmxTypes.get(typeName);
+            fmxType = this.fmxTypeMap.get(typeName);
         }
 
         return fmxType;
