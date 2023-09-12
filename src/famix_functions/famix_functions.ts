@@ -40,7 +40,8 @@ export class FamixFunctions {
     public createOrGetFamixFile(f: SourceFile, isModule: boolean): Famix.ScriptEntity | Famix.Module {
         let fmxFile: Famix.ScriptEntity | Famix.Module;
         const fileName = f.getBaseName();
-        if (!this.fmxFileMap.has(fileName)) {
+        const fullyQualifiedFilename = f.getFilePath();
+        if (!this.fmxFileMap.has(fullyQualifiedFilename)) {
             if (isModule) {
                 fmxFile = new Famix.Module(this.famixRep); 
             }
@@ -53,10 +54,10 @@ export class FamixFunctions {
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(f, fmxFile);
 
-            this.fmxFileMap.set(fileName, fmxFile);
+            this.fmxFileMap.set(fullyQualifiedFilename, fmxFile);
         }
         else {
-            fmxFile = this.fmxFileMap.get(fileName);
+            fmxFile = this.fmxFileMap.get(fullyQualifiedFilename);
         }
         return fmxFile;
     }
@@ -91,19 +92,22 @@ export class FamixFunctions {
     public createFamixAlias(a: TypeAliasDeclaration): Famix.Alias {
         let fmxAlias: Famix.Alias;
         const aliasName = a.getName();
-        if (!this.fmxAliasMap.has(aliasName)) {
+        const aliasFullyQualifiedName = a.getType().getText(); // this.FQNFunctions.getFQN(a);
+        if (!this.fmxAliasMap.has(aliasFullyQualifiedName)) {
             fmxAlias = new Famix.Alias(this.famixRep);
             fmxAlias.setName(a.getName());
+            const aliasNameWithGenerics = aliasName + (a.getTypeParameters().length ? ("<" + a.getTypeParameters().map(tp => tp.getName()).join(", ") + ">") : "");
+            console.info(`> NOTE: alias ${aliasName} has fully qualified name ${aliasFullyQualifiedName} and name with generics ${aliasNameWithGenerics}.`);
 
-            const fmxType = this.createOrGetFamixType(aliasName, a);
+            const fmxType = this.createOrGetFamixType(aliasNameWithGenerics, a);
             fmxAlias.setAliasedEntity(fmxType);
 
             this.famixFunctionsIndex.makeFamixIndexFileAnchor(a, fmxAlias);
 
-            this.fmxAliasMap.set(aliasName, fmxAlias);
+            this.fmxAliasMap.set(aliasFullyQualifiedName, fmxAlias);
         }
         else {
-            fmxAlias = this.fmxAliasMap.get(aliasName);
+            fmxAlias = this.fmxAliasMap.get(aliasFullyQualifiedName);
         }
         return fmxAlias;
     }

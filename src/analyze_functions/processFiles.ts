@@ -32,7 +32,7 @@ export class ProcessFiles {
      */
     public processFiles(sourceFiles: Array<SourceFile>): void {
         sourceFiles.forEach(file => {
-            console.info(`processFiles: File: >>>>>>>>>> ${file.getBaseName()}`);
+            console.info(`processFiles: File: >>>>>>>>>> ${file.getFilePath()}`);
 
             // Computes the cyclomatic complexity metrics for the current source file if it exists (i.e. if it is not from a jest test)
             if (fs.existsSync(file.getFilePath()))
