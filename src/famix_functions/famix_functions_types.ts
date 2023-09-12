@@ -37,6 +37,9 @@ export class FamixFunctionsTypes {
         const typeAncestor = this.findTypeAncestor(element);
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(typeAncestor);
         const ancestor = this.getFamixEntityByFullyQualifiedName(ancestorFullyQualifiedName) as Famix.ContainerEntity;
+        if (!ancestor) {
+            throw new Error(`Ancestor ${ancestorFullyQualifiedName} not found.`);
+        }
 
         if (typeName === "number" || typeName === "string" || typeName === "boolean" || typeName === "bigint" || typeName === "symbol" || typeName === "undefined" || typeName === "null") {
             isPrimitiveType = true;
