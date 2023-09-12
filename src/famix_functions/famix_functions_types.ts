@@ -74,7 +74,7 @@ export class FamixFunctionsTypes {
             fmxType.setName(typeName);
             fmxType.setContainer(ancestor);
             
-            this.famixFunctionsIndex.makeFamixIndexFileAnchor(null, fmxType);
+            this.famixFunctionsIndex.makeFamixIndexFileAnchor(element, fmxType);
 
             this.fmxTypeMap.set(typeName, fmxType);
         }

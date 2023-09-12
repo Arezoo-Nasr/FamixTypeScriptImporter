@@ -3,6 +3,7 @@ import { Importer } from '../src/analyze';
 import { ParameterizedType } from '../src/lib/famix/src/model/famix/parameterized_type';
 import { PrimitiveType } from '../src/lib/famix/src/model/famix/primitive_type';
 import { Type } from '../src/lib/famix/src/model/famix/type';
+import { IndexedFileAnchor } from '../src/lib/famix/src/model/famix';
 
 const importer = new Importer();
 const project = new Project();
@@ -58,4 +59,13 @@ describe('Tests for types', () => {
         expect(Array.from(theParameterizedType?.getArguments() as Set<Type>)[0]).toBe(theAnyType);
         expect(Array.from(theParameterizedType?.getArguments() as Set<Type>)[1]).toBe(theBooleanType);
     });
+
+    it("should have an IndexedFileAnchor with a filename of 'types.ts' for Map<any, boolean>", () => {
+        const theParameterizedType = Array.from(fmxRep._getAllEntitiesWithType("ParameterizedType") as Set<ParameterizedType>).find(t => t.getName() === "Map<any, boolean>");
+        // verify its indexed file anchor
+        const indexedFileAnchor = theParameterizedType?.getSourceAnchor();
+        expect(indexedFileAnchor).toBeTruthy();
+        expect((indexedFileAnchor as IndexedFileAnchor).getFileName().endsWith("types.ts")).toBe(true);
+    });
+
 });
