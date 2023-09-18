@@ -140,6 +140,7 @@ export class FamixFunctionsAssociations {
      * @param isDefaultExport A boolean indicating if the imported entity is a default export
      */
     public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean): void {
+        console.info(`createFamixImportClause: Creating import clause:`);
         const fmxImportClause = new Famix.ImportClause(this.famixRep);
 
         let importedEntity: Famix.NamedEntity;
@@ -177,13 +178,15 @@ export class FamixFunctionsAssociations {
 
         const importerFullyQualifiedName = this.FQNFunctions.getFQN(importer);
         const fmxImporter = this.getFamixEntityByFullyQualifiedName(importerFullyQualifiedName) as Famix.Module;
-        fmxImportClause.setImporter(fmxImporter);
+        fmxImportClause.setImportingEntity(fmxImporter);
         fmxImportClause.setImportedEntity(importedEntity);
         fmxImportClause.setModuleSpecifier(moduleSpecifier);
 
+        console.info(`createFamixImportClause: ${fmxImportClause.getJSON()}`);
+
         this.famixFunctionsIndex.makeFamixIndexFileAnchor(null, fmxImportClause);
 
-        fmxImporter.addImportClause(fmxImportClause);
+        fmxImporter.addOutgoingImport(fmxImportClause);
     }
 
     /**

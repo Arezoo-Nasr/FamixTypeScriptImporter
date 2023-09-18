@@ -1,5 +1,5 @@
 import { FamixBaseElement } from "./famix_base_element";
-import { Class, Interface, Namespace, Method, Function, Type, NamedEntity, ScriptEntity, Module } from "./model/famix";
+import { Class, Interface, Namespace, Variable, Method, Function as FamixFunctionEntity, Type, NamedEntity, ScriptEntity, Module } from "./model/famix";
 
 /**
  * This class is used to store all Famix elements
@@ -11,7 +11,8 @@ export class FamixRepository {
   private famixInterfaces = new Set<Interface>(); // All Famix interfaces
   private famixNamespaces = new Set<Namespace>(); // All Famix namespaces
   private famixMethods = new Set<Method>(); // All Famix methods
-  private famixFunctions = new Set<Function>(); // All Famix functions
+  private famixVariables = new Set<Variable>(); // All Famix variables
+  private famixFunctions = new Set<FamixFunctionEntity>(); // All Famix functions
   private famixFiles = new Set<ScriptEntity | Module>(); // All Famix files
   private idCounter = 1; // Id counter
 
@@ -88,8 +89,18 @@ export class FamixRepository {
    * @param name A function name
    * @returns The Famix function corresponding to the name or undefined if it doesn't exist
    */
-  public _getFamixFunction(name: string): Function | undefined {
+  public _getFamixFunction(name: string): FamixFunctionEntity | undefined {
     return Array.from(this.famixFunctions.values()).find(ns => ns.getName() === name);
+  }
+
+
+/**
+ * Gets a Famix variable by name
+ * @param name A variable name
+ * @returns The Famix variable corresponding to the name or undefined if it doesn't exist
+ */
+  public _getFamixVariable(name: string): Variable | undefined {
+    return Array.from(this.famixVariables.values()).find(v => v.getName() === name);
   }
 
   /**
@@ -172,9 +183,11 @@ export class FamixRepository {
       this.famixInterfaces.add(element);
     } else if (element instanceof Namespace) {
       this.famixNamespaces.add(element);
+    } else if (element instanceof Variable) {
+      this.famixVariables.add(element);
     } else if (element instanceof Method) {
       this.famixMethods.add(element);
-    } else if (element instanceof Function) {
+    } else if (element instanceof FamixFunctionEntity) {
       this.famixFunctions.add(element);
     } else if (element instanceof ScriptEntity || element instanceof Module) {
       this.famixFiles.add(element);

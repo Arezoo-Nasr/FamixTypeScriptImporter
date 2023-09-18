@@ -23,32 +23,32 @@ export class ProcessImportClauses {
      */
     public processImportClauses(modules: Array<SourceFile>, exports: Array<ReadonlyMap<string, ExportedDeclarations[]>>): void {
         console.info(`processImportClauses: Creating import clauses:`);
-        modules.forEach(f => {
-            f.getImportDeclarations().forEach(i => {
-                const path = this.getModulePath(i);
+        modules.forEach(module => {
+            module.getImportDeclarations().forEach(impDecl => {
+                const path = this.getModulePath(impDecl);
 
-                i.getNamedImports().forEach(ni => {
-                    console.info(`processImportClauses: Importing (named) ${ni.getName()} from ${i.getModuleSpecifierValue()}`);
-                    const importedEntityName = ni.getName();
-                    let bool = false;
+                impDecl.getNamedImports().forEach(namedImport => {
+                    console.info(`processImportClauses: Importing (named) ${namedImport.getName()} from ${impDecl.getModuleSpecifierValue()}`);
+                    const importedEntityName = namedImport.getName();
+                    let importFoundInExports = false;
                     exports.forEach(e => {
                         if (e.has(importedEntityName)) {
-                            bool = true;
+                            importFoundInExports = true;
                         }
                     });
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), path, ni, bool, false);
+                    this.famixFunctions.createFamixImportClause2({importer: module, moduleSpecifier: impDecl.getModuleSpecifierValue(), moduleSpecifierFilePath: path, importElement: namedImport, isInExports: importFoundInExports, isDefaultExport: false});
                 });
 
-                const defaultImport = i.getDefaultImport();
+                const defaultImport = impDecl.getDefaultImport();
                 if (defaultImport !== undefined) {
-                    console.info(`processImportClauses: Importing (default) ${defaultImport.getText()} from ${i.getModuleSpecifierValue()}`);
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), path, defaultImport, false, true);
+                    console.info(`processImportClauses: Importing (default) ${defaultImport.getText()} from ${impDecl.getModuleSpecifierValue()}`);
+                    this.famixFunctions.createFamixImportClause(module, impDecl.getModuleSpecifierValue(), path, defaultImport, false, true);
                 }
 
-                const namespaceImport = i.getNamespaceImport();
+                const namespaceImport = impDecl.getNamespaceImport();
                 if (namespaceImport !== undefined) {
-                    console.info(`processImportClauses: Importing (namespace) ${namespaceImport.getText()} from ${i.getModuleSpecifierValue()}`);
-                    this.famixFunctions.createFamixImportClause(f, i.getModuleSpecifierValue(), path, namespaceImport, false, false);
+                    console.info(`processImportClauses: Importing (namespace) ${namespaceImport.getText()} from ${impDecl.getModuleSpecifierValue()}`);
+                    this.famixFunctions.createFamixImportClause(module, impDecl.getModuleSpecifierValue(), path, namespaceImport, false, false);
                 }
             }); 
         });

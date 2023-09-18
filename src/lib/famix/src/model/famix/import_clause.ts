@@ -5,15 +5,15 @@ import { NamedEntity } from "./named_entity";
 
 export class ImportClause extends Association {
 
-  private importer: Module;
+  private importingEntity: Module;
 
-  public getImporter(): Module {
-    return this.importer;
+  public getImportingEntity(): Module {
+    return this.importingEntity;
   }
 
-  public setImporter(importer: Module): void {
-    this.importer = importer;
-    importer.addImportClause(this);
+  public setImportingEntity(importer: Module): void {
+    this.importingEntity = importer;
+    importer.addOutgoingImport(this); // opposite
   }
 
   private importedEntity: NamedEntity;
@@ -24,7 +24,7 @@ export class ImportClause extends Association {
 
   public setImportedEntity(importedEntity: NamedEntity): void {
     this.importedEntity = importedEntity;
-    importedEntity.addImport(this);
+    importedEntity.addIncomingImport(this); // incomingImports in Famix TImportable/TImport
   }
 
   private moduleSpecifier: string;
@@ -46,7 +46,7 @@ export class ImportClause extends Association {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("importer", this.getImporter());
+    exporter.addProperty("importingEntity", this.getImportingEntity());
     exporter.addProperty("importedEntity", this.getImportedEntity());
     exporter.addProperty("moduleSpecifier", this.getModuleSpecifier());
   }
