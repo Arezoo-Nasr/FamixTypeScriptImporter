@@ -30,16 +30,16 @@ export class NamedEntity extends SourcedEntity {
     }
   }
 
-  private imports: Set<ImportClause> = new Set();
+  private incomingImports: Set<ImportClause> = new Set();
 
-  public getImports(): Set<ImportClause> {
-    return this.imports;
+  public getIncomingImports(): Set<ImportClause> {
+    return this.incomingImports;
   }
 
-  public addImport(anImport: ImportClause): void {
-    if (!this.imports.has(anImport)) {
-      this.imports.add(anImport);
-      anImport.setImportedEntity(this);
+  public addIncomingImport(anImport: ImportClause): void {
+    if (!this.incomingImports.has(anImport)) {
+      this.incomingImports.add(anImport);
+      anImport.setImportedEntity(this);  // opposite
     }
   }
 
@@ -90,7 +90,7 @@ export class NamedEntity extends SourcedEntity {
     super.addPropertiesToExporter(exporter);
     exporter.addProperty("fullyQualifiedName", this.getFullyQualifiedName());
     exporter.addProperty("receivedInvocations", this.getReceivedInvocations());
-    exporter.addProperty("imports", this.getImports());
+    exporter.addProperty("incomingImports", this.getIncomingImports());
     exporter.addProperty("name", this.getName());
     exporter.addProperty("aliases", this.getAliases());
     exporter.addProperty("decorators", this.getDecorators());

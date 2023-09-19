@@ -16,14 +16,23 @@ declare module "someModule" {}
 declare module "otherModule";
 
 declare namespace MyNamespace2 {}
-`);
+
+import { Action } from 'myLib';
+
+export namespace ToolbarConstants {
+  export namespace Actions {
+        export const CREATE_ACTION: Action = {
+            label: 'aLabel',
+        };
+  }
+}`);
 
 const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for namespaces', () => {
     
     it("should contain six namespaces", () => {
-        expect(fmxRep._getFamixNamespaces().size).toBe(6);
+        expect(fmxRep._getFamixNamespaces().size).toBe(8);
     });
 
     const theNamespace1 = fmxRep._getFamixNamespace("MyNamespace");
@@ -54,5 +63,24 @@ describe('Tests for namespaces', () => {
     const theNamespace6 = fmxRep._getFamixNamespace("MyNamespace2");
     it("should contain a namespace MyNamespace2", () => {
         expect(theNamespace6).toBeTruthy();
+    });
+
+    const theNamespace7 = fmxRep._getFamixNamespace("ToolbarConstants");
+    it("should contain a namespace ToolbarConstants", () => {
+        expect(theNamespace7).toBeTruthy();
+    });
+
+    const theNamespace8 = fmxRep._getFamixNamespace("Actions");
+    it("should contain a namespace ToolbarConstants", () => {
+        expect(theNamespace8).toBeTruthy();
+    });
+    // test to see if Actions is nested in ToolbarConstants
+    it("should have Actions nested in ToolbarConstants", () => {
+        expect(theNamespace8?.getParentScope()).toBe(theNamespace7);
+    });
+    // see if CREATE_ACTION is nested in Actions
+    const theVariable = fmxRep._getFamixVariable("CREATE_ACTION");
+    it("should have CREATE_ACTION nested in Actions", () => {
+        expect(theVariable?.getParentContainerEntity()).toBe(theNamespace8);
     });
 });

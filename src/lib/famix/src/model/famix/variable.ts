@@ -23,6 +23,6 @@ export class Variable extends StructuralEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("parentContainerEntity", this.getParentContainerEntity());
+    exporter.addProperty("parentBehaviouralEntity", this.getParentContainerEntity());
   }
 }

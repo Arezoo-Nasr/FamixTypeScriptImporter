@@ -4,19 +4,19 @@ import { ImportClause } from "./import_clause";
 
 export class Module extends ScriptEntity {
 
-  private importClauses: Set<ImportClause> = new Set();
-
-  public getImportClauses(): Set<ImportClause> {
-    return this.importClauses;
+  // incomingImports are in NamedEntity
+  private outgoingImports: Set<ImportClause> = new Set();
+  
+  getOutgoingImports() {
+    return this.outgoingImports;
   }
 
-  public addImportClause(importClause: ImportClause): void {
-    if (!this.importClauses.has(importClause)) {
-      this.importClauses.add(importClause);
-      importClause.setImporter(this);
+  addOutgoingImport(importClause: ImportClause) {
+    if (!this.outgoingImports.has(importClause)) {
+      this.outgoingImports.add(importClause);
+      importClause.setImportingEntity(this);  // opposite
     }
   }
-
 
   public getJSON(): string {
     const mse: FamixJSONExporter = new FamixJSONExporter("Module", this);
@@ -26,6 +26,6 @@ export class Module extends ScriptEntity {
 
   public addPropertiesToExporter(exporter: FamixJSONExporter): void {
     super.addPropertiesToExporter(exporter);
-    exporter.addProperty("importClauses", this.getImportClauses());
+    exporter.addProperty("outgoingImports", this.getOutgoingImports());
   }
 }

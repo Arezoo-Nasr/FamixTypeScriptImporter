@@ -533,9 +533,15 @@ export class FamixFunctions {
      * @param importElement The imported entity
      * @param isInExports A boolean indicating if the imported entity is in the exports
      * @param isDefaultExport A boolean indicating if the imported entity is a default export
-     */
+     */    
     public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean): void {
         this.famixFunctionsAssociations.createFamixImportClause(importer, moduleSpecifier, moduleSpecifierFilePath, importElement, isInExports, isDefaultExport);
+    }
+
+    // create the same function as createFamixImportClause but with a signature that has a single object parameter that has all the parameters
+    // this way we can call this function from the processImportClauses.ts file
+    public createFamixImportClause2(importClause: {importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean}): void {
+        this.famixFunctionsAssociations.createFamixImportClause(importClause.importer, importClause.moduleSpecifier, importClause.moduleSpecifierFilePath, importClause.importElement, importClause.isInExports, importClause.isDefaultExport);
     }
 
     /**

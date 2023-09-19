@@ -33,37 +33,38 @@ project.createSourceFile("entities.ts",
 
 // global scope
 var globalA;
-function globalFunc() {}
+function globalFunc() {
+    var aInGlobalFunc;
+    function fInGlobalFunc() {
+        var bInFInGlobalFunc;
+    }
+}
 `);
 
 const fmxRep = importer.famixRepFromProject(project);
 
 describe('Entities', () => {
 
-    const theClass = fmxRep._getFamixClass("EntityClass");
+    const theEntityClass = fmxRep._getFamixClass("EntityClass");
     const theSubclass = fmxRep._getFamixClass("class2");
 
     it("should contain an EntityClass", () => {
-        const theClass = fmxRep._getFamixClass("EntityClass");
-        expect(theClass).toBeTruthy();
+        expect(theEntityClass).toBeTruthy();
     });
 
     it("should contain an EntityClass with four methods", () => {
-        const theClass = fmxRep._getFamixClass("EntityClass");
-        if (theClass) expect(theClass.getMethods().size).toBe(4);
+        expect(theEntityClass?.getMethods().size).toBe(4);
     });
 
     it("should contain methods with correct names", () => {
-        if (theClass) {
-            const mNames = fmxRep._methodNamesAsSetFromClass("EntityClass");    
-            expect(mNames.has("move") &&
+        const mNames = fmxRep._methodNamesAsSetFromClass("EntityClass");
+        expect(mNames.has("move") &&
             mNames.has("move2") &&
             mNames.has("constructor")).toBe(true);
-        } 
     });
 
     it("should contain a private method named move2 that returns void", () => {
-        if (theClass) {
+        if (theEntityClass) {
             const move2Method = fmxRep._getFamixMethod("move2");
             expect(move2Method).toBeTruthy();
             if (move2Method) {
@@ -73,7 +74,7 @@ describe('Entities', () => {
     });
    
     it("should contain a private method named move2 with a signature 'private move2(family: string): void'", () => {
-        if (theClass) {
+        if (theEntityClass) {
             const move2Method = fmxRep._getFamixMethod("move2");
             expect(move2Method).toBeTruthy();
             if (move2Method) {
@@ -89,34 +90,34 @@ describe('Entities', () => {
     });
 
     it("should have a parent relationship between EntityClass and its methods", () => {
-        if (theClass) { 
+        if (theEntityClass) { 
             const mParents = fmxRep._methodParentsAsSetFromClass("EntityClass");
             expect(mParents.size).toBe(1);
-            expect(Array.from(mParents)[0]).toEqual(theClass);
+            expect(Array.from(mParents)[0]).toEqual(theEntityClass);
         }
     });
 
     it("should contain an EntityClass with eight attributes", () => {
-        expect(theClass?.getProperties().size).toBe(8);
+        expect(theEntityClass?.getProperties().size).toBe(8);
     });
 
     it("should contain an EntityClass with an attribute named 'name' that is public", () => {
-        if (theClass) {
-            const nameAttribute = Array.from(theClass.getProperties())[0];
+        if (theEntityClass) {
+            const nameAttribute = Array.from(theEntityClass.getProperties())[0];
             expect(nameAttribute.getName()).toBe("name");
             expect(nameAttribute.getModifiers()).toContain("public");
         }
     });
 
     it("should contain an EntityClass with an attribute named 'name' of type string", () => {
-        if (theClass) {
-            expect(Array.from(theClass.getProperties())[0].getDeclaredType().getName()).toBe("string");
+        if (theEntityClass) {
+            expect(Array.from(theEntityClass.getProperties())[0].getDeclaredType().getName()).toBe("string");
         }
     });
 
     it("should contain an EntityClass with an attribute named 'p1' that is private and of type boolean", () => {
-        if (theClass) {
-            const p1Attribute = Array.from(theClass.getProperties())[1];
+        if (theEntityClass) {
+            const p1Attribute = Array.from(theEntityClass.getProperties())[1];
             expect(p1Attribute.getName()).toBe("p1");
             expect(p1Attribute.getModifiers()).toContain("private");
             expect(p1Attribute.getDeclaredType().getName()).toBe("boolean");
@@ -124,16 +125,16 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with an attribute named '#p2' that is run-time private and of type boolean", () => {
-        if (theClass) {
-            const p2Attribute = Array.from(theClass.getProperties())[2];
+        if (theEntityClass) {
+            const p2Attribute = Array.from(theEntityClass.getProperties())[2];
             expect(p2Attribute.getName()).toBe("#p2");
             expect(p2Attribute.getDeclaredType().getName()).toBe("boolean");
         }
     });
 
     it("should contain an EntityClass with an attribute named 'prot1' that is protected and of type Map<any, any>", () => {
-        if (theClass) {
-            const prot1Attribute = Array.from(theClass.getProperties())[3];
+        if (theEntityClass) {
+            const prot1Attribute = Array.from(theEntityClass.getProperties())[3];
             expect(prot1Attribute.getName()).toBe("prot1");
             expect(prot1Attribute.getModifiers()).toContain("protected");
             expect(prot1Attribute.getDeclaredType().getName()).toBe("Map<any, any>");
@@ -141,8 +142,8 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with an attribute named 'trustMe' that is guaranteed to be there (!) and of type string", () => {
-        if (theClass) {
-            const trustMeAttribute = Array.from(theClass.getProperties())[4];
+        if (theEntityClass) {
+            const trustMeAttribute = Array.from(theEntityClass.getProperties())[4];
             expect(trustMeAttribute.getName()).toBe("trustMe");
             expect(trustMeAttribute.getModifiers()).toContain("!");
             expect(trustMeAttribute.getDeclaredType().getName()).toBe("string");
@@ -150,8 +151,8 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with an attribute named 'ro' that is readonly and of type \"yes\"", () => {
-        if (theClass) {
-            const roAttribute = Array.from(theClass.getProperties())[5];
+        if (theEntityClass) {
+            const roAttribute = Array.from(theEntityClass.getProperties())[5];
             expect(roAttribute.getName()).toBe("ro");
             expect(roAttribute.getModifiers()).toContain("readonly");
             expect(roAttribute.getDeclaredType().getName()).toBe('"yes"');
@@ -159,8 +160,8 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with an attribute named '#userCount' that is static and of type number", () => {
-        if (theClass) {
-            const userCountAttribute = Array.from(theClass.getProperties())[6];
+        if (theEntityClass) {
+            const userCountAttribute = Array.from(theEntityClass.getProperties())[6];
             expect(userCountAttribute.getName()).toBe("#userCount");
             expect(userCountAttribute.getModifiers()).toContain("static");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('number');
@@ -168,8 +169,8 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with an attribute named 'optional' that is optional (?) and of type string", () => {
-        if (theClass) {
-            const userCountAttribute = Array.from(theClass.getProperties())[7];
+        if (theEntityClass) {
+            const userCountAttribute = Array.from(theEntityClass.getProperties())[7];
             expect(userCountAttribute.getName()).toBe("optional");
             expect(userCountAttribute.getModifiers()).toContain("?");
             expect(userCountAttribute.getDeclaredType().getName()).toBe('string');
@@ -177,14 +178,14 @@ describe('Entities', () => {
     });
 
     it("should contain an EntityClass with one subclass", () => {
-        if (theClass) {
-            expect(Array.from(theClass.getSubInheritances()).length).toBe(1);
+        if (theEntityClass) {
+            expect(Array.from(theEntityClass.getSubInheritances()).length).toBe(1);
         }
     });
 
     it("should contain an EntityClass with one subclass named 'class2'", () => {
-        if (theClass) {
-            const theClassSubclass = Array.from(theClass.getSubInheritances())[0].getSubclass();
+        if (theEntityClass) {
+            const theClassSubclass = Array.from(theEntityClass.getSubInheritances())[0].getSubclass();
             expect(theClassSubclass.getName()).toBe("class2");
             if (theSubclass) {
                 expect(theSubclass).toBe(theClassSubclass);
@@ -227,10 +228,19 @@ describe('Entities', () => {
         expect(globalFunc.getParentContainerEntity().getName()).toBe('entities.ts');
     });
 
-    it("should contain a variable 'globalA' with global scope", () => {
+    it("should contain a variable 'globalA'", () => {
         const list = Array.from(fmxRep._getAllEntitiesWithType("Variable") as Set<Variable>);
         expect(list).toBeTruthy();
         const globalVar = list.find(p => p.getName() === "globalA");
         expect(globalVar).toBeTruthy();
+    });
+
+    it("should contain a variable 'aInGlobalFunc' contained in 'globalFunc'", () => {
+        const list = Array.from(fmxRep._getAllEntitiesWithType("Variable") as Set<Variable>);
+        expect(list).toBeTruthy();
+        const globalVar = list.find(p => p.getName() === "aInGlobalFunc");
+        expect(globalVar).toBeTruthy();
+        expect(globalVar?.getParentContainerEntity().getName()).toBe('globalFunc');
+        expect(globalVar?.getJSON()).toMatch(/"parentBehaviouralEntity":{"ref":\d+}/);  // parentBehaviouralEntity is the name used in the Trait in Famix -- it is the parent container
     });
 });

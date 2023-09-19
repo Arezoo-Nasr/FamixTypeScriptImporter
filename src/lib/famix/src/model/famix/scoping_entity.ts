@@ -12,8 +12,11 @@ export class ScopingEntity extends ContainerEntity {
 
   public addNamespace(childNamespace: Namespace): void {
     if (!this.childrenNamespaces.has(childNamespace)) {
+      console.info("Adding namespace " + childNamespace.getName() + " to " + this.getName());
       this.childrenNamespaces.add(childNamespace);
       childNamespace.setParentScope(this);
+    } else {
+      console.info("Namespace " + childNamespace.getName() + " already added to " + this.getName());
     }
   }
 

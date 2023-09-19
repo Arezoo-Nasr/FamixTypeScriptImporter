@@ -3,6 +3,7 @@ import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
 import { FamixFunctionsIndex } from "./famix_functions_index";
+import { Alias, Class, Enum, Interface, Variable } from "../lib/famix/src/model/famix";
 
 /**
  * This class is used to build a Famix model for the associations
@@ -140,6 +141,7 @@ export class FamixFunctionsAssociations {
      * @param isDefaultExport A boolean indicating if the imported entity is a default export
      */
     public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean): void {
+        console.info(`createFamixImportClause: Creating import clause:`);
         const fmxImportClause = new Famix.ImportClause(this.famixRep);
 
         let importedEntity: Famix.NamedEntity;
@@ -177,13 +179,21 @@ export class FamixFunctionsAssociations {
 
         const importerFullyQualifiedName = this.FQNFunctions.getFQN(importer);
         const fmxImporter = this.getFamixEntityByFullyQualifiedName(importerFullyQualifiedName) as Famix.Module;
-        fmxImportClause.setImporter(fmxImporter);
+        fmxImportClause.setImportingEntity(fmxImporter);
         fmxImportClause.setImportedEntity(importedEntity);
         fmxImportClause.setModuleSpecifier(moduleSpecifier);
 
+        console.info(`createFamixImportClause: ${fmxImportClause.getImportedEntity()?.getName()} (of type ${fmxImportClause.getImportedEntity() instanceof Class ? 'Class' :
+        fmxImportClause.getImportedEntity() instanceof Interface ? 'Interface' :
+        fmxImportClause.getImportedEntity() instanceof Function ? 'Function' :
+        fmxImportClause.getImportedEntity() instanceof Enum ? 'Enum' :
+        fmxImportClause.getImportedEntity() instanceof Alias ? 'Alias' :
+        fmxImportClause.getImportedEntity() instanceof Variable ? 'Variable' :
+            'NamedEntity'}) is imported by ${fmxImportClause.getImportingEntity()?.getName()}`);
+
         this.famixFunctionsIndex.makeFamixIndexFileAnchor(null, fmxImportClause);
 
-        fmxImporter.addImportClause(fmxImportClause);
+        fmxImporter.addOutgoingImport(fmxImportClause);
     }
 
     /**
