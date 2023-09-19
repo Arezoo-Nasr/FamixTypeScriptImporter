@@ -241,6 +241,6 @@ describe('Entities', () => {
         const globalVar = list.find(p => p.getName() === "aInGlobalFunc");
         expect(globalVar).toBeTruthy();
         expect(globalVar?.getParentContainerEntity().getName()).toBe('globalFunc');
-        expect(globalVar?.getJSON()).toMatch(/"parentContainerEntity":{"ref":\d+}/);
+        expect(globalVar?.getJSON()).toMatch(/"parentBehaviouralEntity":{"ref":\d+}/);
     });
 });
