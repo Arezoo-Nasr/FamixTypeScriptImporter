@@ -11,7 +11,7 @@ project.createSourceFile("oneClassExporter.ts",
 project.createSourceFile("oneClassImporter.ts",
     `import {ExportedClass} from "./oneClassExport";`);
 
-project.createSourceFile("complexClassModule.ts",
+project.createSourceFile("complexExportModule.ts",
     `class ClassZ {}
 class ClassY {}
 export class ClassX {}
@@ -27,36 +27,53 @@ export namespace Nsp {}
 project.createSourceFile("defaultImporterModule.ts",
     `import * as test from "./sampleForModule.ts";`);
 
+project.createSourceFile("multipleClassImporterModule.ts",
+    `import { ClassZ } from "./complexExportModule.ts";`);
+
 const fmxRep = importer.famixRepFromProject(project);
+const NUMBER_OF_MODULES = 5, NUMBER_OF_IMPORT_CLAUSES = 3;
+
+const importClauses = Array.from(fmxRep._getAllEntitiesWithType("ImportClause")) as Array<ImportClause>;
+const moduleList = Array.from(fmxRep._getAllEntitiesWithType('Module')) as Array<Module>;
+const entityList = Array.from(fmxRep._getAllEntitiesWithType('NamedEntity')) as Array<NamedEntity>;
 
 describe('Tests for import clauses', () => {
-    it("should have four modules", () => {
-        const moduleList = Array.from(fmxRep._getAllEntitiesWithType('Module')) as Array<Module>;
-        expect(moduleList?.length).toBe(4);
+
+    it("should import ClassZ from module complexExporterModule.ts", () => {
+        expect(importClauses).toBeTruthy();
+        expect(importClauses.length).toBe(NUMBER_OF_IMPORT_CLAUSES);
+        // find the import clause for ClassZ
+        const importClause = importClauses.find(e => e.getImportedEntity()?.getName() === 'ClassZ');
+        expect(importClause).toBeTruthy();
+        // importing entity is multipleClassImporterModule.ts
+        expect(importClause?.getImportingEntity()).toBeTruthy();
+        expect(importClause?.getImportingEntity()?.getName()).toBe("multipleClassImporterModule.ts");
+    });
+
+    it(`should have ${NUMBER_OF_MODULES} modules`, () => {
+        expect(moduleList?.length).toBe(NUMBER_OF_MODULES);
         const exporterModule = moduleList.find(e => e.getName() === 'oneClassExporter.ts');
         expect(exporterModule).toBeTruthy();
         const importerModule = moduleList.find(e => e.getName() === 'oneClassImporter.ts');
         expect(importerModule).toBeTruthy();
-        const complexModule = moduleList.find(e => e.getName() === 'complexClassModule.ts');
+        const complexModule = moduleList.find(e => e.getName() === 'complexExportModule.ts');
         expect(complexModule).toBeTruthy();
     });
 
     it("should have a default import clause for test", () => {
-        const importClauses = Array.from(fmxRep._getAllEntitiesWithType("ImportClause")) as Array<ImportClause>;
         expect(importClauses).toBeTruthy();
-        expect(importClauses.length).toBe(2);
+        expect(importClauses.length).toBe(NUMBER_OF_IMPORT_CLAUSES);
         // find the import clause for ClassW
         const importClause = importClauses.find(e => e.getImportedEntity()?.getName() === 'test');
         expect(importClause).toBeTruthy();
-        // importing entity is complexClassModule.ts
+        // importing entity is complexExportModule.ts
         expect(importClause?.getImportingEntity()).toBeTruthy();
         expect(importClause?.getImportingEntity()?.getName()).toBe("defaultImporterModule.ts");
     });
 
     it("should contain an import clause for ExportedClass", () => {
-        const importClauses = Array.from(fmxRep._getAllEntitiesWithType("ImportClause")) as Array<ImportClause>;
         expect(importClauses).toBeTruthy();
-        expect(importClauses.length).toBe(2);
+        expect(importClauses.length).toBe(NUMBER_OF_IMPORT_CLAUSES);
         const importClause = importClauses.find(e => e.getImportedEntity()?.getName() === 'test');
         expect(importClause).toBeTruthy();
         // importing entity is oneClassImporter.ts
@@ -65,7 +82,6 @@ describe('Tests for import clauses', () => {
     });
 
     it("should contain one outgoingImports element for module oneClassImporter.ts", () => {
-        const moduleList = Array.from(fmxRep._getAllEntitiesWithType('Module')) as Array<Module>;
         const importerModule = moduleList.find(e => e.getName() === 'oneClassImporter.ts');
         expect(importerModule).toBeTruthy();
         expect(importerModule?.getOutgoingImports()).toBeTruthy();
@@ -74,7 +90,6 @@ describe('Tests for import clauses', () => {
     });
 
     it("should contain one imports element for module oneClassExporter.ts", () => {
-        const entityList = Array.from(fmxRep._getAllEntitiesWithType('NamedEntity')) as Array<NamedEntity>;
         const exportedEntity = entityList.find(e => e.getName() === 'ExportedClass');
         expect(exportedEntity).toBeTruthy();
         expect(exportedEntity?.getIncomingImports()).toBeTruthy();
