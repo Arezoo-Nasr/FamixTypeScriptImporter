@@ -26,24 +26,26 @@ describe('Tests for source text', () => {
         const theFile = Array.from(fmxRep._getAllEntitiesWithType("Module") as Set<Module>)[0];
         const theVariable = Array.from(theFile.getVariables())[0];
         const sourceAnchor = theVariable.getSourceAnchor() as IndexedFileAnchor;
-        expect(sourceAnchor.getStartPos()).toBe(4);
-        expect(sourceAnchor.getEndPos()).toBe(17);
+        // note: the +1 is because the source anchor is 1-based, but ts-morph is 0-based
+        expect(sourceAnchor.getStartPos()).toBe(4 + 1);
+        expect(sourceAnchor.getEndPos()).toBe(17 + 1);
         expect(sourceAnchor.getFileName().endsWith("simple.ts")).toBe(true);
         expect(project.getSourceFileOrThrow(
             sourceAnchor.getFileName()).getFullText().substring(
-                sourceAnchor.getStartPos(), sourceAnchor.getEndPos()))
+                sourceAnchor.getStartPos() - 1, sourceAnchor.getEndPos() - 1))
                 .toBe("a: number = 1");
     });
     it("should have a Variable 'currentSquareIndex' with the proper source text", () => {
         const theMethod = Array.from(fmxRep._getAllEntitiesWithType("Method") as Set<Method>)[0];
         const theVariable = Array.from(theMethod.getVariables())[0];
         const sourceAnchor = theVariable.getSourceAnchor() as IndexedFileAnchor;
-        expect(sourceAnchor.getStartPos()).toBe(355);
-        expect(sourceAnchor.getEndPos()).toBe(428);
+        // note: the +1 is because the source anchor is 1-based, but ts-morph is 0-based
+        expect(sourceAnchor.getStartPos()).toBe(355 + 1);
+        expect(sourceAnchor.getEndPos()).toBe(428 + 1);
         expect(sourceAnchor.getFileName().endsWith("simple.ts")).toBe(true);
         expect(project.getSourceFileOrThrow(
             sourceAnchor.getFileName()).getFullText().substring(
-                sourceAnchor.getStartPos(), sourceAnchor.getEndPos()))
+                sourceAnchor.getStartPos() - 1, sourceAnchor.getEndPos() - 1))
                 .toBe("currentSquareIndex = this.board.indexOf(this.currentPlayer.currentSquare)");
     });
 });
