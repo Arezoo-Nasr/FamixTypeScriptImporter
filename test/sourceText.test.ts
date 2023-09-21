@@ -8,6 +8,7 @@ const project = new Project();
 project.createSourceFile("test_src/simple.ts",
     `let a: number = 1;
 export class A {
+    public b: string = "💷💷💷💷";
     /**
      * Sends the current player back the number of spaces.
      * @param numberOfSpaces The number of spaces to move back.
@@ -37,8 +38,8 @@ describe('Tests for source text', () => {
         const theMethod = Array.from(fmxRep._getAllEntitiesWithType("Method") as Set<Method>)[0];
         const theVariable = Array.from(theMethod.getVariables())[0];
         const sourceAnchor = theVariable.getSourceAnchor() as IndexedFileAnchor;
-        expect(sourceAnchor.getStartPos()).toBe(320);
-        expect(sourceAnchor.getEndPos()).toBe(393);
+        expect(sourceAnchor.getStartPos()).toBe(355);
+        expect(sourceAnchor.getEndPos()).toBe(428);
         expect(sourceAnchor.getFileName().endsWith("simple.ts")).toBe(true);
         expect(project.getSourceFileOrThrow(
             sourceAnchor.getFileName()).getFullText().substring(
