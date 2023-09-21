@@ -34,7 +34,7 @@ export class FamixFunctionsTypes {
         let isPrimitiveType = false;
         let isParameterizedType = false;
 
-        console.info("Creating (or getting) type: " + typeName + "' of element: " + element.getText() + " of kind: " + element.getKindName());
+        console.info("Creating (or getting) type: '" + typeName + "' of element: " + element.getText() + " of kind: " + element.getKindName());
 
         const typeAncestor = this.findTypeAncestor(element);
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(typeAncestor);
@@ -43,7 +43,7 @@ export class FamixFunctionsTypes {
             throw new Error(`Ancestor ${ancestorFullyQualifiedName} not found.`);
         }
 
-        if (typeName === "number" || typeName === "string" || typeName === "boolean" || typeName === "bigint" || typeName === "symbol" || typeName === "undefined" || typeName === "null") {
+        if (typeName === "number" || typeName === "string" || typeName === "boolean" || typeName === "bigint" || typeName === "symbol" || typeName === "undefined" || typeName === "null" || typeName === "any" || typeName === "unknown" || typeName === "never" || typeName === "void") {
             isPrimitiveType = true;
         }
 
