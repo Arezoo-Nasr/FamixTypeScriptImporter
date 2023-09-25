@@ -4,6 +4,7 @@ import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
 import { FamixFunctionsIndex } from "./famix_functions_index";
 import { Alias, Class, Enum, Interface, Variable } from "../lib/famix/src/model/famix";
+import { logger } from "../analyze";
 
 /**
  * This class is used to build a Famix model for the associations
@@ -79,7 +80,7 @@ export class FamixFunctionsAssociations {
         const fmxInheritance = new Famix.Inheritance(this.famixRep);
         // const clsName = cls.getName();
         const classFullyQualifiedName = this.FQNFunctions.getFQN(cls);
-        console.info(`createFamixInheritance: classFullyQualifiedName: class fqn = ${classFullyQualifiedName}`);
+        logger.debug(`createFamixInheritance: classFullyQualifiedName: class fqn = ${classFullyQualifiedName}`);
         let subClass: Famix.Class | Famix.Interface;
         if (cls instanceof ClassDeclaration) {
             subClass = this.famixClassMap.get(classFullyQualifiedName);
@@ -141,7 +142,7 @@ export class FamixFunctionsAssociations {
      * @param isDefaultExport A boolean indicating if the imported entity is a default export
      */
     public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean): void {
-        console.info(`createFamixImportClause: Creating import clause:`);
+        logger.debug(`createFamixImportClause: Creating import clause:`);
         const fmxImportClause = new Famix.ImportClause(this.famixRep);
 
         let importedEntity: Famix.NamedEntity;
@@ -183,7 +184,7 @@ export class FamixFunctionsAssociations {
         fmxImportClause.setImportedEntity(importedEntity);
         fmxImportClause.setModuleSpecifier(moduleSpecifier);
 
-        console.info(`createFamixImportClause: ${fmxImportClause.getImportedEntity()?.getName()} (of type ${fmxImportClause.getImportedEntity() instanceof Class ? 'Class' :
+        logger.debug(`createFamixImportClause: ${fmxImportClause.getImportedEntity()?.getName()} (of type ${fmxImportClause.getImportedEntity() instanceof Class ? 'Class' :
         fmxImportClause.getImportedEntity() instanceof Interface ? 'Interface' :
         fmxImportClause.getImportedEntity() instanceof Function ? 'Function' :
         fmxImportClause.getImportedEntity() instanceof Enum ? 'Enum' :

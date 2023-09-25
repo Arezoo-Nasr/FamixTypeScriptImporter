@@ -38,7 +38,7 @@ cp JSONModels/projectName.json ~/Pharo/images/Moose\ Suite\ 10\ \(stable\)/.
 ```
 
 Then, in a Moose Playground, do :
-```st
+```smalltalk
 Metacello new 
   githubUser: 'fuhrmanator' project: 'FamixTypeScript' commitish: 'master' path: 'src';
   baseline: 'FamixTypeScript';
@@ -51,7 +51,7 @@ Then, generate the metamodel with :
 ```Library > Famix > Manage metamodels > Regenerate all metamodels```
 
 Then, in a Moose Playground, do :
-```st
+```smalltalk
 'projectName.json' asFileReference readStreamDo:
   [ :stream | model := FamixTypeScriptModel new 
     importFromJSONStream: stream. model install ].

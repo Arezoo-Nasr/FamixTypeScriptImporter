@@ -8,6 +8,11 @@ import { ProcessInvocations } from "./analyze_functions/processInvocations";
 import { ProcessInheritances } from "./analyze_functions/processInheritances";
 import { ProcessImportClauses } from "./analyze_functions/processImportClauses";
 
+import { Logger } from "tslog";
+
+export const logger = new Logger({ name: "ts2famix", minLevel: 3});
+export const config = { "expectGraphemes": false };
+
 /**
  * This class is used to build a Famix model from a TypeScript source code
  */
@@ -29,16 +34,16 @@ export class Importer {
     public famixRepFromPaths(paths: Array<string>): FamixRepository {
 
 //        try {
-        console.info(`famixRepFromPaths: paths: ${paths}`);
+        logger.debug(`famixRepFromPaths: paths: ${paths}`);
         this.project.addSourceFilesAtPaths(paths);
         this.processEntities(this.project);
 
         const famixRep = this.famixFunctions.getFamixRepository();
 //        }
 //        catch (error) {
-            // console.error(`> ERROR: got exception ${error}. Exiting...`);
-            // console.error(error.message);
-            // console.error(error.stack);
+            // logger.error(`> ERROR: got exception ${error}. Exiting...`);
+            // logger.error(error.message);
+            // logger.error(error.stack);
             // process.exit(1);
 //        }
 
@@ -91,4 +96,5 @@ export class Importer {
 
         return this.famixFunctions.getFamixRepository();
     }
+
 }
