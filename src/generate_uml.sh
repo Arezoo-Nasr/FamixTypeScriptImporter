@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Gets latest plantuml
 rm -f plantuml.jar
 wget --no-verbose https://downloads.sourceforge.net/project/plantuml/plantuml.jar

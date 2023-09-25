@@ -4,6 +4,7 @@ import yargs from "yargs";
 import { Importer } from './analyze';
 import { FamixRepository } from "./lib/famix/src/famix_repository";
 import { Project } from "ts-morph";
+import { config } from "./analyze";
 
 const argv = yargs
     .example(`ts2famix -i "path/to/project/**/*.ts" -o JSONModels/projectName.json`, 'Creates a JSON-format Famix model of typescript files.')
@@ -12,7 +13,20 @@ const argv = yargs
     .nargs('i', 1)
     .alias('o', 'output')
     .nargs('o', 1)
-    .demandOption('input').demandOption('output').parseSync();
+    .alias('l', 'loglevel')
+    .nargs('l', 1)
+    .default('l', 3)
+    .describe('l', 'Set minimum logging level 0: silly, 1: trace, 2: debug, 3: info, 4: warn, 5: error, 6: fatal')
+    .boolean('graphemes')
+    .default('graphemes', false)
+    .describe('graphemes', 'Process graphemes (outside of the BMP) to avoid source anchor offset errors (due to performance issues, this is disabled by default)')
+    .demandOption('input')
+    .demandOption('output')
+    .parseSync();
+
+import { logger } from './analyze';
+logger.settings.minLevel = Number(argv.loglevel) as number;
+config.expectGraphemes = argv.graphemes as boolean;
 
 const importer = new Importer();
 let famixRep: FamixRepository;
@@ -36,4 +50,4 @@ fs.writeFile(jsonFilePath, jsonOutput, (err) => {
     if (err) { throw err; }
 });
 
-console.info(`Created: ${jsonFilePath}`); 
+logger.info(`Created: ${jsonFilePath}`); 

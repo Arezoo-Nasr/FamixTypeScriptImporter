@@ -5,6 +5,7 @@ import { FQNFunctions } from "../fqn";
 import { FamixFunctionsIndex } from "./famix_functions_index";
 import { FamixFunctionsAssociations } from "./famix_functions_associations";
 import { FamixFunctionsTypes } from "./famix_functions_types";
+import { logger } from "../analyze";
 
 /**
  * This class contains all the functions needed to create Famix entities
@@ -97,7 +98,7 @@ export class FamixFunctions {
             fmxAlias = new Famix.Alias(this.famixRep);
             fmxAlias.setName(a.getName());
             const aliasNameWithGenerics = aliasName + (a.getTypeParameters().length ? ("<" + a.getTypeParameters().map(tp => tp.getName()).join(", ") + ">") : "");
-            console.info(`> NOTE: alias ${aliasName} has fully qualified name ${aliasFullyQualifiedName} and name with generics ${aliasNameWithGenerics}.`);
+            logger.debug(`> NOTE: alias ${aliasName} has fully qualified name ${aliasFullyQualifiedName} and name with generics ${aliasNameWithGenerics}.`);
 
             const fmxType = this.createOrGetFamixType(aliasNameWithGenerics, a);
             fmxAlias.setAliasedEntity(fmxType);
@@ -189,7 +190,7 @@ export class FamixFunctions {
         try {
             propTypeName = property.getType().getText().trim();
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for property: ${property.getName()}. Continuing...`);
+            logger.error(`> WARNING: got exception ${error}. Failed to get usable name for property: ${property.getName()}. Continuing...`);
         }
 
         const fmxType = this.createOrGetFamixType(propTypeName, property);
@@ -288,7 +289,7 @@ export class FamixFunctions {
         try {
             methodTypeName = method.getReturnType().getText().trim();            
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for return type of method: ${fmxMethod.getName()}. Continuing...`);
+            logger.error(`> WARNING: got exception ${error}. Failed to get usable name for return type of method: ${fmxMethod.getName()}. Continuing...`);
         }
 
         const fmxType = this.createOrGetFamixType(methodTypeName, method);
@@ -332,7 +333,7 @@ export class FamixFunctions {
         try {
             functionTypeName = func.getReturnType().getText().trim();
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for return type of function: ${func.getName()}. Continuing...`);
+            logger.error(`> WARNING: got exception ${error}. Failed to get usable name for return type of function: ${func.getName()}. Continuing...`);
         }
 
         const fmxType = this.createOrGetFamixType(functionTypeName, func);
@@ -359,7 +360,7 @@ export class FamixFunctions {
         try {
             paramTypeName = param.getType().getText().trim();
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for parameter: ${param.getName()}. Continuing...`);
+            logger.error(`> WARNING: got exception ${error}. Failed to get usable name for parameter: ${param.getName()}. Continuing...`);
         }
 
         const fmxType = this.createOrGetFamixType(paramTypeName, param);
@@ -397,7 +398,7 @@ export class FamixFunctions {
         try {
             variableTypeName = variable.getType().getText().trim();
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for variable: ${variable.getName()}. Continuing...`);
+            logger.error(`> WARNING: got exception ${error}. Failed to get usable name for variable: ${variable.getName()}. Continuing...`);
         }
 
         const fmxType = this.createOrGetFamixType(variableTypeName, variable);
@@ -435,7 +436,7 @@ export class FamixFunctions {
         try {
             enumValueTypeName = enumMember.getType().getText().trim();
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. Failed to get usable name for enum value: ${enumMember.getName()}. Continuing...`);
+            logger.error(`> WARNING: got exception ${error}. Failed to get usable name for enum value: ${enumMember.getName()}. Continuing...`);
         }
 
         const fmxType = this.createOrGetFamixType(enumValueTypeName, enumMember);
