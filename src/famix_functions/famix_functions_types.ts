@@ -3,6 +3,7 @@ import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
 import { FamixFunctionsIndex } from "./famix_functions_index";
+import { logger } from "../analyze";
 
 /**
  * This class is used to build a Famix model for the types
@@ -34,7 +35,7 @@ export class FamixFunctionsTypes {
         let isPrimitiveType = false;
         let isParameterizedType = false;
 
-        console.info("Creating (or getting) type: '" + typeName + "' of element: " + element.getText() + " of kind: " + element.getKindName());
+        logger.debug("Creating (or getting) type: '" + typeName + "' of element: " + element.getText() + " of kind: " + element.getKindName());
 
         const typeAncestor = this.findTypeAncestor(element);
         const ancestorFullyQualifiedName = this.FQNFunctions.getFQN(typeAncestor);

@@ -1,6 +1,7 @@
 import { FamixJSONExporter } from "../../famix_JSON_exporter";
 import { ContainerEntity } from "./container_entity";
 import { Namespace } from "./namespace";
+import { logger } from "../../../../../analyze";
 
 export class ScopingEntity extends ContainerEntity {
 
@@ -12,11 +13,11 @@ export class ScopingEntity extends ContainerEntity {
 
   public addNamespace(childNamespace: Namespace): void {
     if (!this.childrenNamespaces.has(childNamespace)) {
-      console.info("Adding namespace " + childNamespace.getName() + " to " + this.getName());
+      logger.debug("Adding namespace " + childNamespace.getName() + " to " + this.getName());
       this.childrenNamespaces.add(childNamespace);
       childNamespace.setParentScope(this);
     } else {
-      console.info("Namespace " + childNamespace.getName() + " already added to " + this.getName());
+      logger.debug("Namespace " + childNamespace.getName() + " already added to " + this.getName());
     }
   }
 

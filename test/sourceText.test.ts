@@ -1,5 +1,5 @@
 import { Project } from "ts-morph";
-import { Importer } from "../src/analyze";
+import { Importer, config } from "../src/analyze";
 import { IndexedFileAnchor, Method, Module, ScriptEntity } from "../src/lib/famix/src/model/famix";
 import GraphemeSplitter from "grapheme-splitter";
 
@@ -22,6 +22,7 @@ export class A {
 // multi-code point emoji is handled differently in JavaScript () and Pharo (one character)
 project.createSourceFile("test_src/a-b.ts", `let c = "💷", d = 5;`);
 
+config.expectGraphemes = true;
 const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for source text', () => {

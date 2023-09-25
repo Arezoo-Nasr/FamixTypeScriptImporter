@@ -1,5 +1,6 @@
 import { Identifier, ParameterDeclaration, VariableDeclaration, PropertyDeclaration, EnumMember } from "ts-morph";
 import { FamixFunctions } from "../famix_functions/famix_functions";
+import { logger } from "../analyze";
 
 /**
  * This class is used to build a Famix model for the accesses
@@ -21,14 +22,14 @@ export class ProcessAccesses {
      * @param accessMap A map of parameters, variables, properties and enum members with their id
      */
     public processAccesses(accessMap: Map<number, ParameterDeclaration | VariableDeclaration | PropertyDeclaration | EnumMember>): void {
-        console.info(`processAccesses: Creating accesses:`);
+        logger.debug(`processAccesses: Creating accesses:`);
         accessMap.forEach((v, id) => {
-            console.info(`processAccesses: Accesses to ${v.getName()}`);
+            logger.debug(`processAccesses: Accesses to ${v.getName()}`);
             try {
                 const temp_nodes = v.findReferencesAsNodes() as Array<Identifier>;
                 temp_nodes.forEach(node => this.processNodeForAccesses(node, id));
             } catch (error) {
-                console.error(`> WARNING: got exception ${error}. Continuing...`);
+                logger.error(`> WARNING: got exception ${error}. Continuing...`);
             }
         });
     }
@@ -45,13 +46,13 @@ export class ProcessAccesses {
             // check for a node whose first ancestor is a property declaration and bail?
             // This may be a bug in ts-morph?
             if (n.getFirstAncestorOrThrow().getKindName() === "PropertyDeclaration") {
-                console.info(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()})'s first ancestor is a PropertyDeclaration. Skipping...`);
+                logger.debug(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()})'s first ancestor is a PropertyDeclaration. Skipping...`);
                 return;
             }
             this.famixFunctions.createFamixAccess(n, id);
-            console.info(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()})`);
+            logger.debug(`processNodeForAccesses: node kind: ${n.getKindName()}, ${n.getText()}, (${n.getType().getText()})`);
         } catch (error) {
-            console.error(`> WARNING: got exception ${error}. ScopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing...`);
+            logger.error(`> WARNING: got exception ${error}. ScopeDeclaration invalid for ${n.getSymbol().getFullyQualifiedName()}. Continuing...`);
         }
     }
 }
