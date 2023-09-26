@@ -16,14 +16,17 @@ const fmxRep = importer.famixRepFromProject(project);
 
 describe('Tests for class implements undefined interface', () => {
 
+    const classesSet = fmxRep._getAllEntitiesWithType("Class");
+    const interfacesSet = fmxRep._getAllEntitiesWithType("Interface");
+    
     it("should contain one class and one interface", () => {
-        expect(fmxRep._getAllEntitiesWithType("Class").size).toBe(1);
-        expect(fmxRep._getAllEntitiesWithType("Interface").size).toBe(1);
+        expect(classesSet.size).toBe(1);
+        expect(interfacesSet.size).toBe(1);
     });
 
     it("should contain an interface myClass that extends an interface FileSystemHost", () => {
-        const cList = Array.from(fmxRep._getAllEntitiesWithType("Class") as Set<Class>);
-        const iList = Array.from(fmxRep._getAllEntitiesWithType("Interface") as Set<Interface>);
+        const cList = Array.from(classesSet as Set<Class>);
+        const iList = Array.from(interfacesSet as Set<Interface>);
         expect(cList).toBeTruthy();
         expect(iList).toBeTruthy();
         const myInterface1 = iList.find(p => p.getName() === "FileSystemHost");

@@ -2,6 +2,8 @@ import { Importer } from '../src/analyze';
 import { Function as FamixFunctionEntity } from "../src/lib/famix/src/model/famix/function";
 import { Comment } from '../src/lib/famix/src/model/famix/comment';
 import { Project } from 'ts-morph';
+import { IndexedFileAnchor } from '../src/lib/famix/src/model/famix/indexed_file_anchor';
+import { getCommentTextFromCommentViaAnchor } from './testUtils';
 
 const importer = new Importer();
 const project = new Project();
@@ -25,16 +27,20 @@ describe('Tests for function with variables', () => {
     });
 
     const firstVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "i");
+    const firstVariableComments = Array.from(firstVariable?.getComments() as Set<Comment>);
+
     it("should have a variable 'i' with three comments", () => {
         expect(firstVariable).toBeTruthy();
         expect(firstVariable?.getParentContainerEntity()).toBe(theFunction);
         expect(firstVariable?.getComments().size).toBe(3);
-        expect(Array.from(firstVariable?.getComments() as Set<Comment>)[0]?.getContent()).toBe("/*comment 2*/");
-        expect(Array.from(firstVariable?.getComments() as Set<Comment>)[1]?.getContent()).toBe("// comment 1");
-        expect(Array.from(firstVariable?.getComments() as Set<Comment>)[2]?.getContent()).toBe("// comment 3");
-        expect(Array.from(firstVariable?.getComments() as Set<Comment>)[0]?.getContainer()).toBe(firstVariable);
-        expect(Array.from(firstVariable?.getComments() as Set<Comment>)[1]?.getContainer()).toBe(firstVariable);
-        expect(Array.from(firstVariable?.getComments() as Set<Comment>)[2]?.getContainer()).toBe(firstVariable);
+
+        expect(getCommentTextFromCommentViaAnchor(firstVariableComments[0], project)).toBe(`/*comment 2*/`);
+        expect(getCommentTextFromCommentViaAnchor(firstVariableComments[1], project)).toBe(`// comment 1`);
+        expect(getCommentTextFromCommentViaAnchor(firstVariableComments[2], project)).toBe(`// comment 3`);
+    
+        expect(firstVariableComments[0]?.getContainer()).toBe(firstVariable);
+        expect(firstVariableComments[1]?.getContainer()).toBe(firstVariable);
+        expect(firstVariableComments[2]?.getContainer()).toBe(firstVariable);
     });
 
     it("should be of type number", () => {
@@ -42,14 +48,25 @@ describe('Tests for function with variables', () => {
     });
 
     const secondVariable = Array.from(theFunction?.getVariables()).find((p) => p.getName() === "j");
+    const secondVariableComments = Array.from(secondVariable?.getComments() as Set<Comment>);
+
     it("should have a variable 'j' with two comments", () => {
         expect(secondVariable).toBeTruthy();
         expect(secondVariable?.getParentContainerEntity()).toBe(theFunction);
-        expect(secondVariable?.getComments().size).toBe(2);
-        expect(Array.from(secondVariable?.getComments() as Set<Comment>)[0]?.getContent()).toBe("// comment 1");
-        expect(Array.from(secondVariable?.getComments() as Set<Comment>)[1]?.getContent()).toBe("// comment 3");
-        expect(Array.from(secondVariable?.getComments() as Set<Comment>)[0]?.getContainer()).toBe(secondVariable);
-        expect(Array.from(secondVariable?.getComments() as Set<Comment>)[1]?.getContainer()).toBe(secondVariable);
+        expect(secondVariableComments.length).toBe(2);
+
+        let anchor = secondVariableComments[0]?.getSourceAnchor() as IndexedFileAnchor;
+        expect(anchor?.getFileName().endsWith("functionWithVariables.ts")).toBe(true);
+        expect(project.getSourceFileOrThrow(anchor.getFileName()).getFullText().substring(
+            anchor.getStartPos() - 1, anchor.getEndPos() - 1)).toBe(`// comment 1`);
+
+        anchor = secondVariableComments[1]?.getSourceAnchor() as IndexedFileAnchor;
+        expect(anchor?.getFileName().endsWith("functionWithVariables.ts")).toBe(true);
+        expect(project.getSourceFileOrThrow(anchor.getFileName()).getFullText().substring(
+            anchor.getStartPos() - 1, anchor.getEndPos() - 1)).toBe(`// comment 3`);
+
+        expect(secondVariableComments[0]?.getContainer()).toBe(secondVariable);
+        expect(secondVariableComments[1]?.getContainer()).toBe(secondVariable);
     });
     
     it("should be of type number", () => {

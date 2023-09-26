@@ -1,6 +1,7 @@
 import { Project } from 'ts-morph';
 import { Importer } from '../src/analyze';
 import { Comment } from '../src/lib/famix/src/model/famix/comment';
+import { getCommentTextFromCommentViaAnchor } from './testUtils';
 
 const importer = new Importer();
 const project = new Project();
@@ -32,9 +33,9 @@ describe('Tests for abstract class with comments', () => {
     it("should have two comments for the abstract class", () => {
         expect(theAbstractClass?.getComments().size).toBe(2);
         const comments = Array.from(theAbstractClass?.getComments() as Set<Comment>);
-        expect(comments[0]?.getContent()).toBe("// before");
+        expect(getCommentTextFromCommentViaAnchor(comments[0], project)).toBe(`// before`);
         expect(comments[0]?.getContainer()).toBe(theAbstractClass);
-        expect(comments[1]?.getContent()).toBe("// a comment");
+        expect(getCommentTextFromCommentViaAnchor(comments[1], project)).toBe(`// a comment`);
         expect(comments[1]?.getContainer()).toBe(theAbstractClass);
     });
 
@@ -46,13 +47,15 @@ describe('Tests for abstract class with comments', () => {
     it("should have three comments for the function", () => {
         expect(theFunction?.getComments().size).toBe(3);
         const comments = Array.from(theFunction?.getComments() as Set<Comment>);
-        expect(comments[0]?.getContent()).toBe("// after");
+        expect(getCommentTextFromCommentViaAnchor(comments[0], project)).toBe(`// after`);
         expect(comments[0]?.getContainer()).toBe(theFunction);
         expect(comments[0]?.getIsJSDoc()).toBe(false);
-        expect(comments[1]?.getContent()).toBe("/* test */");
+        expect(getCommentTextFromCommentViaAnchor(comments[1], project)).toBe(`/* test */`);
         expect(comments[1]?.getContainer()).toBe(theFunction);
         expect(comments[1]?.getIsJSDoc()).toBe(false);
-        expect(comments[2]?.getContent()).toBe("/**\n * test2\n */");
+        expect(getCommentTextFromCommentViaAnchor(comments[2], project)).toBe(`/**
+ * test2
+ */`);
         expect(comments[2]?.getContainer()).toBe(theFunction); 
         expect(comments[2]?.getIsJSDoc()).toBe(true);
     });

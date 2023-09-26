@@ -625,13 +625,15 @@ export class ProcessFiles {
      * @param fmxScope The Famix model of the named entity
      */
     private processComments(e: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | GetAccessorDeclaration | SetAccessorDeclaration | FunctionDeclaration | FunctionExpression | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | Decorator | EnumDeclaration | EnumMember | TypeParameterDeclaration | VariableStatement | TypeAliasDeclaration, fmxScope: Famix.NamedEntity): void {
-        logger.debug(`Finding Comments:`);
+        logger.debug(`Process comments:`);
         e.getLeadingCommentRanges().forEach(c => {
             const fmxComment = this.processComment(c, fmxScope);
-            fmxScope.addComment(fmxComment);
+            logger.debug(`leading comments, addComment: '${c.getText()}'`);
+            fmxScope.addComment(fmxComment); // redundant, but just in case
         });
         e.getTrailingCommentRanges().forEach(c => {
             const fmxComment = this.processComment(c, fmxScope);
+            logger.debug(`trailing comments, addComment: '${c.getText()}'`);
             fmxScope.addComment(fmxComment);
         });
     }
@@ -643,14 +645,9 @@ export class ProcessFiles {
      * @returns A Famix.Comment representing the comment
      */
     private processComment(c: CommentRange, fmxScope: Famix.NamedEntity): Famix.Comment {
-        let isJSDoc = false;
-        if (c.getText().substring(0, 3) === "/**") {
-            isJSDoc = true;
-        }
-
+        const isJSDoc = c.getText().startsWith("/**");
+        logger.debug(`processComment: comment: ${c.getText()}, isJSDoc = ${isJSDoc}`);
         const fmxComment = this.famixFunctions.createFamixComment(c, fmxScope, isJSDoc);
-
-        logger.debug(`processComment: comment: ${c.getText()}`);
 
         return fmxComment;
     }
