@@ -13,3 +13,7 @@ function getCommentFromAnchor(anchor: IndexedFileAnchor, project: Project) {
 export function getCommentTextFromCommentViaAnchor(comment: Comment, project: Project) {
     return getCommentFromAnchor(getIndexedFileAnchorFromComment(comment), project);
 }
+
+export function getTextFromAnchor(anchor: IndexedFileAnchor, project: Project) {
+    return project.getSourceFileOrThrow(anchor.getFileName()).getFullText().substring(anchor.getStartPos() - 1, anchor.getEndPos() - 1);
+}

@@ -1,9 +1,8 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, SourceFile, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, SyntaxKind, FunctionExpression, ExpressionWithTypeArguments } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, SourceFile, GetAccessorDeclaration, SetAccessorDeclaration, Node, ImportSpecifier, SyntaxKind, FunctionExpression, ExpressionWithTypeArguments, ImportDeclaration } from "ts-morph";
 import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
 import { FamixFunctionsIndex } from "./famix_functions_index";
-import { Alias, Class, Enum, Interface, Variable } from "../lib/famix/src/model/famix";
 import { logger } from "../analyze";
 
 /**
@@ -134,14 +133,16 @@ export class FamixFunctionsAssociations {
 
     /**
      * Creates a Famix import clause
+     * @param importClauseInfo The information needed to create a Famix import clause
+     * @param importDeclaration The import declaration
      * @param importer A source file which is a module
-     * @param moduleSpecifier The name of the module where the export declaration is
      * @param moduleSpecifierFilePath The path of the module where the export declaration is
      * @param importElement The imported entity
      * @param isInExports A boolean indicating if the imported entity is in the exports
      * @param isDefaultExport A boolean indicating if the imported entity is a default export
      */
-    public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean): void {
+    public createFamixImportClause(importClauseInfo: {importDeclaration?: ImportDeclaration, importer: SourceFile, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean}): void {
+        const {importDeclaration, importer, moduleSpecifierFilePath, importElement, isInExports, isDefaultExport} = importClauseInfo;
         logger.debug(`createFamixImportClause: Creating import clause:`);
         const fmxImportClause = new Famix.ImportClause(this.famixRep);
 
@@ -182,17 +183,13 @@ export class FamixFunctionsAssociations {
         const fmxImporter = this.getFamixEntityByFullyQualifiedName(importerFullyQualifiedName) as Famix.Module;
         fmxImportClause.setImportingEntity(fmxImporter);
         fmxImportClause.setImportedEntity(importedEntity);
-        fmxImportClause.setModuleSpecifier(moduleSpecifier);
+        fmxImportClause.setModuleSpecifier(importDeclaration?.getModuleSpecifierValue() as string);
 
-        logger.debug(`createFamixImportClause: ${fmxImportClause.getImportedEntity()?.getName()} (of type ${fmxImportClause.getImportedEntity() instanceof Class ? 'Class' :
-        fmxImportClause.getImportedEntity() instanceof Interface ? 'Interface' :
-        fmxImportClause.getImportedEntity() instanceof Function ? 'Function' :
-        fmxImportClause.getImportedEntity() instanceof Enum ? 'Enum' :
-        fmxImportClause.getImportedEntity() instanceof Alias ? 'Alias' :
-        fmxImportClause.getImportedEntity() instanceof Variable ? 'Variable' :
-            'NamedEntity'}) is imported by ${fmxImportClause.getImportingEntity()?.getName()}`);
+        logger.debug(`createFamixImportClause: ${fmxImportClause.getImportedEntity()?.getName()} (of type ${
+            getSubTypeName(fmxImportClause.getImportedEntity())}) is imported by ${fmxImportClause.getImportingEntity()?.getName()}`);
 
-        this.famixFunctionsIndex.makeFamixIndexFileAnchor(null, fmxImportClause);
+        // make an index file anchor for the import clause
+        this.famixFunctionsIndex.makeFamixIndexFileAnchor(importDeclaration, fmxImportClause);
 
         fmxImporter.addOutgoingImport(fmxImportClause);
     }
@@ -224,3 +221,22 @@ export class FamixFunctionsAssociations {
         return node.getAncestors().find(a => a.getKind() === SyntaxKind.MethodDeclaration || a.getKind() === SyntaxKind.Constructor || a.getKind() === SyntaxKind.FunctionDeclaration || a.getKind() === SyntaxKind.FunctionExpression || a.getKind() === SyntaxKind.ModuleDeclaration || a.getKind() === SyntaxKind.SourceFile || a.getKindName() === "GetAccessor" || a.getKindName() === "SetAccessor" || a.getKind() === SyntaxKind.ClassDeclaration);
     }
 }
+function getSubTypeName(fmxNamedEntity: Famix.NamedEntity) {
+    const name = fmxNamedEntity instanceof Famix.Class ? 'Class' :
+        fmxNamedEntity instanceof Famix.Interface ? 'Interface' :
+            fmxNamedEntity instanceof Famix.Function ? 'Function' :
+                fmxNamedEntity instanceof Famix.Enum ? 'Enum' :
+                    fmxNamedEntity instanceof Famix.EnumValue ? 'EnumValue' :
+                        fmxNamedEntity instanceof Famix.Alias ? 'Alias' :
+                            fmxNamedEntity instanceof Famix.Variable ? 'Variable' :
+                                fmxNamedEntity instanceof Famix.Type ? 'Type' :
+                                    fmxNamedEntity instanceof Famix.Method ? 'Method' :
+                                        fmxNamedEntity instanceof Famix.Decorator ? 'Decorator' :
+                                            fmxNamedEntity instanceof Famix.Accessor ? 'Accessor' :
+                                                fmxNamedEntity instanceof Famix.Parameter ? 'Parameter' :
+                                                    fmxNamedEntity instanceof Famix.Property ? 'Property' :
+                                                        'NamedEntity';
+    console.log(`getSubTypeName: ${name}`);
+    return name;
+}
+
