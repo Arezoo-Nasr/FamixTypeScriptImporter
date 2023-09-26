@@ -478,8 +478,9 @@ export class FamixFunctions {
      * @returns The Famix model of the comment
      */
     public createFamixComment(comment: CommentRange, fmxScope: Famix.NamedEntity, isJSDoc: boolean): Famix.Comment {
+        logger.debug(`> NOTE: creating comment ${comment.getText()} in scope ${fmxScope.getName()}.`);
         const fmxComment = new Famix.Comment(this.famixRep);
-        fmxComment.setContainer(fmxScope);
+        fmxComment.setContainer(fmxScope);  // adds comment to the container's comments collection
         fmxComment.setIsJSDoc(isJSDoc);
 
         this.famixFunctionsIndex.makeFamixIndexFileAnchor(comment, fmxComment);

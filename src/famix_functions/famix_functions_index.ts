@@ -3,7 +3,7 @@ import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
 import GraphemeSplitter from "grapheme-splitter";
-import { config } from "../analyze";
+import { logger, config } from "../analyze";
 
 /**
  * This class is used to build a Famix model for the index file anchors
@@ -27,6 +27,7 @@ export class FamixFunctionsIndex {
      * @param famixElement The Famix model of the source element
      */
     public makeFamixIndexFileAnchor(sourceElement: SourceFile | ModuleDeclaration | ClassDeclaration | InterfaceDeclaration | MethodDeclaration | ConstructorDeclaration | MethodSignature | FunctionDeclaration | FunctionExpression | ParameterDeclaration | VariableDeclaration | PropertyDeclaration | PropertySignature | TypeParameterDeclaration | Identifier | Decorator | GetAccessorDeclaration | SetAccessorDeclaration | ImportSpecifier | CommentRange | EnumDeclaration | EnumMember | TypeAliasDeclaration | ExpressionWithTypeArguments, famixElement: Famix.SourcedEntity): void {
+        logger.debug("making index file anchor for '" + sourceElement?.getText() + "' with famixElement " + famixElement.getJSON());
         const fmxIndexFileAnchor = new Famix.IndexedFileAnchor(this.famixRep);
         fmxIndexFileAnchor.setElement(famixElement);
 
@@ -65,10 +66,6 @@ export class FamixFunctionsIndex {
                                                         targetArray: sourceElementTextGraphemes, 
                                                         start: sourceStart - numberOfGraphemeClustersBeforeStart});
                     sourceEnd = sourceStart + sourceElementTextGraphemes.length;
-
-                    // // note: the +1 is because the source anchor is 1-based, but ts-morph is 0-based
-                    // fmxIndexFileAnchor.setStartPos(sourceStart + 1);
-                    // fmxIndexFileAnchor.setEndPos(sourceEnd + 1);
                 } 
             }
             // note: the +1 is because the source anchor is 1-based, but ts-morph is 0-based

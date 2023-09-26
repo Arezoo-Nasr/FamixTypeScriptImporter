@@ -3,6 +3,7 @@ import { SourceLanguage } from "./source_language";
 import { Entity } from "./entity";
 import { Comment } from "./comment";
 import { SourceAnchor } from "./source_anchor";
+import { logger } from "../../../../../analyze";
 
 export class SourcedEntity extends Entity {
 
@@ -39,6 +40,8 @@ export class SourcedEntity extends Entity {
     if (!this.comments.has(comment)) {
       this.comments.add(comment);
       comment.setContainer(this);
+    } else {
+      logger.warn("WARNING: adding comment that is already in comments: " + comment.getJSON() + " to " + this.getJSON());
     }
   }
 
