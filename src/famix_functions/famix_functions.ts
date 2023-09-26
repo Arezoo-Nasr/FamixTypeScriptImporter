@@ -479,7 +479,6 @@ export class FamixFunctions {
      */
     public createFamixComment(comment: CommentRange, fmxScope: Famix.NamedEntity, isJSDoc: boolean): Famix.Comment {
         const fmxComment = new Famix.Comment(this.famixRep);
-        fmxComment.setContent(comment.getText());
         fmxComment.setContainer(fmxScope);
         fmxComment.setIsJSDoc(isJSDoc);
 
