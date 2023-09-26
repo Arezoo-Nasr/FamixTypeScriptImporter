@@ -1,4 +1,4 @@
-import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, TypeAliasDeclaration, FunctionExpression, ExpressionWithTypeArguments } from "ts-morph";
+import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, ModuleDeclaration, PropertyDeclaration, PropertySignature, SourceFile, TypeParameterDeclaration, VariableDeclaration, ParameterDeclaration, Decorator, GetAccessorDeclaration, SetAccessorDeclaration, ImportSpecifier, CommentRange, EnumDeclaration, EnumMember, TypeAliasDeclaration, FunctionExpression, ExpressionWithTypeArguments, ImportDeclaration } from "ts-morph";
 import * as Famix from "../lib/famix/src/model/famix";
 import { FamixRepository } from "../lib/famix/src/famix_repository";
 import { FQNFunctions } from "../fqn";
@@ -528,6 +528,8 @@ export class FamixFunctions {
 
     /**
      * Creates a Famix import clause
+     * @param importClauseInfo An import clause
+     * @param importDeclaration An import declaration (optional)
      * @param importer A source file which is a module
      * @param moduleSpecifier The name of the module where the export declaration is
      * @param moduleSpecifierFilePath The path of the module where the export declaration is
@@ -535,14 +537,8 @@ export class FamixFunctions {
      * @param isInExports A boolean indicating if the imported entity is in the exports
      * @param isDefaultExport A boolean indicating if the imported entity is a default export
      */    
-    public createFamixImportClause(importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean): void {
-        this.famixFunctionsAssociations.createFamixImportClause(importer, moduleSpecifier, moduleSpecifierFilePath, importElement, isInExports, isDefaultExport);
-    }
-
-    // create the same function as createFamixImportClause but with a signature that has a single object parameter that has all the parameters
-    // this way we can call this function from the processImportClauses.ts file
-    public createFamixImportClause2(importClause: {importer: SourceFile, moduleSpecifier: string, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean}): void {
-        this.famixFunctionsAssociations.createFamixImportClause(importClause.importer, importClause.moduleSpecifier, importClause.moduleSpecifierFilePath, importClause.importElement, importClause.isInExports, importClause.isDefaultExport);
+    public createFamixImportClause(importClauseInfo: {importDeclaration?: ImportDeclaration, importer: SourceFile, moduleSpecifierFilePath: string, importElement: ImportSpecifier | Identifier, isInExports: boolean, isDefaultExport: boolean}): void {
+        this.famixFunctionsAssociations.createFamixImportClause(importClauseInfo);
     }
 
     /**

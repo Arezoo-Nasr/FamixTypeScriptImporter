@@ -1,8 +1,10 @@
 import { Project } from "ts-morph";
-import { Importer } from "../src/analyze";
-import { Class, ImportClause, Module, NamedEntity } from "../src/lib/famix/src/model/famix";
+import { Importer, logger } from "../src/analyze";
+import { Class, ImportClause, IndexedFileAnchor, Module, NamedEntity } from "../src/lib/famix/src/model/famix";
+import { getTextFromAnchor } from "./testUtils";
 
 const importer = new Importer();
+logger.settings.minLevel = 0; // all your messages are belong to us
 const project = new Project();
 
 project.createSourceFile("oneClassExporter.ts",
@@ -141,5 +143,17 @@ describe('Tests for import clauses', () => {
         expect(exportedEntity?.getIncomingImports()).toBeTruthy();
         expect(exportedEntity?.getIncomingImports()?.size).toBe(1);
         expect(exportedEntity?.getIncomingImports()?.values().next().value.getImportingEntity()?.getName()).toBe("oneClassImporter.ts");
+    });
+
+    it("should have import clauses with source code anchors", () => {
+        // expect the import clause from renameDefaultExportImporter.ts to have a source anchor for ""
+        const importClause = importClauses.find(e => e.getImportedEntity()?.getName() === 'myRenamedDefaultClassW');
+        expect(importClause).toBeTruthy();
+        const fileAnchor = importClause?.getSourceAnchor() as IndexedFileAnchor;
+        expect(fileAnchor).toBeTruthy();
+        const fileName = fileAnchor?.getFileName().split("/").pop();
+        expect(fileName).toBe("renameDefaultExportImporter.ts");
+        // expect the text from the file anchor to be ""
+        expect(getTextFromAnchor(fileAnchor, project)).toBe(`import myRenamedDefaultClassW from "./complexExportModule.ts";`);
     });
 });
